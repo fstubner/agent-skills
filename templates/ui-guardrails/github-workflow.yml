@@ -1,0 +1,70 @@
+# Layout + interaction guardrails for frontend-design skill.
+# Adjust server command/port to match your project.
+
+name: UI guardrails
+
+on:
+  pull_request:
+    paths:
+      - '**.css'
+      - '**.html'
+      - '**.tsx'
+      - '**.jsx'
+      - '**.vue'
+      - 'ui-guardrails/**'
+      - 'design-tokens.json'
+  workflow_dispatch:
+
+env:
+  FRONTEND_DESIGN_SKILL_ROOT: ${{ vars.FRONTEND_DESIGN_SKILL_ROOT || format('{0}/.cursor/skills/frontend-design', github.workspace) }}
+  UI_CHECK_PORT: '4173'
+
+jobs:
+  ui-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Install Playwright for layout/smoke (skill ab-harness bundle)
+      - name: Install Playwright (skill harness)
+        run: |
+          HARNESS="${FRONTEND_DESIGN_SKILL_ROOT}/ab-harness"
+          if [ ! -f "$HARNESS/package.json" ]; then
+            echo "Set FRONTEND_DESIGN_SKILL_ROOT or copy frontend-design skill into the repo"
+            exit 1
+          fi
+          npm ci --prefix "$HARNESS" 2>/dev/null || npm install --prefix "$HARNESS"
+          npx --prefix "$HARNESS" playwright install chromium --with-deps
+
+      - name: Start static server
+        run: |
+          python -m http.server ${{ env.UI_CHECK_PORT }} &
+          echo "SERVER_PID=$!" >> $GITHUB_ENV
+          sleep 2
+
+      - name: UI check (strict)
+        run: |
+          node "${FRONTEND_DESIGN_SKILL_ROOT}/scripts/ci-check.js" \
+            --root . \
+            --base-url "http://127.0.0.1:${{ env.UI_CHECK_PORT }}" \
+            --strict
+
+      - name: Design critique
+        if: always()
+        run: |
+          node "${FRONTEND_DESIGN_SKILL_ROOT}/scripts/design-critique.js" \
+            --root . \
+            --ui-check-report ui-check-report.json || true
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-check-reports
+          path: |
+            ui-check-report.json
+            design-critique-report.json

@@ -1,0 +1,20 @@
+{
+  "generatedBy": "profile-project.js",
+  "root": "C:\\Users\\Felix\\.cursor\\skills\\frontend-design\\ab-harness\\reference-with-skill",
+  "framework": "Unknown / vanilla",
+  "styling": "CSS (inferred)",
+  "uiLibraries": null,
+  "componentDir": null,
+  "designTokens": "design-tokens.json",
+  "hasDesignDirection": true,
+  "hasProductBrief": false,
+  "scopeTier": "app",
+  "detectedFrom": "file-scan",
+  "guidance": [
+    "Read references/discovery.md — do not assume admin dashboard or enterprise chrome.",
+    "Match this framework and styling system; do not introduce a competing one.",
+    "Map values to design tokens; avoid hardcoded hex/px in component code.",
+    "Components should not set their own outer margins; spacing is the parent layout’s job."
+  ],
+  "openQuestions": []
+}

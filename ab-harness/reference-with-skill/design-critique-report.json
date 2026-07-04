@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-06-29T19:31:29.155Z",
+  "root": "C:\\Users\\Felix\\.cursor\\skills\\frontend-design\\ab-harness\\reference-with-skill",
+  "verdict": "CONDITIONAL",
+  "specialists": [
+    {
+      "id": "intent",
+      "pass": true,
+      "notes": "design-direction.md present"
+    },
+    {
+      "id": "color",
+      "pass": true,
+      "notes": "16 contrast pairs pass"
+    },
+    {
+      "id": "originality",
+      "pass": true,
+      "notes": "generic score 0 (max 2)"
+    },
+    {
+      "id": "layout",
+      "pass": true,
+      "notes": "layout pass"
+    },
+    {
+      "id": "interaction",
+      "pass": true,
+      "notes": "smoke pass"
+    },
+    {
+      "id": "a11y-axe",
+      "pass": true,
+      "notes": "axe pass"
+    }
+  ],
+  "blockers": [],
+  "warnings": [
+    "21 audit-ui finding(s)"
+  ],
+  "agentPrompts": [
+    "5-second test: what is this page and what action is obvious?",
+    "Generic test: name three AI-template tells; how does Phase 2.5 fix them?",
+    "Hierarchy test: three text levels at arm's length?"
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "viewports": [
+    { "name": "desktop", "width": 1280, "height": 800 },
+    { "name": "tablet", "width": 768, "height": 1024 },
+    { "name": "mobile", "width": 390, "height": 844 }
+  ],
+  "scenarios": [
+  {
+    "id": "dashboard-light",
+    "path": "/#/dashboard",
+    "theme": "light",
+    "viewport": "desktop"
+  },
+  {
+    "id": "dashboard-dark",
+    "path": "/#/dashboard",
+    "theme": "dark",
+    "viewport": "desktop"
+  },
+  {
+    "id": "projects-list",
+    "path": "/#/projects",
+    "theme": "light",
+    "viewport": "desktop"
+  },
+  {
+    "id": "projects-empty-filter",
+    "path": "/#/projects",
+    "theme": "light",
+    "viewport": "desktop",
+    "actions": [
+      { "type": "fill", "selector": "#project-search", "value": "zzzznomatch" },
+      { "type": "wait", "ms": 200 }
+    ]
+  },
+  {
+    "id": "project-detail",
+    "path": "/#/projects/acme-api",
+    "theme": "light",
+    "viewport": "desktop"
+  },
+  {
+    "id": "settings-profile",
+    "path": "/#/settings/profile",
+    "theme": "light",
+    "viewport": "desktop"
+  },
+  {
+    "id": "settings-sessions",
+    "path": "/#/settings/sessions",
+    "theme": "light",
+    "viewport": "desktop"
+  },
+  {
+    "id": "settings-sessions-scrolled",
+    "path": "/#/settings/sessions",
+    "theme": "light",
+    "viewport": "desktop",
+    "actions": [
+      { "type": "scroll", "selector": ".scroll-region", "top": 120 },
+      { "type": "wait", "ms": 150 }
+    ]
+  },
+  {
+    "id": "settings-connections",
+    "path": "/#/settings/connections",
+    "theme": "light",
+    "viewport": "desktop"
+  },
+  {
+    "id": "modal-revoke",
+    "path": "/#/settings/sessions",
+    "theme": "light",
+    "viewport": "desktop",
+    "actions": [
+      { "type": "click", "selector": ".session-revoke" },
+      { "type": "wait", "ms": 200 }
+    ]
+  },
+  {
+    "id": "profile-save-success",
+    "path": "/#/settings/profile",
+    "theme": "light",
+    "viewport": "desktop",
+    "actions": [
+      { "type": "click", "selector": "#save-profile" },
+      { "type": "wait", "ms": 900 }
+    ]
+  },
+  {
+    "id": "dashboard-tablet",
+    "path": "/#/dashboard",
+    "theme": "light",
+    "viewport": "tablet"
+  },
+  {
+    "id": "dashboard-mobile",
+    "path": "/#/dashboard",
+    "theme": "light",
+    "viewport": "mobile"
+  },
+  {
+    "id": "projects-mobile",
+    "path": "/#/projects",
+    "theme": "light",
+    "viewport": "mobile"
+  },
+  {
+    "id": "settings-sessions-mobile",
+    "path": "/#/settings/sessions",
+    "theme": "light",
+    "viewport": "mobile"
+  }
+  ],
+  "smoke": [
+    { "id": "route-dashboard", "path": "/#/dashboard", "expect": "#view-dashboard" },
+    { "id": "route-projects", "path": "/#/projects", "expect": "#view-projects" },
+    { "id": "route-project-detail", "path": "/#/projects/acme-api", "expect": "#view-project-detail" },
+    { "id": "route-settings", "path": "/#/settings/profile", "expect": "#view-settings" },
+    { "id": "dark-toggle", "path": "/#/dashboard", "action": { "type": "click", "selector": "#theme-toggle" }, "expectAttr": { "selector": "html", "attr": "data-theme", "value": "dark" } },
+    { "id": "project-filter", "path": "/#/projects", "action": { "type": "fill", "selector": "#project-search", "value": "acme" }, "expectVisible": ".project-row" },
+    { "id": "profile-save", "path": "/#/settings/profile", "action": { "type": "click", "selector": "#save-profile" }, "expectVisible": ".status:not([hidden])" },
+    { "id": "layout-viewport-shell", "path": "/#/settings/sessions", "layout": true },
+    { "id": "layout-responsive-dashboard", "path": "/#/dashboard", "responsive": true, "viewport": { "width": 390, "height": 844 } },
+    { "id": "layout-responsive-projects", "path": "/#/projects", "responsive": true, "viewport": { "width": 390, "height": 844 } },
+    { "id": "layout-responsive-settings", "path": "/#/settings/sessions", "responsive": true, "viewport": { "width": 390, "height": 844 } }
+  ]
+}

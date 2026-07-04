@@ -1,0 +1,18 @@
+{
+  "name": "frontend-design-ab-harness",
+  "private": true,
+  "type": "module",
+  "description": "Visual regression + smoke tests for the frontend-design skill",
+  "scripts": {
+    "capture": "node scripts/capture.mjs",
+    "compare": "node scripts/compare.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "run-ab": "node scripts/run-ab.mjs"
+  },
+  "dependencies": {
+    "@axe-core/playwright": "^4.10.1",
+    "pixelmatch": "^6.0.0",
+    "pngjs": "^7.0.0",
+    "playwright": "^1.49.0"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "shell": "topbar",
+  "selectors": {
+    "header": ".app-header",
+    "scrollRegion": ".app-body"
+  },
+  "tolerances": {
+    "scrollRegionBelowHeader": 4,
+    "headerMaxY": 2,
+    "documentScrollY": 0,
+    "horizontalOverflowPx": 4
+  },
+  "viewports": [
+    { "name": "desktop", "width": 1280, "height": 800 },
+    { "name": "mobile", "width": 390, "height": 844 }
+  ],
+  "surfaces": [
+    {
+      "id": "settings",
+      "path": "/",
+      "layout": true,
+      "viewports": ["desktop", "mobile"]
+    }
+  ],
+  "smoke": []
+}

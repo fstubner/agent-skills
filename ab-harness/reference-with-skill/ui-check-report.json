@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-06-29T19:31:18.367Z",
+  "root": "C:\\Users\\Felix\\.cursor\\skills\\frontend-design\\ab-harness\\reference-with-skill",
+  "skillRoot": "C:\\Users\\Felix\\.cursor\\skills\\frontend-design",
+  "config": "ui-guardrails\\fragile-surfaces.json",
+  "baseUrl": "http://localhost:8780",
+  "strict": true,
+  "contrast": {
+    "pass": true,
+    "pairs": 16,
+    "detail": "\nToken contrast audit: C:\\Users\\Felix\\.cursor\\skills\\frontend-design\\ab-harness\\reference-with-skill\\design-tokens.json\nTarget: WCAG AA 4.5:1 for normal text\n\n  PASS  text-main body on base: #0f172a on #ffffff = 17.85:1\n  PASS  text-main body on raised: #0f172a on #f4f6f8 = 16.48:1\n  PASS  text-muted muted on base: #475569 on #ffffff = 7.58:1\n  PASS  text-muted muted on raised: #475569 on #f4f6f8 = 6.99:1\n  PASS  text-on-accent on accent button: #ffffff on #2563eb = 5.17:1\n  PASS  success status on base: #117f3a on #ffffff = 5.1:1\n  PASS  success status on raised: #117f3a on #f4f6f8 = 4.7:1\n  PASS  warning status on base: #b45309 on #ffffff = 5.02:1\n  PASS  warning status on raised: #b45309 on #f4f6f8 = 4.64:1\n  PASS  danger status on base: #d52222 on #ffffff = 5.15:1\n  PASS  danger status on raised: #d52222 on #f4f6f8 = 4.75:1\n  PASS  info status on base: #0277b3 on #ffffff = 4.89:1\n  PASS  info status on raised: #0277b3 on #f4f6f8 = 4.52:1\n  PASS  chrome-text nav on chrome: #e5e7eb on #111827 = 14.33:1\n  PASS  chrome-text-muted muted nav on chrome: #9ca3af on #111827 = 6.99:1\n  PASS  text-main body on content-well: #0f172a on #e8ecf1 = 15.05:1\n\nAll pairs pass.\n\n"
+  },
+  "genericScore": 0,
+  "auditFindings": 21,
+  "auditFiles": [
+    {
+      "file": "styles.css",
+      "findings": 21
+    }
+  ],
+  "auditDiff": {
+    "pass": true,
+    "stdout": "audit-diff: no git diff or not a repo — skipping\n",
+    "stderr": ""
+  },
+  "hasDirectionLock": true,
+  "hasProductBrief": false,
+  "hasTokens": true,
+  "layout": {
+    "pass": true,
+    "stdout": "layout-check: 2 surface(s), base http://localhost:8780\n  PASS layout dashboard/desktop\n  PASS layout settings-sessions/desktop\n\nlayout-check: all passed\n\n",
+    "stderr": ""
+  },
+  "smoke": {
+    "pass": true,
+    "stdout": "  PASS route-dashboard\n  PASS route-settings\n  PASS dark-toggle\n\nsmoke: all passed\n\n",
+    "stderr": ""
+  },
+  "axe": {
+    "pass": true,
+    "stdout": "axe-check: 2 route(s), base http://localhost:8780\n  PASS axe dashboard\n  PASS axe settings-sessions\n\naxe-check: all passed\n\n",
+    "stderr": ""
+  },
+  "verdict": "PASS_WITH_WARNINGS",
+  "failures": [],
+  "warnings": [],
+  "genericDetail": "\nGeneric SaaS audit: C:\\Users\\Felix\\.cursor\\skills\\frontend-design\\ab-harness\\reference-with-skill\\styles.css\n  Score: 0 — no generic tells detected.\n\n"
+}

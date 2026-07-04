@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "shell": "sidebar",
+  "selectors": {
+    "sidebar": ".sidebar",
+    "mainArea": ".main-area",
+    "topbar": ".topbar",
+    "contentWell": ".content-well",
+    "sidebarNavLast": ".sidebar-nav a:last-child"
+  },
+  "tolerances": {
+    "columnAlign": 4,
+    "mainAreaMaxY": 4,
+    "contentGapBelowTopbar": 8,
+    "documentScrollY": 0,
+    "horizontalOverflowPx": 4
+  },
+  "viewports": [
+    { "name": "desktop", "width": 1280, "height": 800 },
+    { "name": "tablet", "width": 768, "height": 1024 },
+    { "name": "mobile", "width": 390, "height": 844 }
+  ],
+  "surfaces": [
+    {
+      "id": "dashboard",
+      "path": "/#/dashboard",
+      "layout": true,
+      "viewports": ["desktop", "mobile"]
+    },
+    {
+      "id": "settings-sessions",
+      "path": "/#/settings/sessions",
+      "layout": true,
+      "viewports": ["desktop", "mobile"]
+    }
+  ],
+  "smoke": [
+    { "id": "route-dashboard", "path": "/#/dashboard", "expect": "#view-dashboard" },
+    { "id": "route-settings", "path": "/#/settings/profile", "expect": "#view-settings" },
+    { "id": "dark-toggle", "path": "/#/dashboard", "action": { "type": "click", "selector": "#theme-toggle" }, "expectAttr": { "selector": "html", "attr": "data-theme", "value": "dark" } },
+    { "id": "layout-responsive-dashboard", "path": "/#/dashboard", "responsive": true, "viewport": { "width": 390, "height": 844 } },
+    { "id": "layout-responsive-projects", "path": "/#/projects", "responsive": true, "viewport": { "width": 390, "height": 844 } }
+  ]
+}

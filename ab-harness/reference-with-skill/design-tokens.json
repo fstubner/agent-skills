@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "archetype": "enterprise",
+    "density": "high",
+    "mode": "light",
+    "generatedBy": "init-design-tokens.js",
+    "fontsUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap",
+    "visualNote": "Dark chrome + light content well. Use font-mono for data rows."
+  },
+  "color": {
+    "chrome-bg": "#111827",
+    "chrome-text": "#e5e7eb",
+    "chrome-text-muted": "#9ca3af",
+    "chrome-border": "#1f2937",
+    "content-well": "#e8ecf1",
+    "accent-subtle": "#e4eaf5",
+    "surface-base": "#ffffff",
+    "surface-raised": "#f4f6f8",
+    "surface-overlay": "#ffffff",
+    "text-main": "#0f172a",
+    "text-muted": "#475569",
+    "text-on-accent": "#ffffff",
+    "border-subtle": "#d9dee4",
+    "border-strong": "#b6bfc9",
+    "accent": "#2563eb",
+    "accent-hover": "#1453dd",
+    "accent-active": "#1249c1",
+    "focus-ring": "#2563eb",
+    "success": "#117f3a",
+    "warning": "#b45309",
+    "danger": "#d52222",
+    "info": "#0277b3"
+  },
+  "space": {
+    "space-1": "4px",
+    "space-2": "8px",
+    "space-3": "12px",
+    "space-4": "16px",
+    "space-5": "20px",
+    "space-6": "28px",
+    "space-7": "40px",
+    "space-8": "56px"
+  },
+  "radius": {
+    "radius-sm": "2px",
+    "radius-md": "4px",
+    "radius-lg": "8px",
+    "radius-full": "9999px"
+  },
+  "shadow": {
+    "shadow-sm": "0 1px 2px rgba(0, 0, 0, 0.05)",
+    "shadow-md": "0 4px 12px rgba(0, 0, 0, 0.09)",
+    "shadow-lg": "0 12px 32px rgba(0, 0, 0, 0.13)",
+    "shadow-overflow": "inset -12px 0 8px -8px rgba(0, 0, 0, 0.15)"
+  },
+  "type": {
+    "font-sans": "'IBM Plex Sans', system-ui, sans-serif",
+    "font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+    "text-xs": "11px",
+    "text-sm": "13px",
+    "text-base": "16px",
+    "text-lg": "18px",
+    "text-xl": "24px",
+    "text-2xl": "32px",
+    "leading-tight": "1.2",
+    "leading-normal": "1.5",
+    "leading-loose": "1.65",
+    "tracking-label": "0.04em"
+  },
+  "layout": {
+    "sidebar-width": "13.5rem",
+    "header-height": "3rem",
+    "fade-size": "16px",
+    "scrollbar-gutter": "10px",
+    "content-max": "48rem"
+  },
+  "motion": {
+    "duration-fast": "120ms",
+    "duration-base": "200ms",
+    "duration-slow": "320ms",
+    "ease-standard": "cubic-bezier(0.16, 1, 0.3, 1)"
+  }
+}
