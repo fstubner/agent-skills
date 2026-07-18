@@ -16,14 +16,8 @@ Pretty chrome with broken flows, missing states, and “user cannot finish the p
 
 - Token palette and type pairing (frontend-design)
 - Stack and file structure (frontend-engineering)
-- Final product SHIP (product-acceptance) — UX evidence feeds acceptance
+- Final product SHIP (product-acceptance)
 
-## Evergreen evidence
+## Skill path
 
-- Named primary path steps
-- Each step has a defined empty/error/success behavior
-- Smoke or walkthrough proves the path
-
-## Promotion status
-
-**Charter.** Content currently lives in `frontend-design/references/interaction.md` and related docs. Carve into `~/.cursor/skills/frontend-ux/` when design skill is stably visual-only and UX depth needs a separate router.
+`frontend-ux/` in [fstubner/agent-skills](https://github.com/fstubner/agent-skills)

@@ -19,21 +19,10 @@ LLM builds a plausible demo, invents users/scope, and optimizes for “looks lik
 - Final SHIP (product-acceptance)
 - Server schema (backend-engineering)
 
-## Evergreen interview (procedure)
+## Skill path
 
-Ask in focused rounds; do not invent a full PRODUCT.md from a one-line prompt.
-
-1. Register + platform (web default unless native signals)
-2. Users + purpose + success
-3. MVP in-scope + anti-goals
-4. Constraints (must-use stack, SEO, CMS, host)
-
-Use inferred options as hypotheses. User confirms before write.
-
-## Promotion status
-
-**Charter + template inside product-acceptance** for now. Promote to `~/.cursor/skills/product-management/` when interview depth warrants a full skill.
+`product-management/` in [fstubner/agent-skills](https://github.com/fstubner/agent-skills)
 
 ## Template
 
-See `../product-acceptance/templates/PRODUCT.md`.
+`product-acceptance/templates/PRODUCT.md`

@@ -1,158 +1,54 @@
 ---
 name: frontend-design
 description: >-
-  Design modern, accessible, intentional web UI: tokens, visual direction, craft,
-  anti-slop, contrast/layout/axe gates, and design critique. Use when styling,
-  theming, layout craft, typography, color, motion, or visual review. For
-  greenfield stack choice, monolith structure, or framework selection use
-  frontend-engineering first. For product SHIP vs brief use product-acceptance.
-compatibility: >-
-  Any agent runtime supporting the agentskills.io SKILL.md format. Owns visual
-  judgment, tokens, and deterministic design gates. Stack/structure owned by
-  frontend-engineering; outcome acceptance by product-acceptance.
+  Visual design laws for intentional, accessible UI: direction lock, tokens,
+  type/color/motion craft, anti-slop. Use when styling or visually reviewing UI.
+  Not for stack choice (frontend-engineering), flows (frontend-ux), or product SHIP
+  (product-acceptance). Interview before inventing aesthetics.
 ---
 
 # Frontend Design
 
-You own **visual design systems and craft**, not framework selection or product
-sign-off. Treat UI as intentional, accessible, and token-driven — without
-rawdogging a new stack when engineering has not locked one.
+You own **visual system and craft**. Prefer laws over rituals. Scripts prove claims;
+they are not the design process.
 
-This skill is a **router**. Load only the reference(s) the current task needs.
+**Suite:** stack → `frontend-engineering`; flows → `frontend-ux`; SHIP → `product-acceptance`.
 
-**Suite:** charters in `~/.cursor/skills/_suite-charters/`. Stack → `frontend-engineering`. Outcome SHIP → `product-acceptance` (separate turn).
+## Visual laws
 
-### Running scripts
+1. **Direction before decoration** — page/app work locks `design-direction.md` (five decisions) before layout inventiveness (`visual-direction.md`).
+2. **Tokens over magic numbers** — color, space, type, radius, elevation from a contract; raw hex/px in components is a defect.
+3. **Hierarchy is readable at arm’s length** — at least three clear text levels; accent has a job, not confetti.
+4. **One signature, quiet surroundings** — spend boldness once; cut accessory chrome.
+5. **Contrast and focus are non-negotiable** — prove contrast; visible keyboard focus.
+6. **Composition over one-off layout** — outer spacing is the parent’s job; prefer layout primitives.
+7. **Match the locked stack** — never introduce a competing styling paradigm after eng locked stack.
+8. **Refuse slop defaults** — no Inter/Roboto/Arial-by-habit, no purple-gradient template, no card grid for its own sake (`anti-patterns.md`, `professional-craft.md`).
+9. **Stack before polish** — if profile says unknown/vanilla on page/app without `stack-decision.md`, stop → **frontend-engineering**.
+10. **Visual critique ≠ product SHIP** — `design-critique` is visual; outcome acceptance is a separate skill/turn.
 
-Scripts ship in `scripts/` next to this file. Resolve `<SKILL_ROOT>` to this directory:
+## Interview (do not invent)
 
-```
-node "<SKILL_ROOT>/scripts/profile-project.js"
-node "<SKILL_ROOT>/scripts/init-design-tokens.js" --archetype <enterprise|consumer|editorial> --brand "#RRGGBB"
-node "<SKILL_ROOT>/scripts/init-ui-guardrails.js" --root . --shell <sidebar|topbar> --ci github
-node "<SKILL_ROOT>/scripts/ci-check.js" --root . --base-url http://localhost:PORT --strict
-node "<SKILL_ROOT>/scripts/design-critique.js" --root .
-```
+Before tokens/chrome on page/app: register, brand accent, theme, shell (if app).  
+Primary job/states → **frontend-ux** / **build** interview — do not fake them as “design.”
 
-Set `FRONTEND_DESIGN_SKILL_ROOT` in CI if the skill is not at `~/.cursor/skills/frontend-design/`.
-Playwright + axe: `cd "<SKILL_ROOT>/ab-harness" && npm install` (once) — **benchmark only**.
+## How to work
 
-## Operating principles (always apply)
+1. Discover scope (`discovery.md`); hand off stack if needed.
+2. Lock direction + tokens when you own the surface.
+3. Load only the reference the task needs (table below).
+4. Prove visual claims when shipping — see `references/verification.md` (gates/scripts live there, not as the skill’s center).
 
-- **Discover before prescribing.** No default product shape. Run `profile-project.js`, read brief/direction, or **ask** (`discovery.md`).
-- **Stack before polish on page/app.** If `needsStackInterview` or unknown/vanilla without `stack-decision.md`, invoke **frontend-engineering** — do not lock vanilla forever; do not default to React.
-- **Reason from mental models, not snippets.**
-- **Adapt to the locked project stack.** Never introduce a competing paradigm after stack is decided.
-- **Scope-appropriate depth.** Component work ≠ full app CI.
-- **Tokens over magic numbers.**
-- **Composition over custom layout.** Outer spacing is the parent layout's job.
-- **Accessibility is non-negotiable.** Contrast via tools; visible focus; semantic HTML.
-- **Design behavior, not just looks.** States: loading, empty, error, success (`interaction.md`) — full UX acceptance is product-acceptance / frontend-ux charter.
-- **Sane defaults within locked context** (`sane-defaults.md`).
-- **Responsive by default** unless scoped otherwise.
-- **System-driven, not patch-driven** (`regression-guardrails.md`).
-- **Builder does not self-grade product SHIP.** Design-critique is visual; **product-acceptance** is outcome (separate turn).
-
-## Design vocabulary
-
-| Verb | Meaning | Read |
-|---|---|---|
-| **Discover** | Profile + design forks; hand off stack if needed | `discovery.md`, `profile-project.js` |
-| **Shape** | Plan IA/nav/states before visuals (app tier) | `app-shell.md`, `interaction.md` |
-| **Init context** | `design-direction.md` (+ product brief / PRODUCT.md) | `project-context.md`, `visual-direction.md` |
-| **Audit** | Contrast, axe, layout, audit scripts | `verification.md` |
-| **Critique** | Adversarial **visual** review | `design-critique.md` |
-| **Polish** | Token/focus/spacing pass | `anti-patterns.md` |
-
-## Workflow
-
-### Phase 0 — Discover
-
-Read `references/discovery.md`. Classify **component / page / app**.
-
-```
-node "<SKILL_ROOT>/scripts/profile-project.js"
-```
-
-- If `needsStackInterview` → **stop** → frontend-engineering → resume here after `stack-decision.md`
-- If `openQuestions` non-empty → ask before tokens/shell
-- If `PRODUCT.md` / `product-brief.md` / `design-direction.md` exist → follow them
-
-### Phase 1 — Understand the project
-
-Extend existing design system (`design-systems.md`). Do not rip out the locked stack.
-
-### Phase 2 — Design contract (tokens)
-
-**Prerequisite:** archetype and brand chosen — and stack locked when page/app was undecided.
-
-```
-node "<SKILL_ROOT>/scripts/init-design-tokens.js" --archetype <enterprise|consumer|editorial> --brand "#RRGGBB" [--shell none|sidebar|topbar]
-node "<SKILL_ROOT>/scripts/tokens-to-css.js" --format css --out tokens.css
-node "<SKILL_ROOT>/scripts/init-design-tokens.js" --archetype <same> --brand "#RRGGBB" --mode dark --out design-tokens.dark.json
-node "<SKILL_ROOT>/scripts/tokens-to-css.js" design-tokens.dark.json --theme dark --out tokens.dark.css
-node "<SKILL_ROOT>/scripts/check-tokens-contrast.js" design-tokens.json
-```
-
-### Phase 2.5 — Visual direction lock (page + app)
-
-Read `visual-direction.md` + `project-context.md`. Commit five decisions in `design-direction.md` before layout/CSS.
-
-### Phase 3 — Design and build
-
-| Task involves… | Read |
+| Concern | Reference |
 |---|---|
-| Scope, blank slate, stack handoff | **`discovery.md`** |
-| Spec gaps after direction lock | `sane-defaults.md` |
-| Responsive | `responsive-design.md` |
-| Elevation, overflow, focus, motion | `visual-mechanics.md` |
-| Sticky / scroll / shell | `sticky-and-scroll.md`, `app-shell.md` |
-| Color, type, tokens | `color.md`, `typography.md`, `design-systems.md` |
-| Visual structure / ownership | `architecture.md` (visual maintainability; eng owns stack modules) |
-| Forms, states | `interaction.md` |
-| a11y | `accessibility.md` |
-| Differentiation | `visual-direction.md`, `professional-craft.md` |
-| Slop | `anti-patterns.md` |
-| Layout CI | `regression-guardrails.md` |
-| Release gates | `verification.md` |
+| Blank slate / handoff | `discovery.md` |
+| Direction lock | `visual-direction.md`, `project-context.md` |
+| Color / type / tokens | `color.md`, `typography.md`, `design-systems.md` |
+| Craft / anti-slop | `professional-craft.md`, `anti-patterns.md` |
+| Shell / sticky / responsive | `app-shell.md`, `sticky-and-scroll.md`, `responsive-design.md` |
+| Motion / depth | `visual-mechanics.md` |
+| Visual a11y | `accessibility.md` |
+| Gates / scripts | **`verification.md`** |
 | Visual critique | `design-critique.md` |
 
-### Phase 4 — Deterministic verify
-
-```
-node "<SKILL_ROOT>/scripts/check-tokens-contrast.js" design-tokens.json
-node "<SKILL_ROOT>/scripts/audit-ui.js" <changed-files>
-node "<SKILL_ROOT>/scripts/audit-generic.js" styles.css design-tokens.json
-```
-
-**Phase 4b — Craft** (page + app): see `professional-craft.md`.
-
-### Phase 5 — CI (app tier)
-
-```
-node "<SKILL_ROOT>/scripts/init-ui-guardrails.js" --root . --shell <sidebar|topbar> --ci github
-node scripts/ui-check.js --base-url http://127.0.0.1:PORT --strict
-```
-
-### Phase 5b — Visual critique (before claiming design done)
-
-```
-node "<SKILL_ROOT>/scripts/design-critique.js" --root .
-```
-
-Then hand **product** SHIP to **product-acceptance** in a separate turn.
-
-## Release gate summary (visual)
-
-| Tier | BLOCK | WARN | CRITIQUE |
-|---|---|---|---|
-| **Component** | contrast (if tokens), a11y on element | audit-ui | optional |
-| **Page** | + direction lock if net-new, generic >2, responsive | audit-ui | Phase 5b |
-| **App** | + layout, smoke, axe, audit-diff | visual diff | Phase 5b |
-
-Product outcome gates: **product-acceptance**. Structure gates: **frontend-engineering**.
-
-## Notes
-
-- Differentiator remains: token pipeline, layout CI, harness A/B, regression guardrails, design-critique.
-- Charter freeze: `~/.cursor/skills/_suite-charters/frontend-design.md`
+`<SKILL_ROOT>` = this skill directory. Set `FRONTEND_DESIGN_SKILL_ROOT` in CI if needed.

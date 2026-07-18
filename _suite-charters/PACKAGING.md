@@ -4,7 +4,9 @@
 
 Canonical home: **[fstubner/agent-skills](https://github.com/fstubner/agent-skills)** (public monorepo).
 
-Install copies/symlinks into `~/.cursor/skills/<name>/`.
+Version: repo root `VERSION` / `CHANGELOG.md` / `STATUS.md`.
+
+Install copies/symlinks into harness skill dirs (see `INSTALL.md`).
 
 Former `fstubner/frontend-design` is archived and points here.
 

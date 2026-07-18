@@ -11,13 +11,18 @@ cd agent-skills
 
 Skills to install (each is a folder with `SKILL.md`):
 
-- `build`
+- `build` **← install this; it is the entry router**
+- `product-management`
 - `systems-architecture`
 - `frontend-engineering`
 - `frontend-design`
+- `frontend-ux`
+- `backend-engineering`
 - `product-acceptance`
 
-Optional reference (not a skill): `_suite-charters/`
+Optional reference: `_suite-charters/`
+
+Suite version: see [VERSION](./VERSION). Maturity: [STATUS.md](./STATUS.md).
 
 ---
 
@@ -33,7 +38,7 @@ Optional reference (not a skill): `_suite-charters/`
 ```powershell
 # Windows
 $dst = "$env:USERPROFILE\.cursor\skills"
-foreach ($s in 'build','systems-architecture','frontend-engineering','frontend-design','product-acceptance') {
+foreach ($s in 'build','product-management','systems-architecture','frontend-engineering','frontend-design','frontend-ux','backend-engineering','product-acceptance') {
   Copy-Item -Recurse -Force ".\$s" "$dst\$s"
 }
 ```
@@ -41,7 +46,7 @@ foreach ($s in 'build','systems-architecture','frontend-engineering','frontend-d
 ```bash
 # macOS / Linux
 DST="$HOME/.cursor/skills"
-for s in build systems-architecture frontend-engineering frontend-design product-acceptance; do
+for s in build product-management systems-architecture frontend-engineering frontend-design frontend-ux backend-engineering product-acceptance; do
   rm -rf "$DST/$s" && cp -R "./$s" "$DST/$s"
 done
 ```
@@ -64,7 +69,7 @@ Reload Cursor (or start a new agent chat). Prefer starting with **`build`** for 
 ```bash
 DST="$HOME/.claude/skills"
 mkdir -p "$DST"
-for s in build systems-architecture frontend-engineering frontend-design product-acceptance; do
+for s in build product-management systems-architecture frontend-engineering frontend-design frontend-ux backend-engineering product-acceptance; do
   rm -rf "$DST/$s" && cp -R "./$s" "$DST/$s"
 done
 ```
@@ -97,7 +102,7 @@ Typical flow:
 
 1. Open **Claude Desktop** → **Customize** (sidebar), or **claude.ai** → skills / customization settings.
 2. Add or upload each skill (zip a skill folder containing `SKILL.md`, or follow the UI’s “add skill” flow).
-3. Enable: `build`, `systems-architecture`, `frontend-engineering`, `frontend-design`, `product-acceptance`.
+3. Enable all suite skills, especially **`build`**.
 4. Start a new session after enabling.
 
 For **cloud** sessions on a git repo, you can also commit project skills under `.claude/skills/` so the cloned workspace picks them up.
@@ -126,7 +131,7 @@ Official discovery paths ([Codex skills docs](https://developers.openai.com/code
 ```bash
 DST="$HOME/.agents/skills"
 mkdir -p "$DST"
-for s in build systems-architecture frontend-engineering frontend-design product-acceptance; do
+for s in build product-management systems-architecture frontend-engineering frontend-design frontend-ux backend-engineering product-acceptance; do
   rm -rf "$DST/$s" && cp -R "./$s" "$DST/$s"
 done
 ```
@@ -136,7 +141,7 @@ Windows (PowerShell):
 ```powershell
 $dst = "$env:USERPROFILE\.agents\skills"
 New-Item -ItemType Directory -Force -Path $dst | Out-Null
-foreach ($s in 'build','systems-architecture','frontend-engineering','frontend-design','product-acceptance') {
+foreach ($s in 'build','product-management','systems-architecture','frontend-engineering','frontend-design','frontend-ux','backend-engineering','product-acceptance') {
   Copy-Item -Recurse -Force ".\$s" "$dst\$s"
 }
 ```
@@ -145,7 +150,7 @@ foreach ($s in 'build','systems-architecture','frontend-engineering','frontend-d
 
 ```bash
 mkdir -p .agents/skills
-for s in build systems-architecture frontend-engineering frontend-design product-acceptance; do
+for s in build product-management systems-architecture frontend-engineering frontend-design frontend-ux backend-engineering product-acceptance; do
   cp -R "./$s" ".agents/skills/$s"
 done
 ```
@@ -168,7 +173,7 @@ macOS / Linux:
 ```bash
 git clone https://github.com/fstubner/agent-skills.git
 cd agent-skills
-SKILLS="build systems-architecture frontend-engineering frontend-design product-acceptance"
+SKILLS="build product-management systems-architecture frontend-engineering frontend-design frontend-ux backend-engineering product-acceptance"
 for dst in "$HOME/.cursor/skills" "$HOME/.claude/skills" "$HOME/.agents/skills"; do
   mkdir -p "$dst"
   for s in $SKILLS; do
@@ -177,15 +182,16 @@ for dst in "$HOME/.cursor/skills" "$HOME/.claude/skills" "$HOME/.agents/skills";
 done
 ```
 
-Then enable the same five skills in Claude Desktop Customize if you use cloud/Cowork.
+Then enable the same skills in Claude Desktop Customize if you use cloud/Cowork.
 
 ---
 
 ## How to use (any harness)
 
 1. Start with **`build`** for greenfield or “ship this app” work.  
-2. Let engineering/architecture run by default; **answer** design/UX interview questions.  
+2. Let product/architecture/engineering run by default; **answer** design/UX interview questions.  
 3. Implement.  
 4. New turn: **`product-acceptance`** (builder ≠ acceptor).  
 
-Smoke scripts without an agent: see root [README.md](./README.md).
+Unprimed evaluation protocol: [STATUS.md](./STATUS.md).  
+Smoke scripts: root [README.md](./README.md).
