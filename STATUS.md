@@ -1,52 +1,63 @@
 # Status and known gaps
 
-**Suite version:** see [VERSION](./VERSION)  
-**Maturity:** beta — production-capable for informed teams; not proven across many unprimed agents
+**Suite version:** [VERSION](./VERSION) (`v0.3.0`)  
+**Maturity:** public beta — credible internals; unprimed multi-harness eval still thin
 
-## Philosophy (non-negotiable)
+## Philosophy
 
-Skills encode **laws, principles, and decision procedures**.  
-They do **not** center on scaffold recipes or “run every script” rituals.  
-Dated tool examples may live only in `recipes/` and must not define skill identity.
-
-## Addressed (0.2.0)
-
-| Prior gap | Resolution |
+| Layer | Role |
 |---|---|
-| UX / PM / backend charter-only | Promoted to thin skills: `frontend-ux`, `product-management`, `backend-engineering` |
-| Design skill script-first | `frontend-design` SKILL.md is principles-first; gates live in `references/verification.md` |
-| No versioning / gaps for consumers | `VERSION`, `CHANGELOG.md`, this file, README maturity section |
-| Agents skip suite unless told | `build` description/triggers strengthened; README + INSTALL tell harnesses to install **`build`** as the entry skill; unprimed protocol below |
+| Skills | Judgment |
+| References | Understanding |
+| Scripts | Verification (evidence for self-correction) |
 
-## Still open
+Scripts do **not** decide taste, interview quality, or “best” architecture.
 
-| Gap | Why it remains | What closes it |
+## Fixed in 0.3.0
+
+| Gap | Resolution |
+|---|---|
+| accept-check never SHIP | Self-grade note vs `--acceptor-context` |
+| Missing arch counted as pass | `not_evaluated` status |
+| Narrow app detection | Shared `classify-project` + pipeline profiles first |
+| No licence / CI / fixtures | MIT + Actions + fixture tests |
+| Copy-list drift | `suite.manifest.json` + `install.mjs` |
+| Over-strong production claim | README claim language tightened |
+
+## Still open (toward 0.5 / 1.0)
+
+| Gap | Plan |
+|---|---|
+| Unprimed multi-run eval across Cursor / Claude / Codex | [Protocol below](#unprimed-evaluation); publish results as issues |
+| Richer JSON schemas for all reports | Incremental under `_suite/schemas/` |
+| Backend verification scripts | When patterns stabilize |
+| Signed release archives | Optional later; tags + CI sufficient for now |
+
+## Compatibility (supported install targets)
+
+| Harness | Skill path | Notes |
 |---|---|---|
-| Limited unprimed field evidence | Needs real runs without coaching prompts | Run [Unprimed evaluation](#unprimed-evaluation) and file results as issues |
-| Recipe drift in dated files | Ecosystem moves | Rewrite `recipes/YYYY.md` only; leave core refs alone |
-| Backend skill has no hard scripts yet | Property skill first | Add contract checks when a stable pattern appears across projects |
-| Claude.ai cloud upload UX varies | Platform UI | Follow INSTALL.md Customize path; report breakage |
+| Cursor | `~/.cursor/skills/` | Reload chat |
+| Claude Code | `~/.claude/skills/` or `.claude/skills/` | `/build` |
+| Claude Desktop cloud | Account Customize | Disk skills not used |
+| Codex CLI / ChatGPT desktop | `~/.agents/skills/` or `.agents/skills/` | `$build` / `/skills` |
 
 ## Unprimed evaluation
 
-Use this to gather evidence that agents follow the suite **without** restating the pipeline in the user prompt.
+1. Install from tag `v0.3.0` via `node scripts/install.mjs --harness <name>`.
+2. Empty project; new session; prompt only:
 
-1. Install all skills for the harness ([INSTALL.md](./INSTALL.md)). Ensure **`build`** is installed.
-2. New empty directory (or throwaway repo). New agent session.
-3. User prompt only (do **not** mention architecture, stack, tokens, or acceptance):
+   > Build a small multi-view tool for tracking three team OKRs: list, detail, and settings. Include a tiny API.
 
-   > Build a small multi-view tool for tracking three team OKRs: list, detail, and settings. Include a tiny API. Make it something I could actually use.
-
-4. Pass criteria:
-   - Agent asks product and/or design/UX questions before inventing chrome
-   - `ARCHITECTURE.md` or equivalent boundaries appear for client+server
-   - Stack is justified (not silent vanilla monolith for the app)
-   - Design direction not invented without interview signals
-   - Final “done” is not self-SHIP’d in the same turn as implementation (acceptance separate or deferred)
-5. Record: harness, model, pass/fail per bullet, link/notes → GitHub issue titled `unprimed: <harness> <date>`
+3. Score separately (do not collapse into one vague pass):
+   - Product interview or PRODUCT.md before chrome
+   - Architecture artifact for client+server
+   - Non-monolith / justified stack
+   - Design/UX interview signals
+   - Acceptance not self-SHIP’d same turn
+4. File `unprimed: <harness> <model> <date>` with pass/fail per bullet.
 
 ## Consumer expectations
 
-- Prefer invoking or enabling **`build`** for end-to-end work.
-- Treat script exit codes as **evidence**, not as a substitute for judgment.
-- Pin a suite git tag or commit in your docs when you depend on behavior.
+- Pin a **tag** (`v0.3.0`), not floating `main`, for dependable installs.
+- Treat script JSON as evidence; judgment stays in skills.

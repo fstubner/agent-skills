@@ -1,0 +1,21 @@
+{
+  "name": "fstubner/agent-skills",
+  "versionFile": "VERSION",
+  "entrySkill": "build",
+  "skills": [
+    "build",
+    "product-management",
+    "systems-architecture",
+    "frontend-engineering",
+    "frontend-design",
+    "frontend-ux",
+    "backend-engineering",
+    "product-acceptance"
+  ],
+  "optional": ["_suite-charters", "_suite"],
+  "harnessPaths": {
+    "cursor": "~/.cursor/skills",
+    "claude": "~/.claude/skills",
+    "codex": "~/.agents/skills"
+  }
+}

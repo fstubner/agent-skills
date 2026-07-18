@@ -1,11 +1,22 @@
 #!/usr/bin/env node
-// Deterministic product-acceptance precheck. Exit 1 on BLOCK when --strict.
-// Usage: node accept-check.js [--root <dir>] [--strict] [--out product-acceptance-report.json]
+// Product-acceptance verification (evidence, not design judgment).
+// Exit 1 on BLOCK when --strict.
+//
+// Usage:
+//   node accept-check.js [--root <dir>] [--strict]
+//     [--out product-acceptance-report.json]
+//     [--acceptor-context separate|same|unknown]
+//
+// Check status values: pass | fail | not_evaluated
+// Notes are informational and do NOT affect SHIP/CONDITIONAL/BLOCK.
 
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
+
+const classifyPath = path.join(__dirname, '..', '..', '_suite', 'lib', 'classify-project.js');
+const { classifyProject, writeSuiteProfile } = require(classifyPath);
 
 function parseArgs(argv) {
   const out = {};
@@ -57,14 +68,8 @@ function hasSection(text, names) {
   return names.some((n) => new RegExp(`^##\\s*${n}\\b`, 'im').test(text));
 }
 
-function inferAppTier(root) {
-  const profile = readJSON(path.join(root, 'stack-profile.json')) || readJSON(path.join(root, 'design-profile.json'));
-  if (profile?.scopeTier === 'app') return true;
-  if (exists(root, 'public/app.js') || exists(root, 'server.js')) return true;
-  if (exists(root, 'public/index.html') && /\.app-shell|data-tab=/i.test(readText(path.join(root, 'public/index.html')))) {
-    return true;
-  }
-  return false;
+function pushCheck(checks, id, status, extra = {}) {
+  checks.push({ id, status, ...extra });
 }
 
 function main() {
@@ -72,12 +77,17 @@ function main() {
   const root = path.resolve(process.cwd(), String(args.root || '.'));
   const strict = Boolean(args.strict);
   const outPath = path.resolve(root, String(args.out || 'product-acceptance-report.json'));
+  const acceptorContext = String(args['acceptor-context'] || 'unknown'); // separate | same | unknown
 
   const blockers = [];
   const warnings = [];
+  const notes = [];
   const checks = [];
 
-  const appTier = inferAppTier(root);
+  writeSuiteProfile(root);
+  const suite = classifyProject(root);
+  const appTier = suite.appTier;
+  const multiPart = suite.multiPart;
   const product = loadProduct(root);
 
   if (!product) {
@@ -88,10 +98,10 @@ function main() {
       fixHint: 'Copy product-acceptance/templates/PRODUCT.md and fill required sections',
     };
     if (appTier) blockers.push(item);
-    else warnings.push({ ...item, severity: 'WARN', message: item.message + ' (non-app tier)' });
-    checks.push({ id: item.id, pass: false });
+    else warnings.push({ ...item, severity: 'WARN', message: `${item.message} (non-app tier)` });
+    pushCheck(checks, 'A-contract', 'fail');
   } else {
-    checks.push({ id: 'A-contract-present', pass: true, path: product.path });
+    pushCheck(checks, 'A-contract', 'pass', { path: product.path });
     const text = product.text;
     const need = [
       ['Users', ['Users', 'Audience', 'Who']],
@@ -100,7 +110,7 @@ function main() {
     ];
     for (const [label, names] of need) {
       const ok = hasSection(text, names) || new RegExp(label, 'i').test(text);
-      checks.push({ id: `A-section-${label.toLowerCase()}`, pass: ok });
+      pushCheck(checks, `A-section-${label.toLowerCase()}`, ok ? 'pass' : 'fail');
       if (!ok && appTier) {
         blockers.push({
           id: `A-thin-${label.toLowerCase()}`,
@@ -134,6 +144,7 @@ function main() {
         severity: 'WARN',
         message: 'No eng-structure-report.json — run frontend-engineering check-structure.js',
       });
+      pushCheck(checks, 'D-eng', 'not_evaluated', { reason: 'missing eng-structure-report.json' });
     } else if (eng.verdict === 'BLOCK') {
       blockers.push({
         id: 'D-eng-block',
@@ -141,18 +152,27 @@ function main() {
         message: 'Engineering structure verdict is BLOCK',
         fixHint: 'Resolve eng-structure-report blockers before product SHIP',
       });
+      pushCheck(checks, 'D-eng', 'fail', { verdict: eng.verdict });
+    } else {
+      pushCheck(checks, 'D-eng', 'pass', { verdict: eng.verdict });
     }
-    checks.push({ id: 'D-eng', pass: Boolean(eng) && eng.verdict !== 'BLOCK' });
+  } else {
+    pushCheck(checks, 'D-eng', 'not_evaluated', { reason: 'not app-tier' });
   }
 
   const design = readJSON(path.join(root, 'design-critique-report.json'));
-  if (design?.verdict === 'BLOCK') {
+  if (!design) {
+    pushCheck(checks, 'D-design', 'not_evaluated', { reason: 'missing design-critique-report.json' });
+  } else if (design.verdict === 'BLOCK') {
     blockers.push({
       id: 'D-design-block',
       severity: 'BLOCK',
       message: 'design-critique-report verdict is BLOCK',
       fixHint: 'Fix design blockers or do not claim UI complete',
     });
+    pushCheck(checks, 'D-design', 'fail', { verdict: design.verdict });
+  } else {
+    pushCheck(checks, 'D-design', 'pass', { verdict: design.verdict });
   }
 
   if (appTier && !exists(root, 'stack-decision.md')) {
@@ -167,39 +187,52 @@ function main() {
   }
 
   const arch = readJSON(path.join(root, 'architecture-report.json'));
-  const archProfile = readJSON(path.join(root, 'architecture-profile.json'));
-  const multiArch =
-    arch?.systemTier === 'multi' ||
-    arch?.systemTier === 'distributed' ||
-    archProfile?.systemTier === 'multi' ||
-    archProfile?.systemTier === 'distributed' ||
-    (exists(root, 'server.js') && (exists(root, 'public/index.html') || exists(root, 'index.html')));
-  if (multiArch || appTier) {
-    if (arch?.verdict === 'BLOCK') {
+  if (multiPart || appTier) {
+    if (!arch) {
+      if (multiPart) {
+        warnings.push({
+          id: 'D-arch-missing',
+          severity: 'WARN',
+          message: 'No architecture-report.json — run systems-architecture check-architecture.js on multi-part systems',
+        });
+        pushCheck(checks, 'D-arch', 'not_evaluated', { reason: 'missing architecture-report.json', required: multiPart });
+      } else {
+        pushCheck(checks, 'D-arch', 'not_evaluated', { reason: 'no architecture report; multiPart=false' });
+      }
+    } else if (arch.verdict === 'BLOCK') {
       blockers.push({
         id: 'D-arch-block',
         severity: 'BLOCK',
         message: 'architecture-report verdict is BLOCK',
         fixHint: 'Resolve systems-architecture check-architecture.js blockers (boundaries/trust/doc)',
       });
-    } else if (!arch && multiArch) {
-      warnings.push({
-        id: 'D-arch-missing',
-        severity: 'WARN',
-        message: 'No architecture-report.json — run systems-architecture check-architecture.js on multi-part systems',
-      });
+      pushCheck(checks, 'D-arch', 'fail', { verdict: arch.verdict });
+    } else {
+      pushCheck(checks, 'D-arch', 'pass', { verdict: arch.verdict });
     }
-    checks.push({
-      id: 'D-arch',
-      pass: !arch || arch.verdict !== 'BLOCK',
-    });
+  } else {
+    pushCheck(checks, 'D-arch', 'not_evaluated', { reason: 'not multi-part / app-tier' });
   }
 
-  warnings.push({
-    id: 'E-self-grade',
-    severity: 'WARN',
-    message: 'Ensure acceptor is not the same unbroken builder turn (builder ≠ acceptor)',
-  });
+  // Builder ≠ acceptor: only affect verdict when context is known
+  if (acceptorContext === 'same') {
+    blockers.push({
+      id: 'E-self-grade',
+      severity: 'BLOCK',
+      message: 'Acceptor context is same as builder turn (builder ≠ acceptor)',
+      fixHint: 'Run acceptance in a separate turn/subagent with --acceptor-context separate',
+    });
+    pushCheck(checks, 'E-acceptor', 'fail', { acceptorContext });
+  } else if (acceptorContext === 'separate') {
+    pushCheck(checks, 'E-acceptor', 'pass', { acceptorContext });
+  } else {
+    notes.push({
+      id: 'E-self-grade',
+      message:
+        'Builder ≠ acceptor is a process rule. Pass --acceptor-context separate|same when known. Unknown does not downgrade SHIP.',
+    });
+    pushCheck(checks, 'E-acceptor', 'not_evaluated', { acceptorContext: 'unknown' });
+  }
 
   let verdict = 'SHIP';
   if (blockers.length) verdict = 'BLOCK';
@@ -209,23 +242,32 @@ function main() {
     generatedBy: 'accept-check.js',
     generatedAt: new Date().toISOString(),
     root,
-    appTier,
+    suiteProfile: {
+      scopeTier: suite.scopeTier,
+      systemTier: suite.systemTier,
+      appTier,
+      multiPart,
+      source: suite.source,
+    },
+    acceptorContext,
     productContract: product ? product.path : null,
     verdict,
     blockers,
     warnings,
+    notes,
     checks,
     agentPrompts: [
       'State the primary job in one sentence from the contract.',
       'List happy-path steps and mark each evidenced or missing.',
       'Name one demo-ware risk (fake data, stub controls, missing empty states).',
-      'Confirm this acceptance pass is not the implementing turn.',
+      'Confirm this acceptance pass is not the implementing turn (use --acceptor-context separate).',
     ],
+    layerNote: 'This script verifies measurable evidence. Judgment remains in skills/references.',
   };
 
   fs.writeFileSync(outPath, JSON.stringify(report, null, 2) + '\n');
   console.log(`\nWrote ${outPath}`);
-  console.log(`verdict: ${verdict}`);
+  console.log(`verdict: ${verdict}  appTier: ${appTier}  multiPart: ${multiPart}`);
   if (blockers.length) {
     console.log('blockers:');
     blockers.forEach((b) => console.log(`  - ${b.id}: ${b.message}`));
@@ -233,6 +275,10 @@ function main() {
   if (warnings.length) {
     console.log('warnings:');
     warnings.forEach((w) => console.log(`  - ${w.id}: ${w.message}`));
+  }
+  if (notes.length) {
+    console.log('notes:');
+    notes.forEach((n) => console.log(`  - ${n.id}: ${n.message}`));
   }
   console.log('');
 

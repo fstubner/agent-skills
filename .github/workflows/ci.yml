@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fixture + structural tests
+        run: node scripts/run-fixture-tests.mjs
+      - name: Syntax-check suite scripts
+        run: |
+          node --check product-acceptance/scripts/accept-check.js
+          node --check systems-architecture/scripts/check-architecture.js
+          node --check systems-architecture/scripts/profile-architecture.js
+          node --check frontend-engineering/scripts/check-structure.js
+          node --check frontend-engineering/scripts/profile-stack.js
+          node --check _suite/scripts/classify-project.js
+          node --check scripts/run-fixture-tests.mjs
+          node --check scripts/install.mjs

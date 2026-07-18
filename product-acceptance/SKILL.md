@@ -14,19 +14,25 @@ evidence from other skills, and refuse SHIP when the primary job is not real.
 
 Shared vocabulary: `../_suite-charters/SHARED_CONTRACT.md` (or suite charters).
 
-### Scripts
+### Scripts (verification — evidence for self-correction)
 
 ```
-node "<SKILL_ROOT>/scripts/accept-check.js" [--root .] [--strict]
+node "<SUITE_ROOT>/_suite/scripts/classify-project.js" --root .
+node "<SKILL_ROOT>/scripts/accept-check.js" --root . --strict --acceptor-context separate
 ```
+
+`<SUITE_ROOT>` is the agent-skills repo root (parent of this skill when installed from the monorepo).
+
+Check statuses: `pass` | `fail` | `not_evaluated`. Notes do not force CONDITIONAL.  
+Use `--acceptor-context separate` on a true acceptance turn; `same` → **BLOCK**; `unknown` (default) is a note only.
 
 ## Hard rules
 
-1. **Builder ≠ acceptor.** If this conversation just implemented the feature, do not issue final SHIP here — stop and require a separate acceptance turn/subagent, or run only `accept-check.js` and leave verdict for a fresh pass.
+1. **Builder ≠ acceptor.** Do not final-SHIP in the implementing turn. Prefer a separate turn with `--acceptor-context separate`.
 2. **App tier needs a product contract.** Missing `PRODUCT.md` and `product-brief.md` → **BLOCK**.
-3. **Evidence required.** Cite eng-structure-report, architecture-report, design-critique-report, walkthrough steps, or file:line. “Looks done” is invalid.
-4. **Visual SHIP ≠ product SHIP.** Design-critique SHIP with a missed JTBD is still BLOCK.
-5. **Multi-part systems:** architecture-report BLOCK → product **BLOCK** (boundaries/trust are outcome risks).
+3. **Evidence required.** Cite reports / walkthrough / file:line. Missing required evidence is `not_evaluated` or WARN — never fake `pass`.
+4. **Visual SHIP ≠ product SHIP.**
+5. **Architecture report BLOCK** on multi-part → product **BLOCK**.
 
 ## Workflow
 

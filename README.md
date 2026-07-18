@@ -1,38 +1,47 @@
 # agent-skills
 
-**Version:** see [VERSION](./VERSION) · **Changelog:** [CHANGELOG.md](./CHANGELOG.md) · **Maturity / gaps:** [STATUS.md](./STATUS.md)
+**Version:** [VERSION](./VERSION) · **Tag installs:** `v0.3.0` · **Changelog:** [CHANGELOG.md](./CHANGELOG.md) · **Status:** [STATUS.md](./STATUS.md) · **License:** [MIT](./LICENSE)
 
-Cursor / Claude / Codex skills for product UI with:
+Agent Skills suite (Cursor / Claude Code / Claude Desktop / Codex) for product UI work:
 
-- **Passive great engineering** (architecture, stack, structure, backend laws)
+- **Passive engineering defaults** (architecture, stack, structure, backend laws)
 - **Interviewed design & UX** (do not invent aesthetics or primary flows)
 - **Adversarial acceptance** (builder ≠ acceptor)
 
-## Philosophy
+## What we claim
 
-Skills encode **laws, principles, and decision procedures** — not scaffold cookbooks or “run every script” theater.
+> This suite provides **tested decision procedures and verification tools** that materially improve agent behavior across supported harnesses, with **documented limitations**.
 
-| Do | Don’t |
-|---|---|
-| Decision procedures and property gates | Default to React / a cloud vendor |
-| Interview when forks are open | Invent PRODUCT.md or visual direction silently |
-| Scripts as **evidence** | Treat scripts as the design process |
-| Dated `recipes/` that may rot | Put fashion in the skill identity |
+We do **not** claim agents always auto-follow the full pipeline on every model.
+
+## Three layers
+
+```
+Skills (judgment)  →  References (understanding)  →  Scripts (verification)  →  Self-correction
+```
+
+| Layer | Answers | Contains |
+|---|---|---|
+| **Skills** | What / when / why | Principles, routing, interviews, stop rules |
+| **References** | What good looks like | Rationale, patterns, anti-patterns |
+| **Scripts** | Did measurable properties hold? | Reports for agent self-correction |
+
+Details: [`_suite-charters/LAYERS.md`](./_suite-charters/LAYERS.md).
 
 ## Skills
 
 | Skill | Role |
 |---|---|
-| [`build`](./build/) | **Entry router** — eng by default; interview design/UX |
-| [`product-management`](./product-management/) | PRODUCT.md contract interview |
-| [`systems-architecture`](./systems-architecture/) | Boundaries, trust, `ARCHITECTURE.md` |
-| [`frontend-engineering`](./frontend-engineering/) | Job→stack, structure gates |
-| [`frontend-design`](./frontend-design/) | Visual laws, tokens, craft |
-| [`frontend-ux`](./frontend-ux/) | Primary job, states, interaction a11y |
-| [`backend-engineering`](./backend-engineering/) | Trusted-side implementation laws |
-| [`product-acceptance`](./product-acceptance/) | Outcome SHIP/BLOCK |
+| [`build`](./build/) | **Entry router** |
+| [`product-management`](./product-management/) | PRODUCT.md interview |
+| [`systems-architecture`](./systems-architecture/) | Boundaries, trust |
+| [`frontend-engineering`](./frontend-engineering/) | Stack + structure verification |
+| [`frontend-design`](./frontend-design/) | Visual laws |
+| [`frontend-ux`](./frontend-ux/) | Primary job + states |
+| [`backend-engineering`](./backend-engineering/) | Trusted-side laws |
+| [`product-acceptance`](./product-acceptance/) | Outcome verification + adversarial review |
 
-Shared vocabulary: [`_suite-charters/`](./_suite-charters/).
+Canonical list: [`suite.manifest.json`](./suite.manifest.json).
 
 ## Pipeline
 
@@ -45,61 +54,47 @@ build
   → frontend-design + frontend-ux
   → backend-engineering      (if server)
   → implement
-  → product-acceptance       (separate turn)
+  → product-acceptance       (separate turn; --acceptor-context separate)
 ```
 
-## Install
+Optional: [frescowork](https://github.com/fstubner/frescowork) for live human preview feedback.
 
-Install **all skills**, especially **`build`** (entry trigger).
-
-| Harness | Path |
-|---|---|
-| Cursor | `~/.cursor/skills/<name>/` |
-| Claude Code | `~/.claude/skills/<name>/` or `.claude/skills/` |
-| Claude Desktop / claude.ai | Customize (cloud) **or** `~/.claude/skills/` (local Code) |
-| Codex CLI / ChatGPT desktop | `~/.agents/skills/<name>/` or `.agents/skills/` |
-
-Full instructions (Windows/macOS, zip upload, one-shot): **[INSTALL.md](./INSTALL.md)**.
-
-```powershell
-# Windows → Cursor + Claude + Codex user dirs
-git clone https://github.com/fstubner/agent-skills.git
-cd agent-skills
-$skills = 'build','product-management','systems-architecture','frontend-engineering','frontend-design','frontend-ux','backend-engineering','product-acceptance'
-foreach ($dst in @("$env:USERPROFILE\.cursor\skills","$env:USERPROFILE\.claude\skills","$env:USERPROFILE\.agents\skills")) {
-  New-Item -ItemType Directory -Force -Path $dst | Out-Null
-  foreach ($s in $skills) { Copy-Item -Recurse -Force ".\$s" "$dst\$s" }
-}
-```
-
-Reload / restart the harness. For Claude cloud/Cowork, also enable skills in **Customize**.
-
-## How to use
-
-1. Enable or mention **`build`** for app/feature work (or rely on its description triggers).
-2. Answer product / design / UX questions; do not skip to chrome.
-3. Implement inside locked architecture + stack.
-4. **New turn:** **`product-acceptance`** — do not self-SHIP in the build turn.
-
-## Smoke-test scripts (evidence only)
+## Install (prefer a tag)
 
 ```bash
-node frontend-engineering/scripts/check-structure.js --root . --strict
-node systems-architecture/scripts/check-architecture.js --root . --strict
-node product-acceptance/scripts/accept-check.js --root . --strict
+git clone --branch v0.3.0 https://github.com/fstubner/agent-skills.git
+cd agent-skills
+node scripts/install.mjs --harness all   # cursor + claude + codex user dirs
 ```
 
-Visual gate details: `frontend-design/references/verification.md`.
+Harness-specific paths and Claude Desktop / cloud notes: **[INSTALL.md](./INSTALL.md)**.
+
+## Verification loop (scripts)
+
+```bash
+node _suite/scripts/classify-project.js --root .
+node systems-architecture/scripts/check-architecture.js --root . --strict
+node frontend-engineering/scripts/check-structure.js --root . --strict
+node product-acceptance/scripts/accept-check.js --root . --strict --acceptor-context separate
+# read *-report.json → repair → re-run
+```
+
+`accept-check` check statuses: `pass` | `fail` | `not_evaluated`.  
+Notes (e.g. unknown acceptor context) do **not** force CONDITIONAL. SHIP is reachable.
+
+## CI / tests
+
+```bash
+node scripts/run-fixture-tests.mjs
+```
+
+GitHub Actions runs this on every push/PR (`.github/workflows/ci.yml`).
 
 ## Maturity
 
-**Beta.** Usable in production by teams that understand the suite; not yet proven across many unprimed agents/models.
-
-Addressed in 0.2.0: charter promotions, principles-first design skill, versioning/changelog/status, stronger `build` entry.
-
-Still open: field evidence from [unprimed evaluation](./STATUS.md#unprimed-evaluation) — please run it and file issues.
+**Public beta (0.3.x).** Credible for informed teams. See [STATUS.md](./STATUS.md) for remaining eval work toward 0.5 / 1.0.
 
 ## Related
 
-- Preview runtime (separate product): [frescowork](https://github.com/fstubner/frescowork)
-- Archived design-only repo: [frontend-design](https://github.com/fstubner/frontend-design) → use this monorepo
+- Archived design-only repo: [frontend-design](https://github.com/fstubner/frontend-design)
+- Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md) · Security: [SECURITY.md](./SECURITY.md)
