@@ -29,30 +29,16 @@ build
   → product-acceptance     (separate turn)
 ```
 
-## Install (Cursor)
+## Install
 
-Copy or symlink each skill folder into your Cursor skills directory:
+| Harness | Where skills go | Details |
+|---|---|---|
+| **Cursor** | `~/.cursor/skills/<name>/` | Reload Cursor |
+| **Claude Code** | `~/.claude/skills/<name>/` or `.claude/skills/` | `/build`, etc. |
+| **Claude Desktop / claude.ai** | Account Customize **or** local `~/.claude/skills/` for local Code sessions | Cloud/Cowork ≠ disk skills |
+| **Codex CLI / ChatGPT desktop** | `~/.agents/skills/<name>/` or `.agents/skills/` | `/skills` or `$build` |
 
-```text
-~/.cursor/skills/build/
-~/.cursor/skills/systems-architecture/
-~/.cursor/skills/frontend-engineering/
-~/.cursor/skills/frontend-design/
-~/.cursor/skills/product-acceptance/
-```
-
-Optional: also copy `_suite-charters/` next to them for human/agent reference.
-
-On Windows (PowerShell), from this repo:
-
-```powershell
-$dst = "$env:USERPROFILE\.cursor\skills"
-foreach ($s in 'build','systems-architecture','frontend-engineering','frontend-design','product-acceptance','_suite-charters') {
-  Copy-Item -Recurse -Force ".\$s" "$dst\$s"
-}
-```
-
-Reload Cursor after install.
+Full steps (Windows + macOS/Linux, zip upload, one-shot install): **[INSTALL.md](./INSTALL.md)**.
 
 ## Smoke-test scripts (no agent)
 
