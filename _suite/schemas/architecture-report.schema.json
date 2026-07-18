@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/fstubner/agent-skills/schemas/architecture-report.json",
+  "title": "ArchitectureReport",
+  "type": "object",
+  "required": ["generatedBy", "generatedAt", "root", "verdict", "blockers", "warnings", "checks"],
+  "properties": {
+    "generatedBy": { "const": "check-architecture.js" },
+    "generatedAt": { "type": "string" },
+    "root": { "type": "string" },
+    "systemTier": { "type": "string" },
+    "architectureDoc": { "type": ["string", "null"] },
+    "verdict": { "type": "string", "enum": ["SHIP", "CONDITIONAL", "BLOCK"] },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "message"],
+        "properties": {
+          "id": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "message"],
+        "properties": {
+          "id": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "pass"],
+        "properties": {
+          "id": { "type": "string" },
+          "pass": { "type": "boolean" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "evergreenNote": { "type": "string" }
+  },
+  "additionalProperties": true
+}

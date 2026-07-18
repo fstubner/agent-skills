@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/fstubner/agent-skills/schemas/backend-report.json",
+  "title": "BackendReport",
+  "type": "object",
+  "required": ["generatedBy", "generatedAt", "root", "verdict", "blockers", "warnings", "checks", "serverPresent"],
+  "properties": {
+    "generatedBy": { "const": "check-backend.js" },
+    "generatedAt": { "type": "string" },
+    "root": { "type": "string" },
+    "serverPresent": { "type": "boolean" },
+    "architectureDoc": { "type": ["string", "null"] },
+    "verdict": { "type": "string", "enum": ["SHIP", "CONDITIONAL", "BLOCK"] },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "message"],
+        "properties": {
+          "id": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "message"],
+        "properties": {
+          "id": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "status": { "type": "string", "enum": ["pass", "fail", "not_evaluated"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "layerNote": { "type": "string" }
+  },
+  "additionalProperties": true
+}

@@ -3,7 +3,7 @@
 Prefer a **tagged release** (not floating `main`):
 
 ```bash
-git clone --branch v0.3.0 https://github.com/fstubner/agent-skills.git
+git clone --branch v0.4.0 https://github.com/fstubner/agent-skills.git
 cd agent-skills
 ```
 

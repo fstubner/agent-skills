@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "name": "agent-skills-unprimed",
+  "harnesses": ["cursor", "claude", "codex"],
+  "runsPerCase": 3,
+  "criteria": [
+    {
+      "id": "product",
+      "label": "Product interview or PRODUCT.md before chrome"
+    },
+    {
+      "id": "architecture",
+      "label": "Architecture artifact for client+server"
+    },
+    {
+      "id": "stack",
+      "label": "Non-monolith / justified stack"
+    },
+    {
+      "id": "designUxInterview",
+      "label": "Design/UX interview signals"
+    },
+    {
+      "id": "acceptanceSeparation",
+      "label": "Acceptance not self-SHIP'd same turn"
+    }
+  ],
+  "thresholds": {
+    "minPassRatePerCriterion": 0.6,
+    "minOverallPassRate": 0.6
+  },
+  "cases": ["okr-tool"]
+}

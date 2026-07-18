@@ -1,0 +1,6 @@
+{
+  "name": "backend-ship",
+  "dependencies": {
+    "express": "4.0.0"
+  }
+}

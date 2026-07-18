@@ -1,9 +1,9 @@
-# Status and known gaps
+# Status
 
-**Suite version:** [VERSION](./VERSION) (`v0.3.0`)  
-**Maturity:** public beta — credible internals; unprimed multi-harness eval still thin
+**Suite version:** [VERSION](./VERSION) (`v0.4.0`)  
+**Maturity:** public beta
 
-## Philosophy
+## Layers
 
 | Layer | Role |
 |---|---|
@@ -13,51 +13,29 @@
 
 Scripts do **not** decide taste, interview quality, or “best” architecture.
 
-## Fixed in 0.3.0
+## Package assets
 
-| Gap | Resolution |
+| Asset | Path |
 |---|---|
-| accept-check never SHIP | Self-grade note vs `--acceptor-context` |
-| Missing arch counted as pass | `not_evaluated` status |
-| Narrow app detection | Shared `classify-project` + pipeline profiles first |
-| No licence / CI / fixtures | MIT + Actions + fixture tests |
-| Copy-list drift | `suite.manifest.json` + `install.mjs` |
-| Over-strong production claim | README claim language tightened |
+| Report schemas | `_suite/schemas/` |
+| Fixture tests | `fixtures/` + `scripts/run-fixture-tests.mjs` |
+| Backend verification | `backend-engineering/scripts/check-backend.js` |
+| Unprimed eval cases | `eval/cases/` |
+| Eval scoring | `scripts/score-eval-results.mjs` |
+| Eval issue template | `.github/ISSUE_TEMPLATE/unprimed-eval.yml` |
+| Install manifest | `suite.manifest.json` |
 
-## Still open (toward 0.5 / 1.0)
+## Compatibility
 
-| Gap | Plan |
+| Harness | Skill path |
 |---|---|
-| Unprimed multi-run eval across Cursor / Claude / Codex | [Protocol below](#unprimed-evaluation); publish results as issues |
-| Richer JSON schemas for all reports | Incremental under `_suite/schemas/` |
-| Backend verification scripts | When patterns stabilize |
-| Signed release archives | Optional later; tags + CI sufficient for now |
-
-## Compatibility (supported install targets)
-
-| Harness | Skill path | Notes |
-|---|---|---|
-| Cursor | `~/.cursor/skills/` | Reload chat |
-| Claude Code | `~/.claude/skills/` or `.claude/skills/` | `/build` |
-| Claude Desktop cloud | Account Customize | Disk skills not used |
-| Codex CLI / ChatGPT desktop | `~/.agents/skills/` or `.agents/skills/` | `$build` / `/skills` |
-
-## Unprimed evaluation
-
-1. Install from tag `v0.3.0` via `node scripts/install.mjs --harness <name>`.
-2. Empty project; new session; prompt only:
-
-   > Build a small multi-view tool for tracking three team OKRs: list, detail, and settings. Include a tiny API.
-
-3. Score separately (do not collapse into one vague pass):
-   - Product interview or PRODUCT.md before chrome
-   - Architecture artifact for client+server
-   - Non-monolith / justified stack
-   - Design/UX interview signals
-   - Acceptance not self-SHIP’d same turn
-4. File `unprimed: <harness> <model> <date>` with pass/fail per bullet.
+| Cursor | `~/.cursor/skills/` |
+| Claude Code | `~/.claude/skills/` or `.claude/skills/` |
+| Claude Desktop cloud | Account Customize |
+| Codex CLI / ChatGPT desktop | `~/.agents/skills/` or `.agents/skills/` |
 
 ## Consumer expectations
 
-- Pin a **tag** (`v0.3.0`), not floating `main`, for dependable installs.
+- Pin a **tag**, not floating `main`.
 - Treat script JSON as evidence; judgment stays in skills.
+- Publish unprimed runs as `eval/results/*.json` + GitHub issues (`unprimed-eval`).

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0] — 2026-07-18
+
+### Added
+- `_suite/schemas/` for acceptance, architecture, eng-structure, backend, suite-profile, eval-result
+- `backend-engineering/scripts/check-backend.js` + fixtures
+- `eval/` cases, suite thresholds, result scaffolder, `score-eval-results.mjs`
+- GitHub issue template for unprimed eval runs
+- Schema validation in fixture CI
+
+### Changed
+- STATUS lists package assets instead of an open-gap backlog
+- Install / README pin `v0.4.0`
+
 ## [0.3.0] — 2026-07-18
 
 ### Fixed

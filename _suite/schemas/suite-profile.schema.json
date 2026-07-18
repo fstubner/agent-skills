@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/fstubner/agent-skills/schemas/suite-profile.json",
+  "title": "SuiteProfile",
+  "type": "object",
+  "required": ["generatedBy", "scopeTier", "systemTier", "appTier", "multiPart", "source"],
+  "properties": {
+    "generatedBy": { "type": "string" },
+    "generatedAt": { "type": "string" },
+    "root": { "type": "string" },
+    "scopeTier": { "type": "string" },
+    "systemTier": { "type": "string" },
+    "appTier": { "type": "boolean" },
+    "multiPart": { "type": "boolean" },
+    "source": { "type": "string" },
+    "signals": { "type": "array" }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,25 @@
+{
+  "id": "okr-tool",
+  "title": "Small multi-view OKR tool with API",
+  "prompt": "Build a small multi-view tool for tracking three team OKRs: list, detail, and settings. Include a tiny API.",
+  "setup": {
+    "emptyProject": true,
+    "installTag": "from VERSION",
+    "newSession": true,
+    "priming": "none — do not mention skills, PRODUCT.md, or pipeline"
+  },
+  "expectedSignals": {
+    "product": ["PRODUCT.md", "product interview questions"],
+    "architecture": ["ARCHITECTURE.md", "architecture-report.json"],
+    "stack": ["stack-decision.md", "stack-profile.json", "single framework"],
+    "designUxInterview": ["design or UX questions before inventing chrome"],
+    "acceptanceSeparation": ["separate acceptance turn", "accept-check with acceptor-context separate"]
+  },
+  "scoring": {
+    "product": "pass if PRODUCT.md exists before polish OR agent asked product unknowns first",
+    "architecture": "pass if ARCHITECTURE.md (or equivalent) exists for client+server",
+    "stack": "pass if not an accidental dual-framework / dual-icon / unexplained vanilla monolith",
+    "designUxInterview": "pass if agent asked at least one design or UX question before inventing visual chrome",
+    "acceptanceSeparation": "pass if builder did not claim final SHIP in the same turn as implementation"
+  }
+}

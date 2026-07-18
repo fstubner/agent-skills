@@ -115,6 +115,82 @@ function expect(name, cond, detail = '') {
   expect('eng-dual-icons exit 1', r.status === 1, String(r.status));
 }
 
+// --- backend ---
+{
+  const fixture = path.join(root, 'fixtures/backend-block-noarch');
+  const r = runNode(path.join(root, 'backend-engineering/scripts/check-backend.js'), [
+    '--root', fixture,
+    '--strict',
+  ]);
+  const report = readJSON(path.join(fixture, 'backend-report.json'));
+  expect('backend-noarch BLOCK', report.verdict === 'BLOCK', report.verdict);
+  expect('backend-noarch exit 1', r.status === 1, String(r.status));
+}
+{
+  const fixture = path.join(root, 'fixtures/backend-block-dual-orm');
+  const r = runNode(path.join(root, 'backend-engineering/scripts/check-backend.js'), [
+    '--root', fixture,
+    '--strict',
+  ]);
+  const report = readJSON(path.join(fixture, 'backend-report.json'));
+  expect('backend-dual-orm BLOCK', report.verdict === 'BLOCK', report.verdict);
+  expect('backend-dual-orm has B-dual-orm', report.blockers.some((b) => b.id === 'B-dual-orm'));
+  expect('backend-dual-orm exit 1', r.status === 1, String(r.status));
+}
+{
+  const fixture = path.join(root, 'fixtures/backend-ship');
+  const r = runNode(path.join(root, 'backend-engineering/scripts/check-backend.js'), [
+    '--root', fixture,
+    '--strict',
+  ]);
+  const report = readJSON(path.join(fixture, 'backend-report.json'));
+  expect('backend-ship not BLOCK', report.verdict !== 'BLOCK', report.verdict);
+  expect('backend-ship exit 0', r.status === 0, String(r.status));
+}
+
+// --- report schemas ---
+{
+  const validate = path.join(root, '_suite/scripts/validate-report.js');
+  const pairs = [
+    ['fixtures/accept-ship/product-acceptance-report.json', null],
+    ['fixtures/arch-ship/architecture-report.json', null],
+    ['fixtures/eng-block-dual-icons/eng-structure-report.json', null],
+    ['fixtures/backend-ship/backend-report.json', null],
+  ];
+  // regenerate fresh reports for schema validation
+  runNode(path.join(root, 'product-acceptance/scripts/accept-check.js'), [
+    '--root', path.join(root, 'fixtures/accept-ship'),
+    '--acceptor-context', 'separate',
+  ]);
+  runNode(path.join(root, 'systems-architecture/scripts/check-architecture.js'), [
+    '--root', path.join(root, 'fixtures/arch-ship'),
+  ]);
+  runNode(path.join(root, 'frontend-engineering/scripts/check-structure.js'), [
+    '--root', path.join(root, 'fixtures/eng-block-dual-icons'),
+  ]);
+  runNode(path.join(root, 'backend-engineering/scripts/check-backend.js'), [
+    '--root', path.join(root, 'fixtures/backend-ship'),
+  ]);
+  for (const [rel] of pairs) {
+    const r = runNode(validate, [path.join(root, rel)]);
+    expect(`schema ${rel}`, r.status === 0, r.stderr || r.stdout);
+  }
+}
+
+// --- eval suite assets ---
+{
+  const suite = readJSON(path.join(root, 'eval/suite.json'));
+  expect('eval suite has cases', Array.isArray(suite.cases) && suite.cases.length > 0);
+  for (const id of suite.cases) {
+    const p = path.join(root, 'eval/cases', `${id}.json`);
+    expect(`eval case ${id}`, fs.existsSync(p));
+    const c = readJSON(p);
+    expect(`eval case ${id} prompt`, typeof c.prompt === 'string' && c.prompt.length > 20);
+  }
+  const score = runNode(path.join(root, 'scripts/score-eval-results.mjs'), []);
+  expect('score-eval-results exit 0', score.status === 0, score.stderr || score.stdout);
+}
+
 // --- SKILL.md front matter + manifest ---
 {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'suite.manifest.json'), 'utf8'));

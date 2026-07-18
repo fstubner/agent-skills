@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/fstubner/agent-skills/schemas/eval-result.json",
+  "title": "EvalResult",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "harness",
+    "model",
+    "suiteVersion",
+    "runIndex",
+    "date",
+    "scores",
+    "notes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string" },
+    "harness": { "type": "string", "enum": ["cursor", "claude", "codex"] },
+    "model": { "type": "string", "minLength": 1 },
+    "suiteVersion": { "type": "string" },
+    "runIndex": { "type": "integer", "minimum": 1 },
+    "date": { "type": "string" },
+    "scores": {
+      "type": "object",
+      "required": ["product", "architecture", "stack", "designUxInterview", "acceptanceSeparation"],
+      "properties": {
+        "product": { "type": "string", "enum": ["pass", "fail"] },
+        "architecture": { "type": "string", "enum": ["pass", "fail"] },
+        "stack": { "type": "string", "enum": ["pass", "fail"] },
+        "designUxInterview": { "type": "string", "enum": ["pass", "fail"] },
+        "acceptanceSeparation": { "type": "string", "enum": ["pass", "fail"] }
+      },
+      "additionalProperties": false
+    },
+    "artifactsObserved": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "notes": { "type": "string" },
+    "issueUrl": { "type": ["string", "null"] }
+  },
+  "additionalProperties": true
+}

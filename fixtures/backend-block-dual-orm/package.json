@@ -1,0 +1,8 @@
+{
+  "name": "backend-block-dual-orm",
+  "dependencies": {
+    "express": "4.0.0",
+    "@prisma/client": "5.0.0",
+    "typeorm": "0.3.0"
+  }
+}

@@ -1,0 +1,65 @@
+name: Unprimed eval result
+description: Publish a scored unprimed multi-harness evaluation run
+title: "unprimed: <harness> <model> <date>"
+labels: ["unprimed-eval"]
+body:
+  - type: dropdown
+    id: harness
+    attributes:
+      label: Harness
+      options: [cursor, claude, codex]
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      placeholder: e.g. claude-opus-4, gpt-5, composer
+    validations:
+      required: true
+  - type: input
+    id: case
+    attributes:
+      label: Case id
+      description: From eval/cases/
+      value: okr-tool
+    validations:
+      required: true
+  - type: input
+    id: run
+    attributes:
+      label: Run index
+      description: 1..N for this harness/model/case
+      value: "1"
+    validations:
+      required: true
+  - type: textarea
+    id: scores
+    attributes:
+      label: Scores (pass/fail)
+      description: One line per criterion from eval/suite.json
+      value: |
+        product: 
+        architecture: 
+        stack: 
+        designUxInterview: 
+        acceptanceSeparation: 
+    validations:
+      required: true
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Artifacts observed
+      placeholder: PRODUCT.md, ARCHITECTURE.md, …
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes / failure modes
+      description: What the agent skipped or invented
+  - type: checkboxes
+    id: attach
+    attributes:
+      label: Result file
+      options:
+        - label: I will attach or PR eval/results/<date>-<harness>-<case>-rN.json
+          required: true

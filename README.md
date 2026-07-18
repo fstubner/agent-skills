@@ -1,6 +1,6 @@
 # agent-skills
 
-**Version:** [VERSION](./VERSION) · **Tag installs:** `v0.3.0` · **Changelog:** [CHANGELOG.md](./CHANGELOG.md) · **Status:** [STATUS.md](./STATUS.md) · **License:** [MIT](./LICENSE)
+**Version:** [VERSION](./VERSION) · **Tag installs:** `v0.4.0` · **Changelog:** [CHANGELOG.md](./CHANGELOG.md) · **Status:** [STATUS.md](./STATUS.md) · **License:** [MIT](./LICENSE)
 
 Agent Skills suite (Cursor / Claude Code / Claude Desktop / Codex) for product UI work:
 
@@ -62,7 +62,7 @@ Optional: [frescowork](https://github.com/fstubner/frescowork) for live human pr
 ## Install (prefer a tag)
 
 ```bash
-git clone --branch v0.3.0 https://github.com/fstubner/agent-skills.git
+git clone --branch v0.4.0 https://github.com/fstubner/agent-skills.git
 cd agent-skills
 node scripts/install.mjs --harness all   # cursor + claude + codex user dirs
 ```
@@ -75,12 +75,22 @@ Harness-specific paths and Claude Desktop / cloud notes: **[INSTALL.md](./INSTAL
 node _suite/scripts/classify-project.js --root .
 node systems-architecture/scripts/check-architecture.js --root . --strict
 node frontend-engineering/scripts/check-structure.js --root . --strict
+node backend-engineering/scripts/check-backend.js --root . --strict
 node product-acceptance/scripts/accept-check.js --root . --strict --acceptor-context separate
 # read *-report.json → repair → re-run
 ```
 
-`accept-check` check statuses: `pass` | `fail` | `not_evaluated`.  
-Notes (e.g. unknown acceptor context) do **not** force CONDITIONAL. SHIP is reachable.
+Report shapes: [`_suite/schemas/`](./_suite/schemas/).  
+`accept-check` statuses: `pass` | `fail` | `not_evaluated`. SHIP is reachable with `--acceptor-context separate`.
+
+## Unprimed eval
+
+```bash
+# After a clean-session run of eval/cases/<id>.json prompt:
+node scripts/new-eval-result.mjs --harness cursor --model "<model>" --case okr-tool --run 1
+# edit scores in eval/results/*.json, open issue via unprimed-eval template, then:
+node scripts/score-eval-results.mjs
+```
 
 ## CI / tests
 
@@ -92,7 +102,7 @@ GitHub Actions runs this on every push/PR (`.github/workflows/ci.yml`).
 
 ## Maturity
 
-**Public beta (0.3.x).** Credible for informed teams. See [STATUS.md](./STATUS.md) for remaining eval work toward 0.5 / 1.0.
+**Public beta (0.4.x).** Credible for informed teams.
 
 ## Related
 

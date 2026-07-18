@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/fstubner/agent-skills/schemas/eng-structure-report.json",
+  "title": "EngStructureReport",
+  "type": "object",
+  "required": ["generatedBy", "generatedAt", "root", "verdict", "blockers", "warnings"],
+  "properties": {
+    "generatedBy": { "const": "check-structure.js" },
+    "generatedAt": { "type": "string" },
+    "root": { "type": "string" },
+    "scopeTier": { "type": "string" },
+    "throwaway": { "type": "boolean" },
+    "verdict": { "type": "string", "enum": ["SHIP", "CONDITIONAL", "BLOCK"] },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "message"],
+        "properties": {
+          "id": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "message"],
+        "properties": {
+          "id": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "profileSummary": { "type": "object" }
+  },
+  "additionalProperties": true
+}

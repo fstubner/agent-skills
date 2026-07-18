@@ -22,6 +22,12 @@ jobs:
           node --check systems-architecture/scripts/profile-architecture.js
           node --check frontend-engineering/scripts/check-structure.js
           node --check frontend-engineering/scripts/profile-stack.js
+          node --check backend-engineering/scripts/check-backend.js
           node --check _suite/scripts/classify-project.js
+          node --check _suite/scripts/validate-report.js
           node --check scripts/run-fixture-tests.mjs
           node --check scripts/install.mjs
+          node --check scripts/score-eval-results.mjs
+          node --check scripts/new-eval-result.mjs
+      - name: Score eval result schemas
+        run: node scripts/score-eval-results.mjs

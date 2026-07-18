@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "caseId": "okr-tool",
+  "harness": "cursor",
+  "model": "example-model",
+  "suiteVersion": "0.4.0",
+  "runIndex": 1,
+  "date": "2026-07-18",
+  "scores": {
+    "product": "pass",
+    "architecture": "pass",
+    "stack": "pass",
+    "designUxInterview": "fail",
+    "acceptanceSeparation": "pass"
+  },
+  "artifactsObserved": ["PRODUCT.md", "ARCHITECTURE.md"],
+  "notes": "Example only — not a real unprimed run.",
+  "issueUrl": null
+}

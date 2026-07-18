@@ -26,8 +26,17 @@ Countermeasure for happy-path servers without contracts or trust.
 2. Implement inside stated parts and edges.
 3. For each write path: authz, validation, failure mode.
 4. Do not invent a second system topology — update architecture doc if the shape must change.
-5. Product SHIP → **product-acceptance**.
+5. Verify measurable properties, then repair:
+
+```bash
+node "<SKILL_ROOT>/scripts/check-backend.js" --root . --strict
+# read backend-report.json → repair → re-run
+```
+
+6. Product SHIP → **product-acceptance**.
 
 ## Does not own
 
 UI, visual tokens, frontend stack choice, final product SHIP.
+
+Scripts verify architecture presence, contracts/authz sections, single persistence stack, and client-secret smells. They do not judge API taste.
