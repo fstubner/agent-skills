@@ -4,6 +4,10 @@ A beautiful interface that's unmaintainable is a failure. The code you write tod
 the next human — or agent — reads tomorrow. Tangled, one-off CSS becomes a toxic context that
 breeds more one-off CSS. Build a predictable system instead.
 
+> **Stack and module scaffolding** for greenfield / unknown frameworks are owned by the
+> **frontend-engineering** skill (`stack-decision.md`, structure gates). This document covers
+> **visual and CSS ownership** once a stack is locked — composition, blast radius, token use.
+
 ## 1. Localize the blast radius
 
 A change to one component should not ripple into unrelated views.

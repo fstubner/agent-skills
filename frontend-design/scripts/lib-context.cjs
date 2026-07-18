@@ -34,7 +34,15 @@ function loadProjectContext(root) {
   let scopeTier = profile?.scopeTier || null;
   let archetype = tokens?.meta?.archetype || null;
 
-  if (fs.existsSync(path.join(root, 'app.js')) && scopeTier === 'component') {
+  const publicApp = fs.existsSync(path.join(root, 'public', 'app.js'));
+  const indexHtml =
+    readText(path.join(root, 'public', 'index.html')) ||
+    readText(path.join(root, 'index.html'));
+  const shellHint = /\.app-shell|data-tab=/i.test(indexHtml);
+  if (
+    scopeTier === 'component' &&
+    (fs.existsSync(path.join(root, 'app.js')) || publicApp || shellHint)
+  ) {
     scopeTier = 'app';
   }
 
@@ -57,9 +65,18 @@ function loadProjectContext(root) {
   if (tokens?.meta?.archetype === 'editorial' && shell === null) register = register || 'brand';
 
   if (!scopeTier) {
-    const hasApp = fs.existsSync(path.join(root, 'app.js'))
-      || (fs.existsSync(path.join(root, 'index.html')) && /\.app-shell|sidebar-nav/i.test(readText(path.join(root, 'index.html'))));
-    scopeTier = hasApp ? 'app' : fs.existsSync(path.join(root, 'index.html')) ? 'page' : 'component';
+    const hasApp =
+      fs.existsSync(path.join(root, 'app.js')) ||
+      publicApp ||
+      shellHint ||
+      (fs.existsSync(path.join(root, 'index.html')) &&
+        /\.app-shell|sidebar-nav/i.test(readText(path.join(root, 'index.html'))));
+    scopeTier = hasApp
+      ? 'app'
+      : fs.existsSync(path.join(root, 'index.html')) ||
+          fs.existsSync(path.join(root, 'public', 'index.html'))
+        ? 'page'
+        : 'component';
   }
 
   if (archetype === 'editorial' && register === null) register = 'brand';

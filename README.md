@@ -1,101 +1,78 @@
-# Frontend Design Skill
+# agent-skills
 
-Agent skill for **intentional, accessible, maintainable** web UI — with deterministic release gates,
-layout regression CI, and adversarial critique.
+Cursor / Agent Skills suite for building product UI with **passive engineering defaults**, **interviewed design & UX**, and **adversarial acceptance**.
 
-This repository is the **Cursor agent skill** (scripts, references, templates, A/B harness). The complementary preview runtime product lives separately in [fstubner/frescowork](https://github.com/fstubner/frescowork).
+Evergreen rule: skill cores are **invariants + ask/stop + evidence**. Framework and cloud fashion belong only in dated `recipes/` files (optional).
 
-## What this skill is
+## Skills
 
-| Layer | Contents |
+| Skill | Role |
 |---|---|
-| **Mental models** | 15+ reference docs (shell, sticky, tokens, motion, a11y, …) |
-| **Token pipeline** | `init-design-tokens.js` → contrast gate → CSS emit |
-| **Differentiation** | Phase 2.5 direction lock, `audit-generic.js` |
-| **Regression CI** | `init-ui-guardrails`, `ci-check`, layout + axe + smoke |
-| **Critique** | Phase 5b `design-critique.js` — SHIP/BLOCK verdict |
-| **Proof** | A/B harness, capture/compare |
+| [`build`](./build/) | Thin router — engineering by default; interview for design/UX |
+| [`systems-architecture`](./systems-architecture/) | Boundaries, trust, `ARCHITECTURE.md` |
+| [`frontend-engineering`](./frontend-engineering/) | Job→stack (no React monoculture), structure gates |
+| [`frontend-design`](./frontend-design/) | Tokens, visual craft, design critique / layout CI |
+| [`product-acceptance`](./product-acceptance/) | Outcome SHIP/BLOCK vs product contract (builder ≠ acceptor) |
 
-Composes with [Impeccable](https://impeccable.style)-style vocabulary; this skill adds **engineering CI** and **harness**.
+Charters and shared vocabulary: [`_suite-charters/`](./_suite-charters/).
 
-## Install
+## Pipeline
 
-Copy `frontend-design/` to `~/.cursor/skills/` (or project `.cursor/skills/`).
+```
+build
+  → PRODUCT.md
+  → systems-architecture   (if multi-part)
+  → frontend-engineering   (if stack/structure open)
+  → interview design/UX
+  → frontend-design
+  → implement
+  → product-acceptance     (separate turn)
+```
 
-## Quick start
+## Install (Cursor)
 
-**Discover first** — the skill does not assume admin dashboards or enterprise chrome.
+Copy or symlink each skill folder into your Cursor skills directory:
+
+```text
+~/.cursor/skills/build/
+~/.cursor/skills/systems-architecture/
+~/.cursor/skills/frontend-engineering/
+~/.cursor/skills/frontend-design/
+~/.cursor/skills/product-acceptance/
+```
+
+Optional: also copy `_suite-charters/` next to them for human/agent reference.
+
+On Windows (PowerShell), from this repo:
+
+```powershell
+$dst = "$env:USERPROFILE\.cursor\skills"
+foreach ($s in 'build','systems-architecture','frontend-engineering','frontend-design','product-acceptance','_suite-charters') {
+  Copy-Item -Recurse -Force ".\$s" "$dst\$s"
+}
+```
+
+Reload Cursor after install.
+
+## Smoke-test scripts (no agent)
 
 ```bash
-# 0. Discover stack + scope; read openQuestions in output
-node scripts/profile-project.js
-# → if openQuestions non-empty: ask user (register, archetype, shell, brand, theme)
-# → see references/discovery.md
+node frontend-engineering/scripts/profile-stack.js --root /path/to/project
+node frontend-engineering/scripts/check-structure.js --root /path/to/project --strict
 
-# 1. Lock direction (page + app tiers)
-cp templates/project-context/design-direction.template.md design-direction.md
-# edit five decisions — see references/visual-direction.md
+node systems-architecture/scripts/profile-architecture.js --root /path/to/project
+node systems-architecture/scripts/check-architecture.js --root /path/to/project --strict
 
-# 2. Tokens (after archetype + brand are chosen — not defaulted)
-node scripts/init-design-tokens.js --archetype <enterprise|consumer|editorial> --brand "#…"
-node scripts/tokens-to-css.js --format css --out tokens.css
-node scripts/check-tokens-contrast.js design-tokens.json
+node frontend-design/scripts/profile-project.js --root /path/to/project
 
-# 3. CI guardrails (app tier only; --shell must match design-direction.md)
-node scripts/init-ui-guardrails.js --root . --shell <sidebar|topbar> --ci github
-cd ab-harness && npm install
-
-# 4. Verify before ship (gates per scope tier — verification.md)
-python -m http.server 4173 &
-node scripts/ui-check.js --base-url http://127.0.0.1:4173 --strict
-node scripts/design-critique.js --root .
+node product-acceptance/scripts/accept-check.js --root /path/to/project --strict
 ```
 
-## Structure
+## Related
 
-```
-frontend-design/
-  SKILL.md                     Router + phased workflow
-  references/                  Mental models (load on demand)
-    discovery.md                 Blank slate — scope tiers, ask vs script
-    design-vocabulary.md         Shared verbs (shape, audit, critique, …)
-    project-context.md         product-brief.md + design-direction.md
-    design-critique.md         Phase 5b adversarial review
-    regression-guardrails.md   Layout CI, patch stop condition
-    verification.md            BLOCK / WARN / CRITIQUE tiers
-  scripts/
-    ci-check.js                CI orchestrator
-    init-ui-guardrails.js      Scaffold project CI
-    layout-check.mjs           Layout invariant tests
-    axe-check.mjs              axe on fragile routes
-    audit-diff.js              Hex in CSS diff gate
-    design-critique.js         SHIP/BLOCK aggregator
-    …                          tokens, audit, self-check
-  templates/
-    ui-guardrails/             fragile-surfaces, GitHub workflow
-    project-context/           brief + direction templates
-  ab-harness/                  A/B spec, Playwright capture/smoke
-```
+- Preview runtime product (separate): [frescowork](https://github.com/fstubner/frescowork)
+- Former home of the design skill only: archived [`frontend-design`](https://github.com/fstubner/frontend-design) → use this repo
 
-## Scripts reference
+## License
 
-```
-node scripts/check-tokens-contrast.js design-tokens.json    # HARD GATE
-node scripts/audit-ui.js src/styles.css
-node scripts/audit-generic.js styles.css design-tokens.json
-node scripts/audit-diff.js --base main
-node scripts/ci-check.js --root . --base-url http://127.0.0.1:PORT --strict
-node scripts/design-critique.js --root .
-node scripts/init-ui-guardrails.js --root . --shell <sidebar|topbar> --ci github  # after discovery
-```
-
-## Self-improvement loop
-
-Measure → fix skill/scripts → re-measure:
-
-```bash
-node scripts/discovery-smoke.js
-node ab-harness/scripts/run-quality-benchmark.mjs --scenarios-dir /path/to/discovery-tests
-```
-
-Target: aggregate quality score ↑, generic findings ↓, BLOCK verdicts = 0.
+See individual skill folders if present; otherwise all rights reserved unless stated.

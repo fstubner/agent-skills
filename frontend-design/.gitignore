@@ -1,14 +1,13 @@
 node_modules/
-**/node_modules/
-**/artifacts/
+ab-harness/node_modules/
+ab-harness/artifacts/
 playwright-report/
 test-results/
 *.log
+
+# Local env and OS noise
 .env
 .env.*
 !.env.example
 .DS_Store
 Thumbs.db
-*.tsbuildinfo
-.turbo/
-.cache/

@@ -27,6 +27,8 @@ node "<SKILL_ROOT>/scripts/profile-project.js" [--root .]
 Reads stack, styling system, existing tokens, component dirs. Writes `design-profile.json`.
 **Respect what exists** — extend, don't replace (`design-systems.md`).
 
+**Stack handoff:** If `needsStackInterview` is true, or framework is `Unknown / vanilla` on **page/app** tier without `stack-decision.md`, **stop UI polish** and invoke the **frontend-engineering** skill (`profile-stack.js`, stack interview, `stack-decision.md`). Do **not** treat vanilla as a permanent lock for multi-view apps. Do **not** default to React.
+
 ### 2. Classify what you can infer
 
 | Signal | Inference |
@@ -43,6 +45,7 @@ Reads stack, styling system, existing tokens, component dirs. Writes `design-pro
 
 Ask **before** `init-design-tokens.js` or layout/CSS when any of these are unknown:
 
+0. **Stack** (page/app + unknown/vanilla) — owned by **frontend-engineering**; confirm one job-fit stack first
 1. **Register** — product UI (tool/app) or brand/marketing (landing/editorial)?
 2. **Audience & density** — who uses this and how much per screen? (drives archetype)
 3. **Shell** (app tier only) — top bar, sidebar, hybrid, or none? Or extend existing chrome?
@@ -57,13 +60,14 @@ Do **not** silently pick `enterprise` + `sidebar` because they are common in exa
 
 | Gap | Script / artifact |
 |---|---|
-| Stack unknown | `profile-project.js` |
+| Stack unknown / vanilla on page|app | **frontend-engineering** `profile-stack.js` + interview → `stack-decision.md` (not “match vanilla forever”) |
+| Stack already chosen | Extend that stack; design skill does not re-pick frameworks |
 | No tokens | `init-design-tokens.js --archetype <chosen> --brand "#…" [--shell none\|sidebar\|topbar]` after archetype is **decided** |
 | No direction doc | Write `design-direction.md` from answers + `visual-direction.md` template |
-| No brief (app tier) | Scaffold `product-brief.md` from `templates/project-context/` — **confirm with user** |
+| No brief (app tier) | `PRODUCT.md` / `product-brief.md` — confirm with user; product-acceptance will BLOCK without it |
 | Shell for CI | `init-ui-guardrails.js --shell sidebar|topbar` matching **locked** shell in direction doc |
 
-Scripts **generate** artifacts; they do not **choose** product personality for you.
+Scripts **generate** artifacts; they do not **choose** product personality or stack for you.
 
 ## Lock direction (Phase 2.5)
 
@@ -103,11 +107,14 @@ dual tokens when a theme toggle exists.
 | `init-design-tokens.js --archetype enterprise` on every task | Archetype from discovery |
 | `init-ui-guardrails --shell sidebar` on a landing page | Match guardrails to actual shell or skip |
 | Skip questions because harness examples use Acme | Harness is a **benchmark**, not the default product |
+| Unknown/vanilla → build a 1500-line `app.js` SPA | frontend-engineering stack interview + modular scaffold |
+| Design skill picks React by default | Job-fit stack via frontend-engineering |
 
 ## Agent checklist
 
 1. [ ] Ran `profile-project.js` (or read existing profile)
 2. [ ] Scope tier chosen (component / page / app)
-3. [ ] Unknown forks resolved via **user questions** or existing brief/direction files
-4. [ ] `design-direction.md` written before layout/CSS (page+ tiers)
-5. [ ] Gates match tier (`verification.md`)
+3. [ ] If `needsStackInterview` → frontend-engineering completed (`stack-decision.md`)
+4. [ ] Unknown design forks resolved via **user questions** or existing brief/direction files
+5. [ ] `design-direction.md` written before layout/CSS (page+ tiers)
+6. [ ] Gates match tier (`verification.md`); product SHIP → product-acceptance (separate turn)

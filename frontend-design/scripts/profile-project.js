@@ -116,9 +116,21 @@ function fileExists(root, name) {
   return fs.existsSync(path.join(root, name));
 }
 
+function readText(p) {
+  try { return fs.readFileSync(p, 'utf8'); } catch { return ''; }
+}
+
 function inferScopeTier(root) {
+  const indexHtml =
+    (fileExists(root, 'public/index.html') && readText(path.join(root, 'public/index.html'))) ||
+    (fileExists(root, 'index.html') && readText(path.join(root, 'index.html'))) ||
+    '';
+  const hasShell = /\.app-shell|data-tab=|class="sidebar"|class='sidebar'/i.test(indexHtml);
+  const hasPublicApp = fileExists(root, 'public/app.js');
+  const hasServer = fileExists(root, 'server.js');
   const hasRouter =
     fileExists(root, 'app.js') ||
+    hasPublicApp ||
     fileExists(root, 'src/router') ||
     fileExists(root, 'src/routes') ||
     (() => {
@@ -128,26 +140,54 @@ function inferScopeTier(root) {
         return Boolean(deps['react-router-dom'] || deps['vue-router'] || deps['@tanstack/react-router']);
       } catch { return false; }
     })();
-  if (hasRouter && (fileExists(root, 'index.html') || fileExists(root, 'src/App.tsx') || fileExists(root, 'src/App.jsx'))) {
+  if (
+    hasShell ||
+    hasServer ||
+    (hasRouter &&
+      (fileExists(root, 'index.html') ||
+        fileExists(root, 'public/index.html') ||
+        fileExists(root, 'src/App.tsx') ||
+        fileExists(root, 'src/App.jsx')))
+  ) {
     return 'app';
   }
-  if (fileExists(root, 'index.html') || fileExists(root, 'src/pages') || fileExists(root, 'app')) {
+  if (fileExists(root, 'index.html') || fileExists(root, 'public/index.html') || fileExists(root, 'src/pages') || fileExists(root, 'app')) {
     return 'page';
   }
   return 'component';
 }
 
+function isUnknownFramework(framework) {
+  return !framework || /unknown|vanilla/i.test(framework);
+}
+
 function buildOpenQuestions(profile) {
   const q = [];
+  // Stack is owned by frontend-engineering — surface handoff, do not "lock vanilla".
+  if (
+    profile.needsStackInterview ||
+    (isUnknownFramework(profile.framework) &&
+      (profile.scopeTier === 'app' || profile.scopeTier === 'page') &&
+      !profile.hasStackDecision)
+  ) {
+    q.push(
+      'STACK (frontend-engineering): Job shape + constraints — confirm one stack before UI polish. Do not default to React or silent vanilla for multi-view apps.',
+    );
+  }
   if (!profile.hasDesignDirection) {
-    if (profile.scopeTier === 'component') {
+    if (profile.scopeTier === 'component' && !isUnknownFramework(profile.framework)) {
       q.push('Accent color (hex) or match existing tokens/CSS?');
       q.push('Generate component tokens or map to existing design system?');
       return q;
     }
-    q.push('Register: product UI (app/tool) or brand/marketing (landing/editorial)?');
-    q.push('Archetype: enterprise (dense B2B), consumer (friendly app), or editorial (story/marketing)?');
-    q.push('Brand accent color (hex) or match existing tokens/CSS?');
+    if (profile.scopeTier !== 'component') {
+      q.push('Register: product UI (app/tool) or brand/marketing (landing/editorial)?');
+      q.push('Archetype: enterprise (dense B2B), consumer (friendly app), or editorial (story/marketing)?');
+      q.push('Brand accent color (hex) or match existing tokens/CSS?');
+    } else {
+      q.push('Accent color (hex) or match existing tokens/CSS?');
+      q.push('Generate component tokens or map to existing design system?');
+    }
   }
   if (profile.scopeTier === 'app' && !profile.hasProductBrief && !profile.hasDesignDirection) {
     q.push('App shell: top bar, left sidebar, hybrid, or extend existing library chrome?');
@@ -193,6 +233,32 @@ function main() {
     else source = 'package.json + file-scan';
   }
 
+  const scopeTier = inferScopeTier(root);
+  const hasStackDecision = fileExists(root, 'stack-decision.md');
+  const unknown = isUnknownFramework(framework);
+  const needsStackInterview =
+    unknown && (scopeTier === 'app' || scopeTier === 'page') && !hasStackDecision;
+
+  const guidance = [
+    'Read references/discovery.md — do not assume admin dashboard or enterprise chrome.',
+    'This skill owns visual design (tokens, craft, critique). Stack/structure → frontend-engineering skill.',
+  ];
+  if (needsStackInterview) {
+    guidance.push(
+      'Stack undecided (unknown/vanilla on page/app tier): invoke frontend-engineering (profile-stack.js + stack interview). Do NOT treat vanilla as a permanent lock.',
+    );
+  } else if (!unknown) {
+    guidance.push('Match this framework and styling system; do not introduce a competing one.');
+  } else {
+    guidance.push('Extend stack-decision.md / confirmed stack; do not introduce a competing paradigm.');
+  }
+  guidance.push(
+    uiLibraries.length
+      ? `Extend ${uiLibraries.join(', ')} theming/shell primitives — do not replace the library (design-systems.md, shell-patterns.md).`
+      : 'Map values to design tokens; avoid hardcoded hex/px in component code.',
+  );
+  guidance.push('Components should not set their own outer margins; spacing is the parent layout\u2019s job.');
+
   const profile = {
     generatedBy: 'profile-project.js',
     root,
@@ -202,17 +268,12 @@ function main() {
     componentDir: findComponentDir(root),
     designTokens: detectTokens(root),
     hasDesignDirection: fileExists(root, 'design-direction.md'),
-    hasProductBrief: fileExists(root, 'product-brief.md'),
-    scopeTier: inferScopeTier(root),
+    hasProductBrief: fileExists(root, 'product-brief.md') || fileExists(root, 'PRODUCT.md'),
+    hasStackDecision,
+    needsStackInterview,
+    scopeTier,
     detectedFrom: source,
-    guidance: [
-      'Read references/discovery.md — do not assume admin dashboard or enterprise chrome.',
-      'Match this framework and styling system; do not introduce a competing one.',
-      uiLibraries.length
-        ? `Extend ${uiLibraries.join(', ')} theming/shell primitives — do not replace the library (design-systems.md, shell-patterns.md).`
-        : 'Map values to design tokens; avoid hardcoded hex/px in component code.',
-      'Components should not set their own outer margins; spacing is the parent layout\u2019s job.',
-    ],
+    guidance,
   };
   profile.openQuestions = buildOpenQuestions(profile);
 
@@ -225,9 +286,11 @@ function main() {
   console.log(`components: ${profile.componentDir || '(not found)'}`);
   console.log(`tokens:    ${profile.designTokens || '(none \u2014 decide archetype, then init-design-tokens.js)'}`);
   console.log(`direction: ${profile.hasDesignDirection ? 'design-direction.md' : '(missing)'}`);
-  console.log(`brief:     ${profile.hasProductBrief ? 'product-brief.md' : '(missing)'}`);
+  console.log(`brief:     ${profile.hasProductBrief ? 'PRODUCT.md/product-brief.md' : '(missing)'}`);
+  console.log(`stackDecision: ${profile.hasStackDecision ? 'stack-decision.md' : '(missing)'}`);
+  console.log(`stackInterview: ${profile.needsStackInterview}`);
   if (profile.openQuestions.length) {
-    console.log('\nopenQuestions (ask user before prescribing shell/archetype):');
+    console.log('\nopenQuestions (ask user / eng skill before prescribing):');
     profile.openQuestions.forEach((q, i) => console.log(`  ${i + 1}. ${q}`));
   }
   console.log(`detected from: ${source}\n`);
