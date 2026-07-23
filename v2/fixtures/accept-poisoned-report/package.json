@@ -1,0 +1,1 @@
+{ "name": "fx", "dependencies": { "express": "^4.19.0", "prisma": "^5.0.0", "typeorm": "^0.3.0" } }

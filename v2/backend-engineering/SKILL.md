@@ -18,7 +18,8 @@ Verify with:
 node <this-skill>/scripts/check-backend.js --root . --strict
 ```
 
-Acceptance re-runs this checker; a backend BLOCK blocks the ship.
+(`<this-skill>` = this skill's own directory, i.e. the folder containing
+this file.) Acceptance re-runs this checker; a backend BLOCK blocks the ship.
 
 ## Laws
 

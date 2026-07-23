@@ -17,7 +17,7 @@ const registry = require(core.registry);
 const HEADINGS = ['Parts', 'Boundaries', 'Trust'];
 
 function run(root) {
-  const cls = classify(root);
+  const cls = classify(root, { evidenceDir: registry.evidenceDir });
   const checks = [];
 
   if (!cls.multiPart) {
@@ -49,9 +49,10 @@ function run(root) {
 module.exports = { run };
 
 if (require.main === module) {
+  const artifact = registry.artifacts.find((a) => a.producer === 'systems-architecture' && a.kind === 'report');
   runCli({
     skill: 'systems-architecture',
-    reportFile: 'architecture-report.json',
+    reportFile: path.basename(artifact.file),
     evidenceDir: registry.evidenceDir,
     runFn: run,
     argv: process.argv.slice(2),

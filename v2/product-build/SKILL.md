@@ -46,6 +46,18 @@ product-management        PRODUCT.md missing or thin
 The full artifact contract (who writes what, who consumes it) is generated
 into [`docs/CONTRACT.md`](../docs/CONTRACT.md) from `registry.json`.
 
+## Scope boundary: CLI tools and libraries
+
+A project with no detected frontend and no server (a CLI tool, a library, a
+script) is gated on the product contract only — `systems-architecture`,
+`frontend`, and `backend-engineering` have nothing measurable to check when
+none of their signals are present, and `product-acceptance` will correctly
+report SHIP reachable from `PRODUCT.md` alone. That is an honest, stated
+scope boundary of today's gate, not a silent gap: this suite does not yet
+have a CLI-specific checker. If you're building a CLI tool "MVP", say so in
+your acceptance verdict rather than implying the same rigor applied to a
+full-stack app.
+
 ## Stop rules
 
 - Same-turn self-SHIP → run **product-acceptance** next turn instead.

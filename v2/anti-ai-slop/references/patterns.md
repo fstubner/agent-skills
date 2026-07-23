@@ -16,11 +16,11 @@ Patterns are split by how reliably they can be caught by a regex:
 
 ### Inflated vocabulary
 Words that sound important but carry less information than a plain synonym:
-*delve, leverage, foster, utilize, streamline, robust, cutting-edge, paradigm shift,
-game-changer/game-changing, tapestry, realm, multifaceted, meticulous, paramount,
-transformative, elevate, harness (as a verb), empower, facilitate, underscore (as a
-verb), navigate (figurative), landscape (figurative), ecosystem (figurative),
-holistic, seamless, robustly, unlock (figurative), supercharge.*
+*delve, leverage, foster, utilize, streamline, robust, robustly, cutting-edge,
+paradigm shift, game-changer/game-changing, tapestry, realm, multifaceted,
+meticulous, paramount, transformative, elevate, harnessing (the gerund only —
+see caveat), empower, facilitate, seamless, holistic, supercharge, "unlock the
+power/potential of" (as a phrase).*
 
 - **Why it reads as slop:** these words showed up disproportionately in
   post-2022 model output relative to baseline human writing on the same topics;
@@ -29,9 +29,19 @@ holistic, seamless, robustly, unlock (figurative), supercharge.*
 - **Fix:** name the plain action or quality instead. *"Leverage the API"* → *"call
   the API."* *"A robust solution"* → say what makes it hold up under load, or cut
   the adjective.
-- **Caveat:** some of these are legitimate domain terms (e.g. "ecosystem" in a
-  biology paper, "robust" in a stats methods section). The rule flags, it doesn't
-  forbid — check register before cutting.
+- **Caveat:** some of these are legitimate domain terms (e.g. "robust" in a
+  stats methods section). The rule flags, it doesn't forbid — check register
+  before cutting. Bare "harness" (noun) is deliberately NOT flagged — it's
+  ordinary technical vocabulary (a wiring harness, an *agent harness* — the
+  exact term this repo's own tooling uses), and existence-style linting can't
+  tell the noun from the verb. Only "harnessing" (almost always the
+  figurative gerund, "harnessing the power of X") is checked. Two related
+  claims — "underscore" and "unlock" as bare figurative verbs — turned out to
+  be either already covered elsewhere or too collision-prone to check as a
+  single word: see Importance inflation for "underscores the
+  importance/significance of", and note that only the specific phrase
+  "unlock the power/potential of" is checked here, not the bare verb (plain
+  "unlock this feature" is legitimate in software writing).
 
 ### Throat-clearing openers
 Stock phrases that delay the point instead of starting with it: *"Here's the
@@ -78,13 +88,27 @@ A closing paragraph that restates what the reader just read: *"In conclusion,"
 ### Excessive em dash use
 Piling up em dashes as a default rhythm device instead of choosing among comma,
 period, colon, or parenthesis for the actual relationship between clauses.
+The Vale rule checks this **per paragraph** (more than 2 in one paragraph
+fires) — a document with one paragraph-heavy dash and otherwise sparse use
+elsewhere reads as normal rhythm and won't trip it.
 
-- **Why it reads as slop:** one or two per document is normal prose rhythm; a
-  cluster of them in every paragraph is a mechanical tic, not a stylistic choice.
+- **Why it reads as slop:** one or two in a paragraph is normal prose rhythm; a
+  cluster of them in a single paragraph is a mechanical tic, not a stylistic choice.
 - **Fix:** vary punctuation — most em dashes can become a comma or a full stop
   without losing meaning.
 
 ## Judgment-only (not reliably regex-detectable)
+
+### Figurative geography/ecology words
+*"Navigate the challenges of...", "the competitive landscape," "a thriving
+ecosystem of tools."* "Navigate," "landscape," and "ecosystem" are inflated
+vocabulary in their figurative sense — but all three have entirely ordinary
+literal uses (real geography, real biology, real navigation) common enough
+that an existence-style Vale rule would flag legitimate writing constantly.
+Unlike "robust" or "realm," the literal/figurative split here isn't rare
+enough to accept as a false-positive rate. Catch these by eye: if the
+sentence isn't actually about a place, a map, or an organism, it's the slop
+sense.
 
 ### Binary-contrast framing
 *"This isn't X, it's Y." "The question isn't X — it's Y." "It's not just X, it's

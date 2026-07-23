@@ -27,10 +27,23 @@ jobs:
           if [ "$RUNNER_OS" = "Windows" ]; then
             curl -sL "https://github.com/errata-ai/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Windows_64-bit.zip" -o /tmp/vale.zip
             unzip -o /tmp/vale.zip -d "$HOME/.local/bin" vale.exe
+            # GITHUB_PATH entries on Windows must be Windows-style
+            # (C:\...) — a bash-native POSIX path like /c/Users/... is
+            # invisible to Node's spawnSync('vale', ...) later in this same
+            # job, which reads the native Windows PATH env var. Verified
+            # locally: PATH="$(cygpath -u ...):$PATH" resolves `vale` in
+            # bash but a raw POSIX path added to a Windows PATH does not
+            # resolve for non-bash consumers.
+            cygpath -w "$HOME/.local/bin" >> "$GITHUB_PATH"
           else
             curl -sL "https://github.com/errata-ai/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Linux_64-bit.tar.gz" -o /tmp/vale.tar.gz
             tar -xzf /tmp/vale.tar.gz -C "$HOME/.local/bin" vale
+            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           fi
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Verify vale is on PATH
+        # Fails the job loudly if the install step above didn't actually
+        # make vale reachable, instead of letting run-tests.mjs's graceful
+        # local-dev skip silently hide a broken CI leg.
+        run: vale --version
       - name: Suite tests (fixtures, registry cross-check, schema units, contract drift)
         run: node scripts/run-tests.mjs

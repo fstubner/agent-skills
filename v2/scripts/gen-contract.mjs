@@ -12,11 +12,13 @@ const registry = JSON.parse(fs.readFileSync(path.join(suiteRoot, 'registry.json'
 const outPath = path.join(suiteRoot, 'docs', 'CONTRACT.md');
 
 function artifactRow(a) {
+  const file = a.file ? `\`${a.file}\`` : '— (CLI-invoked, no fixed path)';
   const script = a.producerScript ? `\`${a.producerScript}\`` : '—';
   const schema = a.schema ? `\`${a.schema}\`` : '—';
   const consumers = a.consumers.length ? a.consumers.join(', ') : '—';
   const headings = a.requiredHeadings ? ` (headings: ${a.requiredHeadings.join(', ')})` : '';
-  return `| \`${a.file}\`${headings} | ${a.kind} | ${a.producer} | ${consumers} | ${a.requiredWhen} | ${script} | ${schema} |`;
+  const gated = a.acceptanceGated ? 'yes' : 'no';
+  return `| ${file}${headings} | ${a.kind} | ${a.producer} | ${consumers} | ${gated} | ${a.requiredWhen} | ${script} | ${schema} |`;
 }
 
 const doc = `<!-- GENERATED FILE — do not edit. Source: registry.json; regenerate with node scripts/gen-contract.mjs -->
@@ -58,8 +60,12 @@ Entry skill: \`${registry.entrySkill}\`.
 
 ## Artifacts
 
-| File | Kind | Producer | Consumers | Required when | Producer script | Schema |
-|---|---|---|---|---|---|---|
+\`acceptanceGated\` is the ONLY field \`accept-check.js\` reads to decide
+whether an artifact blocks acceptance — not \`consumers\` (which is
+documentation of who else reads the artifact, not a gating signal).
+
+| File | Kind | Producer | Consumers | Gates acceptance? | Required when | Producer script | Schema |
+|---|---|---|---|---|---|---|---|
 ${registry.artifacts.map(artifactRow).join('\n')}
 
 ## Adding a skill

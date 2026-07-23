@@ -5,6 +5,12 @@
 // silently ignored, so schema/validator drift fails loudly instead of
 // letting invalid data through (the v0.4 validator dropped minLength and
 // minimum without a whisper).
+//
+// The unknown-keyword check is STATIC: it walks the whole schema structure
+// up front, independent of what data is validated. A keyword under a
+// branch the current data happens not to reach still throws — a
+// data-path-dependent guard would let an untested branch's drift through
+// silently, which is exactly the failure mode this file exists to prevent.
 
 const ANNOTATIONS = new Set([
   '$schema', '$id', 'title', 'description', 'default', 'examples',
@@ -16,20 +22,8 @@ const IMPLEMENTED = new Set([
   'pattern', 'minItems',
 ]);
 
-function typeOf(v) {
-  if (v === null) return 'null';
-  if (Array.isArray(v)) return 'array';
-  if (typeof v === 'number') return Number.isInteger(v) ? 'integer' : 'number';
-  return typeof v;
-}
-
-function typeMatches(expected, actual) {
-  if (expected === actual) return true;
-  if (expected === 'number' && actual === 'integer') return true;
-  return false;
-}
-
-function validate(schema, data, path = '$', errors = []) {
+function checkKeywordsStatic(schema, path = '$') {
+  if (schema === null || typeof schema !== 'object' || Array.isArray(schema)) return;
   for (const key of Object.keys(schema)) {
     if (!IMPLEMENTED.has(key) && !ANNOTATIONS.has(key)) {
       throw new Error(
@@ -38,11 +32,37 @@ function validate(schema, data, path = '$', errors = []) {
       );
     }
   }
+  if (schema.properties) {
+    for (const [k, v] of Object.entries(schema.properties)) checkKeywordsStatic(v, `${path}.properties.${k}`);
+  }
+  if (schema.items) checkKeywordsStatic(schema.items, `${path}.items`);
+  if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
+    checkKeywordsStatic(schema.additionalProperties, `${path}.additionalProperties`);
+  }
+}
+
+function typeOf(v) {
+  if (v === null) return 'null';
+  if (Array.isArray(v)) return 'array';
+  if (typeof v === 'number') return Number.isInteger(v) ? 'integer' : 'number';
+  return typeof v;
+}
+
+// expected may be a single type string or an array of allowed type strings
+// (JSON Schema's `type: ["string", "null"]` form).
+function typeSatisfied(expected, actual) {
+  const list = Array.isArray(expected) ? expected : [expected];
+  return list.some((t) => t === actual || (t === 'number' && actual === 'integer'));
+}
+
+function validate(schema, data, path = '$', errors = [], isRoot = true) {
+  if (isRoot) checkKeywordsStatic(schema, path);
 
   const t = typeOf(data);
 
-  if (schema.type !== undefined && !typeMatches(schema.type, t)) {
-    errors.push(`${path}: expected type ${schema.type}, got ${t}`);
+  if (schema.type !== undefined && !typeSatisfied(schema.type, t)) {
+    const expectedLabel = Array.isArray(schema.type) ? schema.type.join('|') : schema.type;
+    errors.push(`${path}: expected type ${expectedLabel}, got ${t}`);
     return errors; // structural mismatch — deeper checks would be noise
   }
   if (schema.enum !== undefined && !schema.enum.some((v) => v === data)) {
@@ -75,7 +95,7 @@ function validate(schema, data, path = '$', errors = []) {
       errors.push(`${path}: array shorter than minItems ${schema.minItems}`);
     }
     if (schema.items !== undefined) {
-      data.forEach((item, i) => validate(schema.items, item, `${path}[${i}]`, errors));
+      data.forEach((item, i) => validate(schema.items, item, `${path}[${i}]`, errors, false));
     }
   }
   if (t === 'object') {
@@ -85,15 +105,15 @@ function validate(schema, data, path = '$', errors = []) {
     }
     for (const [k, v] of Object.entries(data)) {
       if (props[k] !== undefined) {
-        validate(props[k], v, `${path}.${k}`, errors);
+        validate(props[k], v, `${path}.${k}`, errors, false);
       } else if (schema.additionalProperties === false) {
         errors.push(`${path}: unexpected property "${k}"`);
       } else if (typeof schema.additionalProperties === 'object') {
-        validate(schema.additionalProperties, v, `${path}.${k}`, errors);
+        validate(schema.additionalProperties, v, `${path}.${k}`, errors, false);
       }
     }
   }
   return errors;
 }
 
-module.exports = { validate };
+module.exports = { validate, checkKeywordsStatic };

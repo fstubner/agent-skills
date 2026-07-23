@@ -61,18 +61,27 @@ silently skipping the check.
 ## Standalone Vale style
 
 `rules/AntiAISlop/` works with any project that has Vale installed — it
-doesn't need this skill or an agent. Copy the folder in and point your
-`.vale.ini` at it:
+doesn't need this skill or an agent. Copy the whole `AntiAISlop/` folder
+into your project (e.g. to `styles/AntiAISlop/`), then point `StylesPath` at
+its **parent** directory — not at `AntiAISlop/` itself, since Vale appends
+`BasedOnStyles`'s value to `StylesPath` when resolving the style:
 
 ```ini
-StylesPath = path/to/AntiAISlop
+StylesPath = styles
 MinAlertLevel = suggestion
 
 [*.md]
 BasedOnStyles = AntiAISlop
 ```
 
-See [`rules/.vale.ini`](./rules/.vale.ini) for a runnable example.
+`StylesPath = path/to/AntiAISlop` (pointing directly at the copied folder)
+is a common mistake and fails with a real Vale runtime error
+(`E100: style 'AntiAISlop' does not exist on StylesPath`) because Vale then
+looks for `path/to/AntiAISlop/AntiAISlop/`.
+
+See [`rules/.vale.ini`](./rules/.vale.ini) for a runnable example (there,
+`StylesPath = .` because the ini file lives one level up from `AntiAISlop/`,
+inside `rules/`).
 
 ## Files
 

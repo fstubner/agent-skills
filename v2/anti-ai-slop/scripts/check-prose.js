@@ -80,7 +80,12 @@ if (!isValeOnPath()) {
   }], args, 2);
 }
 
-const tmpConfig = path.join(os.tmpdir(), `anti-ai-slop-vale-${process.pid}.ini`);
+// A private, freshly-created directory rather than a predictable
+// os.tmpdir() filename — on a shared multi-user machine, a predictable path
+// written with writeFileSync (which follows an existing symlink) is an
+// arbitrary-file-overwrite risk if another local user pre-creates it.
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'anti-ai-slop-'));
+const tmpConfig = path.join(tmpDir, 'vale.ini');
 fs.writeFileSync(tmpConfig, [
   `StylesPath = ${stylesPath.split(path.sep).join('/')}`,
   'MinAlertLevel = suggestion',
@@ -92,12 +97,14 @@ fs.writeFileSync(tmpConfig, [
 
 let result;
 try {
-  result = spawnSync('vale', ['--config', tmpConfig, '--output=JSON', ...args.targets], {
+  // The `--` separator stops a target starting with `-` (e.g. a file
+  // literally named `--verbose`) from being parsed as a vale flag.
+  result = spawnSync('vale', ['--config', tmpConfig, '--output=JSON', '--', ...args.targets], {
     encoding: 'utf8',
     maxBuffer: 20 * 1024 * 1024,
   });
 } finally {
-  fs.unlinkSync(tmpConfig);
+  fs.rmSync(tmpDir, { recursive: true, force: true });
 }
 
 if (result.error) {

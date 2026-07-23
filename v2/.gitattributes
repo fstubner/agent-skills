@@ -2,3 +2,8 @@
 *.png binary
 *.jpg binary
 *.gif binary
+# Deliberately CRLF, preserved exactly regardless of checkout platform — a
+# regression fixture proving readText()'s CRLF normalization matters for
+# TARGET PROJECT files (e.g. a user's ARCHITECTURE.md saved on Windows),
+# not just the suite's own LF-pinned sources.
+fixtures/arch-ship-crlf/ARCHITECTURE.md -text

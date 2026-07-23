@@ -71,11 +71,27 @@ function walk(dir, out = []) {
     expect(`frontmatter description is substantial (${skill.id})`,
       /description:/.test(fmMatch[1]) && descBlock.replace(/\s+/g, ' ').length > 80);
   }
+  // REVERSE check: every top-level directory that has a SKILL.md must be
+  // registered. Without this, a new skill dropped on disk but never added
+  // to registry.json passes every other test silently — never installed,
+  // never gated, never documented (this was the exact shape of the v0.4
+  // "backend-report produced but never consumed" bug: a producer that
+  // exists on disk but has no registry entry to wire it in).
+  const SKIP_TOP_LEVEL = new Set(['core', 'docs', 'eval', 'fixtures', 'scripts', 'node_modules', '.git', '.github']);
+  for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+    if (!entry.isDirectory() || SKIP_TOP_LEVEL.has(entry.name) || entry.name.startsWith('.')) continue;
+    if (!fs.existsSync(path.join(root, entry.name, 'SKILL.md'))) continue;
+    expect(`registry: on-disk skill "${entry.name}" is registered in registry.json`, ids.includes(entry.name));
+  }
+  const KNOWN_REQUIRED_WHEN = ['always', 'never', 'multi_part', 'server_present', 'frontend_present'];
   for (const a of registry.artifacts) {
     expect(`registry: producer is a registered skill (${a.id})`, ids.includes(a.producer));
     for (const c of a.consumers) {
       expect(`registry: consumer is a registered skill (${a.id} -> ${c})`, ids.includes(c));
     }
+    expect(`registry: requiredWhen is a known condition (${a.id}: ${a.requiredWhen})`,
+      KNOWN_REQUIRED_WHEN.includes(a.requiredWhen));
+    expect(`registry: acceptanceGated is a boolean (${a.id})`, typeof a.acceptanceGated === 'boolean');
     if (a.producerScript) {
       expect(`registry: producer script exists (${a.producerScript})`,
         fs.existsSync(path.join(root, ...a.producerScript.split('/'))));
@@ -83,6 +99,16 @@ function walk(dir, out = []) {
     if (a.schema) {
       expect(`registry: schema exists (${a.schema})`,
         fs.existsSync(path.join(root, ...a.schema.split('/'))));
+    }
+    // Report-kind artifacts with a producerScript must be structurally
+    // derivable: the checker looks itself up via
+    // `registry.artifacts.find(x => x.producer === skill && x.kind === 'report')`,
+    // so exactly one such entry must exist per report-producing skill —
+    // ambiguity here would make a checker pick the wrong reportFile silently.
+    if (a.kind === 'report' && a.producerScript && a.file) {
+      const matches = registry.artifacts.filter((x) => x.producer === a.producer && x.kind === 'report');
+      expect(`registry: exactly one report artifact for producer "${a.producer}"`, matches.length === 1,
+        `found ${matches.length}`);
     }
   }
 }
@@ -100,6 +126,23 @@ function walk(dir, out = []) {
   expect('schema: unknown keyword THROWS instead of silently passing', threw);
   const ap = { type: 'object', additionalProperties: { enum: ['pass', 'fail'] } };
   expect('schema: object-form additionalProperties validates values', validate(ap, { a: 'nope' }).length === 1);
+
+  // Regression: the unknown-keyword guard must be STATIC (walk the whole
+  // schema up front), not data-path-dependent — a keyword under a branch
+  // the data never touches must still throw, or drift in an untested
+  // branch ships silently.
+  let threwUnreached = false;
+  try {
+    validate({ type: 'object', properties: { a: { type: 'string' }, b: { type: 'string', format: 'email' } }, required: ['a'] }, { a: 'hello' });
+  } catch { threwUnreached = true; }
+  expect('schema: unknown keyword throws even on a branch the data never reaches', threwUnreached);
+
+  // Regression: `type` as an array of allowed types must validate correctly,
+  // not be silently mishandled while still being in the implemented-keyword set.
+  const typeArraySchema = { type: ['string', 'null'] };
+  expect('schema: type array accepts a matching string', validate(typeArraySchema, 'hello').length === 0);
+  expect('schema: type array accepts a matching null', validate(typeArraySchema, null).length === 0);
+  expect('schema: type array rejects a non-matching type', validate(typeArraySchema, 42).length === 1);
 }
 function pathToFileUrl(p) {
   return 'file:///' + p.split(path.sep).join('/');
@@ -141,6 +184,24 @@ assertFixture('arch-ship', 'arch-ship', ARCH, [], 'SHIP',
   [['P-arch-doc', 'pass'], ['P-section-trust', 'pass']]);
 assertFixture('arch-block-nodoc', 'arch-block-nodoc', ARCH, [], 'BLOCK',
   [['P-arch-doc', 'fail'], ['P-section-parts', 'not_evaluated']]);
+// Regression for mutant M7 (hasHeading returns true always): a doc that IS
+// present but is missing one required heading must still BLOCK on that
+// specific section, with the other present sections still passing — this
+// cannot be satisfied by a vacuous "heading always found" implementation.
+assertFixture('arch-block-missing-heading (doc present, one heading missing)', 'arch-block-missing-heading', ARCH, [], 'BLOCK',
+  [['P-arch-doc', 'pass'], ['P-section-parts', 'pass'], ['P-section-boundaries', 'pass'], ['P-section-trust', 'fail']]);
+// Proves CRLF target-project files (e.g. an ARCHITECTURE.md edited on
+// Windows — the suite's own .gitattributes has no power over a target
+// project's line endings) parse correctly end to end. Committed as literal
+// CRLF, pinned `-text` in .gitattributes so no checkout platform converts
+// it. NOTE: this does NOT discriminate readText's CRLF-normalize call
+// specifically — verified empirically that hasHeading's regex
+// (^#{1,6}\s+name\b, multiline) already tolerates \r on its own, so
+// removing the normalize step is a confirmed EQUIVALENT mutant given
+// today's checks, not a live coverage gap. Kept as a real-world regression
+// test and as insurance for a future check that isn't CRLF-tolerant by luck.
+assertFixture('arch-ship-crlf (target ARCHITECTURE.md has real CRLF line endings)', 'arch-ship-crlf', ARCH, [], 'SHIP',
+  [['P-arch-doc', 'pass'], ['P-section-parts', 'pass'], ['P-section-boundaries', 'pass'], ['P-section-trust', 'pass']]);
 
 // backend-ship contains the literal string "task-management" in a client
 // file — regression test for the v0.4 secret scanner that BLOCKed on it.
@@ -160,6 +221,12 @@ assertFixture('frontend-ship', 'frontend-ship', FRONTEND, [], 'SHIP',
   [['F-dual-framework', 'pass'], ['F-tokens-contrast', 'pass']]);
 assertFixture('frontend-block-dual-framework', 'frontend-block-dual-framework', FRONTEND, [], 'BLOCK',
   [['F-dual-framework', 'fail']]);
+assertFixture('frontend-block-dual-icons', 'frontend-block-dual-icons', FRONTEND, [], 'BLOCK',
+  [['F-dual-icons', 'fail']]);
+// Regression for mutant M8 (contrast threshold droppable to near-0 with
+// tests still green): tokens present, genuinely below 4.5:1, must BLOCK.
+assertFixture('frontend-block-low-contrast (tokens present, ratio 1.61)', 'frontend-block-low-contrast', FRONTEND, [], 'BLOCK',
+  [['F-tokens-contrast', 'fail']]);
 
 // Acceptance: re-runs producers fresh. The backend-block case is THE
 // regression test for v0.4's open backend loop — a backend BLOCK must
@@ -174,6 +241,20 @@ assertFixture('accept-block-backend (backend BLOCK blocks the ship)', 'accept-bl
   ['--acceptor-context', 'separate'], 'BLOCK', [['D-backend-engineering', 'fail']]);
 assertFixture('accept-block-noproduct', 'accept-block-noproduct', ACCEPT,
   ['--acceptor-context', 'separate'], 'BLOCK', [['A-product-contract', 'fail']]);
+// Regression for mutant M7 on the acceptance side: PRODUCT.md present but
+// missing a required heading must fail on the heading, not just on
+// existence — "the file exists" and "the contract is complete" are
+// different claims and the gate must not conflate them.
+assertFixture('accept-block-thin-product (PRODUCT.md present, Constraints heading missing)', 'accept-block-thin-product', ACCEPT,
+  ['--acceptor-context', 'separate'], 'BLOCK', [['A-product-contract', 'fail']]);
+// Regression for mutant M10 (accept-check trusts a stale/planted on-disk
+// report instead of re-running the producer): this fixture COMMITS a
+// hand-written backend-report.json claiming verdict SHIP, while the real
+// project state (dual ORM) should BLOCK. If accept-check ever reads that
+// planted file instead of re-spawning check-backend.js fresh, this
+// assertion is the one that catches it.
+assertFixture('accept-poisoned-report (planted SHIP report must be ignored; real state BLOCKs)', 'accept-poisoned-report', ACCEPT,
+  ['--acceptor-context', 'separate'], 'BLOCK', [['D-backend-engineering', 'fail']]);
 
 // Every emitted report must validate against the unified schema.
 {
@@ -202,6 +283,13 @@ assertFixture('accept-block-noproduct', 'accept-block-noproduct', ACCEPT,
       'AntiAISlop.ImportanceInflation', 'AntiAISlop.SummaryRecap', 'AntiAISlop.EmDashOveruse']) {
       expect(`anti-ai-slop: rule fires ${rule}`, ids.has(rule), [...ids].join(', '));
     }
+    // Regression: patterns.md claimed "robust" was Vale-checkable while the
+    // yml never listed it — the fixture's "robust platform" went unflagged.
+    const flaggedTokens = slopReport.checks
+      .filter((c) => c.id === 'AntiAISlop.InflatedVocabulary')
+      .map((c) => (c.detail.match(/'([^']+)'/) || [])[1]);
+    expect('anti-ai-slop: "robust" is caught by InflatedVocabulary (doc/rule drift regression)',
+      flaggedTokens.includes('robust'), flaggedTokens.join(', '));
   }
 }
 

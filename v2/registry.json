@@ -24,6 +24,7 @@
       "file": "PRODUCT.md",
       "producer": "product-management",
       "consumers": ["systems-architecture", "frontend", "backend-engineering", "product-acceptance"],
+      "acceptanceGated": true,
       "requiredWhen": "always",
       "requiredHeadings": ["Purpose", "Users", "Success", "MVP", "Constraints"]
     },
@@ -33,6 +34,7 @@
       "file": "ARCHITECTURE.md",
       "producer": "systems-architecture",
       "consumers": ["backend-engineering", "product-acceptance"],
+      "acceptanceGated": true,
       "requiredWhen": "multi_part",
       "requiredHeadings": ["Parts", "Boundaries", "Trust"]
     },
@@ -42,6 +44,7 @@
       "file": "design-direction.md",
       "producer": "frontend",
       "consumers": ["product-acceptance"],
+      "acceptanceGated": true,
       "requiredWhen": "frontend_present"
     },
     {
@@ -50,7 +53,28 @@
       "file": "ux-walkthrough.md",
       "producer": "frontend",
       "consumers": ["product-acceptance"],
+      "acceptanceGated": true,
       "requiredWhen": "frontend_present"
+    },
+    {
+      "id": "stack-decision",
+      "kind": "document",
+      "file": "stack-decision.md",
+      "producer": "frontend",
+      "consumers": ["product-acceptance"],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Written only when the stack was open to choose (frontend/SKILL.md). Not acceptance-gated: an existing-stack project legitimately has no stack-decision.md."
+    },
+    {
+      "id": "design-tokens",
+      "kind": "document",
+      "file": "design-tokens.json",
+      "producer": "frontend",
+      "consumers": ["product-acceptance"],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Consumed directly by frontend's own checker (F-tokens-contrast), which is itself acceptance-gated via frontend-report. Listed here so it isn't undocumented, not double-gated."
     },
     {
       "id": "architecture-report",
@@ -60,6 +84,7 @@
       "producerScript": "systems-architecture/scripts/check-architecture.js",
       "schema": "core/schemas/check-report.schema.json",
       "consumers": ["product-acceptance"],
+      "acceptanceGated": true,
       "requiredWhen": "multi_part"
     },
     {
@@ -70,6 +95,7 @@
       "producerScript": "frontend/scripts/check-frontend.js",
       "schema": "core/schemas/check-report.schema.json",
       "consumers": ["product-acceptance"],
+      "acceptanceGated": true,
       "requiredWhen": "frontend_present"
     },
     {
@@ -80,6 +106,7 @@
       "producerScript": "backend-engineering/scripts/check-backend.js",
       "schema": "core/schemas/check-report.schema.json",
       "consumers": ["product-acceptance"],
+      "acceptanceGated": true,
       "requiredWhen": "server_present"
     },
     {
@@ -90,17 +117,20 @@
       "producerScript": "product-acceptance/scripts/accept-check.js",
       "schema": "core/schemas/check-report.schema.json",
       "consumers": [],
+      "acceptanceGated": false,
       "requiredWhen": "always"
     },
     {
       "id": "prose-report",
       "kind": "report",
-      "file": ".agent-evidence/prose-report.json",
+      "file": null,
       "producer": "anti-ai-slop",
       "producerScript": "anti-ai-slop/scripts/check-prose.js",
       "schema": "core/schemas/check-report.schema.json",
       "consumers": [],
-      "requiredWhen": "never"
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Invoked directly via its own CLI (targets as positional args, optional --report <path>), not through --root/evidenceDir like the registry-driven checkers. No default file: null reflects that."
     }
   ]
 }

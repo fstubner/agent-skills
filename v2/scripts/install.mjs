@@ -52,7 +52,12 @@ function parseArgs(argv) {
 }
 
 function expandHome(p) {
-  return p.startsWith('~') ? path.join(os.homedir(), p.slice(1)) : p;
+  // Only expand a leading "~" that means home (bare "~", or "~/..."/"~\...").
+  // A plain startsWith('~') check also matches "~backup" and would rewrite
+  // it into "<home>backup" — a real directory a user might legitimately name.
+  if (p === '~') return os.homedir();
+  if (p.startsWith('~/') || p.startsWith('~\\')) return path.join(os.homedir(), p.slice(2));
+  return p;
 }
 
 function copyDir(src, dest) {

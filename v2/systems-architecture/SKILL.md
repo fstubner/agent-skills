@@ -18,7 +18,8 @@ Produce `ARCHITECTURE.md` at the project root (start from
 node <this-skill>/scripts/check-architecture.js --root . --strict
 ```
 
-Repair and re-run until the verdict is not BLOCK. The report is written to
+(`<this-skill>` = this skill's own directory, i.e. the folder containing
+this file.) Repair and re-run until the verdict is not BLOCK. The report is written to
 `.agent-evidence/architecture-report.json`; acceptance re-runs this checker
 itself, so passing once locally is evidence for you, not a token to cash in
 later.

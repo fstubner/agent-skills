@@ -43,12 +43,22 @@ function makeReport(skill, root, checks) {
   };
 }
 
-function writeReport(root, evidenceDir, fileName, report) {
-  const dir = path.join(root, evidenceDir);
-  fs.mkdirSync(dir, { recursive: true });
-  const out = path.join(dir, fileName);
-  fs.writeFileSync(out, JSON.stringify(report, null, 2) + '\n');
-  return out;
+// --out may be absolute (used as-is), relative (joined to root), or absent
+// (root/evidenceDir/defaultFileName). path.join does NOT special-case an
+// absolute second argument the way path.resolve does, so computing this via
+// join(root, dirname(absoluteOut)) — the previous approach — produced a
+// nonsense nested path and crashed; isAbsolute is checked explicitly instead.
+function resolveReportPath(root, evidenceDir, defaultFileName, outArg) {
+  if (outArg) {
+    return path.isAbsolute(outArg) ? outArg : path.join(root, outArg);
+  }
+  return path.join(root, evidenceDir, defaultFileName);
+}
+
+function writeReport(outPath, report) {
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(outPath, JSON.stringify(report, null, 2) + '\n');
+  return outPath;
 }
 
 // Shared CLI wrapper: every checker's bin behavior is identical by
@@ -68,8 +78,7 @@ function runCli({ skill, reportFile, runFn, argv, parseArgs, evidenceDir }) {
     const checks = runFn(root, args);
     const report = makeReport(skill, root, checks);
     if (!args['no-write']) {
-      writeReport(root, args.out ? path.dirname(args.out) : evidenceDir,
-        args.out ? path.basename(args.out) : reportFile, report);
+      writeReport(resolveReportPath(root, evidenceDir, reportFile, args.out), report);
     }
     console.log(JSON.stringify(report, null, 2));
     if (report.verdict === 'BLOCK') process.exit(1);
@@ -81,4 +90,4 @@ function runCli({ skill, reportFile, runFn, argv, parseArgs, evidenceDir }) {
   }
 }
 
-module.exports = { readText, hasHeading, check, computeVerdict, makeReport, writeReport, runCli };
+module.exports = { readText, hasHeading, check, computeVerdict, makeReport, writeReport, resolveReportPath, runCli };
