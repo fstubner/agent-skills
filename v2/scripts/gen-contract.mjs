@@ -52,11 +52,21 @@ boundary.
 
 ## Skills
 
+Every skill fires on its own trigger and works standalone — there is no
+required order or pipeline. \`(no shared artifacts)\` marks a skill that
+doesn't produce or consume anything in the Artifacts table below; everything
+else composes with its siblings only through those named artifacts, never
+through direct calls.
+
 | Skill | Role |
 |---|---|
-${registry.skills.map((s) => `| \`${s.id}\`${s.standalone ? ' (standalone)' : ''} | ${s.role} |`).join('\n')}
+${registry.skills.map((s) => {
+  const participates = registry.artifacts.some((a) => a.producer === s.id || a.consumers.includes(s.id));
+  return `| \`${s.id}\`${participates ? '' : ' (no shared artifacts)'} | ${s.role} |`;
+}).join('\n')}
 
-Entry skill: \`${registry.entrySkill}\`.
+Suggested starting point for a greenfield/ambiguous request: \`${registry.defaultSkill}\`.
+Not a required entry point — every skill above also fires directly on its own trigger.
 
 ## Artifacts
 

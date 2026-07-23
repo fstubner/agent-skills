@@ -15,12 +15,10 @@ Patterns are split by how reliably they can be caught by a regex:
 ## Vale-checkable
 
 ### Inflated vocabulary
-Words that sound important but carry less information than a plain synonym:
-*delve, leverage, foster, utilize, streamline, robust, robustly, cutting-edge,
-paradigm shift, game-changer/game-changing, tapestry, realm, multifaceted,
-meticulous, paramount, transformative, elevate, harnessing (the gerund only —
-see caveat), empower, facilitate, seamless, holistic, supercharge, "unlock the
-power/potential of" (as a phrase).*
+Words that sound important but carry less information than a plain synonym.
+The list below is generated from `rules/AntiAISlop/InflatedVocabulary.yml` —
+see the caveat after it for words that were deliberately left out:
+<!-- gen-patterns:tokens InflatedVocabulary.yml -->*delve, delves, delving, leverage, leverages, leveraging, foster, fosters, fostering, utilize, utilizes, utilizing, streamline, streamlines, streamlining, cutting-edge, paradigm shift, game-changer, game-changing, tapestry, multifaceted, meticulous, meticulously, paramount, transformative, elevate, elevates, elevating, harnessing, empower, empowers, empowering, facilitate, facilitates, facilitating, seamless, seamlessly, holistic, holistically, supercharge, supercharges, supercharging, unlock the power/potential of, robust, robustly, realm.*<!-- /gen-patterns -->
 
 - **Why it reads as slop:** these words showed up disproportionately in
   post-2022 model output relative to baseline human writing on the same topics;
@@ -44,10 +42,10 @@ power/potential of" (as a phrase).*
   "unlock this feature" is legitimate in software writing).
 
 ### Throat-clearing openers
-Stock phrases that delay the point instead of starting with it: *"Here's the
-thing," "Let me be clear," "I'll be honest," "The truth is," "Simply put,"
-"At its core," "It's worth noting that," "It's important to note that," "Needless
-to say."*
+Stock phrases that delay the point instead of starting with it (generated
+from `rules/AntiAISlop/ThroatClearing.yml`; matching is case-insensitive so
+the tokens below are lowercase):
+<!-- gen-patterns:tokens ThroatClearing.yml -->*here's the thing, let me be clear, i'll be honest, to be honest, simply put, at its core, it's worth noting that, it is worth noting that, it's important to note that, it is important to note that, needless to say, the truth is.*<!-- /gen-patterns -->
 
 - **Why it reads as slop:** these add a beat of narration before the actual
   content, a tic that's rare in edited human prose but common in model output
@@ -55,8 +53,9 @@ to say."*
 - **Fix:** delete the opener, start with the claim.
 
 ### Weasel attribution
-Claims sourced to nobody in particular: *"studies show," "experts agree,"
-"research suggests," "many believe," "it is widely held," "critics argue."*
+Claims sourced to nobody in particular (generated from
+`rules/AntiAISlop/WeaselAttribution.yml`):
+<!-- gen-patterns:tokens WeaselAttribution.yml -->*studies show, research shows, research suggests, experts agree, experts say, many believe, it is widely believed, it is widely held, critics argue, some argue, industry reports suggest.*<!-- /gen-patterns -->
 
 - **Why it reads as slop:** it borrows the authority of evidence without
   supplying any. A human writer under source discipline names the study; a model
@@ -65,9 +64,9 @@ Claims sourced to nobody in particular: *"studies show," "experts agree,"
 
 ### Importance inflation
 Sentences whose whole job is announcing that something matters, without saying
-what happens as a result: *"stands as a testament to," "marks a pivotal moment,"
-"plays a vital/crucial role," "underscores the importance/significance of,"
-"solidifies its position as," "represents a significant step."*
+what happens as a result (generated from
+`rules/AntiAISlop/ImportanceInflation.yml`):
+<!-- gen-patterns:tokens ImportanceInflation.yml -->*stands as a testament to, marks a pivotal moment, plays a vital role, plays a crucial role, underscores the importance of, underscores the significance of, solidifies its position as, represents a significant step, cannot be overstated, serves as a testament to.*<!-- /gen-patterns -->
 
 - **Why it reads as slop:** it's a rhetorical shortcut around doing the work of
   showing why something matters — a concrete consequence, number, or comparison.
@@ -76,8 +75,9 @@ what happens as a result: *"stands as a testament to," "marks a pivotal moment,"
   product."*
 
 ### Summary-recap endings
-A closing paragraph that restates what the reader just read: *"In conclusion,"
-"To summarize," "Overall," "In summary," "All in all," "To wrap up."*
+A closing paragraph that restates what the reader just read (generated from
+`rules/AntiAISlop/SummaryRecap.yml`):
+<!-- gen-patterns:tokens SummaryRecap.yml -->*"In conclusion," "To summarize," "In summary," "All in all," "To wrap up," "Overall,"*<!-- /gen-patterns -->
 
 - **Why it reads as slop:** the reader was just there; restating adds length, not
   information. This convention comes from templated essay structure, not from how
@@ -88,9 +88,10 @@ A closing paragraph that restates what the reader just read: *"In conclusion,"
 ### Excessive em dash use
 Piling up em dashes as a default rhythm device instead of choosing among comma,
 period, colon, or parenthesis for the actual relationship between clauses.
-The Vale rule checks this **per paragraph** (more than 2 in one paragraph
-fires) — a document with one paragraph-heavy dash and otherwise sparse use
-elsewhere reads as normal rhythm and won't trip it.
+The Vale rule checks this **per paragraph** (more than
+<!-- gen-patterns:max EmDashOveruse.yml -->2<!-- /gen-patterns -->
+in one paragraph fires) — a document with one paragraph-heavy dash and
+otherwise sparse use elsewhere reads as normal rhythm and won't trip it.
 
 - **Why it reads as slop:** one or two in a paragraph is normal prose rhythm; a
   cluster of them in a single paragraph is a mechanical tic, not a stylistic choice.

@@ -19,6 +19,19 @@ node scripts/install.mjs --dest /path/to/skills   # anywhere else
 Windows, macOS, and Linux: identical commands (`~` is expanded by the
 installer, not the shell). Run them from the suite checkout root.
 
+## Installing a subset
+
+This is a composable set of skills, not an all-or-nothing suite — grab only
+what you want:
+
+```bash
+node scripts/install.mjs --harness claude --skill anti-ai-slop
+node scripts/install.mjs --harness claude --skill frontend,backend-engineering
+```
+
+Omitting `--skill` installs all of them. `node scripts/install.mjs --help`
+lists the current skill ids.
+
 ## Behavior you can rely on
 
 - **No default target.** No args → usage text, nothing written.

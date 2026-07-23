@@ -12,12 +12,17 @@ make the app fail, not to confirm it works.
 ## B — Primary path (from ux-walkthrough.md)
 
 - [ ] Replay every step exactly as written; any deviation is a finding.
+- [ ] Replay the primary path at the narrowest viewport the walkthrough
+      claims to support (or 375px if it doesn't say) — not just the width
+      it was designed at.
 - [ ] Complete the primary job with keyboard only.
 - [ ] Reload mid-flow at the two worst moments; state must land sensibly.
 
-## C — Empty, error, garbage
+## C — Empty, error, loading, garbage
 
 - [ ] First-run experience: truly empty data — every collection view.
+- [ ] Throttle the network (or add artificial delay): does the primary
+      action show a busy state, or does the UI look frozen/unresponsive?
 - [ ] Kill the server (or block the API) mid-use: human-readable error + retry path?
 - [ ] Paste 10k characters, emoji, `<script>alert(1)</script>`, and `' OR 1=1--`
       into every text input on the primary path.
@@ -33,6 +38,6 @@ make the app fail, not to confirm it works.
 ## Verdict rules
 
 - Any primary-path failure → BLOCK.
-- Missing empty/error states on the primary view → BLOCK.
+- Missing empty/loading/error states on the primary view → BLOCK.
 - Cosmetic findings off the primary path → CONDITIONAL with a list.
 - SHIP only when A-D produced no blocking finding and the gate says SHIP.

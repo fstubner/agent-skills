@@ -1,7 +1,8 @@
 {
   "name": "fstubner/agent-skills",
   "suiteVersionFile": "VERSION",
-  "entrySkill": "product-build",
+  "defaultSkill": "product-build",
+  "_defaultSkillNote": "Not a pipeline head — every skill below fires independently on its own trigger. This is only the suggested starting point when a request is greenfield/ambiguous and no single skill's trigger clearly applies yet.",
   "evidenceDir": ".agent-evidence",
   "harnessPaths": {
     "cursor": "~/.cursor/skills",
@@ -9,13 +10,13 @@
     "codex": "~/.agents/skills"
   },
   "skills": [
-    { "id": "product-build", "role": "Entry router for greenfield product/UI work" },
+    { "id": "product-build", "role": "Dispatcher — routes a greenfield/ambiguous request to whichever skills apply" },
     { "id": "product-management", "role": "PRODUCT.md contract interview" },
     { "id": "systems-architecture", "role": "Parts, boundaries, trust" },
     { "id": "frontend", "role": "Stack, structure, design, and UX" },
     { "id": "backend-engineering", "role": "Trusted-side laws" },
     { "id": "product-acceptance", "role": "Independent acceptance gate" },
-    { "id": "anti-ai-slop", "role": "Standalone prose slop editor/detector", "standalone": true }
+    { "id": "anti-ai-slop", "role": "Prose slop editor/detector" }
   ],
   "artifacts": [
     {

@@ -23,30 +23,41 @@ will not say "tested decision procedures" until it has them.
 
 ## Skills
 
+This is a composable set, not a pipeline. Each skill fires on its own
+trigger and works standalone; skills never call each other directly. Six of
+the seven additionally read or write a handful of named artifacts (below) —
+that's the entire coupling mechanism.
+
 | Skill | Role |
 |---|---|
-| [`product-build`](./product-build/) | Entry router |
+| [`product-build`](./product-build/) | Dispatcher — for a greenfield/ambiguous request, works out which skills below apply |
 | [`product-management`](./product-management/) | PRODUCT.md contract interview |
 | [`systems-architecture`](./systems-architecture/) | Parts, boundaries, trust |
 | [`frontend`](./frontend/) | Stack, structure, design, UX |
 | [`backend-engineering`](./backend-engineering/) | Trusted-side laws |
 | [`product-acceptance`](./product-acceptance/) | Independent acceptance gate |
-| [`anti-ai-slop`](./anti-ai-slop/) | Standalone prose editor/detector (not in the pipeline) |
+| [`anti-ai-slop`](./anti-ai-slop/) | Prose editor/detector — no artifacts, usable on any writing task |
 
-## Pipeline
+## How they compose
 
-```
-product-build
-  → product-management        PRODUCT.md
-  → systems-architecture      (multi-part) ARCHITECTURE.md
-  → frontend                  interview → design-direction / tokens / ux-walkthrough
-  → backend-engineering       (server in scope)
-  → implement
-  → product-acceptance        separate turn, --acceptor-context separate
-```
+Each skill applies exactly when its condition is true, independent of the
+others:
 
-This ordering is canonical here and only here; skills link to it rather than
-restating it.
+| Signal | Skill | Reads / writes |
+|---|---|---|
+| No or thin `PRODUCT.md` | `product-management` | writes `PRODUCT.md` |
+| Multi-part system (client+server, workspaces, trust boundaries) | `systems-architecture` | writes `ARCHITECTURE.md` |
+| Stack/structure unknown, or design/UX direction unset | `frontend` | writes `design-direction.md`, `ux-walkthrough.md`, tokens |
+| Server/API in scope | `backend-engineering` | reads `ARCHITECTURE.md` |
+| A readiness claim ("ship it", "is this done") | `product-acceptance` | reads whatever artifacts exist, re-runs every applicable checker fresh |
+| Any prose, any time | `anti-ai-slop` | none — fully standalone |
+
+A greenfield build happens to touch most rows in roughly the order listed —
+`product-build` gives that trajectory as a default — but nothing enforces
+the order, and a request that only matches one row (e.g. "make this
+accessible") uses only that skill. The full artifact contract (exact files,
+required headings, gating rules) is generated into
+[`docs/CONTRACT.md`](./docs/CONTRACT.md) from [`registry.json`](./registry.json).
 
 ## Install
 

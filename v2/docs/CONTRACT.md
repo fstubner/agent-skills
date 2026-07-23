@@ -29,17 +29,24 @@ boundary.
 
 ## Skills
 
+Every skill fires on its own trigger and works standalone — there is no
+required order or pipeline. `(no shared artifacts)` marks a skill that
+doesn't produce or consume anything in the Artifacts table below; everything
+else composes with its siblings only through those named artifacts, never
+through direct calls.
+
 | Skill | Role |
 |---|---|
-| `product-build` | Entry router for greenfield product/UI work |
+| `product-build` (no shared artifacts) | Dispatcher — routes a greenfield/ambiguous request to whichever skills apply |
 | `product-management` | PRODUCT.md contract interview |
 | `systems-architecture` | Parts, boundaries, trust |
 | `frontend` | Stack, structure, design, and UX |
 | `backend-engineering` | Trusted-side laws |
 | `product-acceptance` | Independent acceptance gate |
-| `anti-ai-slop` (standalone) | Standalone prose slop editor/detector |
+| `anti-ai-slop` | Prose slop editor/detector |
 
-Entry skill: `product-build`.
+Suggested starting point for a greenfield/ambiguous request: `product-build`.
+Not a required entry point — every skill above also fires directly on its own trigger.
 
 ## Artifacts
 

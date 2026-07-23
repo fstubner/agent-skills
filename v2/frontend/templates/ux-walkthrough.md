@@ -12,6 +12,7 @@
 
 ## States
 
+- **Loading:**
 - **Empty:**
 - **Error:**
 - **Success:**

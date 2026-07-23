@@ -55,7 +55,7 @@ function walk(dir, out = []) {
 // ---------- 2. Registry <-> filesystem cross-check ----------
 {
   const ids = registry.skills.map((s) => s.id);
-  expect('registry: entrySkill is a registered skill', ids.includes(registry.entrySkill));
+  expect('registry: defaultSkill is a registered skill', ids.includes(registry.defaultSkill));
   for (const skill of registry.skills) {
     const skillMd = path.join(root, skill.id, 'SKILL.md');
     expect(`registry: skill dir + SKILL.md exists (${skill.id})`, fs.existsSync(skillMd));
@@ -300,6 +300,15 @@ assertFixture('accept-poisoned-report (planted SHIP report must be ignored; real
   const version = read(path.join(root, registry.suiteVersionFile)).trim();
   const changelog = read(path.join(root, 'CHANGELOG.md'));
   expect(`CHANGELOG has an entry for VERSION (${version})`, changelog.includes(`## ${version}`));
+}
+
+// ---------- 6b. anti-ai-slop patterns.md <-> Vale rule drift ----------
+// No vale binary needed for this — it's pure text generation/diffing, so it
+// runs unconditionally rather than being gated behind the vale-presence
+// check in section 5.
+{
+  const r = runNode(path.join(root, 'anti-ai-slop', 'scripts', 'gen-patterns.mjs'), ['--check']);
+  expect('anti-ai-slop/references/patterns.md matches rules/AntiAISlop/*.yml', r.status === 0, (r.stderr || '').trim());
 }
 
 // ---------- 7. Eval assets ----------

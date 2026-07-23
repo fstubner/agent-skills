@@ -5,7 +5,8 @@ description: >-
   weasel attribution, importance inflation, summary-recap endings, em-dash
   overuse, and other model-writing habits) while preserving the writer's real
   voice. Backed by a real Vale style for deterministic, evidence-based checks.
-  Standalone utility skill — not part of the product-build pipeline.
+  Standalone utility skill with no shared artifacts — use it on any writing
+  task regardless of whether the other skills in this suite are involved.
 ---
 
 # Anti AI slop

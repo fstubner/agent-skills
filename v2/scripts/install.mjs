@@ -11,7 +11,8 @@
 // Usage:
 //   node scripts/install.mjs --harness cursor|claude|codex|all
 //   node scripts/install.mjs --dest <dir>
-//   Options: --force, --help
+//   Options: --force, --help, --skill <id>[,<id>...] (default: all skills —
+//     this is a composable set, not a suite, so any subset is a valid install)
 
 import fs from 'fs';
 import os from 'os';
@@ -23,14 +24,21 @@ const registry = JSON.parse(fs.readFileSync(path.join(suiteRoot, 'registry.json'
 const version = fs.readFileSync(path.join(suiteRoot, registry.suiteVersionFile), 'utf8').trim();
 const MARKER = '.agent-skills-install.json';
 
+const allIds = registry.skills.map((s) => s.id);
+
 const USAGE = `agent-skills installer v${version}
 
   node scripts/install.mjs --harness cursor|claude|codex|all
   node scripts/install.mjs --dest <directory>
 
 Options:
-  --force   replace existing skill directories even without an installer marker
-  --help    show this help
+  --skill <id>[,<id>...]   install only these skills (default: all)
+  --force                  replace existing skill directories even without an installer marker
+  --help                   show this help
+
+Known skills: ${allIds.join(', ')}
+This is a composable set, not a suite — installing one skill is a normal,
+fully-supported install, not a partial one.
 
 Refuses to touch directories it didn't create (marker: ${MARKER}) unless --force.
 Claude Desktop (cloud) has no filesystem target — upload skills via the UI; see INSTALL.md.`;
@@ -43,6 +51,7 @@ function parseArgs(argv) {
     else if (a === '--force') out.force = true;
     else if (a === '--harness') out.harness = argv[++i];
     else if (a === '--dest') out.dest = argv[++i];
+    else if (a === '--skill') out.skill = argv[++i];
     else {
       console.error(`Unknown argument: ${a}\n\n${USAGE}`);
       process.exit(1);
@@ -95,9 +104,20 @@ if (args.dest) {
   process.exit(1);
 }
 
+let selectedSkills = registry.skills;
+if (args.skill) {
+  const requested = args.skill.split(',').map((s) => s.trim()).filter(Boolean);
+  const unknown = requested.filter((id) => !allIds.includes(id));
+  if (unknown.length > 0) {
+    console.error(`Unknown skill(s): ${unknown.join(', ')}. Known: ${allIds.join(', ')}\n\n${USAGE}`);
+    process.exit(1);
+  }
+  selectedSkills = registry.skills.filter((s) => requested.includes(s.id));
+}
+
 let failures = 0;
 for (const target of targets) {
-  for (const skill of registry.skills) {
+  for (const skill of selectedSkills) {
     const id = skill.id;
     if (!/^[a-z][a-z0-9-]*$/.test(id)) {
       console.error(`SKIP  invalid skill id in registry: ${JSON.stringify(id)}`);
@@ -137,4 +157,4 @@ if (failures > 0) {
   console.error(`\n${failures} skill(s) skipped. Nothing outside the listed paths was touched.`);
   process.exit(1);
 }
-console.log(`\nInstalled ${registry.skills.length} skill(s) to ${targets.length} target(s).`);
+console.log(`\nInstalled ${selectedSkills.length} skill(s) to ${targets.length} target(s).`);
