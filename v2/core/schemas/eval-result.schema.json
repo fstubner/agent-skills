@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "agent-skills unprimed eval result",
+  "type": "object",
+  "required": ["caseId", "harness", "model", "runIndex", "date", "scores"],
+  "properties": {
+    "caseId": { "type": "string", "minLength": 1 },
+    "harness": { "enum": ["cursor", "claude-code", "claude-desktop", "codex"] },
+    "model": { "type": "string", "minLength": 1 },
+    "runIndex": { "type": "integer", "minimum": 1 },
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}" },
+    "notes": { "type": "string" },
+    "scores": {
+      "type": "object",
+      "description": "criterion id -> pass|fail|not_evaluated. Open by design: adding a criterion to a case must not invalidate old results.",
+      "additionalProperties": { "enum": ["pass", "fail", "not_evaluated"] }
+    }
+  }
+}

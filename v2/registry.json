@@ -1,0 +1,106 @@
+{
+  "name": "fstubner/agent-skills",
+  "suiteVersionFile": "VERSION",
+  "entrySkill": "product-build",
+  "evidenceDir": ".agent-evidence",
+  "harnessPaths": {
+    "cursor": "~/.cursor/skills",
+    "claude": "~/.claude/skills",
+    "codex": "~/.agents/skills"
+  },
+  "skills": [
+    { "id": "product-build", "role": "Entry router for greenfield product/UI work" },
+    { "id": "product-management", "role": "PRODUCT.md contract interview" },
+    { "id": "systems-architecture", "role": "Parts, boundaries, trust" },
+    { "id": "frontend", "role": "Stack, structure, design, and UX" },
+    { "id": "backend-engineering", "role": "Trusted-side laws" },
+    { "id": "product-acceptance", "role": "Independent acceptance gate" },
+    { "id": "anti-ai-slop", "role": "Standalone prose slop editor/detector", "standalone": true }
+  ],
+  "artifacts": [
+    {
+      "id": "product-contract",
+      "kind": "document",
+      "file": "PRODUCT.md",
+      "producer": "product-management",
+      "consumers": ["systems-architecture", "frontend", "backend-engineering", "product-acceptance"],
+      "requiredWhen": "always",
+      "requiredHeadings": ["Purpose", "Users", "Success", "MVP", "Constraints"]
+    },
+    {
+      "id": "architecture-doc",
+      "kind": "document",
+      "file": "ARCHITECTURE.md",
+      "producer": "systems-architecture",
+      "consumers": ["backend-engineering", "product-acceptance"],
+      "requiredWhen": "multi_part",
+      "requiredHeadings": ["Parts", "Boundaries", "Trust"]
+    },
+    {
+      "id": "design-direction",
+      "kind": "document",
+      "file": "design-direction.md",
+      "producer": "frontend",
+      "consumers": ["product-acceptance"],
+      "requiredWhen": "frontend_present"
+    },
+    {
+      "id": "ux-walkthrough",
+      "kind": "document",
+      "file": "ux-walkthrough.md",
+      "producer": "frontend",
+      "consumers": ["product-acceptance"],
+      "requiredWhen": "frontend_present"
+    },
+    {
+      "id": "architecture-report",
+      "kind": "report",
+      "file": ".agent-evidence/architecture-report.json",
+      "producer": "systems-architecture",
+      "producerScript": "systems-architecture/scripts/check-architecture.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": ["product-acceptance"],
+      "requiredWhen": "multi_part"
+    },
+    {
+      "id": "frontend-report",
+      "kind": "report",
+      "file": ".agent-evidence/frontend-report.json",
+      "producer": "frontend",
+      "producerScript": "frontend/scripts/check-frontend.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": ["product-acceptance"],
+      "requiredWhen": "frontend_present"
+    },
+    {
+      "id": "backend-report",
+      "kind": "report",
+      "file": ".agent-evidence/backend-report.json",
+      "producer": "backend-engineering",
+      "producerScript": "backend-engineering/scripts/check-backend.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": ["product-acceptance"],
+      "requiredWhen": "server_present"
+    },
+    {
+      "id": "acceptance-report",
+      "kind": "report",
+      "file": ".agent-evidence/acceptance-report.json",
+      "producer": "product-acceptance",
+      "producerScript": "product-acceptance/scripts/accept-check.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "requiredWhen": "always"
+    },
+    {
+      "id": "prose-report",
+      "kind": "report",
+      "file": ".agent-evidence/prose-report.json",
+      "producer": "anti-ai-slop",
+      "producerScript": "anti-ai-slop/scripts/check-prose.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "requiredWhen": "never"
+    }
+  ]
+}

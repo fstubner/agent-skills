@@ -1,0 +1,17 @@
+extends: existence
+message: "'%s' cites nobody in particular — name the source or drop the claim."
+link: ../../references/patterns.md
+level: warning
+ignorecase: true
+tokens:
+  - studies show
+  - research shows
+  - research suggests
+  - experts agree
+  - experts say
+  - many believe
+  - it is widely believed
+  - it is widely held
+  - critics argue
+  - some argue
+  - industry reports suggest

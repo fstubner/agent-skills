@@ -1,0 +1,36 @@
+# NOTE: active once v2/ is promoted to the repo root (paths below assume it).
+name: ci
+permissions:
+  contents: read
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install vale (anti-ai-slop's one external dependency)
+        shell: bash
+        run: |
+          VALE_VERSION=3.15.1
+          mkdir -p "$HOME/.local/bin"
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            curl -sL "https://github.com/errata-ai/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Windows_64-bit.zip" -o /tmp/vale.zip
+            unzip -o /tmp/vale.zip -d "$HOME/.local/bin" vale.exe
+          else
+            curl -sL "https://github.com/errata-ai/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Linux_64-bit.tar.gz" -o /tmp/vale.tar.gz
+            tar -xzf /tmp/vale.tar.gz -C "$HOME/.local/bin" vale
+          fi
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Suite tests (fixtures, registry cross-check, schema units, contract drift)
+        run: node scripts/run-tests.mjs

@@ -1,0 +1,131 @@
+#!/usr/bin/env node
+'use strict';
+// Shells out to a real `vale` binary — this checks real Vale output, not a
+// reimplementation of its rule engine. See ../SKILL.md rule 3.
+//
+// Deliberately self-contained (no core/lib dependency) so the skill and its
+// Vale style stay copy-anywhere, but it emits the suite's unified report
+// shape: { schemaVersion, skill, generatedAt, root, verdict, checks }.
+// Alert mapping: vale error => fail (BLOCK); warning/suggestion =>
+// not_evaluated (CONDITIONAL — advisory findings need a human judgment
+// pass, they are never auto-SHIP and never auto-BLOCK).
+//
+// Usage: node check-prose.js <file-or-dir...> [--strict] [--report <path>]
+// Exit codes: 0 clean (or advisory findings without --strict), 1 error-level
+// findings or --strict with findings or vale errored, 2 vale not installed.
+
+const { spawnSync } = require('child_process');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+
+const skillRoot = path.resolve(__dirname, '..');
+const stylesPath = path.join(skillRoot, 'rules');
+
+function parseArgs(argv) {
+  const out = { targets: [], strict: false, reportPath: null };
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--strict') out.strict = true;
+    else if (a === '--report') out.reportPath = argv[++i];
+    else out.targets.push(a);
+  }
+  if (out.targets.length === 0) out.targets.push('.');
+  return out;
+}
+
+function installHint() {
+  if (process.platform === 'win32') return 'winget install errata-ai.Vale  (or: scoop install vale)';
+  if (process.platform === 'darwin') return 'brew install vale';
+  return 'See https://vale.sh/docs/vale-cli/installation/ or download a release from https://github.com/errata-ai/vale/releases';
+}
+
+function isValeOnPath() {
+  const probe = spawnSync('vale', ['--version'], { encoding: 'utf8' });
+  if (probe.error && probe.error.code === 'ENOENT') return false;
+  return probe.status === 0;
+}
+
+function makeReport(checks) {
+  const verdict = checks.some((c) => c.status === 'fail') ? 'BLOCK'
+    : checks.some((c) => c.status === 'not_evaluated') ? 'CONDITIONAL'
+    : 'SHIP';
+  return {
+    schemaVersion: 1,
+    skill: 'anti-ai-slop',
+    generatedAt: new Date().toISOString(),
+    root: process.cwd(),
+    verdict,
+    checks,
+  };
+}
+
+function finish(checks, args, exitCode) {
+  const report = makeReport(checks);
+  const json = JSON.stringify(report, null, 2);
+  if (args.reportPath) fs.writeFileSync(args.reportPath, json + '\n');
+  console.log(json);
+  process.exit(exitCode);
+}
+
+const args = parseArgs(process.argv.slice(2));
+
+if (!isValeOnPath()) {
+  finish([{
+    id: 'vale-missing',
+    status: 'not_evaluated',
+    detail:
+      `vale is not on PATH — this skill checks real Vale output, not a reimplementation. ` +
+      `Offer to install it, then re-run. Install: ${installHint()}`,
+  }], args, 2);
+}
+
+const tmpConfig = path.join(os.tmpdir(), `anti-ai-slop-vale-${process.pid}.ini`);
+fs.writeFileSync(tmpConfig, [
+  `StylesPath = ${stylesPath.split(path.sep).join('/')}`,
+  'MinAlertLevel = suggestion',
+  '',
+  '[*.md]',
+  'BasedOnStyles = AntiAISlop',
+  '',
+].join('\n'));
+
+let result;
+try {
+  result = spawnSync('vale', ['--config', tmpConfig, '--output=JSON', ...args.targets], {
+    encoding: 'utf8',
+    maxBuffer: 20 * 1024 * 1024,
+  });
+} finally {
+  fs.unlinkSync(tmpConfig);
+}
+
+if (result.error) {
+  finish([{ id: 'vale-error', status: 'fail', detail: result.error.message }], args, 1);
+}
+
+let parsed;
+try {
+  parsed = JSON.parse(result.stdout || '{}');
+} catch (e) {
+  finish([{
+    id: 'vale-parse-error',
+    status: 'fail',
+    detail: `Could not parse vale output as JSON: ${e.message}; stderr: ${(result.stderr || '').slice(0, 400)}`,
+  }], args, 1);
+}
+
+const checks = [];
+for (const [file, alerts] of Object.entries(parsed)) {
+  for (const alert of alerts) {
+    checks.push({
+      id: alert.Check,
+      status: alert.Severity === 'error' ? 'fail' : 'not_evaluated',
+      detail: `${file}:${alert.Line} ${alert.Message} [${alert.Match}]`,
+    });
+  }
+}
+
+const hasError = checks.some((c) => c.status === 'fail');
+const exitCode = hasError ? 1 : args.strict && checks.length > 0 ? 1 : 0;
+finish(checks, args, exitCode);

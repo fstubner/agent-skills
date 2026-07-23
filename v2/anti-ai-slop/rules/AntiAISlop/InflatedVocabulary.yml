@@ -1,0 +1,49 @@
+extends: existence
+message: "'%s' is inflated vocabulary that reads as AI-prose slop — name the plain action or quality instead."
+link: ../../references/patterns.md
+level: suggestion
+ignorecase: true
+tokens:
+  - delve
+  - delves
+  - delving
+  - leverage
+  - leverages
+  - leveraging
+  - foster
+  - fosters
+  - fostering
+  - utilize
+  - utilizes
+  - utilizing
+  - streamline
+  - streamlines
+  - streamlining
+  - cutting-edge
+  - paradigm shift
+  - game-changer
+  - game-changing
+  - tapestry
+  - multifaceted
+  - meticulous
+  - meticulously
+  - paramount
+  - transformative
+  - elevate
+  - elevates
+  - elevating
+  - harnessing
+  - empower
+  - empowers
+  - empowering
+  - facilitate
+  - facilitates
+  - facilitating
+  - seamless
+  - seamlessly
+  - holistic
+  - holistically
+  - supercharge
+  - supercharges
+  - supercharging
+  - unlock the (?:power|potential) of
