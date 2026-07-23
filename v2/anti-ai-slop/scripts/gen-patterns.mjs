@@ -82,15 +82,53 @@ function phrasesFromRaw(rawPattern) {
   return altGroup[1].split('|').map((phrase) => phrase + suffix);
 }
 
-function loadRule(fileName) {
-  const text = fs.readFileSync(path.join(rulesDir, fileName), 'utf8');
-  return parseSimpleYaml(text);
+// Vale enforces a strict per-extension key schema and rejects the WHOLE
+// style — every rule, not just the offending file — on one unrecognized
+// top-level key. A documentation-only "example" field must never be a real
+// yml key; it's declared as a `# gen-patterns-example: <text>` comment
+// instead, which vale ignores as a comment and this function extracts
+// directly from the raw text (parseSimpleYaml skips comment lines).
+function exampleFromComment(text) {
+  const m = text.match(/^#\s*gen-patterns-example:\s*(.+)$/m);
+  return m ? m[1].trim() : null;
 }
 
-// Renders the word/phrase span for a `tokens:`-based rule (comma list) or a
-// `raw:`-based rule (quoted-phrase list) — the two existing shapes.
+// Known-good top-level keys across all six `extends: existence` rules in
+// this style. Guards against the exact failure mode that motivated this
+// check: an unrecognized key (e.g. a stray "example:") doesn't just break
+// generation, it breaks vale loading the ENTIRE style at runtime, which
+// check-prose.js's stdout-only error handling was separately found to
+// swallow as "zero findings" — fixed there too, but this check catches the
+// mistake before it ever reaches vale.
+const KNOWN_YAML_KEYS = new Set(['extends', 'message', 'link', 'level', 'ignorecase', 'scope', 'tokens', 'raw', 'max', 'token']);
+
+function loadRule(fileName) {
+  const text = fs.readFileSync(path.join(rulesDir, fileName), 'utf8');
+  const parsed = parseSimpleYaml(text);
+  for (const key of Object.keys(parsed)) {
+    if (!KNOWN_YAML_KEYS.has(key)) {
+      throw new Error(
+        `${fileName}: top-level key "${key}" is not a real vale key — vale will reject the ` +
+        `whole style at runtime with "has invalid keys". Documentation-only values go in a ` +
+        `"# gen-patterns-example: <text>" comment instead, not a real yml key.`
+      );
+    }
+  }
+  return { parsed, example: exampleFromComment(text) };
+}
+
+// Renders the word/phrase span for a `tokens:`-based rule (comma list), a
+// `raw:`-based rule with an enumerable (a|b|c) alternation (quoted-phrase
+// list), or a structural pattern with no enumerable list at all — those
+// declare a `# gen-patterns-example:` comment instead, rendered as-is.
+// `example` is checked first because a rule may carry both `raw` (for
+// vale) and an example comment (for documentation) when the raw pattern
+// has no alternation to enumerate.
 function renderTokensSpan(fileName) {
-  const rule = loadRule(fileName);
+  const { parsed: rule, example } = loadRule(fileName);
+  if (example) {
+    return `*e.g. "${example}"*`;
+  }
   if (rule.tokens) {
     return `*${rule.tokens.map(humanizeToken).join(', ')}.*`;
   }
@@ -99,11 +137,11 @@ function renderTokensSpan(fileName) {
     const phrases = raws.flatMap(phrasesFromRaw);
     return `*${phrases.map((p) => `"${p}"`).join(' ')}*`;
   }
-  throw new Error(`${fileName}: no "tokens" or "raw" field to render`);
+  throw new Error(`${fileName}: no "tokens", "raw", or example comment to render`);
 }
 
 function renderScalarSpan(fileName, field) {
-  const rule = loadRule(fileName);
+  const { parsed: rule } = loadRule(fileName);
   if (rule[field] === undefined) throw new Error(`${fileName}: no "${field}" field`);
   return String(rule[field]);
 }

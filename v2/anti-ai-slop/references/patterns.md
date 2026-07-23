@@ -98,7 +98,78 @@ otherwise sparse use elsewhere reads as normal rhythm and won't trip it.
 - **Fix:** vary punctuation — most em dashes can become a comma or a full stop
   without losing meaning.
 
+### Unsupported superlatives and certainty claims
+Claiming something is definitively the best, only, or most common option
+without being able to defend it if someone pushes back (generated from
+`rules/AntiAISlop/UnsupportedSuperlative.yml`):
+<!-- gen-patterns:tokens UnsupportedSuperlative.yml -->*the clearest, the only way, undeniably, guaranteed, proven, most common, the best way.*<!-- /gen-patterns -->
+
+- **Why it reads as slop:** these are the words a claim reaches for when it
+  hasn't actually been checked — "the clearest picture" instead of naming
+  what makes it clear, "guaranteed" instead of stating the mechanism that
+  guarantees it. Real-world origin: this exact pattern (and this exact word
+  list) came out of an actual editing pass, where "the clearest picture of
+  it" got challenged with "that isnt really true tbh" and had to be
+  rewritten to something defensible.
+- **Fix:** ask "is it true, can I defend it" before keeping the claim. If
+  not, name the specific fact instead of the superlative wrapped around it.
+- **Caveat:** narrower than it looks on purpose — bare "always"/"never"/
+  "everyone"/"most people" are NOT included here; they're common enough in
+  ordinary technical writing ("always validate at the boundary") that
+  Vale-checking them would be noise, not signal. See the judgment-only
+  "Unhedged universal claims" pattern below for those instead.
+
+### Parallel-construction flourish
+Symmetric "today's X becomes tomorrow's Y" framing used as manufactured
+drama rather than an earned observation (generated from
+`rules/AntiAISlop/ParallelFlourish.yml`):
+<!-- gen-patterns:tokens ParallelFlourish.yml -->*e.g. "today's quick support becomes tomorrow's disaster"*<!-- /gen-patterns -->
+
+- **Why it reads as slop:** the symmetry is doing the persuading instead of
+  the content — the sentence would make the same claim without the
+  "today's/tomorrow's" scaffolding, which is the tell that the scaffolding
+  wasn't necessary.
+- **Fix:** state the before/after plainly. "Today's quick support becomes
+  tomorrow's disaster" → "an unrecorded quick fix is hard to trace back to
+  later."
+
 ## Judgment-only (not reliably regex-detectable)
+
+### Unhedged universal claims
+*"We always...", "Users never...", "Everyone knows...", "Most people
+think...", "Most of us have experienced..."* Deliberately kept out of the
+Vale-checkable "Unsupported superlatives" rule above: "always"/"never"/
+"everyone"/"most people" are extremely common in ordinary technical writing
+("always validate at the boundary" is a perfectly fine sentence), so
+existence-checking them would flag nearly every paragraph and stop being
+useful signal. The real tell isn't the word, it's whether the claim is
+grounded — "most of the problems *I have dealt with*" is a hedge to a stated
+personal sample; "most problems are not that shape," stated two sentences
+earlier with nothing behind it, is not. Read the sentence right before and
+after: is this generalizing from something the writer actually knows, or
+just reaching for a word that sounds like evidence?
+
+### Fabricated or invented examples
+Inventing a plausible-sounding illustration — a made-up code comment, a
+hypothetical anecdote — instead of using a real one that's already
+available, or naming that none exists. The tell isn't that the example is
+wrong, it's that it wasn't checked: real-world instance, an editing pass
+caught "picks things for an example out of the air and isn't rooted in
+[fact]" on a fabricated software-dev vignette, when a true, already-approved
+example (a specific reinstall story) was sitting two sentences later in the
+same piece and should have been reused instead. Before writing an example,
+ask: is this something that actually happened, or something that sounds
+like it could have?
+
+### Stacked-appositive listiness
+Piling up two or three illustrative examples in a row as a single
+compound sentence — *"a code comment with no ticket behind it, or a
+suppressed error nobody filed"* — instead of picking the one that actually
+carries the point. Reads as performative: manufacturing the *appearance* of
+thoroughness by enumerating relatable scenarios, rather than making the
+argument with the strongest single case. Fix: cut to the one example that
+does the most work, or make each a full sentence if more than one genuinely
+earns its place.
 
 ### Figurative geography/ecology words
 *"Navigate the challenges of...", "the competitive landscape," "a thriving

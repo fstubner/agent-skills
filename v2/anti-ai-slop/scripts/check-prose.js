@@ -111,6 +111,24 @@ if (result.error) {
   finish([{ id: 'vale-error', status: 'fail', detail: result.error.message }], args, 1);
 }
 
+// With --output=JSON, vale exits 0 whether or not alerts were found —
+// verified empirically (a clean doc and a doc with dozens of alerts both
+// exit 0). A non-zero exit here means vale itself failed to run (bad
+// config, a style file with an invalid key, a crash), never "findings
+// present". This check is load-bearing: on that failure path vale prints
+// its error as JSON to STDERR and leaves stdout empty, and
+// `JSON.parse(stdout || '{}')` below would otherwise silently parse the
+// empty stdout as "{}" (zero alerts) and report a clean SHIP — a broken
+// style (e.g. a rule file that fails vale's own key-schema validation)
+// would pass every check instead of blocking.
+if (result.status !== 0) {
+  finish([{
+    id: 'vale-crashed',
+    status: 'fail',
+    detail: `vale exited ${result.status} instead of completing normally — this is a broken check, not a clean one; stderr: ${(result.stderr || '').slice(0, 500)}`,
+  }], args, 1);
+}
+
 let parsed;
 try {
   parsed = JSON.parse(result.stdout || '{}');

@@ -190,6 +190,10 @@ assertFixture('arch-block-nodoc', 'arch-block-nodoc', ARCH, [], 'BLOCK',
 // cannot be satisfied by a vacuous "heading always found" implementation.
 assertFixture('arch-block-missing-heading (doc present, one heading missing)', 'arch-block-missing-heading', ARCH, [], 'BLOCK',
   [['P-arch-doc', 'pass'], ['P-section-parts', 'pass'], ['P-section-boundaries', 'pass'], ['P-section-trust', 'fail']]);
+// The "not applicable" skip path had never been exercised by any fixture —
+// every prior arch fixture was multi-part by construction.
+assertFixture('arch-ship-single-part (P-scope skip path)', 'arch-ship-single-part', ARCH, [], 'SHIP',
+  [['P-scope', 'pass']]);
 // Proves CRLF target-project files (e.g. an ARCHITECTURE.md edited on
 // Windows — the suite's own .gitattributes has no power over a target
 // project's line endings) parse correctly end to end. Committed as literal
@@ -216,6 +220,13 @@ if (secretReport) {
   expect('backend-block-secret: reports path, never the value',
     detail.includes('public/app.js') && !detail.includes('sk_live_'), detail);
 }
+// The "no server" skip path had never been exercised by any fixture.
+assertFixture('backend-no-server (B-scope skip path)', 'backend-no-server', BACKEND, [], 'SHIP',
+  [['B-scope', 'pass']]);
+// v0.4 had this fixture (backend-block-noarch); it was dropped in the v2
+// rebuild, leaving B-arch-doc's fail branch with zero coverage.
+assertFixture('backend-block-noarch (multi-part backend, no ARCHITECTURE.md)', 'backend-block-noarch', BACKEND, [], 'BLOCK',
+  [['B-arch-doc', 'fail']]);
 
 assertFixture('frontend-ship', 'frontend-ship', FRONTEND, [], 'SHIP',
   [['F-dual-framework', 'pass'], ['F-tokens-contrast', 'pass']]);
@@ -227,6 +238,13 @@ assertFixture('frontend-block-dual-icons', 'frontend-block-dual-icons', FRONTEND
 // tests still green): tokens present, genuinely below 4.5:1, must BLOCK.
 assertFixture('frontend-block-low-contrast (tokens present, ratio 1.61)', 'frontend-block-low-contrast', FRONTEND, [], 'BLOCK',
   [['F-tokens-contrast', 'fail']]);
+// The "no frontend detected" skip path had never been exercised.
+assertFixture('frontend-no-ui (F-scope skip path)', 'frontend-no-ui', FRONTEND, [], 'SHIP',
+  [['F-scope', 'pass']]);
+// The "no package.json readable" not_evaluated branch had never been
+// exercised — every prior frontend fixture had one.
+assertFixture('frontend-no-package-json (F-dual-framework not_evaluated)', 'frontend-no-package-json', FRONTEND,
+  [], 'CONDITIONAL', [['F-dual-framework', 'not_evaluated'], ['F-tokens-contrast', 'not_evaluated']]);
 
 // Acceptance: re-runs producers fresh. The backend-block case is THE
 // regression test for v0.4's open backend loop — a backend BLOCK must
@@ -255,6 +273,26 @@ assertFixture('accept-block-thin-product (PRODUCT.md present, Constraints headin
 // assertion is the one that catches it.
 assertFixture('accept-poisoned-report (planted SHIP report must be ignored; real state BLOCKs)', 'accept-poisoned-report', ACCEPT,
   ['--acceptor-context', 'separate'], 'BLOCK', [['D-backend-engineering', 'fail']]);
+// A-design-direction/A-ux-walkthrough had never been asserted failing —
+// genuinely non-redundant, since check-frontend.js never looks at either
+// document (it only checks design-tokens.json), so nothing else in the
+// gate would have caught their absence.
+assertFixture('accept-block-missing-design-docs (design-direction.md + ux-walkthrough.md both absent)', 'accept-block-missing-design-docs', ACCEPT,
+  ['--acceptor-context', 'separate'], 'BLOCK',
+  [['A-design-direction', 'fail'], ['A-ux-walkthrough', 'fail'], ['D-frontend', 'pass']]);
+// D-frontend's own fail branch had never been proven to propagate through
+// acceptance — only D-backend-engineering had a dedicated fixture for
+// this. Docs are all fine here; only the re-run of check-frontend.js BLOCKs.
+assertFixture('accept-block-frontend-dual (dual framework caught only by re-running check-frontend)', 'accept-block-frontend-dual', ACCEPT,
+  ['--acceptor-context', 'separate'], 'BLOCK',
+  [['D-frontend', 'fail'], ['A-design-direction', 'pass'], ['A-ux-walkthrough', 'pass']]);
+// Proves accept-check's own direct document/heading check (A-architecture-doc)
+// and systems-architecture's independent re-run (D-systems-architecture) agree
+// when a required heading is missing — two separate code paths checking the
+// same fact, verified not to have silently diverged.
+assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading missing)', 'accept-block-arch-heading', ACCEPT,
+  ['--acceptor-context', 'separate'], 'BLOCK',
+  [['A-architecture-doc', 'fail'], ['D-systems-architecture', 'fail']]);
 
 // Every emitted report must validate against the unified schema.
 {
@@ -280,7 +318,8 @@ assertFixture('accept-poisoned-report (planted SHIP report must be ignored; real
     expect('anti-ai-slop: slop doc verdict CONDITIONAL', slopReport.verdict === 'CONDITIONAL', slopReport.verdict);
     const ids = new Set(slopReport.checks.map((c) => c.id));
     for (const rule of ['AntiAISlop.InflatedVocabulary', 'AntiAISlop.ThroatClearing', 'AntiAISlop.WeaselAttribution',
-      'AntiAISlop.ImportanceInflation', 'AntiAISlop.SummaryRecap', 'AntiAISlop.EmDashOveruse']) {
+      'AntiAISlop.ImportanceInflation', 'AntiAISlop.SummaryRecap', 'AntiAISlop.EmDashOveruse',
+      'AntiAISlop.UnsupportedSuperlative', 'AntiAISlop.ParallelFlourish']) {
       expect(`anti-ai-slop: rule fires ${rule}`, ids.has(rule), [...ids].join(', '));
     }
     // Regression: patterns.md claimed "robust" was Vale-checkable while the
@@ -290,6 +329,67 @@ assertFixture('accept-poisoned-report (planted SHIP report must be ignored; real
       .map((c) => (c.detail.match(/'([^']+)'/) || [])[1]);
     expect('anti-ai-slop: "robust" is caught by InflatedVocabulary (doc/rule drift regression)',
       flaggedTokens.includes('robust'), flaggedTokens.join(', '));
+
+    // The following were verified by hand once and never captured as a
+    // regression test — automating exactly what was manually exercised.
+    const strictClean = runNode(script, [path.join(root, 'fixtures', 'anti-ai-slop-clean', 'doc.md'), '--strict']);
+    expect('anti-ai-slop: --strict on clean doc exits 0', strictClean.status === 0, `exit ${strictClean.status}`);
+    const strictSlop = runNode(script, [path.join(root, 'fixtures', 'anti-ai-slop-slop', 'doc.md'), '--strict']);
+    expect('anti-ai-slop: --strict on slop doc exits 1', strictSlop.status === 1, `exit ${strictSlop.status}`);
+
+    const dirTarget = runNode(script, [path.join(root, 'fixtures', 'anti-ai-slop-slop')]);
+    let dirReport = null;
+    try { dirReport = JSON.parse(dirTarget.stdout); } catch { /* asserted below */ }
+    expect('anti-ai-slop: directory target works', dirReport?.verdict === 'CONDITIONAL', dirTarget.stderr || dirTarget.stdout);
+
+    const reportPath = path.join(tmpBase, 'anti-ai-slop-report-test.json');
+    runNode(script, [path.join(root, 'fixtures', 'anti-ai-slop-clean', 'doc.md'), '--report', reportPath]);
+    expect('anti-ai-slop: --report writes a readable report file',
+      fs.existsSync(reportPath) && JSON.parse(read(reportPath)).verdict === 'SHIP', 'report file missing or malformed');
+
+    const multiTarget = runNode(script, [
+      path.join(root, 'fixtures', 'anti-ai-slop-clean', 'doc.md'),
+      path.join(root, 'fixtures', 'anti-ai-slop-slop', 'doc.md'),
+    ]);
+    let multiReport = null;
+    try { multiReport = JSON.parse(multiTarget.stdout); } catch { /* asserted below */ }
+    expect('anti-ai-slop: multiple targets in one invocation', multiReport?.verdict === 'CONDITIONAL', multiTarget.stderr || multiTarget.stdout);
+
+    // The `--` separator (added as hardening) must actually stop a target
+    // whose name starts with "-" from being parsed as a vale flag.
+    const dashPath = path.join(tmpBase, '--strict');
+    fs.copyFileSync(path.join(root, 'fixtures', 'anti-ai-slop-clean', 'doc.md'), dashPath);
+    const dashTarget = runNode(script, [dashPath]);
+    let dashReport = null;
+    try { dashReport = JSON.parse(dashTarget.stdout); } catch { /* asserted below */ }
+    expect('anti-ai-slop: a target literally named "--strict" is treated as a path, not a flag',
+      dashReport?.verdict === 'SHIP', dashTarget.stderr || dashTarget.stdout);
+
+    // Regression: a vale execution error (bad config, an invalid yml key —
+    // this exact scenario broke the whole style while adding
+    // UnsupportedSuperlative/ParallelFlourish) must BLOCK loudly, never be
+    // swallowed as "vale ran clean with zero findings" via
+    // `JSON.parse(emptyStdout || '{}')`.
+    const brokenRulePath = path.join(root, 'anti-ai-slop', 'rules', 'AntiAISlop', 'ParallelFlourish.yml');
+    const goodRule = read(brokenRulePath);
+    try {
+      fs.writeFileSync(brokenRulePath, 'extends: existence\nmessage: "test"\nexample: "an invalid top-level key"\ntokens:\n  - test\n');
+      const crashed = runNode(script, [path.join(root, 'fixtures', 'anti-ai-slop-clean', 'doc.md')]);
+      let crashedReport = null;
+      try { crashedReport = JSON.parse(crashed.stdout); } catch { /* asserted below */ }
+      expect('anti-ai-slop: a vale config error BLOCKs instead of silently reporting SHIP',
+        crashedReport?.verdict === 'BLOCK' && crashedReport.checks[0]?.id === 'vale-crashed',
+        JSON.stringify(crashedReport));
+
+      // The same invalid key should also be caught statically at generation
+      // time, before it ever reaches vale.
+      const genResult = runNode(path.join(root, 'anti-ai-slop', 'scripts', 'gen-patterns.mjs'), []);
+      expect('gen-patterns.mjs: rejects a real (non-example-comment) invalid yml key at generation time',
+        genResult.status !== 0 && (genResult.stderr || '').includes('not a real vale key'),
+        (genResult.stderr || '').slice(0, 200));
+    } finally {
+      fs.writeFileSync(brokenRulePath, goodRule);
+    }
   }
 }
 

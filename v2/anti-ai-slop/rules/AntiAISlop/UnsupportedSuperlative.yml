@@ -1,0 +1,13 @@
+extends: existence
+message: "'%s' is an unhedged superlative or certainty claim — can you actually defend it if someone pushes back?"
+link: ../../references/patterns.md
+level: suggestion
+ignorecase: true
+tokens:
+  - the clearest
+  - the only way
+  - undeniably
+  - guaranteed
+  - proven
+  - most common
+  - the best way
