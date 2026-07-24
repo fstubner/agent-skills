@@ -9,10 +9,16 @@
 // - No network access, ever.
 //
 // Usage:
-//   node scripts/install.mjs --harness cursor|claude|codex|all
+//   node scripts/install.mjs --harness cursor|claude|codex|antigravity|all
 //   node scripts/install.mjs --dest <dir>
 //   Options: --force, --help, --skill <id>[,<id>...] (default: all skills —
 //     this is a composable set, not a suite, so any subset is a valid install)
+//
+// A registry.harnessPaths entry may be a single path or an array of paths —
+// codex is an array (see registry.json's _harnessPathsNote): its own skill
+// directory convention is genuinely unsettled upstream right now, so this
+// installer hedges by writing to every documented candidate rather than
+// guessing which one the user's actual Codex surface reads from.
 
 import fs from 'fs';
 import os from 'os';
@@ -97,7 +103,10 @@ if (args.dest) {
       console.error(`Unknown harness "${h}". Known: ${known.join(', ')}, all\n\n${USAGE}`);
       process.exit(1);
     }
-    targets.push(expandHome(registry.harnessPaths[h]));
+    const hPaths = registry.harnessPaths[h];
+    for (const p of Array.isArray(hPaths) ? hPaths : [hPaths]) {
+      targets.push(expandHome(p));
+    }
   }
 } else {
   console.error(USAGE);

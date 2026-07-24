@@ -56,6 +56,11 @@ function walk(dir, out = []) {
 {
   const ids = registry.skills.map((s) => s.id);
   expect('registry: defaultSkill is a registered skill', ids.includes(registry.defaultSkill));
+  for (const [harness, hPaths] of Object.entries(registry.harnessPaths)) {
+    const list = Array.isArray(hPaths) ? hPaths : [hPaths];
+    expect(`registry: harnessPaths.${harness} is a non-empty string or array of strings`,
+      list.length > 0 && list.every((p) => typeof p === 'string' && p.startsWith('~')));
+  }
   for (const skill of registry.skills) {
     const skillMd = path.join(root, skill.id, 'SKILL.md');
     expect(`registry: skill dir + SKILL.md exists (${skill.id})`, fs.existsSync(skillMd));
@@ -531,6 +536,24 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
     expect('pre-commit hook: judges the staged blob, not unstaged working-tree edits',
       stagedVsWorktree.status === 0, `exit ${stagedVsWorktree.status}: ${stagedVsWorktree.stderr}`);
   }
+}
+
+// ---------- 9. Installer: array-valued harnessPaths (codex installs to two dirs) ----------
+// codex is the one harness with a multi-path entry (registry.json's
+// _harnessPathsNote explains why) — this proves install.mjs actually
+// expands it to multiple targets rather than silently installing to only
+// the first, which no other test here would catch (every other harness is
+// a single string and wouldn't exercise the Array.isArray branch at all).
+{
+  const fakeHome = fs.mkdtempSync(path.join(tmpBase, 'installer-fakehome-'));
+  const r = spawnSync(process.execPath, [path.join(root, 'scripts', 'install.mjs'), '--harness', 'codex', '--skill', 'mental-models'],
+    { cwd: root, encoding: 'utf8', env: { ...process.env, HOME: fakeHome, USERPROFILE: fakeHome } });
+  expect('install.mjs --harness codex: exits 0', r.status === 0, r.stderr || r.stdout);
+  expect('install.mjs --harness codex: installs to ~/.codex/skills',
+    fs.existsSync(path.join(fakeHome, '.codex', 'skills', 'mental-models', 'SKILL.md')));
+  expect('install.mjs --harness codex: installs to ~/.agents/skills',
+    fs.existsSync(path.join(fakeHome, '.agents', 'skills', 'mental-models', 'SKILL.md')));
+  expect('install.mjs --harness codex: reports 2 target(s)', /2 target\(s\)/.test(r.stdout), r.stdout);
 }
 
 fs.rmSync(tmpBase, { recursive: true, force: true });

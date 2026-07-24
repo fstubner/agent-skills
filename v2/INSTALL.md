@@ -3,18 +3,30 @@
 ## Requirements
 
 Node 18+. No npm install, no network — the installer only copies files.
-The `ai-prose-slop` skill additionally wants the [Vale](https://vale.sh) CLI
-on PATH for its deterministic layer (it degrades honestly when absent).
+Two skills want an external CLI on PATH for their deterministic layer, and
+both degrade honestly (report `not_evaluated`, never a silent pass) when
+it's absent: `ai-prose-slop` wants [Vale](https://vale.sh);
+`backend-engineering` and the opt-in pre-commit hook want
+[gitleaks](https://github.com/gitleaks/gitleaks).
 
 ## Per-harness
 
 ```bash
-node scripts/install.mjs --harness claude    # ~/.claude/skills
-node scripts/install.mjs --harness cursor    # ~/.cursor/skills
-node scripts/install.mjs --harness codex     # ~/.agents/skills
+node scripts/install.mjs --harness claude       # ~/.claude/skills (Claude Code + Claude Desktop, same path)
+node scripts/install.mjs --harness cursor       # ~/.cursor/skills
+node scripts/install.mjs --harness codex        # ~/.codex/skills AND ~/.agents/skills (see note below)
+node scripts/install.mjs --harness antigravity  # ~/.gemini/antigravity-cli/skills
 node scripts/install.mjs --harness all
 node scripts/install.mjs --dest /path/to/skills   # anywhere else
 ```
+
+Codex installs to **two** paths deliberately: its own skill directory
+convention is unsettled upstream as of mid-2026 (OpenAI's skill-installer
+tooling still defaults to `~/.codex/skills`; current docs point to
+`~/.agents/skills`; the Codex Desktop app has open bugs failing to discover
+skills in the latter). Installing to both is a hedge against that
+instability, not a claim that either one is settled — see
+`registry.json`'s `_harnessPathsNote`.
 
 Windows, macOS, and Linux: identical commands (`~` is expanded by the
 installer, not the shell). Run them from the suite checkout root.

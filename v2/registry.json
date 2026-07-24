@@ -7,8 +7,10 @@
   "harnessPaths": {
     "cursor": "~/.cursor/skills",
     "claude": "~/.claude/skills",
-    "codex": "~/.agents/skills"
+    "codex": ["~/.codex/skills", "~/.agents/skills"],
+    "antigravity": "~/.gemini/antigravity-cli/skills"
   },
+  "_harnessPathsNote": "Claude Desktop reads the same ~/.claude/skills as Claude Code (confirmed, no separate entry needed) and has no filesystem target for cloud use — see INSTALL.md. Codex's skill directory is genuinely unsettled upstream as of mid-2026: OpenAI's own skill-installer/skill-creator tools still default to ~/.codex/skills, current public docs point to ~/.agents/skills instead, and there are open OpenAI GitHub issues (openai/codex#28505, openai/skills#420) showing the Codex Desktop app failing to discover skills placed in ~/.agents/skills. Installing to BOTH paths (a value can be an array) is a deliberate hedge against that instability, not an assumption either one is settled — revisit once upstream converges. Antigravity CLI specifically reads ~/.gemini/antigravity-cli/skills; a broader Antigravity-product-wide path (~/.gemini/config/skills) was also reported but is not what the CLI itself was confirmed to read.",
   "skills": [
     { "id": "product-build", "role": "Dispatcher — routes a greenfield/ambiguous request to whichever skills apply" },
     { "id": "product-management", "role": "PRODUCT.md contract interview" },
