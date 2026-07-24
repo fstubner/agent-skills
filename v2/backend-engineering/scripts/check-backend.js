@@ -7,6 +7,9 @@
 // Usage: node check-backend.js --root <dir> [--strict] [--out <file>] [--no-write]
 
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
+const { spawnSync } = require('child_process');
 const { corePaths } = require('./resolve-core.cjs');
 const core = corePaths();
 const { parseArgs } = require(path.join(core.lib, 'args.cjs'));
@@ -14,11 +17,7 @@ const { classify, ARCH_DOC_CANDIDATES } = require(path.join(core.lib, 'classify.
 const { check, runCli } = require(path.join(core.lib, 'report.cjs'));
 const registry = require(core.registry);
 
-const { SECRET_PATTERNS } = require(path.join(core.lib, 'secret-patterns.cjs'));
-
 const ORM_DEPS = ['prisma', '@prisma/client', 'typeorm', 'sequelize', 'mongoose', 'knex', 'drizzle-orm'];
-
-const SCANNED_EXTENSIONS = new Set(['.html', '.js', '.mjs', '.jsx', '.ts', '.tsx', '.css', '.vue', '.svelte']);
 
 // DENY-list of server-only paths, not an allow-list of client paths. A
 // framework like Next.js/Remix mixes client and server code across
@@ -36,6 +35,78 @@ const SERVER_ONLY_PATTERNS = [
 
 function isServerOnlyPath(relPath) {
   return SERVER_ONLY_PATTERNS.some((p) => p.test(relPath));
+}
+
+// Client-secret scanning shells out to `gitleaks` — a real, maintained
+// secret-detection tool — rather than hand-rolled regex, the same "use the
+// real tool" choice this suite already made for ai-prose-slop and vale.
+// Run TWICE (default ruleset + core/gitleaks-extra.toml, a couple of
+// provider prefixes the default doesn't cover) and merged — see that
+// file's header for why two passes instead of one combined config.
+const EXTRA_GITLEAKS_CONFIG = path.join(core.lib, '..', 'gitleaks-extra.toml');
+const LEAKS_FOUND_CODE = 2; // distinct from gitleaks' own fixed exit 1 for an internal error
+
+function gitleaksInstallHint() {
+  if (process.platform === 'win32') return 'winget install Gitleaks.Gitleaks';
+  if (process.platform === 'darwin') return 'brew install gitleaks';
+  return 'See https://github.com/gitleaks/gitleaks#installing';
+}
+
+function isGitleaksOnPath() {
+  const probe = spawnSync('gitleaks', ['version'], { encoding: 'utf8' });
+  return !probe.error && probe.status === 0;
+}
+
+function runGitleaksPass(root, configArgs, tmpDir, label) {
+  const reportPath = path.join(tmpDir, `report-${label}.json`);
+  const result = spawnSync('gitleaks', [
+    'detect', '--no-git', '--source', root, '--no-banner', '--redact',
+    '--report-format', 'json', '--report-path', reportPath,
+    '--exit-code', String(LEAKS_FOUND_CODE),
+    ...configArgs,
+  ], { encoding: 'utf8' });
+
+  if (result.error) return { leaks: [], crashed: true, detail: result.error.message };
+  if (result.status !== 0 && result.status !== LEAKS_FOUND_CODE) {
+    return { leaks: [], crashed: true, detail: result.stderr || '(no stderr)' };
+  }
+  try {
+    return { leaks: JSON.parse(fs.readFileSync(reportPath, 'utf8')), crashed: false };
+  } catch {
+    if (result.status === LEAKS_FOUND_CODE) {
+      return { leaks: [], crashed: true, detail: 'gitleaks reported leaks but its report file was unreadable' };
+    }
+    return { leaks: [], crashed: false }; // no report file on a clean run is gitleaks' normal behavior
+  }
+}
+
+// Reports FILE PATHS ONLY, never the matched value (gitleaks --redact
+// already withholds the secret itself; we only ever read RuleID/File/Line).
+function scanForClientSecrets(root) {
+  if (!isGitleaksOnPath()) {
+    return check('B-client-secrets', 'not_evaluated',
+      `gitleaks is not on PATH — client-secret scan not evaluated, not assumed clean. Install: ${gitleaksInstallHint()}`);
+  }
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'check-backend-gitleaks-'));
+  let passes;
+  try {
+    passes = [
+      runGitleaksPass(root, [], tmpDir, 'default'),
+      runGitleaksPass(root, ['--config', EXTRA_GITLEAKS_CONFIG], tmpDir, 'extra'),
+    ];
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+  const crashedPass = passes.find((p) => p.crashed);
+  if (crashedPass) {
+    return check('B-client-secrets', 'fail', `gitleaks did not complete normally: ${crashedPass.detail}`);
+  }
+  const relOf = (absFile) => path.relative(root, absFile).split(path.sep).join('/');
+  const clientLeaks = passes.flatMap((p) => p.leaks).filter((leak) => !isServerOnlyPath(relOf(leak.File)));
+  return clientLeaks.length > 0
+    ? check('B-client-secrets', 'fail',
+        `secret(s) in client-reachable paths: ${clientLeaks.map((l) => `${relOf(l.File)} [${l.RuleID}]`).join(', ')}`)
+    : check('B-client-secrets', 'pass', 'no secrets in client-reachable paths (gitleaks)');
 }
 
 function run(root) {
@@ -69,30 +140,14 @@ function run(root) {
       : check('B-dual-orm', 'pass', unique[0] ? `orm: ${unique[0]}` : 'no orm'));
   }
 
-  // No secret material in client-reachable paths. Reports FILE PATHS ONLY,
-  // never the matched value. Files above the safe-read size cap are skipped
-  // and counted, not silently treated as clean.
-  const hits = [];
-  let skippedForSize = 0;
-  for (let i = 0; i < cls.files.length; i++) {
-    const rel = cls.rel[i];
-    if (isServerOnlyPath(rel)) continue;
-    if (!SCANNED_EXTENSIONS.has(path.extname(rel))) continue;
-    const text = cls.readFileSafe(i);
-    if (text === null) {
-      skippedForSize++;
-      continue;
-    }
-    if (SECRET_PATTERNS.some((p) => p.test(text))) hits.push(rel);
-  }
-  checks.push(hits.length > 0
-    ? check('B-client-secrets', 'fail', `secret-shaped values in client-reachable paths: ${hits.join(', ')}`)
-    : check('B-client-secrets', 'pass', 'no secret-prefixed values in client-reachable paths'));
-  const completenessNotes = [];
-  if (skippedForSize > 0) completenessNotes.push(`${skippedForSize} file(s) skipped (over size cap)`);
-  if (cls.truncated) completenessNotes.push('file walk hit the safety cap; scan may not cover the whole tree');
-  if (completenessNotes.length > 0) {
-    checks.push(check('B-scan-completeness', 'not_evaluated', completenessNotes.join('; ')));
+  // No secret material in client-reachable paths — gitleaks does its own
+  // file walk here (not classify()'s), so classify's own truncation is a
+  // separate, narrower concern: it can only affect server/frontend/
+  // multiPart detection (and so B-arch-doc indirectly), not this check.
+  checks.push(scanForClientSecrets(root));
+  if (cls.truncated) {
+    checks.push(check('B-scan-completeness', 'not_evaluated',
+      'project-type file walk hit the safety cap; server/frontend/multi-part detection may be incomplete'));
   }
 
   return checks;

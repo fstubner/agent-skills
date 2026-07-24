@@ -466,98 +466,71 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
   }
 }
 
-// ---------- 8. Pre-commit secret-scanning hook (sh + PowerShell) ----------
-// Native scripts, not Node — a skill consumer's environment may have
-// neither Node nor Python, and this hook's own logic (staged-file list,
-// regex match) doesn't need either. Both implementations read the same
-// canonical core/lib/secret-patterns.txt (see that file's header), so a new
-// prefix added there reaches both without hand-syncing. Functional tests
-// actually init a git repo, stage real content, and run each hook against
-// it — proving the hook's OWN plumbing (git diff --cached, git show :path,
-// exit code), not just that the shared pattern list matches in isolation.
+// ---------- 8. Pre-commit secret-scanning hook (skips only when gitleaks is absent) ----------
+// Node, shelling out to `gitleaks` — Node is already a de facto
+// prerequisite for the coding-agent harnesses this suite targets, and
+// gitleaks is a real, maintained secret-detection tool this suite doesn't
+// try to reimplement (same "use the real tool" choice as vale for
+// ai-prose-slop). Functional tests actually init a git repo, stage real
+// content, and run the hook against it — proving the hook's OWN plumbing
+// (gitleaks invocation, report parsing, exit code), not just that gitleaks
+// itself works in isolation.
 {
-  const shHook = path.join(root, 'scripts', 'git-hooks', 'pre-commit');
-  const ps1Hook = path.join(root, 'scripts', 'git-hooks', 'pre-commit.ps1');
+  const hookPath = path.join(root, 'scripts', 'git-hooks', 'pre-commit');
+  const syntaxCheck = spawnSync(process.execPath, ['--check', hookPath], { encoding: 'utf8' });
+  expect('syntax scripts/git-hooks/pre-commit', syntaxCheck.status === 0, (syntaxCheck.stderr || '').split('\n')[0]);
 
-  const shSyntax = spawnSync('sh', ['-n', shHook], { encoding: 'utf8' });
-  expect('syntax scripts/git-hooks/pre-commit (sh -n)', shSyntax.status === 0, (shSyntax.stderr || '').split('\n')[0]);
-
-  const pwshProbe = spawnSync('pwsh', ['-Version'], { encoding: 'utf8' });
-  const havePwsh = !pwshProbe.error && pwshProbe.status === 0;
-  if (!havePwsh) {
-    console.log('skip  pre-commit.ps1 tests: pwsh not installed (CI installs it on both OSes; install locally to run these)');
+  const gitleaksProbe = spawnSync('gitleaks', ['version'], { encoding: 'utf8' });
+  if (gitleaksProbe.error || gitleaksProbe.status !== 0) {
+    console.log('skip  pre-commit hook fixtures: gitleaks not installed (CI installs it; install locally to run these)');
   } else {
-    const ps1Syntax = spawnSync('pwsh', ['-NoProfile', '-Command',
-      `$e=$null; [System.Management.Automation.Language.Parser]::ParseFile('${ps1Hook.replace(/'/g, "''")}', [ref]$null, [ref]$e) | Out-Null; exit ([int]($e.Count -gt 0))`],
-      { encoding: 'utf8' });
-    expect('syntax scripts/git-hooks/pre-commit.ps1 (parse, no execute)', ps1Syntax.status === 0, ps1Syntax.stderr);
-  }
-
-  // Runs BOTH implementations through the identical scenario set, asserting
-  // the same outcome from each — the point of having two native scripts is
-  // that they behave identically, and that's exactly what could drift.
-  const implementations = [{ name: 'sh', run: (cwd) => spawnSync('sh', [shHook], { cwd, encoding: 'utf8' }) }];
-  if (havePwsh) {
-    implementations.push({ name: 'pwsh', run: (cwd) => spawnSync('pwsh', ['-File', ps1Hook], { cwd, encoding: 'utf8' }) });
-  }
-
-  for (const impl of implementations) {
-    const hookRepo = fs.mkdtempSync(path.join(tmpBase, `hook-repo-${impl.name}-`));
+    const hookRepo = fs.mkdtempSync(path.join(tmpBase, 'hook-repo-'));
     const git = (args) => spawnSync('git', args, { cwd: hookRepo, encoding: 'utf8' });
     git(['init', '-q']);
     git(['config', 'user.email', 'test@example.com']);
     git(['config', 'user.name', 'Test']);
+    const run = () => spawnSync(process.execPath, [hookPath], { cwd: hookRepo, encoding: 'utf8' });
 
-    fs.writeFileSync(path.join(hookRepo, 'app.js'), 'const key = "sk_live_abcdefghijklmnop1234";\n');
+    fs.writeFileSync(path.join(hookRepo, 'app.js'), 'const key = "sk_live_REDACTED_TEST_PLACEHOLDER";\n');
     git(['add', 'app.js']);
-    const blocked = impl.run(hookRepo);
-    expect(`pre-commit (${impl.name}): blocks a staged Stripe-shaped key`, blocked.status === 1, `exit ${blocked.status}: ${blocked.stderr}`);
-    expect(`pre-commit (${impl.name}): reports the path, never the value`,
-      blocked.stderr.includes('app.js') && !blocked.stderr.includes('sk_live_'), blocked.stderr);
+    const blocked = run();
+    expect('pre-commit hook: blocks a staged Stripe-shaped key', blocked.status === 1, `exit ${blocked.status}: ${blocked.stderr}`);
+    expect('pre-commit hook: reports the path and rule, never the value',
+      blocked.stderr.includes('app.js') && blocked.stderr.includes('stripe') && !blocked.stderr.includes('sk_live_REDACTED_TEST_PLACEHOLDER'),
+      blocked.stderr);
+
+    git(['reset']);
+    fs.writeFileSync(path.join(hookRepo, 'app.js'), 'const key = "sk-ant-api03-abcdefghijklmnopqrstuvwxyz1234567890";\n');
+    git(['add', 'app.js']);
+    const blockedExtra = run();
+    expect('pre-commit hook: blocks an Anthropic-shaped key (core/gitleaks-extra.toml pass)',
+      blockedExtra.status === 1 && blockedExtra.stderr.includes('anthropic'), `exit ${blockedExtra.status}: ${blockedExtra.stderr}`);
 
     git(['reset']);
     fs.writeFileSync(path.join(hookRepo, 'app.js'), 'const greeting = "hello";\n');
     git(['add', 'app.js']);
-    const clean = impl.run(hookRepo);
-    expect(`pre-commit (${impl.name}): allows a clean staged file`, clean.status === 0, `exit ${clean.status}: ${clean.stderr}`);
+    const clean = run();
+    expect('pre-commit hook: allows a clean staged file', clean.status === 0, `exit ${clean.status}: ${clean.stderr}`);
 
-    // Regression: v0.4's scanner BLOCKed on the bare phrase "task-management"
-    // with no real key prefix — same anchored-pattern regression as
-    // backend-ship, exercised here against each hook implementation too.
+    // Regression: v0.4's hand-rolled scanner BLOCKed on the bare phrase
+    // "task-management" with no real key prefix — gitleaks' own anchored
+    // rules shouldn't reproduce that false positive.
     fs.writeFileSync(path.join(hookRepo, 'app2.js'), 'const feature = "task-management-app";\n');
     git(['add', 'app2.js']);
-    const notASecret = impl.run(hookRepo);
-    expect(`pre-commit (${impl.name}): "task-management" is not a secret`, notASecret.status === 0, `exit ${notASecret.status}: ${notASecret.stderr}`);
+    const notASecret = run();
+    expect('pre-commit hook: "task-management" is not a secret', notASecret.status === 0, `exit ${notASecret.status}: ${notASecret.stderr}`);
 
-    // Regression: must check the STAGED blob, not the working-tree file — a
-    // partially-staged edit (git add -p leaving unstaged changes on disk)
-    // must be judged on what's actually about to be committed.
+    // Regression: must check the STAGED blob, not the working-tree file —
+    // `gitleaks protect --staged` is documented to do this; asserted here
+    // so a future flag change can't silently regress it unnoticed.
     git(['reset']);
     fs.writeFileSync(path.join(hookRepo, 'app.js'), 'const greeting = "hello";\n');
     git(['add', 'app.js']);
-    fs.writeFileSync(path.join(hookRepo, 'app.js'), 'const key = "sk_live_abcdefghijklmnop1234";\n');
-    const stagedVsWorktree = impl.run(hookRepo);
-    expect(`pre-commit (${impl.name}): judges the staged blob, not unstaged working-tree edits`,
+    fs.writeFileSync(path.join(hookRepo, 'app.js'), 'const key = "sk_live_REDACTED_TEST_PLACEHOLDER";\n');
+    const stagedVsWorktree = run();
+    expect('pre-commit hook: judges the staged blob, not unstaged working-tree edits',
       stagedVsWorktree.status === 0, `exit ${stagedVsWorktree.status}: ${stagedVsWorktree.stderr}`);
   }
-}
-
-// ---------- 8b. secret-patterns.txt <-> secret-patterns.cjs drift ----------
-// The .cjs loader reads the .txt file directly rather than hardcoding a
-// duplicate list, so this mostly proves the loader parses correctly —
-// still worth asserting explicitly, since a parse-time regression here
-// would silently produce zero patterns (an empty array matches nothing,
-// which looks identical to "no secrets found" instead of "the scanner
-// is broken").
-{
-  const { SECRET_PATTERNS } = await import(pathToFileUrl(path.join(root, 'core', 'lib', 'secret-patterns.cjs')));
-  const nonCommentLines = read(path.join(root, 'core', 'lib', 'secret-patterns.txt'))
-    .split('\n').map((l) => l.trim()).filter((l) => l.length > 0 && !l.startsWith('#'));
-  expect('secret-patterns.cjs loads every non-comment line from secret-patterns.txt',
-    SECRET_PATTERNS.length === nonCommentLines.length,
-    `${SECRET_PATTERNS.length} loaded vs ${nonCommentLines.length} in the .txt`);
-  expect('secret-patterns.cjs still catches a Stripe-shaped key',
-    SECRET_PATTERNS.some((p) => p.test('sk_live_abcdefghijklmnop1234')));
 }
 
 fs.rmSync(tmpBase, { recursive: true, force: true });

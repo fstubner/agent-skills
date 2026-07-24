@@ -45,15 +45,23 @@ jobs:
         # make vale reachable, instead of letting run-tests.mjs's graceful
         # local-dev skip silently hide a broken CI leg.
         run: vale --version
-      - name: Verify sh and pwsh are on PATH
-        # scripts/git-hooks/pre-commit(.ps1) are native sh/PowerShell, not
-        # Node — run-tests.mjs spawns both directly. GitHub's windows-latest
-        # image ships Git for Windows (sh.exe on PATH) and pwsh by default;
-        # this fails loudly if that ever stops being true, instead of
-        # run-tests.mjs's spawnSync surfacing an opaque ENOENT.
+      - name: Install gitleaks (backend-engineering's + the pre-commit hook's secret scanner)
         shell: bash
         run: |
-          sh -c 'echo sh ok'
-          pwsh -Version
+          GITLEAKS_VERSION=8.30.1
+          mkdir -p "$HOME/.local/bin"
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            curl -sL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_windows_x64.zip" -o /tmp/gitleaks.zip
+            unzip -o /tmp/gitleaks.zip -d "$HOME/.local/bin" gitleaks.exe
+            # Same Windows-style-path requirement as the vale install above.
+            cygpath -w "$HOME/.local/bin" >> "$GITHUB_PATH"
+          else
+            OS_NAME=$([ "$RUNNER_OS" = "macOS" ] && echo darwin || echo linux)
+            curl -sL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_${OS_NAME}_x64.tar.gz" -o /tmp/gitleaks.tar.gz
+            tar -xzf /tmp/gitleaks.tar.gz -C "$HOME/.local/bin" gitleaks
+            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          fi
+      - name: Verify gitleaks is on PATH
+        run: gitleaks version
       - name: Suite tests (fixtures, registry cross-check, schema units, contract drift)
         run: node scripts/run-tests.mjs

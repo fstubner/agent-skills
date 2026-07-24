@@ -55,19 +55,24 @@ can't silently claim a word is checkable when it isn't (or vice versa).
 git config core.hooksPath scripts/git-hooks
 ```
 
-Blocks a commit whose staged content matches
-`core/lib/secret-patterns.txt` (the same anchored, prefix-based patterns
-`backend-engineering`'s `B-client-secrets` check uses — that check, this
-hook, and the hook's PowerShell counterpart all read the one `.txt` file,
-so a new prefix reaches all three without hand-syncing). The hook itself
-(`scripts/git-hooks/pre-commit`) is native POSIX `sh`, no Node required —
-git resolves it by shebang and runs it through its own bundled `sh.exe` on
-Windows too (Git for Windows), so it works the same on every platform
-without an interpreter to install. `pre-commit.ps1` is a PowerShell
-equivalent for direct/manual invocation. Per-clone opt-in — `git config`
-isn't committed, so this never activates for a contributor who hasn't run
-it. Reports file paths only, never the matched value. A genuine false
-positive: commit with `--no-verify` and open an issue.
+Blocks a commit whose staged content contains a secret, via
+[`gitleaks`](https://github.com/gitleaks/gitleaks) — a real, maintained
+secret-detection tool, the same "shell out to the real tool" choice this
+suite already makes for `vale` in `ai-prose-slop`. Requires `gitleaks` on
+PATH (`winget install Gitleaks.Gitleaks`, `brew install gitleaks`, or the
+release tarball); if it's missing, the hook **warns and allows the
+commit** rather than hard-blocking a contributor's whole workflow over an
+opt-in convenience tool — contrast with `backend-engineering`'s
+`B-client-secrets` check, which correctly treats a missing `gitleaks` as
+`not_evaluated` rather than a silent pass, because that's a ship-readiness
+report, not a local git hook. Both that check and this hook run gitleaks
+twice — its own default ruleset, plus `core/gitleaks-extra.toml` for two
+provider prefixes (Anthropic, OpenAI project keys) the default doesn't
+cover as of gitleaks 8.30.1 — and merge the results. Per-clone opt-in —
+`git config` isn't committed, so this never activates for a contributor
+who hasn't run it. Reports file paths and rule ids only, never the matched
+value (gitleaks redacts it). A genuine false positive: commit with
+`--no-verify` and open an issue.
 
 ## Releases
 

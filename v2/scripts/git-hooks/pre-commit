@@ -1,68 +1,115 @@
-#!/bin/sh
-# Blocks a commit whose STAGED content contains a secret-shaped value.
-# Reuses the canonical pattern list in core/lib/secret-patterns.txt, the
-# same one core/lib/secret-patterns.cjs (JS) and this script's PowerShell
-# counterpart (pre-commit.ps1) read — one list, three consumers, no
-# per-language regex transcription to drift.
-#
-# Reports file paths only, never the matched value — same rule as
-# B-client-secrets in backend-engineering/scripts/check-backend.js.
-#
-# Install (opt-in per clone; git config is not committed, so this never
-# activates for a contributor who hasn't run it):
-#   git config core.hooksPath scripts/git-hooks
-#
-# Deliberately git-native (core.hooksPath), not a copy into .git/hooks/ —
-# that directory isn't version-controlled, so a copied hook silently goes
-# stale the moment this file is edited. This one always runs the current
-# version. Plain POSIX sh (no bashisms — verified against dash, the /bin/sh
-# on Debian/Ubuntu) so it runs unmodified under macOS/Linux's native sh and
-# under Git for Windows' bundled sh.exe, which is what git itself uses to
-# execute a shebang-based hook on Windows regardless of the user's own
-# interactive shell (cmd, PowerShell, or Git Bash).
-#
-# Known scope limit: filenames containing a literal newline are not
-# handled (relies on `git diff --name-only`'s one-path-per-line output,
-# same simplification the vast majority of real-world git hooks make).
+#!/usr/bin/env node
+'use strict';
+// Blocks a commit whose STAGED content contains a secret, via `gitleaks
+// protect --staged` — a real, maintained secret-detection tool (hundreds of
+// provider-specific rules, entropy checks, redaction built in), the same
+// "shell out to the real tool, don't reimplement its detection logic"
+// choice this suite already made for ai-prose-slop and vale. Node, not a
+// native sh/ps1 script: Node is already a de facto prerequisite for the
+// coding-agent harnesses this suite targets (Claude Code CLI itself is
+// npm-distributed), so there's nothing to gain by avoiding it here, and a
+// second hand-maintained implementation is a second thing that can drift.
+//
+// Runs gitleaks TWICE — once with its own default ruleset, once with
+// core/gitleaks-extra.toml (a couple of provider prefixes the default
+// ruleset doesn't cover, verified empirically — see that file's header)
+// — and merges both result sets. `[extend] useDefault = true` on top of a
+// custom config was tried first and empirically did not merge; two runs
+// does.
+//
+// Install (opt-in per clone; git config is not committed, so this never
+// activates for a contributor who hasn't run it):
+//   git config core.hooksPath scripts/git-hooks
+//
+// If gitleaks isn't installed, this WARNS and ALLOWS the commit — a git
+// hook that hard-blocks every commit because an opt-in convenience tool
+// is missing is a worse failure mode than an unscanned commit. Contrast
+// with backend-engineering's B-client-secrets check (product-acceptance
+// context), which correctly treats "gitleaks missing" as not_evaluated —
+// a report is never trusted as done just because a check didn't run, but
+// a LOCAL git hook blocking someone's entire workflow over a missing
+// convenience binary is a different tradeoff than a ship-readiness report.
 
-set -eu
+const { spawnSync } = require('child_process');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 
-# Resolved relative to THIS SCRIPT's own location, not the repo being
-# committed to (`git rev-parse --show-toplevel`) — those are usually the
-# same repo, but core.hooksPath can point at a hooks directory shared
-# across multiple repos, in which case only script-relative resolution
-# finds the canonical pattern list reliably.
-script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-patterns_file="$script_dir/../../core/lib/secret-patterns.txt"
-max_bytes=2000000
+const extraConfig = path.join(__dirname, '..', '..', 'core', 'gitleaks-extra.toml');
+const LEAKS_FOUND_CODE = 2; // distinct from gitleaks' own fixed exit 1 for an internal error
 
-tmp_dir=$(mktemp -d)
-trap 'rm -rf "$tmp_dir"' EXIT
+function installHint() {
+  if (process.platform === 'win32') return 'winget install Gitleaks.Gitleaks';
+  if (process.platform === 'darwin') return 'brew install gitleaks';
+  return 'See https://github.com/gitleaks/gitleaks#installing';
+}
 
-tmp_patterns="$tmp_dir/patterns"
-tmp_filelist="$tmp_dir/files"
-tmp_hits="$tmp_dir/hits"
+function isGitleaksOnPath() {
+  const probe = spawnSync('gitleaks', ['version'], { encoding: 'utf8' });
+  return !probe.error && probe.status === 0;
+}
 
-grep -v '^#' "$patterns_file" | grep -v '^[[:space:]]*$' > "$tmp_patterns"
-git diff --cached --name-only --diff-filter=ACM > "$tmp_filelist"
-: > "$tmp_hits"
+// Runs one gitleaks pass and returns { leaks, crashed, stderr }. `crashed`
+// is true only for a genuine gitleaks failure (bad config, unreadable
+// path) — never for "leaks found," which is the expected non-zero case.
+function runGitleaksPass(configArgs, tmpDir, label) {
+  const reportPath = path.join(tmpDir, `report-${label}.json`);
+  const result = spawnSync('gitleaks', [
+    'protect', '--staged', '--no-banner', '--redact',
+    '--report-format', 'json', '--report-path', reportPath,
+    '--exit-code', String(LEAKS_FOUND_CODE),
+    ...configArgs,
+  ], { encoding: 'utf8' });
 
-# Redirected from a file, not piped, so this loop does NOT run in a
-# subshell (a `... | while read` pipeline would, in POSIX sh, silently
-# losing anything the loop writes to a shell variable — writing matches to
-# tmp_hits sidesteps that instead of relying on a variable).
-while IFS= read -r f; do
-  if git show ":$f" 2>/dev/null | head -c "$max_bytes" | grep -Eq -f "$tmp_patterns"; then
-    printf '%s\n' "$f" >> "$tmp_hits"
-  fi
-done < "$tmp_filelist"
+  if (result.error) {
+    return { leaks: [], crashed: true, stderr: result.error.message };
+  }
+  if (result.status !== 0 && result.status !== LEAKS_FOUND_CODE) {
+    return { leaks: [], crashed: true, stderr: result.stderr || '(no stderr)' };
+  }
+  try {
+    return { leaks: JSON.parse(fs.readFileSync(reportPath, 'utf8')), crashed: false };
+  } catch {
+    // No report file on a clean run is gitleaks' own normal behavior.
+    if (result.status === LEAKS_FOUND_CODE) {
+      return { leaks: [], crashed: true, stderr: 'gitleaks reported leaks but its report file was unreadable' };
+    }
+    return { leaks: [], crashed: false };
+  }
+}
 
-if [ -s "$tmp_hits" ]; then
-  echo "pre-commit: secret-shaped value(s) staged in:" >&2
-  sed 's/^/  /' "$tmp_hits" >&2
-  echo "Remove the secret (and rotate it if already committed elsewhere) before committing." >&2
-  echo "If this is a genuine false positive, commit with --no-verify and open an issue." >&2
-  exit 1
-fi
+if (!isGitleaksOnPath()) {
+  console.error('pre-commit: gitleaks is not on PATH — secret scanning skipped, commit allowed.');
+  console.error(`Install it for real protection: ${installHint()}`);
+  process.exit(0);
+}
 
-exit 0
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pre-commit-gitleaks-'));
+let passes;
+try {
+  passes = [
+    runGitleaksPass([], tmpDir, 'default'),
+    runGitleaksPass(['--config', extraConfig], tmpDir, 'extra'),
+  ];
+} finally {
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+}
+
+const crashedPass = passes.find((p) => p.crashed);
+if (crashedPass) {
+  console.error(`pre-commit: gitleaks did not complete normally: ${crashedPass.stderr}`);
+  process.exit(1);
+}
+
+const leaks = passes.flatMap((p) => p.leaks);
+if (leaks.length > 0) {
+  console.error('pre-commit: secret(s) staged (via gitleaks):');
+  for (const leak of leaks) {
+    console.error(`  ${leak.File}:${leak.StartLine} [${leak.RuleID}]`);
+  }
+  console.error('Remove the secret (and rotate it if already committed elsewhere) before committing.');
+  console.error('If this is a genuine false positive, commit with --no-verify and open an issue.');
+  process.exit(1);
+}
+
+process.exit(0);

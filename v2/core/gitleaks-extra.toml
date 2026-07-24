@@ -1,0 +1,26 @@
+# Supplementary gitleaks rules for prefixes NOT in gitleaks' own default
+# ruleset as of gitleaks 8.30.1 — verified empirically (tested both against
+# the plain default config before adding these; gitleaks caught AWS,
+# Stripe, GitHub PAT, and Slack out of the box but missed both of these).
+#
+# Deliberately a SEPARATE, custom-rules-only config, not a `[extend]
+# useDefault = true` on top of the defaults — that combination was tried
+# first and empirically did not merge (only the custom rules fired, the
+# defaults silently dropped). Every consumer of this file runs gitleaks
+# TWICE instead — once with no --config (gets the full default ruleset)
+# and once with --config core/gitleaks-extra.toml (gets just these two) —
+# and merges both result sets. See backend-engineering/scripts/
+# check-backend.js and scripts/git-hooks/pre-commit for the merge.
+title = "agent-skills supplementary gitleaks rules"
+
+[[rules]]
+id = "anthropic-api-key"
+description = "Anthropic API Key"
+regex = '''sk-ant-[A-Za-z0-9_-]{10,}'''
+tags = ["anthropic", "api-key"]
+
+[[rules]]
+id = "openai-project-key"
+description = "OpenAI Project API Key"
+regex = '''sk-proj-[A-Za-z0-9_-]{10,}'''
+tags = ["openai", "api-key"]

@@ -31,7 +31,12 @@ offered because none is monitored.
   argument arrays (no shell interpolation); the one external binary is
   `vale` for ai-prose-slop.
 - **Secret scanning** (`B-client-secrets`, and the opt-in pre-commit hook at
-  `scripts/git-hooks/pre-commit` / `pre-commit.ps1`) is a local check that
-  reports file paths only — matched values never appear in reports or
-  output. All three read one canonical pattern list
-  (`core/lib/secret-patterns.txt`) so they can't drift apart.
+  `scripts/git-hooks/pre-commit`) shells out to
+  [`gitleaks`](https://github.com/gitleaks/gitleaks) rather than a
+  hand-rolled pattern list — a real, maintained tool, not a reimplementation
+  of its detection logic. Both consumers run it twice (its default
+  ruleset plus `core/gitleaks-extra.toml`, two provider prefixes the
+  default doesn't cover) and merge the results, so a new prefix added to
+  the extra config reaches both without hand-syncing. Reports file paths
+  and rule ids only — matched values never appear in reports or output
+  (gitleaks redacts them at the source).
