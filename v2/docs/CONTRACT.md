@@ -53,6 +53,8 @@ through direct calls.
 | `code-organization` (no shared artifacts) | Module boundaries, dependency direction, naming |
 | `testing-strategy` (no shared artifacts) | Test pyramid triage, behavior over implementation, flaky-test discipline |
 | `data-modeling` (no shared artifacts) | Schema design — keys, normalization, nullability, migrations |
+| `cli-tooling` (no shared artifacts) | CLI contract — exit codes, stdout/stderr, dry-run, idempotency |
+| `release-engineering` (no shared artifacts) | CI/CD pipeline gating, deployment strategy, rollback |
 
 Suggested starting point for a greenfield/ambiguous request: `product-build`.
 Not a required entry point — every skill above also fires directly on its own trigger.

@@ -25,7 +25,9 @@
     { "id": "code-smells", "role": "Fowler code-smell catalog + judgment guide" },
     { "id": "code-organization", "role": "Module boundaries, dependency direction, naming" },
     { "id": "testing-strategy", "role": "Test pyramid triage, behavior over implementation, flaky-test discipline" },
-    { "id": "data-modeling", "role": "Schema design — keys, normalization, nullability, migrations" }
+    { "id": "data-modeling", "role": "Schema design — keys, normalization, nullability, migrations" },
+    { "id": "cli-tooling", "role": "CLI contract — exit codes, stdout/stderr, dry-run, idempotency" },
+    { "id": "release-engineering", "role": "CI/CD pipeline gating, deployment strategy, rollback" }
   ],
   "artifacts": [
     {

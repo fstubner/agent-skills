@@ -46,6 +46,8 @@ that's the entire coupling mechanism.
 | [`code-organization`](./code-organization/) | Module boundaries, dependency direction, naming |
 | [`testing-strategy`](./testing-strategy/) | Test pyramid triage, behavior over implementation |
 | [`data-modeling`](./data-modeling/) | Schema design — keys, normalization, nullability, migrations |
+| [`cli-tooling`](./cli-tooling/) | CLI contract — exit codes, stdout/stderr, dry-run, idempotency |
+| [`release-engineering`](./release-engineering/) | CI/CD pipeline gating, deployment strategy, rollback |
 
 ## How they compose
 
