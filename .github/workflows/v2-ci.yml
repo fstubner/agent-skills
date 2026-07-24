@@ -1,5 +1,13 @@
-# NOTE: active once v2/ is promoted to the repo root (paths below assume it).
-name: ci
+# CI for the v2 suite. This file MUST live at the repository root's
+# .github/workflows/ — GitHub Actions only reads workflows from there, so the
+# earlier copy at v2/.github/workflows/ci.yml never ran a single time. Every
+# CI change made against that copy (the Windows matrix, the vale PATH fix, the
+# gitleaks install) was inert until this move.
+#
+# `working-directory: v2` is the one concession to the suite still living in a
+# subdirectory. When v2/ is promoted to the repo root, delete the `defaults:`
+# block below and this file replaces ci.yml — nothing else here changes.
+name: v2-ci
 permissions:
   contents: read
 on:
@@ -14,6 +22,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: v2
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

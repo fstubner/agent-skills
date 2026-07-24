@@ -911,6 +911,46 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
   }
 }
 
+// ---------- 11. CI must live where GitHub will actually read it ----------
+// GitHub Actions only reads workflows from <repo root>/.github/workflows. This
+// suite's workflow previously sat at v2/.github/workflows/ci.yml — a path
+// Actions never looks at — so it had never run once, and every CI change made
+// against it (Windows matrix, vale PATH handling, gitleaks install) was inert.
+// Nothing in the suite could detect that, because running the tests locally
+// works identically either way.
+//
+// Resolved against the real git root rather than an assumed layout, so this
+// keeps holding after v2/ is promoted to the repo root.
+{
+  let repoRoot = root;
+  while (!fs.existsSync(path.join(repoRoot, '.git'))) {
+    const parent = path.dirname(repoRoot);
+    if (parent === repoRoot) { repoRoot = null; break; }
+    repoRoot = parent;
+  }
+  if (repoRoot === null) {
+    console.log('skip  CI-location test: not inside a git checkout');
+  } else {
+    const wfDir = path.join(repoRoot, '.github', 'workflows');
+    const workflows = fs.existsSync(wfDir)
+      ? fs.readdirSync(wfDir).filter((f) => /\.ya?ml$/.test(f))
+      : [];
+    const runners = workflows.filter((f) => read(path.join(wfDir, f)).includes('run-tests.mjs'));
+    expect('a workflow at the git root runs this suite\'s tests',
+      runners.length > 0,
+      `no workflow in ${path.relative(repoRoot, wfDir)} references run-tests.mjs (found: ${workflows.join(', ') || 'none'})`);
+
+    // A workflow nested inside the suite directory is the exact dead-file
+    // shape this test exists to prevent — flag it rather than let a future
+    // edit quietly recreate it.
+    const nestedWfDir = path.join(root, '.github', 'workflows');
+    const nestedIsReal = path.resolve(nestedWfDir) === path.resolve(wfDir);
+    expect('no dead workflow nested inside the suite directory',
+      nestedIsReal || !fs.existsSync(nestedWfDir),
+      `${nestedWfDir} exists but GitHub Actions will never read it`);
+  }
+}
+
 fs.rmSync(tmpBase, { recursive: true, force: true });
 console.log(failures === 0 ? '\nAll tests passed.' : `\n${failures} failure(s)`);
 process.exit(failures === 0 ? 0 : 1);
