@@ -77,59 +77,113 @@ function readNode(root) {
 // array, and Poetry's `[tool.poetry.dependencies]` table — extracted with a
 // line-scan, not a real TOML parser (documented limit: an inline table or
 // unusual formatting inside these blocks may not be caught).
+// Reads a requirements.txt, following `-r other.txt` / `--requirement other.txt`
+// includes (the split requirements/base.txt layout is extremely common, and not
+// following it previously yielded ZERO dependencies for the whole project).
+// Depth- and cycle-bounded; other flag lines (--extra-index-url, -e) are skipped.
+function readRequirements(file, names, seen, depth = 0) {
+  if (depth > 8 || seen.has(file)) return false;
+  seen.add(file);
+  const text = readFileIfExists(file);
+  if (text === null) return false;
+  for (const rawLine of text.split('\n')) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) continue;
+    const include = line.match(/^(?:-r|--requirement)[=\s]+(\S+)/);
+    if (include) {
+      readRequirements(path.resolve(path.dirname(file), include[1]), names, seen, depth + 1);
+      continue;
+    }
+    if (line.startsWith('-')) continue; // some other pip flag
+    const m = line.match(/^([A-Za-z0-9_.-]+)/);
+    if (m) names.add(m[1].toLowerCase());
+  }
+  return true;
+}
+
+// Extracts the body of a TOML array by matching brackets from `key = [`, so a
+// single-line `dependencies = ["flask"]` works and state cannot leak past the
+// closing `]` into an unrelated array (a `classifiers = [...]` list following
+// `dependencies` was previously scraped as if it held dependencies).
+function tomlArrayBody(text, key) {
+  const start = text.search(new RegExp(`^\\s*${key}\\s*=\\s*\\[`, 'm'));
+  if (start === -1) return null;
+  const open = text.indexOf('[', start);
+  let depth = 0;
+  for (let i = open; i < text.length; i++) {
+    if (text[i] === '[') depth++;
+    else if (text[i] === ']') {
+      depth--;
+      if (depth === 0) return text.slice(open + 1, i);
+    }
+  }
+  return null;
+}
+
 function readPython(root) {
   const names = new Set();
-  let found = false;
-  const reqText = readFileIfExists(path.join(root, 'requirements.txt'));
-  if (reqText !== null) {
-    found = true;
-    for (const rawLine of reqText.split('\n')) {
-      const line = rawLine.trim();
-      if (!line || line.startsWith('#') || line.startsWith('-')) continue;
-      const m = line.match(/^([A-Za-z0-9_.-]+)/);
-      if (m) names.add(m[1].toLowerCase());
-    }
-  }
+  const manifestsFound = [];
+
+  const reqPath = path.join(root, 'requirements.txt');
+  if (readRequirements(reqPath, names, new Set())) manifestsFound.push('requirements.txt');
+
   const pyprojectText = readFileIfExists(path.join(root, 'pyproject.toml'));
   if (pyprojectText !== null) {
-    found = true;
-    const lines = pyprojectText.split('\n');
-    let inPep621Deps = false;
+    manifestsFound.push('pyproject.toml');
+    // PEP 621: [project] dependencies = [...]
+    const body = tomlArrayBody(pyprojectText, 'dependencies');
+    if (body !== null) {
+      for (const m of body.matchAll(/["']\s*([A-Za-z0-9_.-]+)/g)) names.add(m[1].toLowerCase());
+    }
+    // Poetry, including 1.2+ group tables:
+    // [tool.poetry.dependencies], [tool.poetry.dev-dependencies],
+    // [tool.poetry.group.<name>.dependencies]
     let inPoetryDeps = false;
-    for (const rawLine of lines) {
+    for (const rawLine of pyprojectText.split('\n')) {
       const line = rawLine.trim();
-      if (/^\[tool\.poetry\.(dependencies|dev-dependencies)\]/.test(line)) { inPoetryDeps = true; inPep621Deps = false; continue; }
-      if (/^dependencies\s*=\s*\[/.test(line)) { inPep621Deps = true; inPoetryDeps = false; continue; }
-      if (/^\[/.test(line)) { inPoetryDeps = false; inPep621Deps = false; continue; }
-      if (inPep621Deps) {
-        const m = line.match(/^["']([A-Za-z0-9_.-]+)/);
-        if (m) names.add(m[1].toLowerCase());
-      } else if (inPoetryDeps) {
-        const m = line.match(/^([A-Za-z0-9_.-]+)\s*=/);
-        if (m && m[1].toLowerCase() !== 'python') names.add(m[1].toLowerCase());
+      if (line.startsWith('[')) {
+        inPoetryDeps = /^\[tool\.poetry\.(dependencies|dev-dependencies|group\.[A-Za-z0-9_.-]+\.dependencies)\]/.test(line);
+        continue;
       }
+      if (!inPoetryDeps) continue;
+      const m = line.match(/^([A-Za-z0-9_.-]+)\s*=/);
+      if (m && m[1].toLowerCase() !== 'python') names.add(m[1].toLowerCase());
     }
   }
-  return found ? { manifestFile: reqText !== null ? 'requirements.txt' : 'pyproject.toml', depNames: names } : null;
+
+  return manifestsFound.length > 0
+    ? { manifestFile: manifestsFound.join(' + '), depNames: names }
+    : null;
 }
 
 // go.mod: module paths inside a `require ( ... )` block or on a single-line
 // `require module/path vX.Y.Z`. Matched by full module path (e.g.
 // "github.com/gin-gonic/gin"), not a short name — Go has no package-name
 // registry separate from its import path.
+// Line-based rather than a regex over the whole file. The previous
+// `/require\s*\(([\s\S]*?)\)/` was non-global (only the FIRST require block was
+// read — multiple blocks are normal `go mod tidy` output) and lazy (a `)` inside
+// a comment truncated the block, dropping every dep after it). Both produced
+// zero deps on ordinary files. `// indirect` requirements are transitive, not
+// chosen by the author, so counting them caused false dual-ORM findings.
 function readGo(root) {
   const text = readFileIfExists(path.join(root, 'go.mod'));
   if (text === null) return null;
   const names = new Set();
-  const blockMatch = text.match(/require\s*\(([\s\S]*?)\)/);
-  if (blockMatch) {
-    for (const rawLine of blockMatch[1].split('\n')) {
-      const m = rawLine.trim().match(/^(\S+)\s+v\S+/);
-      if (m) names.add(m[1].toLowerCase());
+  let inBlock = false;
+  for (const rawLine of text.split('\n')) {
+    const isIndirect = /\/\/\s*indirect\b/.test(rawLine);
+    const line = rawLine.replace(/\/\/.*$/, '').trim(); // strip comment, keep the code
+    if (!line) continue;
+    if (!inBlock) {
+      if (/^require\s*\($/.test(line)) { inBlock = true; continue; }
+      const inline = line.match(/^require\s*\(?\s*(\S+)\s+v\S+\s*\)?$/);
+      if (inline && !isIndirect) names.add(inline[1].toLowerCase());
+      continue;
     }
-  }
-  for (const m of text.matchAll(/^require\s+(\S+)\s+v\S+/gm)) {
-    names.add(m[1].toLowerCase());
+    if (line === ')') { inBlock = false; continue; }
+    const m = line.match(/^(\S+)\s+v\S+/);
+    if (m && !isIndirect) names.add(m[1].toLowerCase());
   }
   return { manifestFile: 'go.mod', depNames: names };
 }
@@ -157,24 +211,46 @@ function readJava(root) {
   const pomText = readFileIfExists(path.join(root, 'pom.xml'));
   if (pomText !== null) {
     manifestFile = 'pom.xml';
-    for (const m of pomText.matchAll(/<artifactId>([^<]+)<\/artifactId>/g)) {
-      names.add(m[1].trim().toLowerCase());
+    // Only artifactIds inside a <dependency>, and NOT inside its <exclusions>.
+    // Matching every <artifactId> in the document counted the project's own
+    // name, parent POMs, build plugins, and — worst — excluded artifacts: a
+    // textbook Spring Boot pom that EXCLUDES hibernate-core was read as
+    // DEPENDING on it, producing a false dual-ORM BLOCK.
+    for (const dep of pomText.matchAll(/<dependency>([\s\S]*?)<\/dependency>/g)) {
+      const withoutExclusions = dep[1].replace(/<exclusions>[\s\S]*?<\/exclusions>/g, '');
+      const id = withoutExclusions.match(/<artifactId>([^<]+)<\/artifactId>/);
+      if (id) names.add(id[1].trim().toLowerCase());
     }
   }
   for (const gradleFile of ['build.gradle', 'build.gradle.kts']) {
     const text = readFileIfExists(path.join(root, gradleFile));
     if (text === null) continue;
     manifestFile = manifestFile || gradleFile;
-    for (const m of text.matchAll(/['"(]([a-zA-Z0-9._-]+:[a-zA-Z0-9._-]+):[^'")]+['")]/g)) {
-      const artifact = m[1].split(':')[1];
-      if (artifact) names.add(artifact.toLowerCase());
+    // The version segment is OPTIONAL: under a BOM or the Spring dependency
+    // management plugin, `implementation 'group:artifact'` with no version is
+    // the normal form, and requiring `:version` made a standard Spring Boot
+    // Gradle app read as having no dependencies at all.
+    for (const m of text.matchAll(/['"]([a-zA-Z0-9._-]+):([a-zA-Z0-9._-]+)(?::[^'"]*)?['"]/g)) {
+      names.add(m[2].toLowerCase());
     }
   }
   return manifestFile ? { manifestFile, depNames: names } : null;
 }
 
-// Cargo.toml: crate names as keys inside a `[dependencies]` (or
-// `[dev-dependencies]`) table, either `name = "1.0"` or `name = { version = "1.0", ... }`.
+// Cargo.toml: crate names as keys inside a dependency table, either
+// `name = "1.0"` or `name = { version = "1.0", ... }`.
+//
+// Also handles the two forms that previously yielded nothing:
+//   [dependencies.axum]        — the per-crate subtable form, used whenever a
+//                                crate needs `features`. It matched the generic
+//                                `^\[` section-exit test, so it not only missed
+//                                axum but switched parsing OFF for the rest of
+//                                the file.
+//   [workspace.dependencies]   — where a Cargo workspace root declares ALL
+//                                shared deps (members then write
+//                                `axum.workspace = true`).
+const RUST_DEP_TABLE = /^\[(?:workspace\.)?(?:dependencies|dev-dependencies|build-dependencies)(?:\.([A-Za-z0-9_-]+))?\]/;
+
 function readRust(root) {
   const text = readFileIfExists(path.join(root, 'Cargo.toml'));
   if (text === null) return null;
@@ -182,7 +258,13 @@ function readRust(root) {
   let inDeps = false;
   for (const rawLine of text.split('\n')) {
     const line = rawLine.trim();
-    if (/^\[(dependencies|dev-dependencies|build-dependencies)\]/.test(line)) { inDeps = true; continue; }
+    const table = line.match(RUST_DEP_TABLE);
+    if (table) {
+      // `[dependencies.axum]` names the crate in the header itself; the keys
+      // inside it are that crate's settings, not further dependencies.
+      if (table[1]) { names.add(table[1].toLowerCase()); inDeps = false; } else { inDeps = true; }
+      continue;
+    }
     if (/^\[/.test(line)) { inDeps = false; continue; }
     if (inDeps) {
       const m = line.match(/^([a-zA-Z0-9_-]+)\s*=/);
@@ -335,8 +417,13 @@ function classify(root, opts = {}) {
   const pkg = nodeManifest ? nodeManifest.pkg : null;
   const deps = nodeManifest ? Object.fromEntries([...nodeManifest.depNames].map((d) => [d, true])) : {};
 
+  // The file-form pattern previously omitted `t`, so a root `server.ts` was not
+  // a server signal while `api/index.ts` was — and check-backend.js's own
+  // SERVER_ONLY_PATTERNS lists `src/server.ts` as server-only, so the two files
+  // disagreed about what a server file is. Now matched at any depth, both
+  // extensions, consistent with that deny-list.
   const explicitServerFile =
-    rel.some((f) => /^(server|api)\.(c|m)?js$/.test(f) || /^(server|api)\/.+\.(c|m)?(j|t)s$/.test(f));
+    rel.some((f) => /(^|\/)(server|api)\.(c|m)?[jt]s$/.test(f) || /(^|\/)(server|api)\/.+\.(c|m)?[jt]s$/.test(f));
   const standaloneServerDep = manifests.some((m) => (SERVER_FRAMEWORKS[m.ecosystem]?.standalone || []).some((d) => m.depNames.has(d.toLowerCase())));
   const fullstackFrameworkDep = manifests.some((m) => (SERVER_FRAMEWORKS[m.ecosystem]?.fullstack || []).some((d) => m.depNames.has(d.toLowerCase())));
 

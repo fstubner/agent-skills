@@ -951,6 +951,77 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
   }
 }
 
+// ---------- 12. Manifest parsers, against REAL-WORLD manifest shapes ----------
+// The per-ecosystem readers were written against one hand-picked shape each and
+// fixtured with that same shape, so the fixtures confirmed the implementation
+// instead of probing it. Every case below is a normal, common way to write the
+// manifest that returned ZERO dependencies — meaning serverPresent went false,
+// B-scope short-circuited, and the entire backend gate silently skipped.
+{
+  const { classify } = await import(pathToFileUrl(path.join(root, 'core', 'lib', 'classify.cjs')));
+  const mk = (files) => {
+    const dir = fs.mkdtempSync(path.join(tmpBase, 'manifest-'));
+    for (const [rel, content] of Object.entries(files)) {
+      const full = path.join(dir, rel);
+      fs.mkdirSync(path.dirname(full), { recursive: true });
+      fs.writeFileSync(full, content);
+    }
+    return dir;
+  };
+  // [label, files, expectServerPresent, mustContainDep, mustNotContainDep]
+  const CASES = [
+    ['py: single-line PEP-621 array',
+      { 'pyproject.toml': '[project]\nname = "s"\ndependencies = ["flask", "sqlalchemy"]\n' }, true, 'flask'],
+    ['py: PEP-621 state must not leak past the closing bracket',
+      { 'pyproject.toml': '[project]\ndependencies = [\n  "requests",\n]\nclassifiers = [\n  "Framework :: Django :: 4.2",\n]\n' },
+      false, null, 'django'],
+    ['py: Poetry 1.2+ group syntax',
+      { 'pyproject.toml': '[tool.poetry.group.main.dependencies]\nflask = "^3.0"\n' }, true, 'flask'],
+    ['py: requirements.txt -r include is followed',
+      { 'requirements.txt': '-r requirements/base.txt\n', 'requirements/base.txt': 'flask==3.0.0\n' }, true, 'flask'],
+    ['go: second require block is parsed',
+      { 'go.mod': 'module x\n\nrequire ( golang.org/x/text v0.3.0 )\n\nrequire ( github.com/labstack/echo/v4 v4.11.0 )\n' },
+      true, 'github.com/labstack/echo/v4'],
+    ['go: a paren inside a comment does not truncate the block',
+      { 'go.mod': 'module x\n\nrequire (\n\t// gin (web framework)\n\tgithub.com/gin-gonic/gin v1.9.1\n)\n' },
+      true, 'github.com/gin-gonic/gin'],
+    ['go: // indirect deps are not counted as direct',
+      { 'go.mod': 'module x\n\nrequire (\n\tgithub.com/gin-gonic/gin v1.9.1\n\tgorm.io/gorm v1.25.7 // indirect\n)\n' },
+      true, 'github.com/gin-gonic/gin', 'gorm.io/gorm'],
+    ['rust: [dependencies.foo] subtable',
+      { 'Cargo.toml': '[package]\nname = "s"\n\n[dependencies]\nserde = "1.0"\n\n[dependencies.axum]\nversion = "0.7"\n' },
+      true, 'axum'],
+    ['rust: [workspace.dependencies]',
+      { 'Cargo.toml': '[workspace]\nmembers = ["a"]\n\n[workspace.dependencies]\naxum = "0.7"\n' }, true, 'axum'],
+    ['java: gradle coordinates without an inline version',
+      { 'build.gradle': "dependencies {\n  implementation 'org.springframework.boot:spring-boot-starter-web'\n}\n" },
+      true, 'spring-boot-starter-web'],
+    ['java: pom <exclusion> is not counted as a dependency',
+      { 'pom.xml': '<project><artifactId>my-svc</artifactId><dependencies><dependency>' +
+        '<artifactId>spring-boot-starter-web</artifactId><exclusions><exclusion>' +
+        '<artifactId>hibernate-core</artifactId></exclusion></exclusions></dependency></dependencies></project>\n' },
+      true, 'spring-boot-starter-web', 'hibernate-core'],
+    ['java: the project\'s own artifactId is not a dependency',
+      { 'pom.xml': '<project><artifactId>my-svc</artifactId><dependencies><dependency>' +
+        '<artifactId>spring-boot-starter-web</artifactId></dependency></dependencies></project>\n' },
+      true, 'spring-boot-starter-web', 'my-svc'],
+    ['node: root server.ts counts as a server file',
+      { 'package.json': '{}', 'server.ts': 'export {};\n' }, true, null],
+  ];
+  for (const [label, files, wantServer, mustHave, mustNotHave] of CASES) {
+    const cls = classify(mk(files));
+    const deps = cls.manifests.flatMap((m) => [...m.depNames]);
+    expect(`classify — ${label}: serverPresent ${wantServer}`, cls.serverPresent === wantServer,
+      `got ${cls.serverPresent}; deps: [${deps.join(', ')}]`);
+    if (mustHave) {
+      expect(`classify — ${label}: detects ${mustHave}`, deps.includes(mustHave), `deps: [${deps.join(', ')}]`);
+    }
+    if (mustNotHave) {
+      expect(`classify — ${label}: does NOT count ${mustNotHave}`, !deps.includes(mustNotHave), `deps: [${deps.join(', ')}]`);
+    }
+  }
+}
+
 fs.rmSync(tmpBase, { recursive: true, force: true });
 console.log(failures === 0 ? '\nAll tests passed.' : `\n${failures} failure(s)`);
 process.exit(failures === 0 ? 0 : 1);
