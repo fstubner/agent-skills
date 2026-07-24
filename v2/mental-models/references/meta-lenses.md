@@ -20,6 +20,31 @@ certain than it is), aimed here at reasoning and conclusions generally
 rather than just sentences. Use both skills; they check different surfaces
 of the same underlying habit.
 
+**Escalating it for a high-stakes conclusion.** Asking yourself "is this
+defensible" has a real limit: the same reasoning that produced the
+conclusion is doing the grading, and it's anchored on its own first answer.
+For a conclusion where being wrong is expensive — a root cause about to
+drive a fix, an architecture decision, anything about to be presented as
+settled — the check gets stronger by making the second pass genuinely
+independent, not just a re-read of the first:
+
+- If the harness can spawn an independent reasoning pass (a subagent, a
+  fresh session with no memory of the first attempt), give it only the
+  problem and the conclusion, and ask it to find the flaw — not to confirm
+  it. Treat the conclusion as surviving only if that attempt can't break it.
+- If it can't, at minimum re-derive the conclusion from scratch without
+  looking at the first attempt, then compare the two. Two independent
+  derivations agreeing is real evidence; one derivation re-read twice is
+  not — rereading your own reasoning tends to confirm it by construction,
+  since a plausible-sounding chain of thought reads as more plausible the
+  second time, not less.
+
+This is a procedure, not a script — nothing here is a checker that can gate
+a report, because there's no ground truth to check against outside more
+reasoning. Reserve it for conclusions where the cost of being wrong justifies
+the extra pass; running it on every small decision is the coverage test's
+own failure mode (over-verification) wearing a different hat.
+
 ## Coverage test / premature-closure check
 
 **For:** deciding whether you've actually found enough — for a diagnosed

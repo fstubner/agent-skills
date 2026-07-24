@@ -303,6 +303,50 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
   expect('acceptance report validates against check-report schema', errors.length === 0, errors.join('; '));
 }
 
+// ---------- 4b. code-organization (circular-import detector; no vale needed) ----------
+{
+  const ORG = path.join(root, 'code-organization', 'scripts', 'check-organization.js');
+
+  const clean = runNode(ORG, ['--root', path.join(root, 'fixtures', 'code-organization-clean')]);
+  let cleanReport = null;
+  try { cleanReport = JSON.parse(clean.stdout); } catch { /* asserted below */ }
+  expect('code-organization: clean two-file chain verdict SHIP', cleanReport?.verdict === 'SHIP', clean.stdout || clean.stderr);
+  expect('code-organization: clean exit code 0', clean.status === 0, `exit ${clean.status}`);
+
+  const circular = runNode(ORG, ['--root', path.join(root, 'fixtures', 'code-organization-circular')]);
+  let circularReport = null;
+  try { circularReport = JSON.parse(circular.stdout); } catch { /* asserted below */ }
+  expect('code-organization: a->b->c->a verdict BLOCK', circularReport?.verdict === 'BLOCK', circular.stdout || circular.stderr);
+  expect('code-organization: exit code 1', circular.status === 1, `exit ${circular.status}`);
+  const cycleCheck = circularReport?.checks.find((c) => c.id === 'O-circular-deps');
+  expect('code-organization: reports the actual cycle chain',
+    Boolean(cycleCheck) && cycleCheck.status === 'fail' &&
+    /a\.js -> .*b\.js -> .*c\.js -> .*a\.js/.test(cycleCheck.detail), cycleCheck?.detail);
+
+  // Regression: a real bug caught before this checker ever shipped — `known`
+  // held relative paths while resolveSpecifier builds absolute ones, so the
+  // Set lookup never matched and no edge was ever added to the graph. This
+  // fixture is the one that would silently pass (SHIP on a real 3-file
+  // cycle) if that regressed.
+  expect('code-organization: circular fixture is not silently reported clean (regression)',
+    circularReport?.verdict !== 'SHIP', JSON.stringify(circularReport));
+
+  // Regression: `import type` is erased at compile time and creates no
+  // runtime cycle — flagging it would be a false positive on an idiomatic
+  // TS pattern (two modules whose types reference each other).
+  const typeOnly = runNode(ORG, ['--root', path.join(root, 'fixtures', 'code-organization-typeonly-clean')]);
+  let typeOnlyReport = null;
+  try { typeOnlyReport = JSON.parse(typeOnly.stdout); } catch { /* asserted below */ }
+  expect('code-organization: type-only mutual imports are not flagged as a cycle',
+    typeOnlyReport?.verdict === 'SHIP', typeOnly.stdout || typeOnly.stderr);
+
+  const noCode = runNode(ORG, ['--root', path.join(root, 'fixtures', 'code-organization-no-code')]);
+  let noCodeReport = null;
+  try { noCodeReport = JSON.parse(noCode.stdout); } catch { /* asserted below */ }
+  expect('code-organization: no JS/TS files (O-scope skip path)',
+    noCodeReport?.verdict === 'SHIP' && noCodeReport.checks[0]?.id === 'O-scope', JSON.stringify(noCodeReport));
+}
+
 // ---------- 5. ai-prose-slop (skips only when vale is absent; CI installs vale) ----------
 {
   const probe = spawnSync('vale', ['--version'], { encoding: 'utf8' });

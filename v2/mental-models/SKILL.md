@@ -71,7 +71,10 @@ files — the table above is enough to pick one, not enough to apply it well.
    — it actively hides what the right lens would have surfaced.
 2. **Every lens ends at the defensibility check.** A conclusion that can't
    survive "is this true, can I defend it" isn't done, regardless of which
-   lens produced it.
+   lens produced it. For a genuinely high-stakes conclusion, self-assessment
+   has a real limit — see "Escalating it for a high-stakes conclusion" in
+   `references/meta-lenses.md` for getting an actually independent second
+   opinion instead of re-reading your own reasoning and nodding.
 3. **A workable answer is not the same as a complete one.** That's the
    whole point of the coverage test — don't stop at the first thing that
    fits.

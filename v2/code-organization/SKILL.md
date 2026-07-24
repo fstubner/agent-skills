@@ -22,9 +22,18 @@ related until this change forced them to be? Layout that optimizes for
 "where does this technical *kind* of file go" over "where does this
 *capability* live" usually fails that test.
 
-No shared artifacts, no checker script — like `code-smells`, this is a
-judgment skill about shape and meaning, not something a generic script can
-verify across arbitrary codebases and languages.
+No shared artifacts. Almost all of this is judgment about shape and meaning
+that no generic script can verify across arbitrary codebases and languages —
+with one exception: **circular imports are genuinely binary, and
+`scripts/check-organization.js` checks for them.** Run it for JS/TS
+projects: `node <this-skill>/scripts/check-organization.js --root <dir>`.
+It walks local (relative) imports only — a package import can't participate
+in the kind of cycle this checks — and deliberately ignores `import type`,
+since a type-only reference is erased at compile time and creates no
+runtime cycle; flagging it would be a false positive on an idiomatic TS
+pattern (see `fixtures/code-organization-typeonly-clean` for the exact
+case it exists not to flag). Everything else below — naming, cohesion,
+where a module's boundary should sit — stays judgment, like `code-smells`.
 
 ## The core question
 
@@ -48,6 +57,9 @@ means editing three or more top-level folders.
    cycle means the two are really one module pretending to be two. Point
    dependencies from concrete/detail toward abstract/policy (an HTTP handler
    depends on a domain function, not the other way around), not the reverse.
+   `check-organization.js` catches the literal-import-cycle case of this
+   automatically; the direction-of-dependency judgment (which side *should*
+   depend on which) is still yours to make.
 2. **Cohesion inside a module, low coupling between them.** Things that
    change together belong together; things that change independently
    should be free to, without one edit forcing the other to be touched. If
