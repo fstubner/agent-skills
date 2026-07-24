@@ -211,6 +211,11 @@ assertFixture('arch-ship-single-part (P-scope skip path)', 'arch-ship-single-par
 // test and as insurance for a future check that isn't CRLF-tolerant by luck.
 assertFixture('arch-ship-crlf (target ARCHITECTURE.md has real CRLF line endings)', 'arch-ship-crlf', ARCH, [], 'SHIP',
   [['P-arch-doc', 'pass'], ['P-section-parts', 'pass'], ['P-section-boundaries', 'pass'], ['P-section-trust', 'pass']]);
+// multiPart generalized beyond Node: a Python Flask backend (requirements.txt,
+// no package.json at all) plus a public/index.html frontend signal must be
+// recognized as multi-part exactly like an Express+React app would be.
+assertFixture('multipart-python-frontend (multiPart detected with zero package.json)', 'multipart-python-frontend', ARCH, [], 'BLOCK',
+  [['P-arch-doc', 'fail']]);
 
 // backend-ship contains the literal string "task-management" in a client
 // file — regression test for the v0.4 secret scanner that BLOCKed on it.
@@ -231,6 +236,24 @@ assertFixture('backend-no-server (B-scope skip path)', 'backend-no-server', BACK
 // v0.4 had this fixture (backend-block-noarch); it was dropped in the v2
 // rebuild, leaving B-arch-doc's fail branch with zero coverage.
 assertFixture('backend-block-noarch (multi-part backend, no ARCHITECTURE.md)', 'backend-block-noarch', BACKEND, [], 'BLOCK',
+  [['B-arch-doc', 'fail']]);
+
+// classify.cjs's manifest detection generalized beyond package.json — these
+// four fixtures prove it, not just assert it. Before this, a Python/Go
+// backend with no package.json hit B-scope's "no server detected" skip
+// unconditionally, silently never running B-dual-orm/B-client-secrets.
+assertFixture('backend-python-ship (Flask + SQLAlchemy via requirements.txt)', 'backend-python-ship', BACKEND, [], 'SHIP',
+  [['B-dual-orm', 'pass']]);
+assertFixture('backend-python-dual-orm (SQLAlchemy + peewee in one requirements.txt)', 'backend-python-dual-orm', BACKEND, [], 'BLOCK',
+  [['B-dual-orm', 'fail']]);
+assertFixture('backend-go-ship (Gin via go.mod, module path matched not a short name)', 'backend-go-ship', BACKEND, [], 'SHIP',
+  [['B-dual-orm', 'pass']]);
+// Django bundles its own ORM (no separate package to declare) and is a
+// fullstack framework like Next.js — single-part on its own, same
+// treatment, now proven for a second ecosystem, not just Node's.
+assertFixture('backend-django-solo (fullstack framework, not forced multi-part)', 'backend-django-solo', BACKEND, [], 'SHIP',
+  [['B-arch-doc', 'pass'], ['B-dual-orm', 'pass']]);
+assertFixture('multipart-python-frontend (B-arch-doc fail, same fixture as the systems-architecture regression)', 'multipart-python-frontend', BACKEND, [], 'BLOCK',
   [['B-arch-doc', 'fail']]);
 
 assertFixture('frontend-ship', 'frontend-ship', FRONTEND, [], 'SHIP',

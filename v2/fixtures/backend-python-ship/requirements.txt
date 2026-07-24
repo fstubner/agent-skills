@@ -1,0 +1,4 @@
+Flask==3.0.0
+SQLAlchemy>=2.0,<3.0
+# a comment line, and an editable install below, both must be ignored
+-e git+https://example.com/some/pkg.git#egg=pkg

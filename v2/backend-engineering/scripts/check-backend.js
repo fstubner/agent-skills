@@ -13,11 +13,9 @@ const { spawnSync } = require('child_process');
 const { corePaths } = require('./resolve-core.cjs');
 const core = corePaths();
 const { parseArgs } = require(path.join(core.lib, 'args.cjs'));
-const { classify, ARCH_DOC_CANDIDATES } = require(path.join(core.lib, 'classify.cjs'));
+const { classify, ARCH_DOC_CANDIDATES, ORM_DEPS } = require(path.join(core.lib, 'classify.cjs'));
 const { check, runCli } = require(path.join(core.lib, 'report.cjs'));
 const registry = require(core.registry);
-
-const ORM_DEPS = ['prisma', '@prisma/client', 'typeorm', 'sequelize', 'mongoose', 'knex', 'drizzle-orm'];
 
 // DENY-list of server-only paths, not an allow-list of client paths. A
 // framework like Next.js/Remix mixes client and server code across
@@ -128,16 +126,27 @@ function run(root) {
     checks.push(check('B-arch-doc', 'pass', 'single-part server; architecture doc not required'));
   }
 
-  // One ORM.
-  if (!cls.pkg) {
-    checks.push(check('B-dual-orm', 'not_evaluated', 'no package.json readable'));
+  // One ORM per manifest — checked WITHIN each detected ecosystem
+  // separately, not across all of them combined. A monorepo with a Python
+  // service using SQLAlchemy and a Node service using Prisma is two
+  // services each correctly using one ORM, not a dual-ORM smell; the smell
+  // is two ORMs declared in the SAME manifest.
+  if (cls.manifests.length === 0) {
+    checks.push(check('B-dual-orm', 'not_evaluated', 'no recognized dependency manifest readable'));
   } else {
-    const orms = ORM_DEPS.filter((d) => d in cls.deps)
-      .map((d) => (d === '@prisma/client' ? 'prisma' : d));
-    const unique = [...new Set(orms)];
-    checks.push(unique.length > 1
-      ? check('B-dual-orm', 'fail', `multiple ORMs in dependencies: ${unique.join(', ')}`)
-      : check('B-dual-orm', 'pass', unique[0] ? `orm: ${unique[0]}` : 'no orm'));
+    const perManifestOrms = cls.manifests.map((m) => ({
+      ecosystem: m.ecosystem,
+      manifestFile: m.manifestFile,
+      orms: [...new Set((ORM_DEPS[m.ecosystem] || []).filter((d) => m.depNames.has(d.toLowerCase())).map((d) => (d === '@prisma/client' ? 'prisma' : d)))],
+    }));
+    const dual = perManifestOrms.filter((m) => m.orms.length > 1);
+    if (dual.length > 0) {
+      checks.push(check('B-dual-orm', 'fail',
+        dual.map((m) => `${m.manifestFile}: multiple ORMs (${m.orms.join(', ')})`).join('; ')));
+    } else {
+      const summary = perManifestOrms.filter((m) => m.orms.length > 0).map((m) => `${m.manifestFile}: ${m.orms.join(', ')}`);
+      checks.push(check('B-dual-orm', 'pass', summary.length > 0 ? summary.join('; ') : 'no orm detected'));
+    }
   }
 
   // No secret material in client-reachable paths — gitleaks does its own
