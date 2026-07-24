@@ -55,6 +55,7 @@ through direct calls.
 | `data-modeling` (no shared artifacts) | Schema design — keys, normalization, nullability, migrations |
 | `cli-tooling` (no shared artifacts) | CLI contract — exit codes, stdout/stderr, dry-run, idempotency |
 | `release-engineering` (no shared artifacts) | CI/CD pipeline gating, deployment strategy, rollback |
+| `learn-from-session` (no shared artifacts) | Turn a correction or confirmation into a durable rule/fixture/memory |
 
 Suggested starting point for a greenfield/ambiguous request: `product-build`.
 Not a required entry point — every skill above also fires directly on its own trigger.

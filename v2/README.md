@@ -48,6 +48,7 @@ that's the entire coupling mechanism.
 | [`data-modeling`](./data-modeling/) | Schema design — keys, normalization, nullability, migrations |
 | [`cli-tooling`](./cli-tooling/) | CLI contract — exit codes, stdout/stderr, dry-run, idempotency |
 | [`release-engineering`](./release-engineering/) | CI/CD pipeline gating, deployment strategy, rollback |
+| [`learn-from-session`](./learn-from-session/) | Turn a correction or confirmation into a durable rule/fixture/memory |
 
 ## How they compose
 

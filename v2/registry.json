@@ -27,7 +27,8 @@
     { "id": "testing-strategy", "role": "Test pyramid triage, behavior over implementation, flaky-test discipline" },
     { "id": "data-modeling", "role": "Schema design — keys, normalization, nullability, migrations" },
     { "id": "cli-tooling", "role": "CLI contract — exit codes, stdout/stderr, dry-run, idempotency" },
-    { "id": "release-engineering", "role": "CI/CD pipeline gating, deployment strategy, rollback" }
+    { "id": "release-engineering", "role": "CI/CD pipeline gating, deployment strategy, rollback" },
+    { "id": "learn-from-session", "role": "Turn a correction or confirmation into a durable rule/fixture/memory" }
   ],
   "artifacts": [
     {
