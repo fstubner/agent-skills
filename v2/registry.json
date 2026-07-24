@@ -17,7 +17,11 @@
     { "id": "backend-engineering", "role": "Trusted-side laws" },
     { "id": "product-acceptance", "role": "Independent acceptance gate" },
     { "id": "ai-prose-slop", "role": "Prose slop editor/detector" },
-    { "id": "mental-models", "role": "Reasoning lens catalog + triage guide" }
+    { "id": "mental-models", "role": "Reasoning lens catalog + triage guide" },
+    { "id": "the-skeptic", "role": "Persona — demands evidence before accepting a claim or plan" },
+    { "id": "the-systems-thinker", "role": "Persona — maps interconnections and feedback loops before fixing" },
+    { "id": "the-pragmatist", "role": "Persona — smallest thing that ships, tradeoffs named not hidden" },
+    { "id": "the-explorer", "role": "Persona — generates genuinely different approaches before judging any" }
   ],
   "artifacts": [
     {

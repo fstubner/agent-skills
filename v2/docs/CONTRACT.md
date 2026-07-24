@@ -45,6 +45,10 @@ through direct calls.
 | `product-acceptance` | Independent acceptance gate |
 | `ai-prose-slop` | Prose slop editor/detector |
 | `mental-models` (no shared artifacts) | Reasoning lens catalog + triage guide |
+| `the-skeptic` (no shared artifacts) | Persona — demands evidence before accepting a claim or plan |
+| `the-systems-thinker` (no shared artifacts) | Persona — maps interconnections and feedback loops before fixing |
+| `the-pragmatist` (no shared artifacts) | Persona — smallest thing that ships, tradeoffs named not hidden |
+| `the-explorer` (no shared artifacts) | Persona — generates genuinely different approaches before judging any |
 
 Suggested starting point for a greenfield/ambiguous request: `product-build`.
 Not a required entry point — every skill above also fires directly on its own trigger.

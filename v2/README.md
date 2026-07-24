@@ -38,6 +38,10 @@ that's the entire coupling mechanism.
 | [`product-acceptance`](./product-acceptance/) | Independent acceptance gate |
 | [`ai-prose-slop`](./ai-prose-slop/) | Prose editor/detector — no artifacts, usable on any writing task |
 | [`mental-models`](./mental-models/) | Reasoning lens catalog + triage guide — no artifacts, usable on any hard problem |
+| [`the-skeptic`](./the-skeptic/) | Persona — demands evidence before accepting a claim or plan |
+| [`the-systems-thinker`](./the-systems-thinker/) | Persona — maps interconnections before proposing a fix |
+| [`the-pragmatist`](./the-pragmatist/) | Persona — smallest thing that ships, tradeoffs named |
+| [`the-explorer`](./the-explorer/) | Persona — generates genuinely different approaches before judging any |
 
 ## How they compose
 
