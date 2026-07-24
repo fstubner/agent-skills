@@ -422,6 +422,47 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
   }
 }
 
+// ---------- 8. Pre-commit secret-scanning hook ----------
+// Extensionless (git looks up hooks by exact name "pre-commit"), so it's
+// invisible to section 1's extension-filtered syntax walk — checked
+// explicitly here instead. Functional test actually inits a git repo,
+// stages real content, and runs the hook against it, rather than only
+// exercising SECRET_PATTERNS directly (which check-backend.js already does)
+// — this proves the hook's OWN plumbing (git diff --cached, git show
+// :path, exit code) works, not just the shared pattern list.
+{
+  const hookPath = path.join(root, 'scripts', 'git-hooks', 'pre-commit');
+  const syntaxCheck = spawnSync(process.execPath, ['--check', hookPath], { encoding: 'utf8' });
+  expect('syntax scripts/git-hooks/pre-commit', syntaxCheck.status === 0, (syntaxCheck.stderr || '').split('\n')[0]);
+
+  const hookRepo = fs.mkdtempSync(path.join(tmpBase, 'hook-repo-'));
+  const git = (args) => spawnSync('git', args, { cwd: hookRepo, encoding: 'utf8' });
+  git(['init', '-q']);
+  git(['config', 'user.email', 'test@example.com']);
+  git(['config', 'user.name', 'Test']);
+
+  fs.writeFileSync(path.join(hookRepo, 'app.js'), 'const key = "sk_live_abcdefghijklmnop1234";\n');
+  git(['add', 'app.js']);
+  const blocked = spawnSync(process.execPath, [hookPath], { cwd: hookRepo, encoding: 'utf8' });
+  expect('pre-commit hook: blocks a staged Stripe-shaped key', blocked.status === 1, `exit ${blocked.status}: ${blocked.stderr}`);
+  expect('pre-commit hook: reports the path, never the value',
+    blocked.stderr.includes('app.js') && !blocked.stderr.includes('sk_live_'), blocked.stderr);
+
+  git(['reset']);
+  fs.writeFileSync(path.join(hookRepo, 'app.js'), 'const greeting = "hello";\n');
+  git(['add', 'app.js']);
+  const clean = spawnSync(process.execPath, [hookPath], { cwd: hookRepo, encoding: 'utf8' });
+  expect('pre-commit hook: allows a clean staged file', clean.status === 0, `exit ${clean.status}: ${clean.stderr}`);
+
+  // Regression: must check the STAGED blob, not the working-tree file — a
+  // partially-staged edit (git add -p leaving unstaged changes on disk)
+  // must be judged on what's actually about to be committed.
+  fs.writeFileSync(path.join(hookRepo, 'app.js'), 'const key = "sk_live_abcdefghijklmnop1234";\n');
+  const stagedVsWorktree = spawnSync(process.execPath, [hookPath], { cwd: hookRepo, encoding: 'utf8' });
+  expect('pre-commit hook: judges the staged blob, not unstaged working-tree edits',
+    stagedVsWorktree.status === 0, `exit ${stagedVsWorktree.status}: ${stagedVsWorktree.stderr}`);
+}
+
 fs.rmSync(tmpBase, { recursive: true, force: true });
 console.log(failures === 0 ? '\nAll tests passed.' : `\n${failures} failure(s)`);
 process.exit(failures === 0 ? 0 : 1);

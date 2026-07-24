@@ -14,19 +14,9 @@ const { classify, ARCH_DOC_CANDIDATES } = require(path.join(core.lib, 'classify.
 const { check, runCli } = require(path.join(core.lib, 'report.cjs'));
 const registry = require(core.registry);
 
-const ORM_DEPS = ['prisma', '@prisma/client', 'typeorm', 'sequelize', 'mongoose', 'knex', 'drizzle-orm'];
+const { SECRET_PATTERNS } = require(path.join(core.lib, 'secret-patterns.cjs'));
 
-// Anchored, prefix-based secret patterns ONLY. The v0.4 scanner used
-// /sk-[a-zA-Z0-9]{10,}/ with no boundary and BLOCKed projects for containing
-// the phrase "task-management". Every pattern here requires a real key prefix.
-const SECRET_PATTERNS = [
-  /\bsk_(live|test)_[A-Za-z0-9]{10,}/,        // Stripe
-  /\bsk-ant-[A-Za-z0-9_-]{10,}/,              // Anthropic
-  /\bsk-proj-[A-Za-z0-9_-]{10,}/,             // OpenAI project keys
-  /\bAKIA[0-9A-Z]{16}\b/,                     // AWS access key id
-  /\bghp_[A-Za-z0-9]{30,}\b/,                 // GitHub PAT
-  /\bxox[baprs]-[A-Za-z0-9-]{10,}/,           // Slack
-];
+const ORM_DEPS = ['prisma', '@prisma/client', 'typeorm', 'sequelize', 'mongoose', 'knex', 'drizzle-orm'];
 
 const SCANNED_EXTENSIONS = new Set(['.html', '.js', '.mjs', '.jsx', '.ts', '.tsx', '.css', '.vue', '.svelte']);
 

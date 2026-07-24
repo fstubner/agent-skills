@@ -30,5 +30,7 @@ offered because none is monitored.
   network requests. Scripts read no env secrets and shell out only with
   argument arrays (no shell interpolation); the one external binary is
   `vale` for ai-prose-slop.
-- **Secret scanning** (`B-client-secrets`) is a local check that reports
-  file paths only — matched values never appear in reports or output.
+- **Secret scanning** (`B-client-secrets`, and the opt-in pre-commit hook at
+  `scripts/git-hooks/pre-commit`) is a local check that reports file paths
+  only — matched values never appear in reports or output. Both share one
+  pattern list (`core/lib/secret-patterns.cjs`) so they can't drift apart.

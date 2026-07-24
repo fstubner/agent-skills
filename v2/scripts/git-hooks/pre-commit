@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+'use strict';
+// Blocks a commit whose STAGED content contains a secret-shaped value.
+// Reuses backend-engineering's SECRET_PATTERNS (core/lib/secret-patterns.cjs)
+// so a prefix added for one is available to the other.
+//
+// Reports file paths only, never the matched value — same rule as
+// B-client-secrets in backend-engineering/scripts/check-backend.js.
+//
+// Install (opt-in per clone; git config is not committed, so this never
+// activates for a contributor who hasn't run it):
+//   git config core.hooksPath scripts/git-hooks
+//
+// Deliberately git-native (core.hooksPath), not a copy into .git/hooks/ —
+// that directory isn't version-controlled, so a copied hook silently goes
+// stale the moment this file is edited. This one always runs the current
+// version.
+
+const { execFileSync } = require('child_process');
+const path = require('path');
+const { SECRET_PATTERNS } = require(path.join(__dirname, '..', '..', 'core', 'lib', 'secret-patterns.cjs'));
+
+const MAX_BYTES = 2 * 1024 * 1024; // matches classify.cjs's MAX_FILE_BYTES order of magnitude
+
+function stagedFiles() {
+  const out = execFileSync('git', ['diff', '--cached', '--name-only', '--diff-filter=ACM'], { encoding: 'utf8' });
+  return out.split('\n').map((l) => l.trim()).filter(Boolean);
+}
+
+// Reads the STAGED blob (`git show :path`), not the working-tree file — a
+// partially-staged file (`git add -p`) must be checked for what's actually
+// about to be committed, not what's currently on disk.
+function stagedContent(relPath) {
+  try {
+    return execFileSync('git', ['show', `:${relPath}`], { encoding: 'utf8', maxBuffer: MAX_BYTES * 2 });
+  } catch {
+    return null; // binary, deleted, or unreadable as text — skip, don't crash the commit
+  }
+}
+
+const hits = [];
+for (const rel of stagedFiles()) {
+  const text = stagedContent(rel);
+  if (text === null) continue;
+  if (Buffer.byteLength(text, 'utf8') > MAX_BYTES) continue;
+  if (SECRET_PATTERNS.some((p) => p.test(text))) hits.push(rel);
+}
+
+if (hits.length > 0) {
+  console.error('pre-commit: secret-shaped value(s) staged in:');
+  for (const f of hits) console.error(`  ${f}`);
+  console.error('Remove the secret (and rotate it if already committed elsewhere) before committing.');
+  console.error('If this is a genuine false positive, commit with --no-verify and open an issue.');
+  process.exit(1);
+}
+
+process.exit(0);

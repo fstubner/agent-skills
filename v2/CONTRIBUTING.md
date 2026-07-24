@@ -49,6 +49,19 @@ can't silently claim a word is checkable when it isn't (or vice versa).
 - Shared logic goes in `core/lib/` — the only intentionally duplicated file
   is `resolve-core.cjs`.
 
+## Pre-commit secret scanning (opt-in)
+
+```bash
+git config core.hooksPath scripts/git-hooks
+```
+
+Blocks a commit whose staged content matches `core/lib/secret-patterns.cjs`
+(the same anchored, prefix-based patterns `backend-engineering`'s
+`B-client-secrets` check uses). Per-clone opt-in — `git config` isn't
+committed, so this never activates for a contributor who hasn't run it.
+Reports file paths only, never the matched value. A genuine false positive:
+commit with `--no-verify` and open an issue.
+
 ## Releases
 
 1. Bump `VERSION` and add a matching `## <version>` heading to
