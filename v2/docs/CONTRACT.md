@@ -49,6 +49,8 @@ through direct calls.
 | `the-systems-thinker` (no shared artifacts) | Persona — maps interconnections and feedback loops before fixing |
 | `the-pragmatist` (no shared artifacts) | Persona — smallest thing that ships, tradeoffs named not hidden |
 | `the-explorer` (no shared artifacts) | Persona — generates genuinely different approaches before judging any |
+| `code-smells` (no shared artifacts) | Fowler code-smell catalog + judgment guide |
+| `code-organization` (no shared artifacts) | Module boundaries, dependency direction, naming |
 
 Suggested starting point for a greenfield/ambiguous request: `product-build`.
 Not a required entry point — every skill above also fires directly on its own trigger.

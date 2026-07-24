@@ -42,6 +42,8 @@ that's the entire coupling mechanism.
 | [`the-systems-thinker`](./the-systems-thinker/) | Persona — maps interconnections before proposing a fix |
 | [`the-pragmatist`](./the-pragmatist/) | Persona — smallest thing that ships, tradeoffs named |
 | [`the-explorer`](./the-explorer/) | Persona — generates genuinely different approaches before judging any |
+| [`code-smells`](./code-smells/) | Fowler code-smell catalog — no artifacts, usable on any existing code |
+| [`code-organization`](./code-organization/) | Module boundaries, dependency direction, naming |
 
 ## How they compose
 

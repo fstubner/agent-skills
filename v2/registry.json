@@ -21,7 +21,9 @@
     { "id": "the-skeptic", "role": "Persona — demands evidence before accepting a claim or plan" },
     { "id": "the-systems-thinker", "role": "Persona — maps interconnections and feedback loops before fixing" },
     { "id": "the-pragmatist", "role": "Persona — smallest thing that ships, tradeoffs named not hidden" },
-    { "id": "the-explorer", "role": "Persona — generates genuinely different approaches before judging any" }
+    { "id": "the-explorer", "role": "Persona — generates genuinely different approaches before judging any" },
+    { "id": "code-smells", "role": "Fowler code-smell catalog + judgment guide" },
+    { "id": "code-organization", "role": "Module boundaries, dependency direction, naming" }
   ],
   "artifacts": [
     {
