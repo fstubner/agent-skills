@@ -25,7 +25,7 @@ will not say "tested decision procedures" until it has them.
 
 This is a composable set, not a pipeline. Each skill fires on its own
 trigger and works standalone; skills never call each other directly. Six of
-the seven additionally read or write a handful of named artifacts (below) —
+the eight additionally read or write a handful of named artifacts (below) —
 that's the entire coupling mechanism.
 
 | Skill | Role |
@@ -37,6 +37,7 @@ that's the entire coupling mechanism.
 | [`backend-engineering`](./backend-engineering/) | Trusted-side laws |
 | [`product-acceptance`](./product-acceptance/) | Independent acceptance gate |
 | [`anti-ai-slop`](./anti-ai-slop/) | Prose editor/detector — no artifacts, usable on any writing task |
+| [`mental-models`](./mental-models/) | Reasoning lens catalog + triage guide — no artifacts, usable on any hard problem |
 
 ## How they compose
 

@@ -16,7 +16,8 @@
     { "id": "frontend", "role": "Stack, structure, design, and UX" },
     { "id": "backend-engineering", "role": "Trusted-side laws" },
     { "id": "product-acceptance", "role": "Independent acceptance gate" },
-    { "id": "anti-ai-slop", "role": "Prose slop editor/detector" }
+    { "id": "anti-ai-slop", "role": "Prose slop editor/detector" },
+    { "id": "mental-models", "role": "Reasoning lens catalog + triage guide" }
   ],
   "artifacts": [
     {

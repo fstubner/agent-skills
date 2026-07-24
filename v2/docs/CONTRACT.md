@@ -44,6 +44,7 @@ through direct calls.
 | `backend-engineering` | Trusted-side laws |
 | `product-acceptance` | Independent acceptance gate |
 | `anti-ai-slop` | Prose slop editor/detector |
+| `mental-models` (no shared artifacts) | Reasoning lens catalog + triage guide |
 
 Suggested starting point for a greenfield/ambiguous request: `product-build`.
 Not a required entry point — every skill above also fires directly on its own trigger.
