@@ -729,6 +729,61 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
   }
 }
 
+// ---------- 10. A --root that cannot be read is never a pass ----------
+// Every checker's file walk swallows readdirSync errors, so a nonexistent or
+// unreadable --root produced "zero files found" -> "not applicable" -> pass ->
+// SHIP, exit 0, on all six checkers. A typo'd path in CI was indistinguishable
+// from a clean codebase — the precise failure the suite's own contract
+// ("missing evidence can never read as success") exists to forbid.
+//
+// This is NOT the same as "scanned fine, found no server" — that remains a
+// legitimate pass. The distinction under test is readable-but-empty vs.
+// unreadable.
+{
+  const missing = path.join(tmpBase, 'no-such-project-dir');
+  const CHECKERS = [
+    ['systems-architecture', ARCH],
+    ['frontend', FRONTEND],
+    ['backend-engineering', BACKEND],
+    ['product-acceptance', ACCEPT],
+    ['code-organization', 'code-organization/scripts/check-organization.js'],
+    ['code-smells', 'code-smells/scripts/check-smells.js'],
+    ['data-modeling', 'data-modeling/scripts/check-migrations.js'],
+  ];
+  for (const [name, script] of CHECKERS) {
+    const r = runNode(path.join(root, ...script.split('/')), ['--root', missing, '--no-write']);
+    let rep = null;
+    try { rep = JSON.parse(r.stdout); } catch { /* a hard exit with no JSON is also acceptable */ }
+    expect(`${name}: unreadable --root does not exit 0`, r.status !== 0, `exit ${r.status}: ${r.stdout.slice(0, 160)}`);
+    expect(`${name}: unreadable --root does not report SHIP`,
+      rep === null || rep.verdict !== 'SHIP', JSON.stringify(rep && rep.checks));
+  }
+
+  // A readable directory with no signals must still be a legitimate pass —
+  // proving the fix above discriminates rather than just blanket-failing.
+  const emptyProj = fs.mkdtempSync(path.join(tmpBase, 'genuinely-empty-'));
+  fs.writeFileSync(path.join(emptyProj, 'notes.txt'), 'no code here\n');
+  const okRun = runNode(path.join(root, ...BACKEND.split('/')), ['--root', emptyProj, '--no-write']);
+  expect('backend-engineering: readable-but-empty project is still a clean pass',
+    okRun.status === 0, `exit ${okRun.status}: ${okRun.stdout.slice(0, 200)}`);
+}
+
+// ---------- 10b. An empty checks array is not a ship ----------
+// computeVerdict([]) returned SHIP and the report schema had no minItems, so a
+// producer that emitted zero checks — because it crashed early, was gutted, or
+// short-circuited — was recorded by accept-check as a passing producer.
+{
+  const { computeVerdict } = await import(pathToFileUrl(path.join(root, 'core', 'lib', 'report.cjs')));
+  expect('computeVerdict([]) is not SHIP', computeVerdict([]) !== 'SHIP', computeVerdict([]));
+
+  const { validate } = await import(pathToFileUrl(path.join(root, 'core', 'lib', 'schema.cjs')));
+  const schema = JSON.parse(read(path.join(root, 'core', 'schemas', 'check-report.schema.json')));
+  const emptyReport = {
+    schemaVersion: 1, skill: 'x', generatedAt: '2026-01-01T00:00:00Z', root: '/', verdict: 'SHIP', checks: [],
+  };
+  expect('report schema rejects an empty checks array', validate(schema, emptyReport).length > 0);
+}
+
 fs.rmSync(tmpBase, { recursive: true, force: true });
 console.log(failures === 0 ? '\nAll tests passed.' : `\n${failures} failure(s)`);
 process.exit(failures === 0 ? 0 : 1);

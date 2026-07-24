@@ -294,8 +294,31 @@ function readFileSafe(absPath) {
   }
 }
 
+// listFiles swallows readdirSync errors by design (an unreadable SUBdirectory
+// shouldn't abort a whole scan). Applied to the root itself that turned a
+// nonexistent path into "zero files found" -> "not applicable" -> pass -> SHIP,
+// so a typo'd --root in CI was indistinguishable from a clean codebase. The
+// root specifically must be proven readable before any verdict is computed:
+// "I scanned it and found nothing" and "I could not scan it" are different
+// claims, and only the first may pass.
+function assertReadableRoot(root) {
+  let stat;
+  try {
+    stat = fs.statSync(root);
+  } catch (e) {
+    throw new Error(
+      `--root is not readable: ${root} (${e.code || e.message}). ` +
+      `Refusing to report a verdict on a directory that could not be scanned.`
+    );
+  }
+  if (!stat.isDirectory()) {
+    throw new Error(`--root is not a directory: ${root}`);
+  }
+}
+
 function classify(root, opts = {}) {
   const evidenceDirName = opts.evidenceDir || '.agent-evidence';
+  assertReadableRoot(root);
   const { files, truncated } = listFiles(root, evidenceDirName);
   // IMPORTANT: all signal matching happens on paths RELATIVE to root — the
   // absolute location of the checkout must never change a verdict.
@@ -366,6 +389,6 @@ function conditionMet(condition, cls) {
 const KNOWN_REQUIRED_WHEN = ['always', 'never', 'multi_part', 'server_present', 'frontend_present'];
 
 module.exports = {
-  classify, conditionMet, listFiles, readFileSafe, ARCH_DOC_CANDIDATES, KNOWN_REQUIRED_WHEN, MAX_FILE_BYTES,
+  classify, conditionMet, listFiles, readFileSafe, assertReadableRoot, ARCH_DOC_CANDIDATES, KNOWN_REQUIRED_WHEN, MAX_FILE_BYTES,
   ORM_DEPS, SERVER_FRAMEWORKS,
 };

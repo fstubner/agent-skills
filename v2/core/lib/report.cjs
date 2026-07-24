@@ -27,6 +27,10 @@ function check(id, status, detail = '') {
 }
 
 function computeVerdict(checks) {
+  // Zero checks means nothing was evaluated — never a ship. A producer that
+  // crashed early, was gutted, or short-circuited used to emit [] and be
+  // recorded by accept-check as a passing producer.
+  if (!Array.isArray(checks) || checks.length === 0) return 'CONDITIONAL';
   if (checks.some((c) => c.status === 'fail')) return 'BLOCK';
   if (checks.some((c) => c.status === 'not_evaluated')) return 'CONDITIONAL';
   return 'SHIP';

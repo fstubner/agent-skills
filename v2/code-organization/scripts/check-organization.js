@@ -144,7 +144,22 @@ function makeReport(checks) {
   };
 }
 
+// walk() swallows readdirSync errors so an unreadable SUBdirectory can't abort
+// a scan. Applied to the root itself that turned a typo'd --root into "zero
+// files" -> "not applicable" -> pass -> SHIP. "I scanned it and found nothing"
+// and "I could not scan it" are different claims; only the first may pass.
+function assertReadableRoot(root) {
+  let stat;
+  try {
+    stat = fs.statSync(root);
+  } catch (e) {
+    throw new Error(`--root is not readable: ${root} (${e.code || e.message})`);
+  }
+  if (!stat.isDirectory()) throw new Error(`--root is not a directory: ${root}`);
+}
+
 function run(root) {
+  assertReadableRoot(root);
   const files = [];
   const truncated = { hit: false };
   walk(root, files, truncated);

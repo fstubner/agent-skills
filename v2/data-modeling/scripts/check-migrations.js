@@ -150,7 +150,21 @@ function makeReport(checks) {
   };
 }
 
+// See the matching guard in code-organization/scripts/check-organization.js:
+// walk() deliberately swallows readdirSync errors, which on the ROOT turned a
+// typo'd --root into a clean SHIP. Scanned-and-empty may pass; unscannable may not.
+function assertReadableRoot(root) {
+  let stat;
+  try {
+    stat = fs.statSync(root);
+  } catch (e) {
+    throw new Error(`--root is not readable: ${root} (${e.code || e.message})`);
+  }
+  if (!stat.isDirectory()) throw new Error(`--root is not a directory: ${root}`);
+}
+
 function run(root) {
+  assertReadableRoot(root);
   const files = [];
   const truncated = { hit: false };
   walk(root, files, truncated);
