@@ -44,6 +44,8 @@ that's the entire coupling mechanism.
 | [`the-explorer`](./the-explorer/) | Persona — generates genuinely different approaches before judging any |
 | [`code-smells`](./code-smells/) | Fowler code-smell catalog — no artifacts, usable on any existing code |
 | [`code-organization`](./code-organization/) | Module boundaries, dependency direction, naming |
+| [`testing-strategy`](./testing-strategy/) | Test pyramid triage, behavior over implementation |
+| [`data-modeling`](./data-modeling/) | Schema design — keys, normalization, nullability, migrations |
 
 ## How they compose
 

@@ -23,7 +23,9 @@
     { "id": "the-pragmatist", "role": "Persona — smallest thing that ships, tradeoffs named not hidden" },
     { "id": "the-explorer", "role": "Persona — generates genuinely different approaches before judging any" },
     { "id": "code-smells", "role": "Fowler code-smell catalog + judgment guide" },
-    { "id": "code-organization", "role": "Module boundaries, dependency direction, naming" }
+    { "id": "code-organization", "role": "Module boundaries, dependency direction, naming" },
+    { "id": "testing-strategy", "role": "Test pyramid triage, behavior over implementation, flaky-test discipline" },
+    { "id": "data-modeling", "role": "Schema design — keys, normalization, nullability, migrations" }
   ],
   "artifacts": [
     {

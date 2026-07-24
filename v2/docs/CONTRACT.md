@@ -51,6 +51,8 @@ through direct calls.
 | `the-explorer` (no shared artifacts) | Persona — generates genuinely different approaches before judging any |
 | `code-smells` (no shared artifacts) | Fowler code-smell catalog + judgment guide |
 | `code-organization` (no shared artifacts) | Module boundaries, dependency direction, naming |
+| `testing-strategy` (no shared artifacts) | Test pyramid triage, behavior over implementation, flaky-test discipline |
+| `data-modeling` (no shared artifacts) | Schema design — keys, normalization, nullability, migrations |
 
 Suggested starting point for a greenfield/ambiguous request: `product-build`.
 Not a required entry point — every skill above also fires directly on its own trigger.
