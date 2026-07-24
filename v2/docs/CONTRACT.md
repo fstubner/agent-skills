@@ -49,7 +49,7 @@ through direct calls.
 | `the-systems-thinker` (no shared artifacts) | Persona — maps interconnections and feedback loops before fixing |
 | `the-pragmatist` (no shared artifacts) | Persona — smallest thing that ships, tradeoffs named not hidden |
 | `the-explorer` (no shared artifacts) | Persona — generates genuinely different approaches before judging any |
-| `code-smells` (no shared artifacts) | Fowler code-smell catalog + judgment guide |
+| `code-smells` | Fowler code-smell catalog + judgment guide |
 | `code-organization` | Module boundaries, dependency direction, naming |
 | `testing-strategy` (no shared artifacts) | Test pyramid triage, behavior over implementation, flaky-test discipline |
 | `data-modeling` (no shared artifacts) | Schema design — keys, normalization, nullability, migrations |
@@ -80,6 +80,7 @@ documentation of who else reads the artifact, not a gating signal).
 | `.agent-evidence/acceptance-report.json` | report | product-acceptance | — | no | always | `product-acceptance/scripts/accept-check.js` | `core/schemas/check-report.schema.json` |
 | — (CLI-invoked, no fixed path) | report | ai-prose-slop | — | no | never | `ai-prose-slop/scripts/check-prose.js` | `core/schemas/check-report.schema.json` |
 | — (CLI-invoked, no fixed path) | report | code-organization | — | no | never | `code-organization/scripts/check-organization.js` | `core/schemas/check-report.schema.json` |
+| — (CLI-invoked, no fixed path) | report | code-smells | — | no | never | `code-smells/scripts/check-smells.js` | `core/schemas/check-report.schema.json` |
 
 ## Adding a skill
 

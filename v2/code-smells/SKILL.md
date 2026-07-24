@@ -21,13 +21,20 @@ that the next change will be harder than it should be. Treat a hit as a
 prompt to look at that code's shape, not an automatic rewrite — some
 "smells" are the right call for the constraints they were written under.
 
-No shared artifacts, no checker script. Unlike the prose patterns in
-`ai-prose-slop`, most of these resist generic detection: recognizing "this
-class does too much" requires understanding what the methods actually do,
-not just counting them. A crude structural check (function line count, file
-size) would flag plenty of legitimate code and miss most real instances —
-better to say so than ship a check that's mostly noise. This is a judgment
-skill, like `mental-models`; lean on the reader, not a script.
+No shared artifacts. Most of this catalog resists generic detection —
+recognizing "this class does too much" requires understanding what the
+methods actually do, not just counting them — so it stays a judgment skill,
+like `mental-models`. Two exceptions are genuinely checkable without a
+per-language parser, and `scripts/check-smells.js` checks them: **file
+size** (any language — a long file is a long file regardless of syntax)
+and **nesting depth** (brace-delimited languages only: JS/TS and the
+C-family, not Python/Ruby's indentation-based nesting or Go's braces,
+whose raw-string escaping this checker's string-stripping doesn't handle
+safely — see the script's own header for the exact reasoning). Run it:
+`node <this-skill>/scripts/check-smells.js --root <dir>`. Everything else
+in the table below — duplication, feature envy, primitive obsession, and
+the rest — needs a human reader; a codebase in any language gets the same
+judgment-only treatment for those.
 
 ## Catalog
 

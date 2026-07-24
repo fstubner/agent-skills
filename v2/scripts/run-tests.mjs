@@ -352,6 +352,58 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
     noCodeReport?.verdict === 'SHIP' && noCodeReport.checks[0]?.id === 'O-scope', JSON.stringify(noCodeReport));
 }
 
+// ---------- 4c. code-smells (file size + nesting depth; no vale needed) ----------
+// Deliberately exercises MULTIPLE languages, not just JS/TS — this checker
+// was specifically corrected mid-build to not assume every codebase it
+// reviews is JavaScript, and these fixtures are what prove that correction
+// actually holds rather than just being asserted in a comment.
+{
+  const SMELLS = path.join(root, 'code-smells', 'scripts', 'check-smells.js');
+
+  const clean = runNode(SMELLS, ['--root', path.join(root, 'fixtures', 'code-smells-clean')]);
+  let cleanReport = null;
+  try { cleanReport = JSON.parse(clean.stdout); } catch { /* asserted below */ }
+  expect('code-smells: clean mixed JS+Python fixture verdict SHIP', cleanReport?.verdict === 'SHIP', clean.stdout || clean.stderr);
+  expect('code-smells: exit code 0', clean.status === 0, `exit ${clean.status}`);
+
+  // The large-file check is language-agnostic on purpose: a 400+ line
+  // Python file must be caught exactly like a 400+ line JS file would be.
+  const largeFile = runNode(SMELLS, ['--root', path.join(root, 'fixtures', 'code-smells-large-file')]);
+  let largeFileReport = null;
+  try { largeFileReport = JSON.parse(largeFile.stdout); } catch { /* asserted below */ }
+  expect('code-smells: large Python file verdict BLOCK (language-agnostic size check)',
+    largeFileReport?.verdict === 'BLOCK', largeFile.stdout || largeFile.stderr);
+  const largeCheck = largeFileReport?.checks.find((c) => c.id === 'S-large-file');
+  expect('code-smells: S-large-file fails on the .py file specifically',
+    largeCheck?.status === 'fail' && largeCheck.detail.includes('big.py'), largeCheck?.detail);
+  expect('code-smells: S-deep-nesting correctly not_applicable for an all-Python project',
+    largeFileReport?.checks.find((c) => c.id === 'S-deep-nesting')?.status === 'pass');
+
+  const deepNesting = runNode(SMELLS, ['--root', path.join(root, 'fixtures', 'code-smells-deep-nesting')]);
+  let deepNestingReport = null;
+  try { deepNestingReport = JSON.parse(deepNesting.stdout); } catch { /* asserted below */ }
+  expect('code-smells: deep JS nesting verdict BLOCK', deepNestingReport?.verdict === 'BLOCK', deepNesting.stdout || deepNesting.stderr);
+  const nestingCheck = deepNestingReport?.checks.find((c) => c.id === 'S-deep-nesting');
+  expect('code-smells: reports the specific depth and location',
+    nestingCheck?.status === 'fail' && /depth 6.*deep\.js:6/.test(nestingCheck.detail), nestingCheck?.detail);
+
+  // Regression: Go is deliberately excluded from the brace-nesting check
+  // (its backtick raw strings don't process backslash escapes the way
+  // stripStringsAndComments assumes) — equally deep .go nesting must NOT
+  // be flagged, proving the exclusion is real and not just documented.
+  const goExcluded = runNode(SMELLS, ['--root', path.join(root, 'fixtures', 'code-smells-go-excluded')]);
+  let goExcludedReport = null;
+  try { goExcludedReport = JSON.parse(goExcluded.stdout); } catch { /* asserted below */ }
+  expect('code-smells: equally deep .go nesting is NOT flagged (Go excluded from S-deep-nesting)',
+    goExcludedReport?.verdict === 'SHIP', JSON.stringify(goExcludedReport));
+
+  const noCodeSmells = runNode(SMELLS, ['--root', path.join(root, 'fixtures', 'code-smells-no-code')]);
+  let noCodeSmellsReport = null;
+  try { noCodeSmellsReport = JSON.parse(noCodeSmells.stdout); } catch { /* asserted below */ }
+  expect('code-smells: no source files (S-scope skip path)',
+    noCodeSmellsReport?.verdict === 'SHIP' && noCodeSmellsReport.checks[0]?.id === 'S-scope', JSON.stringify(noCodeSmellsReport));
+}
+
 // ---------- 5. ai-prose-slop (skips only when vale is absent; CI installs vale) ----------
 {
   const probe = spawnSync('vale', ['--version'], { encoding: 'utf8' });

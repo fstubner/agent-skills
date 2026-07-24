@@ -158,6 +158,18 @@
       "acceptanceGated": false,
       "requiredWhen": "never",
       "note": "Invoked directly via its own CLI (--root <dir>, optional --strict/--report), self-contained like ai-prose-slop's check-prose.js. Only checks circular imports (O-circular-deps) — the one code-organization rule that's genuinely deterministic; everything else in that skill stays judgment-only."
+    },
+    {
+      "id": "smells-report",
+      "kind": "report",
+      "file": null,
+      "producer": "code-smells",
+      "producerScript": "code-smells/scripts/check-smells.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Invoked directly via its own CLI (--root <dir>, optional --strict/--report). Checks file size (any language) and nesting depth (brace-delimited languages only, excluding Go) — the two code-smells rules genuinely checkable without a per-language parser; everything else in that skill stays judgment-only."
     }
   ]
 }
