@@ -833,6 +833,84 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
   }
 }
 
+// ---------- 10d. Acceptance must not trust a producer's self-declared verdict ----------
+// accept-check re-runs producers rather than reading their JSON off disk — but
+// it then branched on report.verdict, a value the producer wrote about itself.
+// That reintroduces the trust the design exists to remove, one level down: a
+// producer emitting {verdict:'SHIP', checks:[{status:'fail'}]} was recorded as
+// a passing producer with the failing check in hand.
+//
+// Built as a minimal temp suite (core + registry + product-acceptance + one
+// stub producer) so a lying producer can be exercised without touching the repo.
+{
+  const suite = fs.mkdtempSync(path.join(tmpBase, 'lying-producer-suite-'));
+  fs.cpSync(path.join(root, 'core'), path.join(suite, 'core'), { recursive: true });
+  fs.copyFileSync(path.join(root, 'registry.json'), path.join(suite, 'registry.json'));
+  fs.cpSync(path.join(root, 'product-acceptance'), path.join(suite, 'product-acceptance'), { recursive: true });
+
+  // Stub frontend producer: claims SHIP while reporting a failing check.
+  const stubDir = path.join(suite, 'frontend', 'scripts');
+  fs.mkdirSync(stubDir, { recursive: true });
+  fs.writeFileSync(path.join(stubDir, 'check-frontend.js'),
+    'console.log(JSON.stringify({schemaVersion:1,skill:"frontend",generatedAt:"2026-01-01T00:00:00Z",' +
+    'root:"/",verdict:"SHIP",checks:[{id:"F-boom",status:"fail",detail:"deliberate disagreement"}]}));\n');
+
+  const proj = fs.mkdtempSync(path.join(tmpBase, 'lying-producer-proj-'));
+  fs.mkdirSync(path.join(proj, 'public'), { recursive: true });
+  fs.writeFileSync(path.join(proj, 'public', 'index.html'), '<!doctype html><html></html>\n');
+  fs.writeFileSync(path.join(proj, 'PRODUCT.md'),
+    '# P\n\n## Purpose\nx\n\n## Users\nx\n\n## Success\nx\n\n## MVP\nx\n\n## Constraints\nx\n');
+
+  const r = runNode(path.join(suite, 'product-acceptance', 'scripts', 'accept-check.js'),
+    ['--root', proj, '--no-write', '--acceptor-context', 'separate']);
+  let rep = null;
+  try { rep = JSON.parse(r.stdout); } catch { /* asserted below */ }
+  const dFrontend = rep && rep.checks.find((c) => c.id === 'D-frontend');
+  expect('acceptance: a producer claiming SHIP with a failing check is not recorded as pass',
+    Boolean(dFrontend) && dFrontend.status !== 'pass',
+    dFrontend ? `${dFrontend.status}: ${dFrontend.detail}` : JSON.stringify(rep && rep.checks));
+  expect('acceptance: overall verdict is not SHIP when a producer lied',
+    rep && rep.verdict !== 'SHIP', rep && rep.verdict);
+}
+
+// ---------- 10e. The audited repo must not be able to disable its own scan ----------
+// product-acceptance is the skill most likely to run standalone against an
+// untrusted finished repo, and accept-check.js's header promises a planted file
+// "can never satisfy this gate". That held for report JSON but not for the
+// SCANNER'S OWN CONFIG: gitleaks auto-discovers <source>/.gitleaks.toml, and
+// honors inline `gitleaks:allow` comments. Both live inside the audited tree,
+// so the repo could switch off its own secret scan.
+{
+  const probe = spawnSync('gitleaks', ['version'], { encoding: 'utf8' });
+  if (probe.error || probe.status !== 0) {
+    console.log('skip  planted-gitleaks-config tests: gitleaks not installed');
+  } else {
+    const mkProj = (extra) => {
+      const p = fs.mkdtempSync(path.join(tmpBase, 'hostile-repo-'));
+      fs.mkdirSync(path.join(p, 'src'), { recursive: true });
+      fs.writeFileSync(path.join(p, 'package.json'), '{"dependencies":{"express":"^4.0.0"}}\n');
+      fs.writeFileSync(path.join(p, 'server.js'), 'module.exports = {};\n');
+      fs.writeFileSync(path.join(p, 'src', 'config.js'),
+        `const t = "${'ghp_' + '1234567890abcdefghij1234567890ABCDEF'}";${extra.inlineAllow ? ' //gitleaks:allow' : ''}\n`);
+      if (extra.plantedConfig) fs.writeFileSync(path.join(p, '.gitleaks.toml'), '[allowlist]\npaths = [".*"]\n');
+      if (extra.plantedIgnore) fs.writeFileSync(path.join(p, '.gitleaksignore'), 'src/config.js:github-pat:1\n');
+      return p;
+    };
+    const statusFor = (p) => {
+      const r = runNode(path.join(root, ...BACKEND.split('/')), ['--root', p, '--no-write']);
+      try { return JSON.parse(r.stdout).checks.find((c) => c.id === 'B-client-secrets')?.status; }
+      catch { return `unparseable: ${r.stdout.slice(0, 120)}`; }
+    };
+    expect('acceptance: baseline leak is caught', statusFor(mkProj({})) === 'fail');
+    expect('acceptance: a planted .gitleaks.toml cannot disable the scan',
+      statusFor(mkProj({ plantedConfig: true })) === 'fail');
+    expect('acceptance: an inline gitleaks:allow comment cannot disable the scan',
+      statusFor(mkProj({ inlineAllow: true })) === 'fail');
+    expect('acceptance: a planted .gitleaksignore cannot disable the scan',
+      statusFor(mkProj({ plantedIgnore: true })) === 'fail');
+  }
+}
+
 fs.rmSync(tmpBase, { recursive: true, force: true });
 console.log(failures === 0 ? '\nAll tests passed.' : `\n${failures} failure(s)`);
 process.exit(failures === 0 ? 0 : 1);

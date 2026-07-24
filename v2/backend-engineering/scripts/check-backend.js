@@ -42,6 +42,12 @@ function isServerOnlyPath(relPath) {
 // provider prefixes the default doesn't cover) and merged — see that
 // file's header for why two passes instead of one combined config.
 const EXTRA_GITLEAKS_CONFIG = path.join(core.lib, '..', 'gitleaks-extra.toml');
+// Pass 1 supplies gitleaks' defaults EXPLICITLY rather than letting it fall
+// through to auto-discovering <source>/.gitleaks.toml. The audited repo does
+// not get a vote on how it is audited: without this, a repo shipping
+// `[allowlist] paths = [".*"]` turned a live token from fail to pass. See
+// core/gitleaks-defaults.toml.
+const DEFAULT_GITLEAKS_CONFIG = path.join(core.lib, '..', 'gitleaks-defaults.toml');
 const LEAKS_FOUND_CODE = 2; // distinct from gitleaks' own fixed exit 1 for an internal error
 
 function gitleaksInstallHint() {
@@ -61,6 +67,11 @@ function runGitleaksPass(root, configArgs, tmpDir, label) {
     'detect', '--no-git', '--source', root, '--no-banner', '--redact',
     '--report-format', 'json', '--report-path', reportPath,
     '--exit-code', String(LEAKS_FOUND_CODE),
+    // Neutralise the two in-tree bypasses the audited repo would otherwise
+    // control: an inline `gitleaks:allow` comment on the offending line, and
+    // a planted .gitleaksignore. Both live inside the tree being scanned.
+    '--ignore-gitleaks-allow',
+    '--gitleaks-ignore-path', tmpDir,
     ...configArgs,
   ], { encoding: 'utf8' });
 
@@ -89,7 +100,7 @@ function scanForClientSecrets(root) {
   let passes;
   try {
     passes = [
-      runGitleaksPass(root, [], tmpDir, 'default'),
+      runGitleaksPass(root, ['--config', DEFAULT_GITLEAKS_CONFIG], tmpDir, 'default'),
       runGitleaksPass(root, ['--config', EXTRA_GITLEAKS_CONFIG], tmpDir, 'extra'),
     ];
   } finally {

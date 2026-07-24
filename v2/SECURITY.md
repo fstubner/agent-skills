@@ -23,20 +23,36 @@ offered because none is monitored.
   eliminates, the risk.
 - **Reports are not security controls.** `*-report.json` files are evidence
   for self-correction. The acceptance gate re-runs checkers rather than
-  reading reports precisely so planted files can't forge a SHIP — but
-  nothing stops a human ignoring the gate.
+  reading reports precisely so planted files can't forge a SHIP — and it
+  recomputes each producer's verdict from that producer's own checks rather
+  than trusting the `verdict` field the producer wrote about itself. (It
+  previously trusted that field, so a producer reporting `SHIP` alongside a
+  failing check was recorded as passing.) Nothing stops a human ignoring the
+  gate.
+- **The audited repo gets no vote on how it is audited.** `product-acceptance`
+  is designed to run against an untrusted finished repo, so the secret scan
+  supplies its configuration explicitly (`core/gitleaks-defaults.toml`) rather
+  than letting gitleaks auto-discover `<source>/.gitleaks.toml`, and passes
+  `--ignore-gitleaks-allow` plus a neutral `--gitleaks-ignore-path`. Without
+  those, a repo could disable the scan inspecting it by committing an
+  allowlist config, an inline `gitleaks:allow` comment, or a `.gitleaksignore`.
+  The **pre-commit hook deliberately does not do this**: there the repo's own
+  gitleaks configuration is the developer's own, and honouring a deliberate
+  team allowlist is correct behaviour for a local convenience hook.
 - **The installer** writes only into the target you name, never deletes
   directories it didn't create (marker file) without `--force`, and makes no
   network requests. Scripts read no env secrets and shell out only with
-  argument arrays (no shell interpolation); the one external binary is
-  `vale` for ai-prose-slop.
+  argument arrays (no shell interpolation). Two external binaries are used and
+  never vendored: `vale` for ai-prose-slop, `gitleaks` for secret scanning.
 - **Secret scanning** (`B-client-secrets`, and the opt-in pre-commit hook at
   `scripts/git-hooks/pre-commit`) shells out to
   [`gitleaks`](https://github.com/gitleaks/gitleaks) rather than a
   hand-rolled pattern list — a real, maintained tool, not a reimplementation
-  of its detection logic. Both consumers run it twice (its default
-  ruleset plus `core/gitleaks-extra.toml`, two provider prefixes the
-  default doesn't cover) and merge the results, so a new prefix added to
-  the extra config reaches both without hand-syncing. Reports file paths
-  and rule ids only — matched values never appear in reports or output
-  (gitleaks redacts them at the source).
+  of its detection logic. Both consumers run it twice (its default ruleset
+  plus `core/gitleaks-extra.toml`, two provider prefixes the default doesn't
+  cover) and merge the results, so a new prefix added to the extra config
+  reaches both without hand-syncing. The supplementary rules carry a length
+  floor, an entropy floor, and a placeholder allowlist so documentation
+  showing a key *format* is not reported as a leak. Reports file paths and
+  rule ids only — matched values never appear in reports or output (gitleaks
+  redacts them at the source).

@@ -26,7 +26,7 @@ const { corePaths } = require('./resolve-core.cjs');
 const core = corePaths();
 const { parseArgs } = require(path.join(core.lib, 'args.cjs'));
 const { classify, conditionMet } = require(path.join(core.lib, 'classify.cjs'));
-const { readText, hasHeading, check, runCli } = require(path.join(core.lib, 'report.cjs'));
+const { readText, hasHeading, check, runCli, computeVerdict } = require(path.join(core.lib, 'report.cjs'));
 const { validate } = require(path.join(core.lib, 'schema.cjs'));
 const registry = require(core.registry);
 
@@ -112,10 +112,26 @@ function checkReportArtifact(root, artifact, checks) {
     checks.push(check(id, 'fail', `producer report failed schema validation: ${errors.slice(0, 3).join('; ')}`));
     return;
   }
-  if (report.verdict === 'BLOCK') {
+  // Recompute the verdict from the producer's own checks rather than trusting
+  // its self-declared `verdict` field. Re-running the producer instead of
+  // reading its report off disk removes trust in stale FILES; branching on a
+  // value the producer wrote ABOUT ITSELF put that trust straight back one
+  // level down. A producer emitting {verdict:'SHIP', checks:[{status:'fail'}]}
+  // was recorded as passing with the failing check in hand.
+  //
+  // A disagreement is itself a finding: the producer is either buggy or drifted
+  // from the shared verdict rule, and either way its report can't be relied on.
+  const recomputed = computeVerdict(report.checks);
+  if (recomputed !== report.verdict) {
+    checks.push(check(id, 'fail',
+      `${artifact.producer} reported verdict ${report.verdict} but its own checks compute to ${recomputed} — ` +
+      `a producer that disagrees with itself is not a passing gate`));
+    return;
+  }
+  if (recomputed === 'BLOCK') {
     const failed = report.checks.filter((c) => c.status === 'fail').map((c) => c.id);
     checks.push(check(id, 'fail', `${artifact.producer} verdict BLOCK (${failed.join(', ')})`));
-  } else if (report.verdict === 'CONDITIONAL') {
+  } else if (recomputed === 'CONDITIONAL') {
     const open = report.checks.filter((c) => c.status === 'not_evaluated').map((c) => c.id);
     checks.push(check(id, 'not_evaluated', `${artifact.producer} verdict CONDITIONAL (open: ${open.join(', ')})`));
   } else {
