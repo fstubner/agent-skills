@@ -36,7 +36,7 @@ that's the entire coupling mechanism.
 | [`frontend`](./frontend/) | Stack, structure, design, UX |
 | [`backend-engineering`](./backend-engineering/) | Trusted-side laws |
 | [`product-acceptance`](./product-acceptance/) | Independent acceptance gate |
-| [`anti-ai-slop`](./anti-ai-slop/) | Prose editor/detector — no artifacts, usable on any writing task |
+| [`ai-prose-slop`](./ai-prose-slop/) | Prose editor/detector — no artifacts, usable on any writing task |
 | [`mental-models`](./mental-models/) | Reasoning lens catalog + triage guide — no artifacts, usable on any hard problem |
 
 ## How they compose
@@ -51,7 +51,7 @@ others:
 | Stack/structure unknown, or design/UX direction unset | `frontend` | writes `design-direction.md`, `ux-walkthrough.md`, tokens |
 | Server/API in scope | `backend-engineering` | reads `ARCHITECTURE.md` |
 | A readiness claim ("ship it", "is this done") | `product-acceptance` | reads whatever artifacts exist, re-runs every applicable checker fresh |
-| Any prose, any time | `anti-ai-slop` | none — fully standalone |
+| Any prose, any time | `ai-prose-slop` | none — fully standalone |
 
 A greenfield build happens to touch most rows in roughly the order listed —
 `product-build` gives that trajectory as a default — but nothing enforces

@@ -47,7 +47,7 @@ still the standard framing in brainstorming and design-thinking practice.
 
 **Failure mode:** skipping straight to the first workable idea. A fast,
 plausible-sounding first answer is not the same as a considered one — the
-same habit `anti-ai-slop` catches in prose (a fabricated-but-plausible
+same habit `ai-prose-slop` catches in prose (a fabricated-but-plausible
 example standing in for a real one) shows up here as a single
 first-guess approach standing in for an actual survey of the option space.
 

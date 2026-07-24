@@ -43,7 +43,7 @@ through direct calls.
 | `frontend` | Stack, structure, design, and UX |
 | `backend-engineering` | Trusted-side laws |
 | `product-acceptance` | Independent acceptance gate |
-| `anti-ai-slop` | Prose slop editor/detector |
+| `ai-prose-slop` | Prose slop editor/detector |
 | `mental-models` (no shared artifacts) | Reasoning lens catalog + triage guide |
 
 Suggested starting point for a greenfield/ambiguous request: `product-build`.
@@ -67,7 +67,7 @@ documentation of who else reads the artifact, not a gating signal).
 | `.agent-evidence/frontend-report.json` | report | frontend | product-acceptance | yes | frontend_present | `frontend/scripts/check-frontend.js` | `core/schemas/check-report.schema.json` |
 | `.agent-evidence/backend-report.json` | report | backend-engineering | product-acceptance | yes | server_present | `backend-engineering/scripts/check-backend.js` | `core/schemas/check-report.schema.json` |
 | `.agent-evidence/acceptance-report.json` | report | product-acceptance | — | no | always | `product-acceptance/scripts/accept-check.js` | `core/schemas/check-report.schema.json` |
-| — (CLI-invoked, no fixed path) | report | anti-ai-slop | — | no | never | `anti-ai-slop/scripts/check-prose.js` | `core/schemas/check-report.schema.json` |
+| — (CLI-invoked, no fixed path) | report | ai-prose-slop | — | no | never | `ai-prose-slop/scripts/check-prose.js` | `core/schemas/check-report.schema.json` |
 
 ## Adding a skill
 

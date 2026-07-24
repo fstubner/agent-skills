@@ -14,7 +14,7 @@ specific claim, and would you have an actual answer — or just a
 plausible-sounding one? If the honest answer is "I'd have to go check,"
 you're not done; go check.
 
-This is the same discipline `anti-ai-slop` applies to prose (no unsupported
+This is the same discipline `ai-prose-slop` applies to prose (no unsupported
 superlatives, no fabricated examples, no claim dressed up to sound more
 certain than it is), aimed here at reasoning and conclusions generally
 rather than just sentences. Use both skills; they check different surfaces

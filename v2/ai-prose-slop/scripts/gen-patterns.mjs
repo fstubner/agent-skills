@@ -16,7 +16,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const skillRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const rulesDir = path.join(skillRoot, 'rules', 'AntiAISlop');
+const rulesDir = path.join(skillRoot, 'rules', 'AIProseTells');
 const patternsPath = path.join(skillRoot, 'references', 'patterns.md');
 
 // Minimal hand-rolled extractor for the flat YAML shapes these rule files
@@ -176,7 +176,7 @@ const check = process.argv.includes('--check');
 if (check) {
   let failed = false;
   if (regenerated !== current) {
-    console.error('references/patterns.md is out of date with rules/AntiAISlop/*.yml — run: node scripts/gen-patterns.mjs');
+    console.error('references/patterns.md is out of date with rules/AIProseTells/*.yml — run: node scripts/gen-patterns.mjs');
     failed = true;
   }
   if (undocumented.length > 0) {
@@ -184,7 +184,7 @@ if (check) {
     failed = true;
   }
   if (failed) process.exit(1);
-  console.log('references/patterns.md matches rules/AntiAISlop/*.yml');
+  console.log('references/patterns.md matches rules/AIProseTells/*.yml');
   process.exit(0);
 }
 

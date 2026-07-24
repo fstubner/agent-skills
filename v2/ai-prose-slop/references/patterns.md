@@ -7,7 +7,7 @@ sentence, not a verdict on the writer.
 Patterns are split by how reliably they can be caught by a regex:
 
 - **Vale-checkable** — specific enough to lint deterministically. These have a
-  matching rule in `rules/AntiAISlop/`.
+  matching rule in `rules/AIProseTells/`.
 - **Judgment-only** — real, but too context-dependent for a regex without heavy
   false positives (they depend on rhetorical structure, not fixed wording).
   These live only in `SKILL.md` guidance for an editing/detect pass.
@@ -16,7 +16,7 @@ Patterns are split by how reliably they can be caught by a regex:
 
 ### Inflated vocabulary
 Words that sound important but carry less information than a plain synonym.
-The list below is generated from `rules/AntiAISlop/InflatedVocabulary.yml` —
+The list below is generated from `rules/AIProseTells/InflatedVocabulary.yml` —
 see the caveat after it for words that were deliberately left out:
 <!-- gen-patterns:tokens InflatedVocabulary.yml -->*delve, delves, delving, leverage, leverages, leveraging, foster, fosters, fostering, utilize, utilizes, utilizing, streamline, streamlines, streamlining, cutting-edge, paradigm shift, game-changer, game-changing, tapestry, multifaceted, meticulous, meticulously, paramount, transformative, elevate, elevates, elevating, harnessing, empower, empowers, empowering, facilitate, facilitates, facilitating, seamless, seamlessly, holistic, holistically, supercharge, supercharges, supercharging, unlock the power/potential of, robust, robustly, realm.*<!-- /gen-patterns -->
 
@@ -43,7 +43,7 @@ see the caveat after it for words that were deliberately left out:
 
 ### Throat-clearing openers
 Stock phrases that delay the point instead of starting with it (generated
-from `rules/AntiAISlop/ThroatClearing.yml`; matching is case-insensitive so
+from `rules/AIProseTells/ThroatClearing.yml`; matching is case-insensitive so
 the tokens below are lowercase):
 <!-- gen-patterns:tokens ThroatClearing.yml -->*here's the thing, let me be clear, i'll be honest, to be honest, simply put, at its core, it's worth noting that, it is worth noting that, it's important to note that, it is important to note that, needless to say, the truth is.*<!-- /gen-patterns -->
 
@@ -54,7 +54,7 @@ the tokens below are lowercase):
 
 ### Weasel attribution
 Claims sourced to nobody in particular (generated from
-`rules/AntiAISlop/WeaselAttribution.yml`):
+`rules/AIProseTells/WeaselAttribution.yml`):
 <!-- gen-patterns:tokens WeaselAttribution.yml -->*studies show, research shows, research suggests, experts agree, experts say, many believe, it is widely believed, it is widely held, critics argue, some argue, industry reports suggest.*<!-- /gen-patterns -->
 
 - **Why it reads as slop:** it borrows the authority of evidence without
@@ -65,7 +65,7 @@ Claims sourced to nobody in particular (generated from
 ### Importance inflation
 Sentences whose whole job is announcing that something matters, without saying
 what happens as a result (generated from
-`rules/AntiAISlop/ImportanceInflation.yml`):
+`rules/AIProseTells/ImportanceInflation.yml`):
 <!-- gen-patterns:tokens ImportanceInflation.yml -->*stands as a testament to, marks a pivotal moment, plays a vital role, plays a crucial role, underscores the importance of, underscores the significance of, solidifies its position as, represents a significant step, cannot be overstated, serves as a testament to.*<!-- /gen-patterns -->
 
 - **Why it reads as slop:** it's a rhetorical shortcut around doing the work of
@@ -76,7 +76,7 @@ what happens as a result (generated from
 
 ### Summary-recap endings
 A closing paragraph that restates what the reader just read (generated from
-`rules/AntiAISlop/SummaryRecap.yml`):
+`rules/AIProseTells/SummaryRecap.yml`):
 <!-- gen-patterns:tokens SummaryRecap.yml -->*"In conclusion," "To summarize," "In summary," "All in all," "To wrap up," "Overall,"*<!-- /gen-patterns -->
 
 - **Why it reads as slop:** the reader was just there; restating adds length, not
@@ -101,7 +101,7 @@ otherwise sparse use elsewhere reads as normal rhythm and won't trip it.
 ### Unsupported superlatives and certainty claims
 Claiming something is definitively the best, only, or most common option
 without being able to defend it if someone pushes back (generated from
-`rules/AntiAISlop/UnsupportedSuperlative.yml`):
+`rules/AIProseTells/UnsupportedSuperlative.yml`):
 <!-- gen-patterns:tokens UnsupportedSuperlative.yml -->*the clearest, the only way, undeniably, guaranteed, proven, most common, the best way.*<!-- /gen-patterns -->
 
 - **Why it reads as slop:** these are the words a claim reaches for when it
@@ -122,7 +122,7 @@ without being able to defend it if someone pushes back (generated from
 ### Parallel-construction flourish
 Symmetric "today's X becomes tomorrow's Y" framing used as manufactured
 drama rather than an earned observation (generated from
-`rules/AntiAISlop/ParallelFlourish.yml`):
+`rules/AIProseTells/ParallelFlourish.yml`):
 <!-- gen-patterns:tokens ParallelFlourish.yml -->*e.g. "today's quick support becomes tomorrow's disaster"*<!-- /gen-patterns -->
 
 - **Why it reads as slop:** the symmetry is doing the persuading instead of

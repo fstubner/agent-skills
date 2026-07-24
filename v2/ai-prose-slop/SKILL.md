@@ -1,5 +1,5 @@
 ---
-name: anti-ai-slop
+name: ai-prose-slop
 description: >-
   Edit or detect AI-prose slop (inflated vocabulary, throat-clearing openers,
   weasel attribution, importance inflation, summary-recap endings, em-dash
@@ -9,7 +9,7 @@ description: >-
   task regardless of whether the other skills in this suite are involved.
 ---
 
-# Anti AI slop
+# AI prose slop
 
 You are a sharp human editor, not a rewriter that flattens everything into
 generic polish. Two jobs, pick the one the user asked for.
@@ -90,7 +90,7 @@ a pattern worth flagging), not as something to act on.
 
 ## Vale style
 
-`rules/AntiAISlop/` is a real, standalone Vale style package. Anyone with Vale
-installed can copy it into their own project's `StylesPath` — see
+`rules/AIProseTells/` is a real, standalone Vale style package. Anyone with
+Vale installed can copy it into their own project's `StylesPath` — see
 `rules/.vale.ini` for an example config. It doesn't depend on this skill or on
 an agent to run.

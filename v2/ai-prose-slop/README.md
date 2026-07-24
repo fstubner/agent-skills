@@ -1,4 +1,4 @@
-# anti-ai-slop
+# ai-prose-slop
 
 Catch and fix AI-prose habits — inflated vocabulary, throat-clearing openers,
 weasel attribution, importance inflation, summary-recap endings, em-dash
@@ -28,7 +28,7 @@ with rationale, examples, and false-positive caveats. Short version:
 **Detect** — ask whether a draft reads as AI-written:
 
 ```
-Use anti-ai-slop to check if this reads as AI slop:
+Use ai-prose-slop to check if this reads as AI slop:
 
 <paste draft>
 ```
@@ -39,7 +39,7 @@ no authorship claim.
 **Edit** — ask for a cleaned-up draft:
 
 ```
-Use anti-ai-slop to edit this draft:
+Use ai-prose-slop to edit this draft:
 
 <paste draft>
 ```
@@ -49,7 +49,7 @@ You get the edited draft plus a **What changed** section.
 **Direct lint** — run the deterministic layer yourself, no agent needed:
 
 ```bash
-node anti-ai-slop/scripts/check-prose.js path/to/draft.md
+node ai-prose-slop/scripts/check-prose.js path/to/draft.md
 ```
 
 Requires the real `vale` CLI on PATH. If it's missing, the script tells you
@@ -60,10 +60,10 @@ silently skipping the check.
 
 ## Standalone Vale style
 
-`rules/AntiAISlop/` works with any project that has Vale installed — it
-doesn't need this skill or an agent. Copy the whole `AntiAISlop/` folder
-into your project (e.g. to `styles/AntiAISlop/`), then point `StylesPath` at
-its **parent** directory — not at `AntiAISlop/` itself, since Vale appends
+`rules/AIProseTells/` works with any project that has Vale installed — it
+doesn't need this skill or an agent. Copy the whole `AIProseTells/` folder
+into your project (e.g. to `styles/AIProseTells/`), then point `StylesPath` at
+its **parent** directory — not at `AIProseTells/` itself, since Vale appends
 `BasedOnStyles`'s value to `StylesPath` when resolving the style:
 
 ```ini
@@ -71,16 +71,16 @@ StylesPath = styles
 MinAlertLevel = suggestion
 
 [*.md]
-BasedOnStyles = AntiAISlop
+BasedOnStyles = AIProseTells
 ```
 
-`StylesPath = path/to/AntiAISlop` (pointing directly at the copied folder)
+`StylesPath = path/to/AIProseTells` (pointing directly at the copied folder)
 is a common mistake and fails with a real Vale runtime error
-(`E100: style 'AntiAISlop' does not exist on StylesPath`) because Vale then
-looks for `path/to/AntiAISlop/AntiAISlop/`.
+(`E100: style 'AIProseTells' does not exist on StylesPath`) because Vale then
+looks for `path/to/AIProseTells/AIProseTells/`.
 
 See [`rules/.vale.ini`](./rules/.vale.ini) for a runnable example (there,
-`StylesPath = .` because the ini file lives one level up from `AntiAISlop/`,
+`StylesPath = .` because the ini file lives one level up from `AIProseTells/`,
 inside `rules/`).
 
 ## Files
@@ -89,7 +89,7 @@ inside `rules/`).
 |---|---|
 | `SKILL.md` | Editing/detect rules and workflow (judgment layer) |
 | `references/patterns.md` | Full pattern catalog with rationale and examples |
-| `rules/AntiAISlop/*.yml` | Vale style rules (verification layer) |
+| `rules/AIProseTells/*.yml` | Vale style rules (verification layer) |
 | `rules/.vale.ini` | Example Vale config |
 | `scripts/check-prose.js` | Shells out to real Vale, reports results as JSON |
 

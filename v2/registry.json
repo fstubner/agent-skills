@@ -16,7 +16,7 @@
     { "id": "frontend", "role": "Stack, structure, design, and UX" },
     { "id": "backend-engineering", "role": "Trusted-side laws" },
     { "id": "product-acceptance", "role": "Independent acceptance gate" },
-    { "id": "anti-ai-slop", "role": "Prose slop editor/detector" },
+    { "id": "ai-prose-slop", "role": "Prose slop editor/detector" },
     { "id": "mental-models", "role": "Reasoning lens catalog + triage guide" }
   ],
   "artifacts": [
@@ -126,8 +126,8 @@
       "id": "prose-report",
       "kind": "report",
       "file": null,
-      "producer": "anti-ai-slop",
-      "producerScript": "anti-ai-slop/scripts/check-prose.js",
+      "producer": "ai-prose-slop",
+      "producerScript": "ai-prose-slop/scripts/check-prose.js",
       "schema": "core/schemas/check-report.schema.json",
       "consumers": [],
       "acceptanceGated": false,

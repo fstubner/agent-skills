@@ -29,6 +29,6 @@ offered because none is monitored.
   directories it didn't create (marker file) without `--force`, and makes no
   network requests. Scripts read no env secrets and shell out only with
   argument arrays (no shell interpolation); the one external binary is
-  `vale` for anti-ai-slop.
+  `vale` for ai-prose-slop.
 - **Secret scanning** (`B-client-secrets`) is a local check that reports
   file paths only — matched values never appear in reports or output.

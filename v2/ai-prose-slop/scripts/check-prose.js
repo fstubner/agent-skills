@@ -52,7 +52,7 @@ function makeReport(checks) {
     : 'SHIP';
   return {
     schemaVersion: 1,
-    skill: 'anti-ai-slop',
+    skill: 'ai-prose-slop',
     generatedAt: new Date().toISOString(),
     root: process.cwd(),
     verdict,
@@ -84,14 +84,14 @@ if (!isValeOnPath()) {
 // os.tmpdir() filename — on a shared multi-user machine, a predictable path
 // written with writeFileSync (which follows an existing symlink) is an
 // arbitrary-file-overwrite risk if another local user pre-creates it.
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'anti-ai-slop-'));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-prose-slop-'));
 const tmpConfig = path.join(tmpDir, 'vale.ini');
 fs.writeFileSync(tmpConfig, [
   `StylesPath = ${stylesPath.split(path.sep).join('/')}`,
   'MinAlertLevel = suggestion',
   '',
   '[*.md]',
-  'BasedOnStyles = AntiAISlop',
+  'BasedOnStyles = AIProseTells',
   '',
 ].join('\n'));
 

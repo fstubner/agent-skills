@@ -5,7 +5,7 @@
 ```bash
 node scripts/run-tests.mjs                        # must pass — same command CI runs (Ubuntu + Windows)
 node scripts/gen-contract.mjs                      # after any registry.json change
-node anti-ai-slop/scripts/gen-patterns.mjs         # after any rules/AntiAISlop/*.yml change
+node ai-prose-slop/scripts/gen-patterns.mjs        # after any rules/AIProseTells/*.yml change
 ```
 
 The repo ships `.gitattributes` (LF-normalized), and the test runner
@@ -20,17 +20,17 @@ the contract, ship + block fixtures pinning the specific blocker id. The
 test runner cross-checks the registry against the filesystem, so a skipped
 step fails loudly.
 
-## Editing anti-ai-slop's Vale rules
+## Editing ai-prose-slop's Vale rules
 
-`rules/AntiAISlop/*.yml` is the single source of truth for every checkable
+`rules/AIProseTells/*.yml` is the single source of truth for every checkable
 word/phrase/threshold. Never hand-edit the word lists inside
-`anti-ai-slop/references/patterns.md` — the spans between
+`ai-prose-slop/references/patterns.md` — the spans between
 `<!-- gen-patterns:... -->` markers are generated from the `.yml` files and
 overwritten on every run. After adding, removing, or changing a token in a
 rule file (or adding a new rule file), run:
 
 ```bash
-node anti-ai-slop/scripts/gen-patterns.mjs
+node ai-prose-slop/scripts/gen-patterns.mjs
 ```
 
 `run-tests.mjs` runs this in `--check` mode and fails if `patterns.md` is

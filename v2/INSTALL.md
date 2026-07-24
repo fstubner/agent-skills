@@ -3,7 +3,7 @@
 ## Requirements
 
 Node 18+. No npm install, no network — the installer only copies files.
-The `anti-ai-slop` skill additionally wants the [Vale](https://vale.sh) CLI
+The `ai-prose-slop` skill additionally wants the [Vale](https://vale.sh) CLI
 on PATH for its deterministic layer (it degrades honestly when absent).
 
 ## Per-harness
@@ -25,7 +25,7 @@ This is a composable set of skills, not an all-or-nothing suite — grab only
 what you want:
 
 ```bash
-node scripts/install.mjs --harness claude --skill anti-ai-slop
+node scripts/install.mjs --harness claude --skill ai-prose-slop
 node scripts/install.mjs --harness claude --skill frontend,backend-engineering
 ```
 

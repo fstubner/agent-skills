@@ -22,7 +22,7 @@ neutral choice (Five Whys on an interconnected problem doesn't just work
 less well, it actively hides the other contributing factors). Triage first;
 don't run every lens on every problem.
 
-No shared artifacts, no checker script — like `anti-ai-slop`, this fires on
+No shared artifacts, no checker script — like `ai-prose-slop`, this fires on
 its own trigger and works standalone. What it verifies is judgment, not
 something a script can check; be honest that the "defensibility check"
 below is the only verification this skill has, and it's a discipline, not a
@@ -75,8 +75,8 @@ files — the table above is enough to pick one, not enough to apply it well.
 3. **A workable answer is not the same as a complete one.** That's the
    whole point of the coverage test — don't stop at the first thing that
    fits.
-4. **This overlaps with `anti-ai-slop` on purpose.** The defensibility
-   check is the same discipline anti-ai-slop applies to prose (no
+4. **This overlaps with `ai-prose-slop` on purpose.** The defensibility
+   check is the same discipline ai-prose-slop applies to prose (no
    unsupported superlatives, no fabricated examples), applied here to
    reasoning and conclusions generally. Use both; they check different
    surfaces of the same habit.
