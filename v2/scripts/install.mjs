@@ -150,10 +150,16 @@ for (const target of targets) {
       fs.rmSync(dest, { recursive: true, force: true });
     }
     copyDir(src, dest);
-    // Vendor the core so the skill works standalone.
+    // Vendor the ENTIRE core so the skill works standalone. Deliberately a
+    // whole-directory copy rather than an enumeration of subdirectories: the
+    // previous `lib` + `schemas` list silently dropped core/gitleaks-extra.toml,
+    // so every INSTALLED check-backend run failed with "unable to load gitleaks
+    // config" — an unconditional BLOCK on every project, invisible to every
+    // dev-checkout test because there core.lib resolves to core/lib and the
+    // sibling file is reachable. Copying core/ wholesale means a new file under
+    // core/ ships by default instead of by remembering to add a line here.
     const vendor = path.join(dest, 'scripts', 'vendor');
-    copyDir(path.join(suiteRoot, 'core', 'lib'), path.join(vendor, 'lib'));
-    copyDir(path.join(suiteRoot, 'core', 'schemas'), path.join(vendor, 'schemas'));
+    copyDir(path.join(suiteRoot, 'core'), vendor);
     fs.copyFileSync(path.join(suiteRoot, 'registry.json'), path.join(vendor, 'registry.json'));
     fs.writeFileSync(path.join(dest, MARKER), JSON.stringify({
       suite: registry.name, version, installedAt: new Date().toISOString(),

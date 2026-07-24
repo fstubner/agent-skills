@@ -677,6 +677,58 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
   expect('install.mjs --harness codex: reports 2 target(s)', /2 target\(s\)/.test(r.stdout), r.stdout);
 }
 
+// ---------- 9b. INSTALLED skills must actually run ----------
+// Every other test in this file runs checkers from the DEV CHECKOUT, where
+// core.lib resolves to core/lib and sibling files under core/ are reachable.
+// An installed skill resolves core.lib to scripts/vendor/lib instead, so
+// anything under core/ that install.mjs forgets to vendor is missing at
+// runtime — and no dev-checkout test can ever see it.
+//
+// This gap shipped a real bug: core/gitleaks-extra.toml was not vendored, so
+// EVERY installed check-backend run failed with "unable to load gitleaks
+// config" — an unconditional BLOCK on every project, while this suite stayed
+// green. Asserting a specific missing file would only re-pin that one bug, so
+// the check below is deliberately generic: install, then run, and require the
+// checker to reach a real verdict.
+{
+  const dest = fs.mkdtempSync(path.join(tmpBase, 'installed-'));
+  const inst = spawnSync(process.execPath,
+    [path.join(root, 'scripts', 'install.mjs'), '--dest', dest, '--skill', 'backend-engineering'],
+    { cwd: root, encoding: 'utf8' });
+  expect('install.mjs --dest: exits 0', inst.status === 0, inst.stderr || inst.stdout);
+
+  // Every regular file directly under core/ must reach the vendored core.
+  // Directory-by-directory vendoring is what silently dropped gitleaks-extra.toml.
+  const vendor = path.join(dest, 'backend-engineering', 'scripts', 'vendor');
+  for (const entry of fs.readdirSync(path.join(root, 'core'), { withFileTypes: true })) {
+    if (!entry.isFile()) continue;
+    expect(`install.mjs vendors core/${entry.name}`, fs.existsSync(path.join(vendor, entry.name)));
+  }
+
+  // Run the INSTALLED checker against a clean, minimal server project.
+  const proj = fs.mkdtempSync(path.join(tmpBase, 'installed-proj-'));
+  fs.writeFileSync(path.join(proj, 'package.json'), '{"dependencies":{"express":"^4.0.0"}}\n');
+  fs.writeFileSync(path.join(proj, 'server.js'), 'module.exports = {};\n');
+  const run = spawnSync(process.execPath,
+    [path.join(dest, 'backend-engineering', 'scripts', 'check-backend.js'), '--root', proj, '--no-write'],
+    { encoding: 'utf8' });
+  let installedReport = null;
+  try { installedReport = JSON.parse(run.stdout); } catch { /* asserted below */ }
+  expect('installed check-backend: emits a parseable report', installedReport !== null,
+    (run.stderr || run.stdout || '').slice(0, 300));
+  if (installedReport) {
+    const secrets = installedReport.checks.find((c) => c.id === 'B-client-secrets');
+    // The tool itself may legitimately be absent locally (=> not_evaluated).
+    // What must never happen is the checker failing because its OWN install
+    // is incomplete — that's a broken product, not a finding about the project.
+    expect('installed check-backend: does not fail on its own missing config',
+      Boolean(secrets) && !/did not complete normally|unable to load/i.test(secrets.detail),
+      secrets ? secrets.detail.slice(0, 200) : 'B-client-secrets check absent');
+    expect('installed check-backend: clean project is not BLOCKed',
+      installedReport.verdict !== 'BLOCK', JSON.stringify(installedReport.checks));
+  }
+}
+
 fs.rmSync(tmpBase, { recursive: true, force: true });
 console.log(failures === 0 ? '\nAll tests passed.' : `\n${failures} failure(s)`);
 process.exit(failures === 0 ? 0 : 1);
