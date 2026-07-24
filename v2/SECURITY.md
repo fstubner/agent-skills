@@ -31,6 +31,7 @@ offered because none is monitored.
   argument arrays (no shell interpolation); the one external binary is
   `vale` for ai-prose-slop.
 - **Secret scanning** (`B-client-secrets`, and the opt-in pre-commit hook at
-  `scripts/git-hooks/pre-commit`) is a local check that reports file paths
-  only — matched values never appear in reports or output. Both share one
-  pattern list (`core/lib/secret-patterns.cjs`) so they can't drift apart.
+  `scripts/git-hooks/pre-commit` / `pre-commit.ps1`) is a local check that
+  reports file paths only — matched values never appear in reports or
+  output. All three read one canonical pattern list
+  (`core/lib/secret-patterns.txt`) so they can't drift apart.

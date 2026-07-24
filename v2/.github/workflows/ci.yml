@@ -45,5 +45,15 @@ jobs:
         # make vale reachable, instead of letting run-tests.mjs's graceful
         # local-dev skip silently hide a broken CI leg.
         run: vale --version
+      - name: Verify sh and pwsh are on PATH
+        # scripts/git-hooks/pre-commit(.ps1) are native sh/PowerShell, not
+        # Node — run-tests.mjs spawns both directly. GitHub's windows-latest
+        # image ships Git for Windows (sh.exe on PATH) and pwsh by default;
+        # this fails loudly if that ever stops being true, instead of
+        # run-tests.mjs's spawnSync surfacing an opaque ENOENT.
+        shell: bash
+        run: |
+          sh -c 'echo sh ok'
+          pwsh -Version
       - name: Suite tests (fixtures, registry cross-check, schema units, contract drift)
         run: node scripts/run-tests.mjs

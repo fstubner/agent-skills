@@ -1,17 +1,17 @@
 'use strict';
-// Anchored, prefix-based secret patterns ONLY. The v0.4 scanner used
-// /sk-[a-zA-Z0-9]{10,}/ with no boundary and BLOCKed projects for containing
-// the phrase "task-management". Every pattern here requires a real key
-// prefix. Shared by backend-engineering's client-secret scan and the
-// pre-commit hook in scripts/git-hooks/ — one list, so a new prefix added
-// for one is available to the other without hand-syncing two copies.
-const SECRET_PATTERNS = [
-  /\bsk_(live|test)_[A-Za-z0-9]{10,}/,        // Stripe
-  /\bsk-ant-[A-Za-z0-9_-]{10,}/,              // Anthropic
-  /\bsk-proj-[A-Za-z0-9_-]{10,}/,             // OpenAI project keys
-  /\bAKIA[0-9A-Z]{16}\b/,                     // AWS access key id
-  /\bghp_[A-Za-z0-9]{30,}\b/,                 // GitHub PAT
-  /\bxox[baprs]-[A-Za-z0-9-]{10,}/,           // Slack
-];
+// Thin loader over the canonical pattern list in secret-patterns.txt —
+// deliberately no hardcoded regex literals here. The .txt file's ERE
+// syntax is also valid JS RegExp syntax verbatim (no dialect translation
+// needed), so this is a straight parse, not a port. See secret-patterns.txt
+// for why the patterns are shaped the way they are.
+const fs = require('fs');
+const path = require('path');
+
+const raw = fs.readFileSync(path.join(__dirname, 'secret-patterns.txt'), 'utf8');
+const SECRET_PATTERNS = raw
+  .split('\n')
+  .map((line) => line.trim())
+  .filter((line) => line.length > 0 && !line.startsWith('#'))
+  .map((line) => new RegExp(line));
 
 module.exports = { SECRET_PATTERNS };

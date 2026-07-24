@@ -55,12 +55,19 @@ can't silently claim a word is checkable when it isn't (or vice versa).
 git config core.hooksPath scripts/git-hooks
 ```
 
-Blocks a commit whose staged content matches `core/lib/secret-patterns.cjs`
-(the same anchored, prefix-based patterns `backend-engineering`'s
-`B-client-secrets` check uses). Per-clone opt-in — `git config` isn't
-committed, so this never activates for a contributor who hasn't run it.
-Reports file paths only, never the matched value. A genuine false positive:
-commit with `--no-verify` and open an issue.
+Blocks a commit whose staged content matches
+`core/lib/secret-patterns.txt` (the same anchored, prefix-based patterns
+`backend-engineering`'s `B-client-secrets` check uses — that check, this
+hook, and the hook's PowerShell counterpart all read the one `.txt` file,
+so a new prefix reaches all three without hand-syncing). The hook itself
+(`scripts/git-hooks/pre-commit`) is native POSIX `sh`, no Node required —
+git resolves it by shebang and runs it through its own bundled `sh.exe` on
+Windows too (Git for Windows), so it works the same on every platform
+without an interpreter to install. `pre-commit.ps1` is a PowerShell
+equivalent for direct/manual invocation. Per-clone opt-in — `git config`
+isn't committed, so this never activates for a contributor who hasn't run
+it. Reports file paths only, never the matched value. A genuine false
+positive: commit with `--no-verify` and open an issue.
 
 ## Releases
 

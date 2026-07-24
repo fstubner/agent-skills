@@ -1,57 +1,68 @@
-#!/usr/bin/env node
-'use strict';
-// Blocks a commit whose STAGED content contains a secret-shaped value.
-// Reuses backend-engineering's SECRET_PATTERNS (core/lib/secret-patterns.cjs)
-// so a prefix added for one is available to the other.
-//
-// Reports file paths only, never the matched value — same rule as
-// B-client-secrets in backend-engineering/scripts/check-backend.js.
-//
-// Install (opt-in per clone; git config is not committed, so this never
-// activates for a contributor who hasn't run it):
-//   git config core.hooksPath scripts/git-hooks
-//
-// Deliberately git-native (core.hooksPath), not a copy into .git/hooks/ —
-// that directory isn't version-controlled, so a copied hook silently goes
-// stale the moment this file is edited. This one always runs the current
-// version.
+#!/bin/sh
+# Blocks a commit whose STAGED content contains a secret-shaped value.
+# Reuses the canonical pattern list in core/lib/secret-patterns.txt, the
+# same one core/lib/secret-patterns.cjs (JS) and this script's PowerShell
+# counterpart (pre-commit.ps1) read — one list, three consumers, no
+# per-language regex transcription to drift.
+#
+# Reports file paths only, never the matched value — same rule as
+# B-client-secrets in backend-engineering/scripts/check-backend.js.
+#
+# Install (opt-in per clone; git config is not committed, so this never
+# activates for a contributor who hasn't run it):
+#   git config core.hooksPath scripts/git-hooks
+#
+# Deliberately git-native (core.hooksPath), not a copy into .git/hooks/ —
+# that directory isn't version-controlled, so a copied hook silently goes
+# stale the moment this file is edited. This one always runs the current
+# version. Plain POSIX sh (no bashisms — verified against dash, the /bin/sh
+# on Debian/Ubuntu) so it runs unmodified under macOS/Linux's native sh and
+# under Git for Windows' bundled sh.exe, which is what git itself uses to
+# execute a shebang-based hook on Windows regardless of the user's own
+# interactive shell (cmd, PowerShell, or Git Bash).
+#
+# Known scope limit: filenames containing a literal newline are not
+# handled (relies on `git diff --name-only`'s one-path-per-line output,
+# same simplification the vast majority of real-world git hooks make).
 
-const { execFileSync } = require('child_process');
-const path = require('path');
-const { SECRET_PATTERNS } = require(path.join(__dirname, '..', '..', 'core', 'lib', 'secret-patterns.cjs'));
+set -eu
 
-const MAX_BYTES = 2 * 1024 * 1024; // matches classify.cjs's MAX_FILE_BYTES order of magnitude
+# Resolved relative to THIS SCRIPT's own location, not the repo being
+# committed to (`git rev-parse --show-toplevel`) — those are usually the
+# same repo, but core.hooksPath can point at a hooks directory shared
+# across multiple repos, in which case only script-relative resolution
+# finds the canonical pattern list reliably.
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+patterns_file="$script_dir/../../core/lib/secret-patterns.txt"
+max_bytes=2000000
 
-function stagedFiles() {
-  const out = execFileSync('git', ['diff', '--cached', '--name-only', '--diff-filter=ACM'], { encoding: 'utf8' });
-  return out.split('\n').map((l) => l.trim()).filter(Boolean);
-}
+tmp_dir=$(mktemp -d)
+trap 'rm -rf "$tmp_dir"' EXIT
 
-// Reads the STAGED blob (`git show :path`), not the working-tree file — a
-// partially-staged file (`git add -p`) must be checked for what's actually
-// about to be committed, not what's currently on disk.
-function stagedContent(relPath) {
-  try {
-    return execFileSync('git', ['show', `:${relPath}`], { encoding: 'utf8', maxBuffer: MAX_BYTES * 2 });
-  } catch {
-    return null; // binary, deleted, or unreadable as text — skip, don't crash the commit
-  }
-}
+tmp_patterns="$tmp_dir/patterns"
+tmp_filelist="$tmp_dir/files"
+tmp_hits="$tmp_dir/hits"
 
-const hits = [];
-for (const rel of stagedFiles()) {
-  const text = stagedContent(rel);
-  if (text === null) continue;
-  if (Buffer.byteLength(text, 'utf8') > MAX_BYTES) continue;
-  if (SECRET_PATTERNS.some((p) => p.test(text))) hits.push(rel);
-}
+grep -v '^#' "$patterns_file" | grep -v '^[[:space:]]*$' > "$tmp_patterns"
+git diff --cached --name-only --diff-filter=ACM > "$tmp_filelist"
+: > "$tmp_hits"
 
-if (hits.length > 0) {
-  console.error('pre-commit: secret-shaped value(s) staged in:');
-  for (const f of hits) console.error(`  ${f}`);
-  console.error('Remove the secret (and rotate it if already committed elsewhere) before committing.');
-  console.error('If this is a genuine false positive, commit with --no-verify and open an issue.');
-  process.exit(1);
-}
+# Redirected from a file, not piped, so this loop does NOT run in a
+# subshell (a `... | while read` pipeline would, in POSIX sh, silently
+# losing anything the loop writes to a shell variable — writing matches to
+# tmp_hits sidesteps that instead of relying on a variable).
+while IFS= read -r f; do
+  if git show ":$f" 2>/dev/null | head -c "$max_bytes" | grep -Eq -f "$tmp_patterns"; then
+    printf '%s\n' "$f" >> "$tmp_hits"
+  fi
+done < "$tmp_filelist"
 
-process.exit(0);
+if [ -s "$tmp_hits" ]; then
+  echo "pre-commit: secret-shaped value(s) staged in:" >&2
+  sed 's/^/  /' "$tmp_hits" >&2
+  echo "Remove the secret (and rotate it if already committed elsewhere) before committing." >&2
+  echo "If this is a genuine false positive, commit with --no-verify and open an issue." >&2
+  exit 1
+fi
+
+exit 0
