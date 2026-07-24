@@ -784,6 +784,55 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
   expect('report schema rejects an empty checks array', validate(schema, emptyReport).length > 0);
 }
 
+// ---------- 10c. core/gitleaks-extra.toml must not fire on documentation ----------
+// The two supplementary rules (Anthropic / OpenAI project keys, which gitleaks'
+// default ruleset does not cover as of 8.30.1) were bare prefix regexes with no
+// entropy floor and no allowlist. Result: any repo whose docs SHOW the key
+// format — "keys look like sk-ant-api03-YOUR-KEY-HERE" — was BLOCKed, while
+// upstream gitleaks correctly ignored the same line. That's a false positive on
+// exactly the projects this suite targets (LLM tooling), and a gate that cries
+// wolf is a gate people disable.
+//
+// The realistic key is generated at RUNTIME, never stored as a literal: a
+// high-entropy sk-ant- string committed to this repo would trip the suite's own
+// pre-commit hook.
+{
+  const probe = spawnSync('gitleaks', ['version'], { encoding: 'utf8' });
+  if (probe.error || probe.status !== 0) {
+    console.log('skip  gitleaks-extra.toml precision tests: gitleaks not installed');
+  } else {
+    const crypto = await import('node:crypto');
+    const entropicTail = crypto.randomBytes(72).toString('base64url').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 95);
+    const proj = fs.mkdtempSync(path.join(tmpBase, 'gitleaks-precision-'));
+    fs.writeFileSync(path.join(proj, 'package.json'), '{"dependencies":{"express":"^4.0.0"}}\n');
+    fs.writeFileSync(path.join(proj, 'server.js'), 'module.exports = {};\n');
+    // TRUE POSITIVE: a realistic, high-entropy key.
+    fs.writeFileSync(path.join(proj, 'leak.js'), `const k = "${'sk-ant-' + 'api03-' + entropicTail}";\n`);
+    const leakRun = runNode(path.join(root, ...BACKEND.split('/')), ['--root', proj, '--no-write']);
+    let leakRep = null;
+    try { leakRep = JSON.parse(leakRun.stdout); } catch { /* asserted below */ }
+    expect('gitleaks-extra: a realistic Anthropic key is still caught',
+      leakRep && leakRep.checks.find((c) => c.id === 'B-client-secrets')?.status === 'fail',
+      JSON.stringify(leakRep && leakRep.checks));
+
+    // FALSE POSITIVE GUARD: docs describing the format, and a benign URL slug
+    // sharing the prefix. Neither is a credential.
+    fs.rmSync(path.join(proj, 'leak.js'));
+    fs.writeFileSync(path.join(proj, 'README.md'),
+      '# Setup\n\nSet ANTHROPIC_API_KEY. Keys look like sk-ant-api03-YOUR-KEY-HERE.\n');
+    fs.writeFileSync(path.join(proj, 'cdn.js'),
+      'const u = "https://cdn.acme.io/assets/sk-ant-theme-bundle-v2";\n');
+    fs.writeFileSync(path.join(proj, 'ci.sh'), 'KEY=sk-proj-CI_PLACEHOLDER_TOKEN_1234\n');
+    const cleanRun = runNode(path.join(root, ...BACKEND.split('/')), ['--root', proj, '--no-write']);
+    let cleanRep = null;
+    try { cleanRep = JSON.parse(cleanRun.stdout); } catch { /* asserted below */ }
+    const cleanSecrets = cleanRep && cleanRep.checks.find((c) => c.id === 'B-client-secrets');
+    expect('gitleaks-extra: documentation placeholders do not BLOCK',
+      Boolean(cleanSecrets) && cleanSecrets.status === 'pass',
+      cleanSecrets ? cleanSecrets.detail.slice(0, 220) : JSON.stringify(cleanRep));
+  }
+}
+
 fs.rmSync(tmpBase, { recursive: true, force: true });
 console.log(failures === 0 ? '\nAll tests passed.' : `\n${failures} failure(s)`);
 process.exit(failures === 0 ? 0 : 1);
