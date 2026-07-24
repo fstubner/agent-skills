@@ -404,6 +404,52 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
     noCodeSmellsReport?.verdict === 'SHIP' && noCodeSmellsReport.checks[0]?.id === 'S-scope', JSON.stringify(noCodeSmellsReport));
 }
 
+// ---------- 4d. data-modeling (SQL migration-safety checker; a narrow slice, not "all of data modeling") ----------
+{
+  const MIGRATIONS = path.join(root, 'data-modeling', 'scripts', 'check-migrations.js');
+
+  const clean = runNode(MIGRATIONS, ['--root', path.join(root, 'fixtures', 'data-modeling-clean')]);
+  let cleanReport = null;
+  try { cleanReport = JSON.parse(clean.stdout); } catch { /* asserted below */ }
+  expect('data-modeling: clean fixture verdict SHIP (comment/string mentions of DROP/RENAME ignored)',
+    cleanReport?.verdict === 'SHIP', clean.stdout || clean.stderr);
+  expect('data-modeling: exit code 0', clean.status === 0, `exit ${clean.status}`);
+
+  const destructive = runNode(MIGRATIONS, ['--root', path.join(root, 'fixtures', 'data-modeling-destructive')]);
+  let destructiveReport = null;
+  try { destructiveReport = JSON.parse(destructive.stdout); } catch { /* asserted below */ }
+  expect('data-modeling: DROP TABLE/COLUMN verdict BLOCK', destructiveReport?.verdict === 'BLOCK', destructive.stdout || destructive.stderr);
+  expect('data-modeling: DM-sql-destructive-drop is the specific failing check',
+    destructiveReport?.checks.find((c) => c.id === 'DM-sql-destructive-drop')?.status === 'fail');
+
+  const unsafe = runNode(MIGRATIONS, ['--root', path.join(root, 'fixtures', 'data-modeling-unsafe-notnull')]);
+  let unsafeReport = null;
+  try { unsafeReport = JSON.parse(unsafe.stdout); } catch { /* asserted below */ }
+  expect('data-modeling: unsafe-notnull fixture verdict BLOCK', unsafeReport?.verdict === 'BLOCK', unsafe.stdout || unsafe.stderr);
+  expect('data-modeling: DM-sql-unsafe-not-null fails (ADD COLUMN NOT NULL, no DEFAULT)',
+    unsafeReport?.checks.find((c) => c.id === 'DM-sql-unsafe-not-null')?.status === 'fail');
+  expect('data-modeling: DM-sql-rename fails (RENAME COLUMN in the same file)',
+    unsafeReport?.checks.find((c) => c.id === 'DM-sql-rename')?.status === 'fail');
+  expect('data-modeling: DM-sql-volatile-default fails (ADD COLUMN DEFAULT gen_random_uuid())',
+    unsafeReport?.checks.find((c) => c.id === 'DM-sql-volatile-default')?.status === 'fail');
+
+  // Regression: down/rollback migrations are EXPECTED to contain drops and
+  // reversals by design — both the .down.sql filename convention and an
+  // inline `-- +goose Down` marker must be excluded, or a normal rollback
+  // file would permanently BLOCK the project.
+  const downExcluded = runNode(MIGRATIONS, ['--root', path.join(root, 'fixtures', 'data-modeling-down-excluded')]);
+  let downExcludedReport = null;
+  try { downExcludedReport = JSON.parse(downExcluded.stdout); } catch { /* asserted below */ }
+  expect('data-modeling: down migrations (.down.sql AND goose-style inline marker) are excluded, verdict SHIP',
+    downExcludedReport?.verdict === 'SHIP', JSON.stringify(downExcludedReport));
+
+  const noSql = runNode(MIGRATIONS, ['--root', path.join(root, 'fixtures', 'data-modeling-no-sql')]);
+  let noSqlReport = null;
+  try { noSqlReport = JSON.parse(noSql.stdout); } catch { /* asserted below */ }
+  expect('data-modeling: no .sql files (DM-sql-scope skip path — e.g. an ORM-schema or NoSQL project)',
+    noSqlReport?.verdict === 'SHIP' && noSqlReport.checks[0]?.id === 'DM-sql-scope', JSON.stringify(noSqlReport));
+}
+
 // ---------- 5. ai-prose-slop (skips only when vale is absent; CI installs vale) ----------
 {
   const probe = spawnSync('vale', ['--version'], { encoding: 'utf8' });

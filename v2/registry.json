@@ -170,6 +170,18 @@
       "acceptanceGated": false,
       "requiredWhen": "never",
       "note": "Invoked directly via its own CLI (--root <dir>, optional --strict/--report). Checks file size (any language) and nesting depth (brace-delimited languages only, excluding Go) — the two code-smells rules genuinely checkable without a per-language parser; everything else in that skill stays judgment-only."
+    },
+    {
+      "id": "migrations-report",
+      "kind": "report",
+      "file": null,
+      "producer": "data-modeling",
+      "producerScript": "data-modeling/scripts/check-migrations.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Invoked directly via its own CLI (--root <dir>, optional --strict/--report). Checks ONLY raw .sql migration files for destructive drops, unsafe NOT NULL additions, renames, and volatile-function column defaults — every check id is prefixed DM-sql- specifically so this is never mistaken for having evaluated data modeling generally. A project modeling data via an ORM schema DSL or a NoSQL store gets none of this checked mechanically; SKILL.md's judgment rules still apply to those, just without a script behind them."
     }
   ]
 }

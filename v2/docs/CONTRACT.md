@@ -52,7 +52,7 @@ through direct calls.
 | `code-smells` | Fowler code-smell catalog + judgment guide |
 | `code-organization` | Module boundaries, dependency direction, naming |
 | `testing-strategy` (no shared artifacts) | Test pyramid triage, behavior over implementation, flaky-test discipline |
-| `data-modeling` (no shared artifacts) | Schema design — keys, normalization, nullability, migrations |
+| `data-modeling` | Schema design — keys, normalization, nullability, migrations |
 | `cli-tooling` (no shared artifacts) | CLI surface + contract — naming, config precedence, exit codes, dry-run |
 | `release-engineering` (no shared artifacts) | CI/CD pipeline gating, deployment strategy, rollback |
 | `learn-from-session` (no shared artifacts) | Turn a correction or confirmation into a durable rule/fixture/memory |
@@ -81,6 +81,7 @@ documentation of who else reads the artifact, not a gating signal).
 | — (CLI-invoked, no fixed path) | report | ai-prose-slop | — | no | never | `ai-prose-slop/scripts/check-prose.js` | `core/schemas/check-report.schema.json` |
 | — (CLI-invoked, no fixed path) | report | code-organization | — | no | never | `code-organization/scripts/check-organization.js` | `core/schemas/check-report.schema.json` |
 | — (CLI-invoked, no fixed path) | report | code-smells | — | no | never | `code-smells/scripts/check-smells.js` | `core/schemas/check-report.schema.json` |
+| — (CLI-invoked, no fixed path) | report | data-modeling | — | no | never | `data-modeling/scripts/check-migrations.js` | `core/schemas/check-report.schema.json` |
 
 ## Adding a skill
 

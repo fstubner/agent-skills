@@ -45,7 +45,7 @@ that's the entire coupling mechanism.
 | [`code-smells`](./code-smells/) | Fowler code-smell catalog + file-size/nesting checker (any language for size; JS/TS/C-family for nesting) |
 | [`code-organization`](./code-organization/) | Module boundaries, dependency direction, naming |
 | [`testing-strategy`](./testing-strategy/) | Test pyramid triage, behavior over implementation |
-| [`data-modeling`](./data-modeling/) | Schema design — keys, normalization, nullability, migrations |
+| [`data-modeling`](./data-modeling/) | Schema design (any format) + a raw-SQL migration-safety checker |
 | [`cli-tooling`](./cli-tooling/) | CLI surface + contract — naming, config precedence, exit codes, dry-run |
 | [`release-engineering`](./release-engineering/) | CI/CD pipeline gating, deployment strategy, rollback |
 | [`learn-from-session`](./learn-from-session/) | Turn a correction or confirmation into a durable rule/fixture/memory |

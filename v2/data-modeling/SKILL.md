@@ -19,8 +19,25 @@ every unconstrained foreign key, every field with no validation is a claim
 the schema explicitly declines to make — sometimes correctly, but that
 should be a decision, not a default.
 
-No shared artifacts, no checker script — schema quality depends on the
-domain's actual invariants, which no generic script can know.
+No shared artifacts. Schema quality depends on the domain's actual
+invariants, which no generic script can know — this stays a judgment
+skill regardless of whether the data is modeled as SQL tables, an ORM's
+own schema DSL (Prisma, Django models, SQLAlchemy), or a NoSQL document
+store; the rules below apply to all of those the same way. One narrow
+slice IS genuinely checkable without knowing the domain, though: whether a
+raw SQL migration file does something known to be unsafe regardless of
+what it's migrating. `scripts/check-migrations.js` checks exactly that and
+nothing more — every check id it emits is prefixed `DM-sql-` on purpose,
+so a report can never be misread as having evaluated data modeling
+generally. A project with no `.sql` files (ORM-DSL or NoSQL projects
+included) gets a clean scope-skip, not a false pass on rules it never
+looked at. Run it: `node <this-skill>/scripts/check-migrations.js --root
+<dir>`. It checks for destructive drops, an unsafe `NOT NULL` addition, a
+rename, and a volatile-function column default — sourced from real
+migration linters (Squawk, strong_migrations), not invented — and
+excludes down/rollback migrations (which are expected to contain drops by
+design) by filename convention or an inline `-- +goose Down` /
+`-- migrate:down` marker.
 
 ## Rules
 
