@@ -16,7 +16,14 @@ function readText(p) {
 function hasHeading(text, name) {
   // Real markdown headings only. A bare mention of the word "Users" in prose
   // must not satisfy a section requirement (v0.4's gate was vacuous).
-  return new RegExp(`^#{1,6}\\s+${name}\\b`, 'im').test(text);
+  //
+  // `name` is escaped before interpolation: it comes from registry.json's
+  // requiredHeadings, and an unescaped metacharacter there either crashed the
+  // checker (a heading like "C++" threw "Nothing to repeat", surfacing as an
+  // exit-3 internal error rather than a validation failure) or silently matched
+  // the wrong thing (a name of ".*" matched any heading at all).
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`^#{1,6}\\s+${escaped}\\b`, 'im').test(text);
 }
 
 function check(id, status, detail = '') {

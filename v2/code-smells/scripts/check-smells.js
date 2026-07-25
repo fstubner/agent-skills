@@ -192,7 +192,10 @@ function run(root) {
     const rel = path.relative(root, file).split(path.sep).join('/');
     // Line count needs no language-specific parsing — checked for every
     // source file found, not just brace languages.
-    const lineCount = text.split('\n').length;
+    // A single trailing newline terminates the last line rather than starting a
+    // new one — counting it made every file read as one line longer than it is,
+    // so a file exactly at the limit was reported as over it.
+    const lineCount = text.replace(/\n$/, '').split('\n').length;
     if (lineCount > LARGE_FILE_LINES) largeFiles.push(`${rel} (${lineCount} lines)`);
 
     if (!BRACE_LANGUAGE_EXTENSIONS.has(path.extname(file))) continue;
