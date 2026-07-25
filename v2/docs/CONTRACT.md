@@ -44,11 +44,7 @@ through direct calls.
 | `backend-engineering` | Trusted-side laws |
 | `product-acceptance` | Independent acceptance gate |
 | `ai-prose-slop` | Prose slop editor/detector |
-| `mental-models` (no shared artifacts) | Reasoning lens catalog + triage guide |
-| `the-skeptic` (no shared artifacts) | Persona — demands evidence before accepting a claim or plan |
-| `the-systems-thinker` (no shared artifacts) | Persona — maps interconnections and feedback loops before fixing |
-| `the-pragmatist` (no shared artifacts) | Persona — smallest thing that ships, tradeoffs named not hidden |
-| `the-explorer` (no shared artifacts) | Persona — generates genuinely different approaches before judging any |
+| `mental-models` (no shared artifacts) | Reasoning lens catalog + triage guide + four named mindsets |
 | `code-smells` | Fowler code-smell catalog + judgment guide |
 | `code-organization` | Module boundaries, dependency direction, naming |
 | `testing-strategy` (no shared artifacts) | Test pyramid triage, behavior over implementation, flaky-test discipline |

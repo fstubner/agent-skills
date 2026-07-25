@@ -24,9 +24,12 @@ will not say "tested decision procedures" until it has them.
 ## Skills
 
 This is a composable set, not a pipeline. Each skill fires on its own
-trigger and works standalone; skills never call each other directly. Six of
-the eight additionally read or write a handful of named artifacts (below) —
-that's the entire coupling mechanism.
+trigger and works standalone; skills never call each other directly. Nine of
+the fifteen additionally read or write a handful of named artifacts (below) —
+that's the entire coupling mechanism. (Some skills also point a reader at a
+sibling's reference files for further detail — e.g. `mental-models`'
+mindsets citing its own lens files — which is a documentation cross-link,
+not a runtime call.)
 
 | Skill | Role |
 |---|---|
@@ -37,11 +40,7 @@ that's the entire coupling mechanism.
 | [`backend-engineering`](./backend-engineering/) | Trusted-side laws |
 | [`product-acceptance`](./product-acceptance/) | Independent acceptance gate |
 | [`ai-prose-slop`](./ai-prose-slop/) | Prose editor/detector — no artifacts, usable on any writing task |
-| [`mental-models`](./mental-models/) | Reasoning lens catalog + triage guide — no artifacts, usable on any hard problem |
-| [`the-skeptic`](./the-skeptic/) | Persona — demands evidence before accepting a claim or plan |
-| [`the-systems-thinker`](./the-systems-thinker/) | Persona — maps interconnections before proposing a fix |
-| [`the-pragmatist`](./the-pragmatist/) | Persona — smallest thing that ships, tradeoffs named |
-| [`the-explorer`](./the-explorer/) | Persona — generates genuinely different approaches before judging any |
+| [`mental-models`](./mental-models/) | Reasoning lens catalog + triage guide + four named mindsets (Skeptic, Systems Thinker, Pragmatist, Explorer) — no artifacts, usable on any hard problem |
 | [`code-smells`](./code-smells/) | Fowler code-smell catalog + file-size/nesting checker (any language for size; JS/TS/C-family for nesting) |
 | [`code-organization`](./code-organization/) | Module boundaries, dependency direction, naming |
 | [`testing-strategy`](./testing-strategy/) | Test pyramid triage, behavior over implementation |
