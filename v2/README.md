@@ -86,8 +86,19 @@ per-harness paths: [INSTALL.md](./INSTALL.md).
 node systems-architecture/scripts/check-architecture.js --root . --strict
 node frontend/scripts/check-frontend.js --root . --strict
 node backend-engineering/scripts/check-backend.js --root . --strict
-node product-acceptance/scripts/accept-check.js --root . --acceptor-context separate --strict
+node product-acceptance/scripts/accept-check.js --root . --strict
 ```
+
+That acceptance command is the **capped** one — it's the correct default,
+and its verdict tops out at CONDITIONAL by design. Builder ≠ acceptor is
+this suite's whole architectural claim: SHIP is unreachable from the
+context that built, so uncapping it isn't a `--strict`-style verbosity
+flag, it's a claim that this run is genuinely independent. Only add
+`--acceptor-context separate` if all three conditions in
+[`product-acceptance/SKILL.md`](./product-acceptance/SKILL.md) hold —
+starting with "this conversation did not write or edit the code being
+accepted." If you're unsure, leave the cap on; an honest CONDITIONAL is
+worth more than a SHIP that isn't real.
 
 Reports land in `.agent-evidence/` (gitignore it). Verdicts: `SHIP` /
 `CONDITIONAL` / `BLOCK`; any failed check ⇒ BLOCK, any unevaluated check ⇒
