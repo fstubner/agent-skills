@@ -45,8 +45,9 @@ Business Review, 2007): simple problems have one obvious cause, complicated
 problems have a discoverable cause via analysis, complex problems only
 reveal their shape through probing and weighting, not a single chain — and
 generative work (building toward a goal that doesn't exist yet) is a
-different kind of problem than any of Cynefin's fault-categories, which is
-why it gets its own row rather than being forced into "complicated."
+different kind of problem than any of Cynefin's domains (simple,
+complicated, complex, chaotic), which is why it gets its own row rather
+than being forced into "complicated."
 
 ## Lenses
 

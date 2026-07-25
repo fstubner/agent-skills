@@ -17,9 +17,16 @@ around three ideas:
 
 The **checkers are tested**: every gate has ship + block fixtures asserting
 the specific blocker, run in CI on Ubuntu **and Windows**. The behavioral
-claim — that these skills improve agent output — is **not yet measured**:
-the [eval](./eval/) is a scaffold with zero recorded runs, and this README
-will not say "tested decision procedures" until it has them.
+claim — that these skills improve agent output — has now been measured
+twice ([eval/results/](./eval/results/), case `okr-tool`), and the honest
+result is **not good**: in both a Task-tool subagent and a genuine top-level
+`claude -p` session, with all 15 skills installed from a tagged release,
+neither run invoked a single skill on a prompt that matches `product-build`'s
+own stated trigger almost verbatim. No `PRODUCT.md`, no `ARCHITECTURE.md`, no
+design question asked, and the builder self-certified "done" in the same
+turn it built. The checkers work when run; getting an agent to run them
+unprompted is an open, unsolved problem — see the eval notes for detail. Do
+not read "the checkers are tested" as "the skills change agent behavior."
 
 ## Skills
 

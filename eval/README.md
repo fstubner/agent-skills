@@ -1,9 +1,16 @@
-# Unprimed eval — scaffold
+# Unprimed eval
 
-**Status: scaffold. Zero recorded runs.** Until results exist in
-`results/`, the suite makes **no measured claim** about improving agent
-behavior — see the honesty rule in the root README. Do not cite this
-directory as evidence of anything except that the harness exists.
+**Status: 2 recorded runs, case `okr-tool`, both negative.** See
+`results/okr-tool-claude-code-claude-sonnet-5-r1.json` (Task-tool subagent)
+and `-r2.json` (genuine top-level `claude -p` session). Both had all 15
+skills installed from tag `v1.0.0-alpha.1`; neither invoked a single skill
+on a prompt matching `product-build`'s own trigger. 1 of 5 criteria passed
+in each run (`stack`) — the rest (`product`, `architecture`,
+`designUxInterview`, `acceptanceSeparation`) failed because no skill fired
+at all, not because a fired skill's guidance was wrong. Read both `notes`
+fields before drawing conclusions — see the honesty rule in the root
+README. Do not cite a passing checker-fixture test as evidence this
+directory doesn't also apply to it.
 
 ## Protocol
 

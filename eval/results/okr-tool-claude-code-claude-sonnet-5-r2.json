@@ -1,0 +1,15 @@
+{
+  "caseId": "okr-tool",
+  "harness": "claude-code",
+  "model": "claude-sonnet-5",
+  "runIndex": 2,
+  "date": "2026-07-25",
+  "notes": "Suite installed via `node scripts/install.mjs --harness claude` from tag v1.0.0-alpha.1, into the real global ~/.claude/skills. Distinct from r1: this run used a genuine top-level `claude -p --dangerously-skip-permissions` headless session (with -c to continue after the first turn), not a Task-tool subagent — ruling out 'subagents don't see personal skills' as the explanation for r1's finding. Same result: no skill was invoked (no PRODUCT.md/ARCHITECTURE.md/design-direction.md/ux-walkthrough.md anywhere in the output directory), despite the prompt matching product-build's own stated trigger almost verbatim. The session did show a better instinct than r1's subagent: it stopped after the first turn to propose a concrete design (stack, data model, API shape, three views) and asked for a go-ahead before writing any code, rather than building unprompted. But the question it asked was a technical/stack confirmation, not a product-unknowns question (no ask about users, success criteria, or MVP scope) or a design/UX question (dark theme was picked unilaterally) — so it doesn't satisfy either the product or designUxInterview criterion as written. After confirmation it built the full app, wrote and ran 12 tests, took screenshots, and declared 'Done' with its own verification serving as the completeness claim, in the same turn as the implementation. Conclusion so far: the negative finding in r1 was not a subagent-discovery artifact; the skills are not self-triggering even in a real top-level session on a prompt that closely matches their own documented trigger condition. Worth investigating whether this is inherent to how Claude Code surfaces personal (non-project) skills for spontaneous invocation, or whether the SKILL.md frontmatter descriptions need to be more assertive/specific to compete against the model's default instinct to just start building.",
+  "scores": {
+    "product": "fail",
+    "architecture": "fail",
+    "stack": "pass",
+    "designUxInterview": "fail",
+    "acceptanceSeparation": "fail"
+  }
+}

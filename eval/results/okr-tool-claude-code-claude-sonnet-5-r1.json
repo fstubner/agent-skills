@@ -1,0 +1,15 @@
+{
+  "caseId": "okr-tool",
+  "harness": "claude-code",
+  "model": "claude-sonnet-5",
+  "runIndex": 1,
+  "date": "2026-07-25",
+  "notes": "Suite installed via `node scripts/install.mjs --harness claude` from tag v1.0.0-alpha.1, into the real global ~/.claude/skills. Agent: a fresh Claude Code subagent (Task tool, general-purpose type, no memory of any prior conversation), given only the case prompt plus a working-directory instruction, working in an empty scratch directory outside the suite repo. A first attempt was discarded per protocol: that agent delegated the entire build to an external CLI via an unrelated global routing instruction, so it never touched the installed skills at all and produced no PRODUCT.md/ARCHITECTURE.md/design artifacts either way; this result is from a corrected retry that explicitly told the agent to implement directly, itself, with no delegation. Finding: the agent never invoked any skill (no Skill tool call observed, no product-build/product-management/systems-architecture/frontend artifacts written) despite the prompt matching product-build's own stated trigger almost verbatim (\"multi-view feature work\"). It went straight to a working Express + vanilla-JS implementation, asked zero product or design questions, and self-verified (\"Done\", ran the server, hit endpoints, called it complete) in the same turn it built — the exact pattern product-acceptance exists to prevent. Open question this raises, not yet answered: whether Task-tool subagents structurally lack access to personal ~/.claude/skills the way a top-level Claude Code session would, vs. the skill descriptions simply not being compelling/prioritized enough to get spontaneously invoked. Worth a follow-up run in an actual top-level `claude` CLI session before concluding this is a content problem rather than a harness/subagent limitation.",
+  "scores": {
+    "product": "fail",
+    "architecture": "fail",
+    "stack": "pass",
+    "designUxInterview": "fail",
+    "acceptanceSeparation": "fail"
+  }
+}
