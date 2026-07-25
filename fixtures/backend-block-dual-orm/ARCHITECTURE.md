@@ -1,35 +1,12 @@
 # Architecture
 
-## Context
-
-Multi-part demo with conflicting ORMs.
-
 ## Parts
+- server: node process, owns OKR data
+- client: static bundle served from public/
 
-| Part | Kind | Responsibility |
-|---|---|---|
-| API | service | CRUD |
-| UI | client | Render |
+## Boundaries
+- client -> server over HTTP JSON (/api/okrs)
 
-## Trust boundary
-
-- Untrusted: browser
-- Trusted: API
-
-## Data ownership
-
-| Data | Write-owner | Readers |
-|---|---|---|
-| items | API | UI |
-
-## Contracts
-
-| From → To | Style | Auth |
-|---|---|---|
-| UI → API | sync | session |
-
-## Failure modes
-
-| Path | Failure |
-|---|---|
-| API down | error banner |
+## Trust
+- server validates all input at POST /api/okrs; client is untrusted
+- secrets live in server env vars only

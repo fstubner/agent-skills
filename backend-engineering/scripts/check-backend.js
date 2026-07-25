@@ -1,319 +1,188 @@
 #!/usr/bin/env node
-// Backend verification (objective evidence only).
-// Exit 1 on BLOCK when --strict.
-//
-// Usage:
-//   node check-backend.js [--root <dir>] [--strict] [--out backend-report.json]
-
 'use strict';
+// Backend gate: trusted-side laws that are measurable. One ORM, no secret
+// material in client-reachable paths, architecture doc present when the
+// system is multi-part.
+//
+// Usage: node check-backend.js --root <dir> [--strict] [--out <file>] [--no-write]
 
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
+const { spawnSync } = require('child_process');
+const { corePaths } = require('./resolve-core.cjs');
+const core = corePaths();
+const { parseArgs } = require(path.join(core.lib, 'args.cjs'));
+const { classify, ARCH_DOC_CANDIDATES, ORM_DEPS } = require(path.join(core.lib, 'classify.cjs'));
+const { check, runCli } = require(path.join(core.lib, 'report.cjs'));
+const registry = require(core.registry);
 
-const classifyPath = path.join(__dirname, '..', '..', '_suite', 'lib', 'classify-project.js');
-const { classifyProject, writeSuiteProfile } = require(classifyPath);
+// DENY-list of server-only paths, not an allow-list of client paths. A
+// framework like Next.js/Remix mixes client and server code across
+// app/, pages/, components/ with no directory boundary a regex can trust —
+// so the safe default is "scan everything that could conceivably reach the
+// client, except what's provably server-only", not the reverse. The v0.4
+// design (allow-list of public/static/client/src) missed app/pages/components
+// entirely and simultaneously false-flagged genuine server code under src/.
+const SERVER_ONLY_PATTERNS = [
+  /(^|\/)server\.(js|mjs|cjs|ts)$/,   // server.js, src/server.ts, lib/server.js
+  /(^|\/)server\//,                    // a dedicated server/ directory at any depth
+  /(^|\/)api\//,                       // pages/api/, app/api/, generic api/ (Next/Remix route handlers)
+  /\.server\.(js|jsx|ts|tsx|mjs|cjs)$/, // *.server.ts convention (Remix, etc.)
+];
 
-function parseArgs(argv) {
-  const out = {};
-  for (let i = 0; i < argv.length; i++) {
-    if (argv[i].startsWith('--')) {
-      const key = argv[i].slice(2);
-      const next = argv[i + 1];
-      if (next === undefined || next.startsWith('--')) out[key] = true;
-      else {
-        out[key] = next;
-        i++;
-      }
+function isServerOnlyPath(relPath) {
+  return SERVER_ONLY_PATTERNS.some((p) => p.test(relPath));
+}
+
+// Client-secret scanning shells out to `gitleaks` — a real, maintained
+// secret-detection tool — rather than hand-rolled regex, the same "use the
+// real tool" choice this suite already made for ai-prose-slop and vale.
+// Run TWICE (default ruleset + core/gitleaks-extra.toml, a couple of
+// provider prefixes the default doesn't cover) and merged — see that
+// file's header for why two passes instead of one combined config.
+const EXTRA_GITLEAKS_CONFIG = path.join(core.lib, '..', 'gitleaks-extra.toml');
+// Pass 1 supplies gitleaks' defaults EXPLICITLY rather than letting it fall
+// through to auto-discovering <source>/.gitleaks.toml. The audited repo does
+// not get a vote on how it is audited: without this, a repo shipping
+// `[allowlist] paths = [".*"]` turned a live token from fail to pass. See
+// core/gitleaks-defaults.toml.
+const DEFAULT_GITLEAKS_CONFIG = path.join(core.lib, '..', 'gitleaks-defaults.toml');
+const LEAKS_FOUND_CODE = 2; // distinct from gitleaks' own fixed exit 1 for an internal error
+
+function gitleaksInstallHint() {
+  if (process.platform === 'win32') return 'winget install Gitleaks.Gitleaks';
+  if (process.platform === 'darwin') return 'brew install gitleaks';
+  return 'See https://github.com/gitleaks/gitleaks#installing';
+}
+
+function isGitleaksOnPath() {
+  const probe = spawnSync('gitleaks', ['version'], { encoding: 'utf8' });
+  return !probe.error && probe.status === 0;
+}
+
+function runGitleaksPass(root, configArgs, tmpDir, label) {
+  const reportPath = path.join(tmpDir, `report-${label}.json`);
+  const result = spawnSync('gitleaks', [
+    'detect', '--no-git', '--source', root, '--no-banner', '--redact',
+    '--report-format', 'json', '--report-path', reportPath,
+    '--exit-code', String(LEAKS_FOUND_CODE),
+    // Neutralise the two in-tree bypasses the audited repo would otherwise
+    // control: an inline `gitleaks:allow` comment on the offending line, and
+    // a planted .gitleaksignore. Both live inside the tree being scanned.
+    '--ignore-gitleaks-allow',
+    '--gitleaks-ignore-path', tmpDir,
+    ...configArgs,
+  ], { encoding: 'utf8' });
+
+  if (result.error) return { leaks: [], crashed: true, detail: result.error.message };
+  if (result.status !== 0 && result.status !== LEAKS_FOUND_CODE) {
+    return { leaks: [], crashed: true, detail: result.stderr || '(no stderr)' };
+  }
+  try {
+    return { leaks: JSON.parse(fs.readFileSync(reportPath, 'utf8')), crashed: false };
+  } catch {
+    if (result.status === LEAKS_FOUND_CODE) {
+      return { leaks: [], crashed: true, detail: 'gitleaks reported leaks but its report file was unreadable' };
     }
+    return { leaks: [], crashed: false }; // no report file on a clean run is gitleaks' normal behavior
   }
-  return out;
 }
 
-function readJSON(p) {
+// Reports FILE PATHS ONLY, never the matched value (gitleaks --redact
+// already withholds the secret itself; we only ever read RuleID/File/Line).
+function scanForClientSecrets(root) {
+  if (!isGitleaksOnPath()) {
+    return check('B-client-secrets', 'not_evaluated',
+      `gitleaks is not on PATH — client-secret scan not evaluated, not assumed clean. Install: ${gitleaksInstallHint()}`);
+  }
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'check-backend-gitleaks-'));
+  let passes;
   try {
-    return JSON.parse(fs.readFileSync(p, 'utf8'));
-  } catch {
-    return null;
+    passes = [
+      runGitleaksPass(root, ['--config', DEFAULT_GITLEAKS_CONFIG], tmpDir, 'default'),
+      runGitleaksPass(root, ['--config', EXTRA_GITLEAKS_CONFIG], tmpDir, 'extra'),
+    ];
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
   }
-}
-
-function readText(p) {
-  try {
-    return fs.readFileSync(p, 'utf8');
-  } catch {
-    return '';
+  const crashedPass = passes.find((p) => p.crashed);
+  if (crashedPass) {
+    return check('B-client-secrets', 'fail', `gitleaks did not complete normally: ${crashedPass.detail}`);
   }
+  const relOf = (absFile) => path.relative(root, absFile).split(path.sep).join('/');
+  const clientLeaks = passes.flatMap((p) => p.leaks).filter((leak) => !isServerOnlyPath(relOf(leak.File)));
+  return clientLeaks.length > 0
+    ? check('B-client-secrets', 'fail',
+        `secret(s) in client-reachable paths: ${clientLeaks.map((l) => `${relOf(l.File)} [${l.RuleID}]`).join(', ')}`)
+    : check('B-client-secrets', 'pass', 'no secrets in client-reachable paths (gitleaks)');
 }
 
-function exists(root, rel) {
-  return fs.existsSync(path.join(root, rel));
-}
-
-function hasSection(text, names) {
-  return names.some((n) => new RegExp(`^##\\s*${n}\\b`, 'im').test(text));
-}
-
-function pushCheck(checks, id, status, extra = {}) {
-  checks.push({ id, status, ...extra });
-}
-
-function detectServer(root, suite) {
-  const signals = [];
-  const serverFiles = [
-    'server.js',
-    'server.ts',
-    'server.mjs',
-    'app.js',
-    'src/server.js',
-    'src/server.ts',
-    'api/index.js',
-    'api/index.ts',
-  ];
-  for (const f of serverFiles) {
-    if (exists(root, f)) signals.push(f);
-  }
-  if (exists(root, 'prisma/schema.prisma')) signals.push('prisma');
-  if (exists(root, 'drizzle.config.ts') || exists(root, 'drizzle.config.js')) signals.push('drizzle');
-  const pkg = readJSON(path.join(root, 'package.json')) || {};
-  const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
-  for (const name of [
-    'express',
-    'fastify',
-    'hono',
-    'koa',
-    '@nestjs/core',
-    'next',
-    'django',
-  ]) {
-    if (deps[name]) signals.push(`dep:${name}`);
-  }
-  // Directory heuristics
-  for (const dir of ['api', 'server', 'backend', 'services']) {
-    if (exists(root, dir)) signals.push(`dir:${dir}`);
-  }
-  const multi = suite.multiPart || suite.systemTier === 'multi' || suite.systemTier === 'distributed';
-  const serverPresent = signals.length > 0 || (multi && (exists(root, 'public') || exists(root, 'src')));
-  return { serverPresent: Boolean(serverPresent && (signals.length > 0 || multi)), signals };
-}
-
-function findArchDoc(root) {
-  if (exists(root, 'ARCHITECTURE.md')) return 'ARCHITECTURE.md';
-  if (exists(root, 'docs/architecture.md')) return 'docs/architecture.md';
-  return null;
-}
-
-function ormFrameworks(root) {
-  const pkg = readJSON(path.join(root, 'package.json')) || {};
-  const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
-  const found = [];
-  const map = [
-    ['prisma', '@prisma/client'],
-    ['prisma', 'prisma'],
-    ['typeorm', 'typeorm'],
-    ['sequelize', 'sequelize'],
-    ['mongoose', 'mongoose'],
-    ['drizzle', 'drizzle-orm'],
-    ['knex', 'knex'],
-  ];
-  const seen = new Set();
-  for (const [label, dep] of map) {
-    if (deps[dep] && !seen.has(label)) {
-      seen.add(label);
-      found.push(label);
-    }
-  }
-  if (exists(root, 'prisma/schema.prisma') && !seen.has('prisma')) found.push('prisma');
-  return found;
-}
-
-function scanClientSecrets(root) {
-  const hits = [];
-  const dirs = ['public', 'client', 'src/client', 'app'];
-  const re = /(sk_live_|sk_test_|AKIA[0-9A-Z]{16}|BEGIN (RSA )?PRIVATE KEY|api[_-]?key\s*[:=]\s*['"][^'"]{16,})/i;
-  for (const dir of dirs) {
-    const abs = path.join(root, dir);
-    if (!fs.existsSync(abs)) continue;
-    walk(abs, (file) => {
-      if (!/\.(js|ts|tsx|jsx|mjs|cjs|html)$/i.test(file)) return;
-      const text = readText(file);
-      if (re.test(text)) hits.push(path.relative(root, file));
-    }, 3);
-  }
-  return hits;
-}
-
-function walk(dir, fn, depth) {
-  if (depth < 0) return;
-  let entries;
-  try {
-    entries = fs.readdirSync(dir, { withFileTypes: true });
-  } catch {
-    return;
-  }
-  for (const e of entries) {
-    const p = path.join(dir, e.name);
-    if (e.isDirectory()) {
-      if (e.name === 'node_modules' || e.name === '.git') continue;
-      walk(p, fn, depth - 1);
-    } else if (e.isFile()) fn(p);
-  }
-}
-
-function main() {
-  const args = parseArgs(process.argv.slice(2));
-  const root = path.resolve(process.cwd(), String(args.root || '.'));
-  const strict = Boolean(args.strict);
-  const outPath = path.resolve(root, String(args.out || 'backend-report.json'));
-
-  const suite = classifyProject(root);
-  writeSuiteProfile(root);
-
-  const { serverPresent, signals } = detectServer(root, suite);
-  const blockers = [];
-  const warnings = [];
+function run(root) {
+  const cls = classify(root, { evidenceDir: registry.evidenceDir });
   const checks = [];
-  const archDoc = findArchDoc(root);
 
-  if (!serverPresent) {
-    pushCheck(checks, 'B-server', 'not_evaluated', { reason: 'no server signals' });
-    pushCheck(checks, 'B-arch', 'not_evaluated');
-    pushCheck(checks, 'B-contracts', 'not_evaluated');
-    pushCheck(checks, 'B-authz', 'not_evaluated');
-    pushCheck(checks, 'B-orm', 'not_evaluated');
-    pushCheck(checks, 'B-secrets', 'not_evaluated');
-    const report = {
-      generatedBy: 'check-backend.js',
-      generatedAt: new Date().toISOString(),
-      root,
-      serverPresent: false,
-      architectureDoc: archDoc,
-      signals,
-      verdict: 'SHIP',
-      blockers,
-      warnings,
-      checks,
-      layerNote: 'No server detected — backend checks not evaluated.',
-    };
-    fs.writeFileSync(outPath, JSON.stringify(report, null, 2) + '\n');
-    console.log(`\nWrote ${outPath}`);
-    console.log('verdict: SHIP (no server)');
-    return;
+  if (!cls.serverPresent) {
+    checks.push(check('B-scope', 'pass', 'no server detected; backend gate not required'));
+    return checks;
   }
 
-  pushCheck(checks, 'B-server', 'pass', { signals });
-
-  // Architecture required when server + multi-part / app-tier
-  const needsArch = suite.multiPart || suite.appTier || suite.systemTier === 'multi';
-  if (needsArch && !archDoc) {
-    blockers.push({
-      id: 'B-arch-doc',
-      message: 'Server present without ARCHITECTURE.md',
-      fixHint: 'Run systems-architecture; document trust boundary and contracts',
-    });
-    pushCheck(checks, 'B-arch', 'fail', { required: true });
-  } else if (!archDoc) {
-    warnings.push({
-      id: 'B-arch-optional',
-      message: 'Server signals without ARCHITECTURE.md',
-    });
-    pushCheck(checks, 'B-arch', 'not_evaluated', { reason: 'doc optional for non-multi' });
+  // Architecture doc (required only when multi-part; single-part servers pass).
+  if (cls.multiPart) {
+    checks.push(cls.archDocPath
+      ? check('B-arch-doc', 'pass', cls.archDocPath)
+      : check('B-arch-doc', 'fail',
+          `multi-part project has no architecture doc (looked for: ${ARCH_DOC_CANDIDATES.join(', ')})`));
   } else {
-    pushCheck(checks, 'B-arch', 'pass', { path: archDoc });
-    const text = readText(path.join(root, archDoc));
-    if (!hasSection(text, ['Contracts', 'Edges', 'APIs', 'API'])) {
-      warnings.push({
-        id: 'B-contracts-soft',
-        message: `${archDoc} missing Contracts/Edges/API section`,
-      });
-      pushCheck(checks, 'B-contracts', 'fail');
+    checks.push(check('B-arch-doc', 'pass', 'single-part server; architecture doc not required'));
+  }
+
+  // One ORM per manifest — checked WITHIN each detected ecosystem
+  // separately, not across all of them combined. A monorepo with a Python
+  // service using SQLAlchemy and a Node service using Prisma is two
+  // services each correctly using one ORM, not a dual-ORM smell; the smell
+  // is two ORMs declared in the SAME manifest.
+  if (cls.manifests.length === 0) {
+    checks.push(check('B-dual-orm', 'not_evaluated', 'no recognized dependency manifest readable'));
+  } else {
+    const perManifestOrms = cls.manifests.map((m) => ({
+      ecosystem: m.ecosystem,
+      manifestFile: m.manifestFile,
+      orms: [...new Set((ORM_DEPS[m.ecosystem] || []).filter((d) => m.depNames.has(d.toLowerCase())).map((d) => (d === '@prisma/client' ? 'prisma' : d)))],
+    }));
+    const dual = perManifestOrms.filter((m) => m.orms.length > 1);
+    if (dual.length > 0) {
+      checks.push(check('B-dual-orm', 'fail',
+        dual.map((m) => `${m.manifestFile}: multiple ORMs (${m.orms.join(', ')})`).join('; ')));
     } else {
-      pushCheck(checks, 'B-contracts', 'pass');
-    }
-    const authOk =
-      hasSection(text, ['Trust boundary', 'Trust', 'Auth', 'Authorization', 'Authz']) ||
-      /authz|authorization|who may|trusted side/i.test(text);
-    if (!authOk) {
-      warnings.push({
-        id: 'B-authz-soft',
-        message: `${archDoc} lacks authz/trust language for write paths`,
-      });
-      pushCheck(checks, 'B-authz', 'fail');
-    } else {
-      pushCheck(checks, 'B-authz', 'pass');
+      const summary = perManifestOrms.filter((m) => m.orms.length > 0).map((m) => `${m.manifestFile}: ${m.orms.join(', ')}`);
+      checks.push(check('B-dual-orm', 'pass', summary.length > 0 ? summary.join('; ') : 'no orm detected'));
     }
   }
 
-  if (!checks.some((c) => c.id === 'B-contracts')) {
-    pushCheck(checks, 'B-contracts', 'not_evaluated', { reason: 'no architecture doc' });
-  }
-  if (!checks.some((c) => c.id === 'B-authz')) {
-    pushCheck(checks, 'B-authz', 'not_evaluated', { reason: 'no architecture doc' });
-  }
-
-  const orms = ormFrameworks(root);
-  if (orms.length > 1) {
-    blockers.push({
-      id: 'B-dual-orm',
-      message: `Multiple persistence stacks: ${orms.join(', ')}`,
-      fixHint: 'Pick one data access stack; update ARCHITECTURE.md',
-    });
-    pushCheck(checks, 'B-orm', 'fail', { orms });
-  } else {
-    pushCheck(checks, 'B-orm', 'pass', { orms });
+  // No secret material in client-reachable paths — gitleaks does its own
+  // file walk here (not classify()'s), so classify's own truncation is a
+  // separate, narrower concern: it can only affect server/frontend/
+  // multiPart detection (and so B-arch-doc indirectly), not this check.
+  checks.push(scanForClientSecrets(root));
+  if (cls.truncated) {
+    checks.push(check('B-scan-completeness', 'not_evaluated',
+      'project-type file walk hit the safety cap; server/frontend/multi-part detection may be incomplete'));
   }
 
-  const secretHits = scanClientSecrets(root);
-  if (secretHits.length) {
-    blockers.push({
-      id: 'B-client-secret',
-      message: `Possible secret material in client path: ${secretHits.slice(0, 3).join(', ')}`,
-      fixHint: 'Keep secrets on the trusted side',
-    });
-    pushCheck(checks, 'B-secrets', 'fail', { files: secretHits });
-  } else {
-    pushCheck(checks, 'B-secrets', 'pass');
-  }
-
-  if (needsArch && !exists(root, 'PRODUCT.md') && !exists(root, 'product-brief.md')) {
-    warnings.push({
-      id: 'B-product',
-      message: 'Server/app without PRODUCT.md — product-acceptance will BLOCK ship',
-    });
-  }
-
-  let verdict = 'SHIP';
-  if (blockers.length) verdict = 'BLOCK';
-  else if (warnings.length) verdict = 'CONDITIONAL';
-
-  const report = {
-    generatedBy: 'check-backend.js',
-    generatedAt: new Date().toISOString(),
-    root,
-    serverPresent: true,
-    architectureDoc: archDoc,
-    signals,
-    verdict,
-    blockers,
-    warnings,
-    checks,
-    layerNote:
-      'Verifies measurable backend properties (arch doc, contracts/authz sections, single ORM, no client secrets). Does not judge API design quality.',
-  };
-
-  fs.writeFileSync(outPath, JSON.stringify(report, null, 2) + '\n');
-  console.log(`\nWrote ${outPath}`);
-  console.log(`verdict: ${verdict}  serverPresent: true`);
-  if (blockers.length) {
-    console.log('blockers:');
-    blockers.forEach((b) => console.log(`  - ${b.id}: ${b.message}`));
-  }
-  if (warnings.length) {
-    console.log('warnings:');
-    warnings.forEach((w) => console.log(`  - ${w.id}: ${w.message}`));
-  }
-  console.log('');
-
-  if (strict && blockers.length) process.exit(1);
+  return checks;
 }
 
-main();
+module.exports = { run, isServerOnlyPath };
+
+if (require.main === module) {
+  const artifact = registry.artifacts.find((a) => a.producer === 'backend-engineering' && a.kind === 'report');
+  runCli({
+    skill: 'backend-engineering',
+    reportFile: path.basename(artifact.file),
+    evidenceDir: registry.evidenceDir,
+    runFn: run,
+    argv: process.argv.slice(2),
+    parseArgs,
+  });
+}

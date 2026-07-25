@@ -1,6 +1,1 @@
-{
-  "name": "backend-ship",
-  "dependencies": {
-    "express": "4.0.0"
-  }
-}
+{ "name": "fx", "dependencies": { "express": "^4.19.0", "prisma": "^5.0.0" } }

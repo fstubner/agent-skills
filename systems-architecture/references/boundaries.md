@@ -1,74 +1,32 @@
-# Boundaries — evergreen properties
+# Boundaries: decision procedure
 
-These are **properties** of a sound system. Tool names are examples only; replace with whatever the project already uses.
+## When is a project multi-part?
 
-## 1. Name the parts
+Client + server, more than one deployable, more than one workspace, or any
+edge where data crosses a trust change. If none of these hold, skip this
+skill — a single-part project needs no ARCHITECTURE.md.
 
-Every multi-part system states:
+## Procedure
 
-| Part | Questions |
-|---|---|
-| **Clients** | Who runs untrusted code? (browser, mobile, CLI) |
-| **Application services** | What accepts requests and enforces rules? |
-| **Data stores** | What persists state? Who may write? |
-| **Async workers** (if any) | What runs off the request path? |
-| **Third parties** | What is outside your process and on the critical path? |
+1. **List parts from what exists**, not from what you'd like. A part is a
+   thing that runs (process, function host, static bundle), not a folder.
+2. **Draw every edge.** For each pair of parts that communicate: transport,
+   payload shape, direction, and frequency. An edge you can't describe in
+   one line is two edges pretending to be one.
+3. **Assign trust per edge.** The side that owns the data validates. The
+   client is always untrusted — even "our own" client, because anything can
+   speak HTTP.
+4. **Place secrets.** Name the exact part and mechanism (env var, secret
+   store). A secret whose location you can't name is a finding.
+5. **Prefer boring.** Request/response over queues until volume proves
+   otherwise; one database until a second owner proves otherwise.
 
-If a part is not needed for the MVP, omit it and say so under anti-goals / complexity.
+## Anti-patterns
 
-## 2. Trust boundary
-
-State explicitly:
-
-- What the **untrusted client** may know and call
-- What must **never** leave the trusted side (secrets, privileged credentials, raw admin powers)
-- Where **authentication** and **authorization** are enforced (not “in the UI”)
-
-Property: *privileged capability is enforced on the trusted side of the boundary.*
-
-## 3. Data ownership
-
-For each important entity or store:
-
-- **Write-owner** (one)
-- **Readers**
-- If two writers exist → **sync rule** or it is a defect
-
-Property: *no silent dual source of truth.*
-
-## 4. Contracts between parts
-
-For each client→service or service→service edge:
-
-- Sync request/response vs async (queue/event) — choose one primary style per edge
-- Authn/z expectation
-- Invalid input / error shape (enough for clients to act)
-- Idempotency for unsafe retries on writes (when retries exist)
-
-Property: *edges are described before new ones are invented in code.*
-
-## 5. Failure modes
-
-For each external dependency and each write path, name at least:
-
-- What failure looks like to the user
-- Retry or not (and who retries)
-- What must not be double-applied
-
-Property: *failure is designed, not discovered only in production.*
-
-## 6. Complexity budget
-
-Default shape for an MVP product app:
-
-- One trusted application process (or platform equivalent)
-- One primary data store
-- One primary client surface
-
-Distribute (extra services, meshes, multi-region) only when a **named constraint** in PRODUCT.md requires it. Fashion is not a constraint.
-
-Property: *distribution is justified, not default.*
-
-## 7. Change rule
-
-Changing trust boundaries, write-owners, or adding a critical third party requires updating `ARCHITECTURE.md` in the same change set as the code.
+- **Trust by origin** — "it came from our frontend" is not authentication.
+- **Validation confetti** — checks scattered through layers instead of at
+  the boundary; nobody knows which one is load-bearing.
+- **Part inflation** — microservices at MVP scope. Every extra part costs an
+  edge, a deploy, and a failure mode.
+- **Implicit fourth part** — a cron job, webhook receiver, or "little
+  script" that runs in production but appears nowhere in Parts.

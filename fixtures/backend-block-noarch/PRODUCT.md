@@ -1,13 +1,16 @@
 # Product
 
+## Purpose
+Demo.
+
 ## Users
-
-Operators
-
-## Purpose / primary job
-
-Demo API without architecture
+- **Primary:** devs
 
 ## Success
+Works.
 
-Health endpoint responds
+## MVP
+- Thing
+
+## Constraints
+- None

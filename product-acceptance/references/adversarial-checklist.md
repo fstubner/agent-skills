@@ -1,52 +1,43 @@
 # Adversarial acceptance checklist
 
-Assume the build is a convincing demo until evidence proves otherwise.
+Run after `accept-check.js` is green enough to bother. You are trying to
+make the app fail, not to confirm it works.
 
-## A. Contract
+## A — Contract
 
-| Check | BLOCK if |
-|---|---|
-| PRODUCT.md or product-brief.md exists | App-tier work without either |
-| Users + purpose + success stated | Hollow “enterprise platform” fluff only |
-| MVP and anti-goals present | Scope unbounded |
+- [ ] `PRODUCT.md` Success condition: literally attempt it, end to end.
+- [ ] Each MVP bullet: built, or explicitly deferred with the human's sign-off?
+- [ ] Anything shipped that Anti-goals excludes?
 
-## B. Primary job
+## B — Primary path (from ux-walkthrough.md)
 
-| Check | BLOCK if |
-|---|---|
-| Primary job named in one sentence | Cannot state JTBD |
-| Happy path steps listed | Vague “user can manage data” |
-| Path completable in the build | Critical step missing, stubbed, or dead control |
-| Empty / error / success considered | Only happy-path fake data |
+- [ ] Replay every step exactly as written; any deviation is a finding.
+- [ ] Replay the primary path at the narrowest viewport the walkthrough
+      claims to support (or 375px if it doesn't say) — not just the width
+      it was designed at.
+- [ ] Complete the primary job with keyboard only.
+- [ ] Reload mid-flow at the two worst moments; state must land sensibly.
 
-## C. Honesty vs demo-ware
+## C — Empty, error, loading, garbage
 
-| Check | BLOCK if |
-|---|---|
-| Real or honest mock boundary | Fake metrics presented as live without label |
-| Empty states exist for collections | Tables only work with seeded JSON |
-| Destructive actions confirm | Delete/pay with no confirm |
+- [ ] First-run experience: truly empty data — every collection view.
+- [ ] Throttle the network (or add artificial delay): does the primary
+      action show a busy state, or does the UI look frozen/unresponsive?
+- [ ] Kill the server (or block the API) mid-use: human-readable error + retry path?
+- [ ] Paste 10k characters, emoji, `<script>alert(1)</script>`, and `' OR 1=1--`
+      into every text input on the primary path.
+- [ ] Submit the same mutation twice, fast. Duplicate rows?
 
-## D. Cross-skill evidence (consume, don’t redo)
+## D — Evidence honesty
 
-| Evidence file | Expectation |
-|---|---|
-| `eng-structure-report.json` | Not BLOCK for app tier (or justified throwaway) |
-| `architecture-report.json` | Not BLOCK for multi/distributed systems |
-| `ARCHITECTURE.md` | Present when client+server (or core third-party path) |
-| `stack-decision.md` | Present when stack was greenfield/unknown |
-| `design-critique-report.json` | Not BLOCK if visual work claimed done |
-| UX walkthrough notes | Primary path steps checked |
+- [ ] The gate re-ran the checkers itself — do NOT accept report JSONs from
+      the repo as evidence of anything.
+- [ ] Was this context the builder? Then the cap applies: report CONDITIONAL
+      and hand SHIP to a separate acceptance context.
 
-Missing eng report on app tier → **CONDITIONAL** at best; prefer running frontend-engineering `check-structure.js` first.  
-Missing architecture report on multi-part systems → warn or BLOCK via accept-check when architecture verdict is BLOCK.
+## Verdict rules
 
-## E. Self-grade
-
-| Check | BLOCK if |
-|---|---|
-| Acceptor ≠ sole builder of this change | Same turn implemented and SHIPped without separate pass |
-
-## Output shape
-
-For each failed check: `id`, `severity`, `evidence` (or `missing-evidence`), `fix-hint`.
+- Any primary-path failure → BLOCK.
+- Missing empty/loading/error states on the primary view → BLOCK.
+- Cosmetic findings off the primary path → CONDITIONAL with a list.
+- SHIP only when A-D produced no blocking finding and the gate says SHIP.

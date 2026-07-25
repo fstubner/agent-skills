@@ -1,2 +1,2 @@
-const express = require('express');
-module.exports = express();
+const http = require('http');
+http.createServer((req, res) => { res.end('ok'); }).listen(4180);

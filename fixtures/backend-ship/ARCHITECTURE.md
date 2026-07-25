@@ -1,37 +1,12 @@
 # Architecture
 
-## Context
-
-- **Product contract:** `PRODUCT.md`
-- **System tier:** `multi`
-
 ## Parts
+- server: node process, owns OKR data
+- client: static bundle served from public/
 
-| Part | Kind | Responsibility |
-|---|---|---|
-| Web UI | client | Render OKRs |
-| API | service | CRUD |
+## Boundaries
+- client -> server over HTTP JSON (/api/okrs)
 
-## Trust boundary
-
-- **Untrusted:** browser
-- **Trusted:** API process
-- **Authn/z enforced at:** API (session)
-
-## Data ownership
-
-| Data / store | Write-owner | Readers |
-|---|---|---|
-| OKRs | API | Web UI |
-
-## Contracts
-
-| From → To | Style | Auth |
-|---|---|---|
-| Web → API | sync | session |
-
-## Failure modes
-
-| Path | User-visible failure |
-|---|---|
-| API down | Error banner |
+## Trust
+- server validates all input at POST /api/okrs; client is untrusted
+- secrets live in server env vars only

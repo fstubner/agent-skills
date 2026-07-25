@@ -1,14 +1,18 @@
 # Product
 
-## Register
-product
-## Users
-- **Primary:** User
 ## Purpose
-Demo multi-part with architecture.
+Track three team OKRs in one small tool.
+
+## Users
+- **Primary:** team leads
+- **Context:** weekly check-ins
+
 ## Success
-Loads.
+A lead can add an OKR and see it in the list without help.
+
 ## MVP
-- UI+API
-## Anti-goals
-- No mesh
+- List view
+- Add form
+
+## Constraints
+- Node + vanilla client, no build step

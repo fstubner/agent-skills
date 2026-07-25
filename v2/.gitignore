@@ -1,7 +1,0 @@
-node_modules/
-.agent-evidence/
-.context/
-# Exception: one fixture intentionally COMMITS a planted, lying report to
-# prove accept-check.js ignores on-disk evidence (see fixtures/accept-poisoned-report).
-!fixtures/accept-poisoned-report/.agent-evidence/
-!fixtures/accept-poisoned-report/.agent-evidence/**

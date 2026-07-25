@@ -1,4 +1,2 @@
-const express = require('express');
-const app = express();
-app.get('/api/health', (_req, res) => res.json({ ok: true }));
-app.listen(3000);
+const http = require("http");
+http.createServer((req,res)=>res.end("ok")).listen(4180);

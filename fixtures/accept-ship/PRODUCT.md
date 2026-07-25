@@ -1,27 +1,18 @@
 # Product
 
-## Register
-
-product
+## Purpose
+Track three team OKRs in one small tool.
 
 ## Users
-
-- **Primary:** Team lead tracking OKRs weekly
-
-## Purpose
-
-Track three team OKRs with list, detail, and settings.
+- **Primary:** team leads
+- **Context:** weekly check-ins
 
 ## Success
-
-User can open an OKR, update status, and see it reflected in the list.
+A lead can add an OKR and see it in the list without help.
 
 ## MVP
+- List view
+- Add form
 
-- List, detail, settings views
-- Tiny API for OKR CRUD
-
-## Anti-goals
-
-- No SSO
-- No analytics warehouse
+## Constraints
+- Node + vanilla client, no build step

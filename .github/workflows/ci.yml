@@ -1,33 +1,66 @@
 name: ci
-
+permissions:
+  contents: read
 on:
   push:
     branches: [main]
   pull_request:
 
 jobs:
-  verify:
-    runs-on: ubuntu-latest
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Fixture + structural tests
-        run: node scripts/run-fixture-tests.mjs
-      - name: Syntax-check suite scripts
+      - name: Install vale (ai-prose-slop's one external dependency)
+        shell: bash
         run: |
-          node --check product-acceptance/scripts/accept-check.js
-          node --check systems-architecture/scripts/check-architecture.js
-          node --check systems-architecture/scripts/profile-architecture.js
-          node --check frontend-engineering/scripts/check-structure.js
-          node --check frontend-engineering/scripts/profile-stack.js
-          node --check backend-engineering/scripts/check-backend.js
-          node --check _suite/scripts/classify-project.js
-          node --check _suite/scripts/validate-report.js
-          node --check scripts/run-fixture-tests.mjs
-          node --check scripts/install.mjs
-          node --check scripts/score-eval-results.mjs
-          node --check scripts/new-eval-result.mjs
-      - name: Score eval result schemas
-        run: node scripts/score-eval-results.mjs
+          VALE_VERSION=3.15.1
+          mkdir -p "$HOME/.local/bin"
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            curl -sL "https://github.com/errata-ai/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Windows_64-bit.zip" -o /tmp/vale.zip
+            unzip -o /tmp/vale.zip -d "$HOME/.local/bin" vale.exe
+            # GITHUB_PATH entries on Windows must be Windows-style
+            # (C:\...) — a bash-native POSIX path like /c/Users/... is
+            # invisible to Node's spawnSync('vale', ...) later in this same
+            # job, which reads the native Windows PATH env var. Verified
+            # locally: PATH="$(cygpath -u ...):$PATH" resolves `vale` in
+            # bash but a raw POSIX path added to a Windows PATH does not
+            # resolve for non-bash consumers.
+            cygpath -w "$HOME/.local/bin" >> "$GITHUB_PATH"
+          else
+            curl -sL "https://github.com/errata-ai/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Linux_64-bit.tar.gz" -o /tmp/vale.tar.gz
+            tar -xzf /tmp/vale.tar.gz -C "$HOME/.local/bin" vale
+            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          fi
+      - name: Verify vale is on PATH
+        # Fails the job loudly if the install step above didn't actually
+        # make vale reachable, instead of letting run-tests.mjs's graceful
+        # local-dev skip silently hide a broken CI leg.
+        run: vale --version
+      - name: Install gitleaks (backend-engineering's + the pre-commit hook's secret scanner)
+        shell: bash
+        run: |
+          GITLEAKS_VERSION=8.30.1
+          mkdir -p "$HOME/.local/bin"
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            curl -sL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_windows_x64.zip" -o /tmp/gitleaks.zip
+            unzip -o /tmp/gitleaks.zip -d "$HOME/.local/bin" gitleaks.exe
+            # Same Windows-style-path requirement as the vale install above.
+            cygpath -w "$HOME/.local/bin" >> "$GITHUB_PATH"
+          else
+            OS_NAME=$([ "$RUNNER_OS" = "macOS" ] && echo darwin || echo linux)
+            curl -sL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_${OS_NAME}_x64.tar.gz" -o /tmp/gitleaks.tar.gz
+            tar -xzf /tmp/gitleaks.tar.gz -C "$HOME/.local/bin" gitleaks
+            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          fi
+      - name: Verify gitleaks is on PATH
+        run: gitleaks version
+      - name: Suite tests (fixtures, registry cross-check, schema units, contract drift)
+        run: node scripts/run-tests.mjs

@@ -1,13 +1,18 @@
 # Product
 
+## Purpose
+Track three team OKRs in one small tool.
+
 ## Users
-
-Users
-
-## Purpose / primary job
-
-Track items
+- **Primary:** team leads
+- **Context:** weekly check-ins
 
 ## Success
+A lead can add an OKR and see it in the list without help.
 
-List loads
+## MVP
+- List view
+- Add form
+
+## Constraints
+- Node + vanilla client, no build step
