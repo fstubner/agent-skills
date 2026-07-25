@@ -1163,6 +1163,49 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
     forced.stderr || forced.stdout);
 }
 
+// ---------- 14. Import-edge extraction must cover real-world import shapes ----------
+// Every cycle fixture used CommonJS `require()` on a single line, so the ESM
+// path — the majority case in any modern codebase — contributed zero coverage
+// and could be deleted entirely with the suite still green. Worse, the clause
+// matcher was `[^\n]*?`, which cannot cross a newline: Prettier splits any
+// import list past ~80 chars, so in a normally-formatted TS project MOST import
+// edges were invisible and cycles through them reported "no circular imports".
+{
+  const { localImportsOf } = await import(pathToFileUrl(path.join(root, 'code-organization', 'scripts', 'check-organization.js')));
+  const CASES = [
+    ['single-line ESM', "import a from './a';", ['./a']],
+    ['multi-line ESM (Prettier default output)', "import {\n  alpha,\n  beta,\n} from './a';", ['./a']],
+    ['side-effect import', "import './a';", ['./a']],
+    ['named re-export (barrel file)', "export { x } from './a';", ['./a']],
+    ['star re-export (barrel file)', "export * from './a';", ['./a']],
+    ['two imports on one line', "import a from './a'; import b from './b';", ['./a', './b']],
+    ['dynamic import', "const m = await import('./a');", ['./a']],
+    ['commonjs require', "const a = require('./a');", ['./a']],
+    ['package imports are ignored', "import React from 'react';", []],
+    ['type-only import creates no runtime edge', "import type { X } from './a';", []],
+    ['type-only re-export creates no runtime edge', "export type { X } from './a';", []],
+  ];
+  for (const [label, src, want] of CASES) {
+    const got = localImportsOf(src);
+    expect(`imports — ${label}`, JSON.stringify(got) === JSON.stringify(want), `got ${JSON.stringify(got)}`);
+  }
+
+  // End-to-end: a genuine cycle expressed in ESM across multi-line imports and
+  // a barrel re-export must BLOCK, not report "no circular imports".
+  const ORG = path.join(root, 'code-organization', 'scripts', 'check-organization.js');
+  const esmCycle = fs.mkdtempSync(path.join(tmpBase, 'esm-cycle-'));
+  fs.mkdirSync(path.join(esmCycle, 'src'), { recursive: true });
+  fs.writeFileSync(path.join(esmCycle, 'src', 'a.ts'),
+    "import {\n  bThing,\n  bOther,\n} from './b';\n\nexport const aThing = () => bThing() + bOther();\n");
+  fs.writeFileSync(path.join(esmCycle, 'src', 'b.ts'),
+    "export { aThing } from './a';\n\nexport const bThing = () => 1;\nexport const bOther = () => 2;\n");
+  const r = runNode(ORG, ['--root', esmCycle]);
+  let rep = null;
+  try { rep = JSON.parse(r.stdout); } catch { /* asserted below */ }
+  expect('imports — a multi-line ESM + barrel-re-export cycle is detected',
+    rep && rep.verdict === 'BLOCK', JSON.stringify(rep && rep.checks));
+}
+
 fs.rmSync(tmpBase, { recursive: true, force: true });
 console.log(failures === 0 ? '\nAll tests passed.' : `\n${failures} failure(s)`);
 process.exit(failures === 0 ? 0 : 1);

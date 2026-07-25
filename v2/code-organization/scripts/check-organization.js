@@ -56,17 +56,27 @@ function walk(dir, out, truncated) {
 // `import type { X } from './y'` is deliberately excluded: a type-only
 // reference is erased at compile time and creates no runtime cycle, so
 // flagging it would be a real false positive on an idiomatic TS pattern.
-const IMPORT_RE = /(?:^|\n)\s*import\s+type\s[^\n]*from\s*['"](\.[^'"]+)['"]|(?:^|\n)\s*import\b[^\n]*?\bfrom\s*['"](\.[^'"]+)['"]|\brequire\(\s*['"](\.[^'"]+)['"]\s*\)|\bimport\(\s*['"](\.[^'"]+)['"]\s*\)/g;
+// The clause matcher is `[^;]*?`, NOT `[^\n]*?`. Newlines are legal inside an
+// import clause and Prettier splits any list past its print width, so a
+// line-bounded matcher missed the majority of import edges in a normally
+// formatted TS codebase while still reporting "N file(s) scanned". `;` is the
+// statement boundary, so the clause cannot bleed into the next statement, and
+// two imports on one line are both found.
+//
+// Covers, in order: import/export ... from '<rel>' (value imports AND re-export
+// barrels, the single most common real source of cycles); bare side-effect
+// `import '<rel>'`; require('<rel>'); dynamic import('<rel>').
+const IMPORT_RE = /\b(?:import|export)\b[^;]*?\bfrom\s*['"](\.[^'"]+)['"]|\bimport\s*['"](\.[^'"]+)['"]|\brequire\(\s*['"](\.[^'"]+)['"]\s*\)|\bimport\(\s*['"](\.[^'"]+)['"]\s*\)/g;
 
 function localImportsOf(text) {
   const specs = [];
-  let m;
-  IMPORT_RE.lastIndex = 0;
-  while ((m = IMPORT_RE.exec(text))) {
-    // Group 1 = type-only import target (skipped); groups 2-4 = real ones.
-    if (m[2]) specs.push(m[2]);
-    if (m[3]) specs.push(m[3]);
-    if (m[4]) specs.push(m[4]);
+  for (const m of text.matchAll(IMPORT_RE)) {
+    // `import type` / `export type` are erased at compile time and create no
+    // runtime cycle — flagging them would false-positive on an idiomatic TS
+    // pattern (two modules whose types reference each other).
+    if (/^\s*(?:import|export)\s+type\b/.test(m[0])) continue;
+    const spec = m[1] || m[2] || m[3] || m[4];
+    if (spec) specs.push(spec);
   }
   return specs;
 }
