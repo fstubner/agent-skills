@@ -1026,6 +1026,13 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
       true, 'spring-boot-starter-web', 'my-svc'],
     ['node: root server.ts counts as a server file',
       { 'package.json': '{}', 'server.ts': 'export {};\n' }, true, null],
+    ['node: nested backend/+frontend/ package.json split (no root deps, no workspaces field) counts as a server file',
+      {
+        'package.json': '{"name":"root","private":true}',
+        'backend/package.json': '{"dependencies":{"express":"^4.18.0"}}',
+        'frontend/package.json': '{"dependencies":{"react":"^18.2.0"}}',
+        'frontend/public/index.html': '<!doctype html>\n',
+      }, true, 'express'],
   ];
   for (const [label, files, wantServer, mustHave, mustNotHave] of CASES) {
     const cls = classify(mk(files));
@@ -1038,6 +1045,28 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
     if (mustNotHave) {
       expect(`classify — ${label}: does NOT count ${mustNotHave}`, !deps.includes(mustNotHave), `deps: [${deps.join(', ')}]`);
     }
+  }
+
+  // Regression: a genuinely multi-part project (separate backend/ and
+  // frontend/ directories, each with its own package.json, no npm/yarn
+  // workspaces field tying them together) was classified single-part because
+  // only the ROOT package.json was ever read — express in backend/package.json
+  // and react in frontend/package.json were both invisible. Found via a real
+  // A/B eval run: check-architecture.js said "architecture doc not required"
+  // on a project that was unambiguously client+server.
+  {
+    const dir = mk({
+      'package.json': '{"name":"root","private":true}',
+      'backend/package.json': '{"dependencies":{"express":"^4.18.0"}}',
+      'backend/src/index.ts': 'export {};\n',
+      'frontend/package.json': '{"dependencies":{"react":"^18.2.0"}}',
+      'frontend/public/index.html': '<!doctype html>\n',
+      'frontend/src/App.jsx': 'export default function App() { return null; }\n',
+    });
+    const cls = classify(dir);
+    expect('classify — nested backend/+frontend/ split: multiPart is true',
+      cls.multiPart === true,
+      `distinctServerPresent=${cls.distinctServerPresent} frontendPresent=${cls.frontendPresent}`);
   }
 }
 

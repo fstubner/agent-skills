@@ -71,6 +71,33 @@ function readNode(root) {
   return { manifestFile: 'package.json', depNames: new Set(Object.keys(deps).map((d) => d.toLowerCase())), pkg };
 }
 
+// Finds every package.json in the tree, not just the root one. A common
+// non-monorepo-tool layout — backend/package.json + frontend/package.json,
+// no npm/yarn `workspaces` field tying them together — previously read as
+// "no server, no frontend deps" because only the root manifest was ever
+// consulted: express in backend/package.json and react in
+// frontend/package.json were both invisible, so a genuinely multi-part
+// project classified as single-part. `rel` is already the full, SKIP_DIRS-
+// filtered (node_modules excluded) file walk `classify()` performs, so this
+// costs no extra directory traversal.
+function findAllNodeManifests(root, rel) {
+  const found = [];
+  for (const r of rel) {
+    if (!/(^|\/)package\.json$/.test(r)) continue;
+    const text = readFileIfExists(path.join(root, r));
+    if (text === null) continue;
+    let pkg;
+    try {
+      pkg = JSON.parse(text);
+    } catch {
+      continue;
+    }
+    const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
+    found.push({ ecosystem: 'node', manifestFile: r, depNames: new Set(Object.keys(deps).map((d) => d.toLowerCase())), pkg });
+  }
+  return found;
+}
+
 // requirements.txt: one requirement per line ("Django==4.2", "flask>=2.0",
 // "# comment", "-e git+..." editable installs skipped). pyproject.toml:
 // supports the two common shapes — PEP 621's `[project] dependencies = [...]`
@@ -408,12 +435,16 @@ function classify(root, opts = {}) {
 
   const manifests = [];
   for (const [ecosystem, reader] of Object.entries(ECOSYSTEM_READERS)) {
+    if (ecosystem === 'node') continue; // handled below — covers nested manifests too
     const found = reader(root);
     if (found) manifests.push({ ecosystem, ...found });
   }
-  // Back-compat: `pkg`/`deps` are the Node manifest specifically (several
-  // checkers pre-date multi-ecosystem support and only ever meant Node's).
-  const nodeManifest = manifests.find((m) => m.ecosystem === 'node');
+  manifests.push(...findAllNodeManifests(root, rel));
+  // Back-compat: `pkg`/`deps` are the ROOT Node manifest specifically
+  // (several checkers pre-date multi-ecosystem support and only ever meant
+  // Node's) — not just any node-ecosystem entry, now that nested
+  // backend/package.json-style manifests are also collected above.
+  const nodeManifest = manifests.find((m) => m.ecosystem === 'node' && m.manifestFile === 'package.json');
   const pkg = nodeManifest ? nodeManifest.pkg : null;
   const deps = nodeManifest ? Object.fromEntries([...nodeManifest.depNames].map((d) => [d, true])) : {};
 
@@ -435,7 +466,7 @@ function classify(root, opts = {}) {
 
   const frontendPresent =
     rel.some((f) => /(^|\/)index\.html$/.test(f) || /^public\//.test(f) || /\.(jsx|tsx|vue|svelte)$/.test(f)) ||
-    (nodeManifest ? FRONTEND_DEPS.some((d) => nodeManifest.depNames.has(d)) : false);
+    manifests.some((m) => m.ecosystem === 'node' && FRONTEND_DEPS.some((d) => m.depNames.has(d)));
 
   // Multi-part means real trust boundaries: a distinct server plus a
   // frontend, or an explicit workspace split. A bare go.mod/Cargo.toml does
