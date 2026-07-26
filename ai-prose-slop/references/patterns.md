@@ -12,6 +12,20 @@ Patterns are split by how reliably they can be caught by a regex:
   false positives (they depend on rhetorical structure, not fixed wording).
   These live only in `SKILL.md` guidance for an editing/detect pass.
 
+## Contents
+
+- [Vale-checkable](#vale-checkable): inflated vocabulary, throat-clearing
+  openers, weasel attribution, importance inflation, summary-recap endings,
+  excessive em dash use, unsupported superlatives and certainty claims,
+  parallel-construction flourish
+- [Judgment-only](#judgment-only-not-reliably-regex-detectable): unhedged
+  universal claims, fabricated or invented examples, stacked-appositive
+  listiness, figurative geography/ecology words, binary-contrast framing,
+  faux-insight setups, colon-reveal drama, synonym cycling, fake-strong
+  verbs over "is"/"has", negative listing, robotic rhythm, rhetorical
+  self-answered questions
+- [Sources of inspiration](#sources-of-inspiration)
+
 ## Vale-checkable
 
 ### Inflated vocabulary

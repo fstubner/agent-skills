@@ -12,6 +12,7 @@ description: >-
   one in advance is premature abstraction) and not a substitute for a
   linter's mechanical rules (unused vars, formatting) — this is the layer
   above that, for symptoms only a reader can recognize.
+compatibility: Requires Node 18+ to run the deterministic checker script.
 ---
 
 # Code smells

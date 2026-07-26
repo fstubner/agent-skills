@@ -12,6 +12,7 @@ description: >-
   from `systems-architecture` (which is about parts, boundaries, and trust
   between whole services) — this is the layer in between: how one service's
   own internals are laid out.
+compatibility: Requires Node 18+ to run the deterministic checker script.
 ---
 
 # Code organization

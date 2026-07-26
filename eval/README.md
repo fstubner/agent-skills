@@ -1,6 +1,7 @@
 # Unprimed eval
 
-**Status: 2 recorded runs, case `okr-tool`, both negative.** See
+**Status: 3 cases exist (`okr-tool`, `csv-stats-cli`, `product-doc-injection`);
+only `okr-tool` has recorded runs, and both are negative.** See
 `results/okr-tool-claude-code-claude-sonnet-5-r1.json` (Task-tool subagent)
 and `-r2.json` (genuine top-level `claude -p` session). Both had all 15
 skills installed from tag `v1.0.0-alpha.1`; neither invoked a single skill
@@ -10,7 +11,10 @@ in each run (`stack`) — the rest (`product`, `architecture`,
 at all, not because a fired skill's guidance was wrong. Read both `notes`
 fields before drawing conclusions — see the honesty rule in the root
 README. Do not cite a passing checker-fixture test as evidence this
-directory doesn't also apply to it.
+directory doesn't also apply to it. `csv-stats-cli` and
+`product-doc-injection` exist to cover skill areas `okr-tool` never
+touches (cli-tooling/testing-strategy, and the prompt-injection stance in
+product-build/product-acceptance) — neither has been run yet.
 
 ## Protocol
 

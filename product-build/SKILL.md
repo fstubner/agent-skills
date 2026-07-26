@@ -1,12 +1,11 @@
 ---
 name: product-build
 description: >-
-  Dispatcher for building product UI end to end: greenfield apps, "build
-  this" requests, dashboard or tool MVPs, and multi-view feature work. Checks
-  which sibling skills' triggers apply to the request and hands off to each;
-  defers SHIP to a separate acceptance turn. Not for finalizing or accepting
-  finished work (product-acceptance), not for one-line tweaks in a locked
-  codebase, and not for compiling or CI questions.
+  Entry point for greenfield or ambiguous product-UI requests: a brand new
+  app, a "build this" request, a dashboard or tool MVP, or multi-view
+  feature work with no obvious single starting skill. Not for finalizing or
+  accepting finished work (product-acceptance), not for one-line tweaks in
+  a locked codebase, and not for compiling or CI questions.
 ---
 
 # Product build (dispatcher)

@@ -1,5 +1,43 @@
 # Changelog
 
+## 1.0.0-alpha.2 — 2026-07-26
+
+**Behavioral eval, honestly reported**
+- First real unprimed eval runs recorded (`eval/results/`, case `okr-tool`):
+  both a Task-tool subagent and a genuine top-level `claude -p` session,
+  with all 15 skills installed from tag `v1.0.0-alpha.1`, built the app
+  without invoking a single skill — no `PRODUCT.md`, no `ARCHITECTURE.md`,
+  no design question, same-turn self-certification of "done" in both. Root
+  cause traced to the mechanism level: Claude Code's passive skill-listing
+  discovery is weak, and even a plugin's hook-forced full-body injection
+  (`superpowers`) didn't reliably produce invocation either, in an
+  empirical A/B check run in the same environment. README and
+  `eval/README.md` updated to state this plainly instead of the prior
+  "zero recorded runs" scaffold language.
+- Two more eval cases added (`csv-stats-cli`, `product-doc-injection`),
+  bringing total case count to 3 per Anthropic's own "at least three
+  evaluations" authoring checklist; neither has recorded runs yet.
+
+**Spec-compliance pass (agentskills.io/specification + Anthropic's official
+skill-authoring guide)**
+- `product-build` and `product-acceptance` descriptions rewritten to drop
+  internal-mechanism summaries ("checks sibling triggers and hands off...",
+  "verifies... re-runs... walks...") per a documented, tested failure mode:
+  a description that summarizes a skill's workflow lets a model mimic an
+  abbreviated version of it without ever loading the real content.
+- `mental-models/SKILL.md` cut from 1286 to 781 words by moving the
+  Mindsets section to `references/mindsets.md`, extending the same
+  progressive-disclosure pattern the Lenses section already used.
+- Added a compatibility field (Node 18+, plus Vale/gitleaks where relevant)
+  to the 8 skills with executable checker scripts.
+- Added a table of contents to the two reference files over 100 lines
+  (`ai-prose-slop/references/patterns.md`, `code-smells/references/catalog.md`).
+- Piloted an experimental `allowed-tools` field on `backend-engineering` and
+  `frontend`, scoped to their own checker scripts plus read-only
+  exploration tools, to test whether it reduces permission friction.
+- Fixed `mental-models/SKILL.md` calling Cynefin's domains
+  "fault-categories" — not Cynefin's actual terminology.
+
 ## 1.0.0-alpha.1 — 2026-07-25
 
 Ground-up rebuild, promoted to the repository root. Supersedes the 0.x line

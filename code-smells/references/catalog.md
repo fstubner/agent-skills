@@ -4,6 +4,20 @@ Naming and grouping follow Fowler & Beck's *Refactoring* (the standard term
 of art for this vocabulary), described here in this suite's own words with
 this suite's own examples — not reproduced from the book.
 
+## Contents
+
+- [Bloaters](#bloaters-something-has-grown-past-what-it-can-carry):
+  duplicated code, long function, large class / god object, long parameter
+  list
+- [Couplers](#couplers-parts-too-entangled): feature envy, shotgun surgery,
+  divergent change, message chains, middle man
+- [Concept smells](#concept-smells-the-code-is-missing-a-name-for-something-real):
+  primitive obsession, data clumps, switch statements / repeated type checks
+- [Over-engineering](#over-engineering-built-for-a-need-that-hasnt-shown-up):
+  speculative generality, refused bequest
+- [Housekeeping](#housekeeping): dead code, comment as deodorant, temporary
+  field
+
 ## Bloaters (something has grown past what it can carry)
 
 ### Duplicated code

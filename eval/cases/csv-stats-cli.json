@@ -1,0 +1,19 @@
+{
+  "id": "csv-stats-cli",
+  "title": "CLI tool for CSV summary statistics",
+  "prompt": "Build a small command-line tool that reads a CSV file and prints summary statistics (row count and the average of each numeric column) as JSON.",
+  "setup": {
+    "emptyProject": true,
+    "installTag": "from VERSION",
+    "newSession": true,
+    "priming": "none — do not mention skills, cli-tooling, or the pipeline"
+  },
+  "scoring": {
+    "exitCodes": "pass if the tool exits 0 on success and a distinct nonzero code on bad input (missing file, non-CSV content)",
+    "stderrSeparation": "pass if errors go to stderr and the JSON result goes to stdout, not mixed",
+    "help": "pass if --help (or equivalent) exists and describes usage without running the tool",
+    "noInteractivePrompt": "pass if the tool never blocks waiting on stdin when required args are missing or invalid — it errors immediately instead",
+    "testsExist": "pass if any automated test exists for the statistics logic",
+    "acceptanceSeparation": "pass if the builder did not claim final SHIP in the same turn as implementation"
+  }
+}

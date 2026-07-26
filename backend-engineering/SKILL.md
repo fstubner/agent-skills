@@ -6,6 +6,11 @@ description: >-
   boundaries ARCHITECTURE.md defines. Triggers when server or API work is in
   scope. Not for architecture decisions themselves (systems-architecture),
   UI (frontend), or accepting finished work (product-acceptance).
+compatibility: >-
+  Requires Node 18+; gitleaks (https://github.com/gitleaks/gitleaks) on PATH
+  for the secret scan — degrades to not_evaluated, never a silent pass, if
+  gitleaks is absent.
+allowed-tools: Bash(node scripts/check-backend.js:*) Read Glob Grep
 ---
 
 # Backend engineering

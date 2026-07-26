@@ -10,6 +10,7 @@ description: >-
   `backend-engineering` (trusted-side runtime laws — secrets, validation,
   auth) — this is specifically about the shape of persisted data, not the
   code that reads and writes it.
+compatibility: Requires Node 18+ to run the deterministic checker script.
 ---
 
 # Data modeling

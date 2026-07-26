@@ -7,6 +7,9 @@ description: >-
   voice. Backed by a real Vale style for deterministic, evidence-based checks.
   Standalone utility skill with no shared artifacts — use it on any writing
   task regardless of whether the other skills in this suite are involved.
+compatibility: >-
+  Requires Node 18+; Vale (https://vale.sh) on PATH for the deterministic
+  checks — degrades to not_evaluated, never a silent pass, if Vale is absent.
 ---
 
 # AI prose slop

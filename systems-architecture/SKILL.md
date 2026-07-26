@@ -7,6 +7,7 @@ description: >-
   build is multi-part or trust boundaries are unclear. Not for single-file
   scripts, styling (frontend), or server implementation detail
   (backend-engineering).
+compatibility: Requires Node 18+ to run the deterministic checker script.
 ---
 
 # Systems architecture

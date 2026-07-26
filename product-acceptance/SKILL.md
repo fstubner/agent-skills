@@ -1,12 +1,11 @@
 ---
 name: product-acceptance
 description: >-
-  Independent acceptance gate before claiming work is done: verifies the
-  product contract, re-runs every domain checker fresh, and walks the primary
-  job adversarially. Triggers on "ship it", "is this done", "accept this",
-  or any readiness claim. Must run in a separate context/turn from the
-  build — the builder never self-accepts. Not for building or fixing
-  (product-build routes that).
+  Independent acceptance gate before claiming work is done. Triggers on
+  "ship it", "is this done", "accept this", or any other readiness claim.
+  Must run in a separate context/turn from the build — the builder never
+  self-accepts. Not for building or fixing (product-build routes that).
+compatibility: Requires Node 18+ to re-run the sibling checker scripts.
 ---
 
 # Product acceptance
