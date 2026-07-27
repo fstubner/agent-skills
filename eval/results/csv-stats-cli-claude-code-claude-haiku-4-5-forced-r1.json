@@ -1,0 +1,17 @@
+{
+  "caseId": "csv-stats-cli",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-07-27",
+  "condition": "forced",
+  "notes": "Efficacy study forced arm (paired with -control-r1). Task-tool subagent explicitly instructed to read cli-tooling/SKILL.md by absolute path and follow it as a hard requirement — NOT a test of whether the skill would be invoked on its own. n=1, preliminary. cli-tooling has no deterministic checker, so verification is behavioral, same as the control arm. Results, independently re-run (not trusting the self-report, which initially appeared to claim 9/9 tests passing where my first check-run showed 0/9 — that discrepancy was MY error, running test.js from the wrong working directory so its internal relative-path fixtures weren't found; re-run correctly from the project directory confirmed the self-report was accurate, 9/9 passing): real --help output describing usage without running the tool (pass); exit 0 success / distinct nonzero codes for different error classes, e.g. 1 for missing file (pass); JSON only on stdout, errors only on stderr, verified directly (pass); no args exits immediately with an actionable error, no hang (pass); a real automated test suite with assertions, independently re-run and confirmed 9/9 passing (pass). acceptanceSeparation still fails here too — self-report calls the tool 'fully implemented, tested, and documented' in the same turn as building, with no separate acceptance pass; cli-tooling's guidance doesn't cover that discipline, so this failure is expected and not something forcing this particular skill should have fixed.",
+  "scores": {
+    "exitCodes": "pass",
+    "stderrSeparation": "pass",
+    "help": "pass",
+    "noInteractivePrompt": "pass",
+    "testsExist": "pass",
+    "acceptanceSeparation": "fail"
+  }
+}

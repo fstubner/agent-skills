@@ -1,0 +1,17 @@
+{
+  "caseId": "csv-stats-cli",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-07-27",
+  "condition": "unprimed",
+  "notes": "Efficacy study control arm (paired with -forced-r1). Task-tool subagent, no skill mentioned. n=1, preliminary — not yet replicated to 3 reps the way systems-architecture was. cli-tooling has no deterministic checker, so verification here is behavioral: actually ran the built tool (Python) rather than trusting the self-report. Results: exit code 0 on success / 1 on error (pass); errors correctly on stderr, JSON only on stdout (pass); no --help support at all, '--help' is treated as a literal filename and errors 'File not found: --help' (fail); no args exits immediately with a usage message, does not hang (pass); the one 'test' file is a manual demo script with zero assertions, not automated tests (fail); self-report ends with a same-turn completeness claim ('production-ready... handles real-world CSV data robustly') with no separate acceptance step (fail).",
+  "scores": {
+    "exitCodes": "pass",
+    "stderrSeparation": "pass",
+    "help": "fail",
+    "noInteractivePrompt": "pass",
+    "testsExist": "fail",
+    "acceptanceSeparation": "fail"
+  }
+}
