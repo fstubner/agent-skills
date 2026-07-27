@@ -1,0 +1,16 @@
+{
+  "caseId": "okr-tool",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-07-27",
+  "condition": "forced",
+  "notes": "Efficacy study forced arm (paired with -control-r1). Task-tool subagent explicitly instructed to read systems-architecture/SKILL.md by absolute path, treat it as a hard requirement, and run its checker before implementing — NOT a test of whether the skill would be invoked on its own; see eval/README.md's forced-protocol caveat. Built a single Node server + public/ frontend. Wrote ARCHITECTURE.md with real Parts/Boundaries/Trust/Contracts sections, including a concrete named enforcement point ('Server validates all request payloads before persisting') rather than a vague claim. Independently verified (not self-reported): re-ran systems-architecture/scripts/check-architecture.js against the resulting project — verdict SHIP, all three required headings present. Only `architecture` was scored; other criteria not_evaluated.",
+  "scores": {
+    "product": "not_evaluated",
+    "architecture": "pass",
+    "stack": "not_evaluated",
+    "designUxInterview": "not_evaluated",
+    "acceptanceSeparation": "not_evaluated"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "caseId": "okr-tool",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-07-27",
+  "condition": "unprimed",
+  "notes": "Efficacy study control arm (paired with the -forced-r1 result for the same rep). Task-tool subagent, no skill mentioned, suite installed from tag v1.0.0-alpha.1 (not that installation mattered here — nothing was invoked). Only the `architecture` criterion was scored; the other 4 okr-tool criteria were not systematically assessed this round and are not_evaluated, not assumed pass or fail. Chose a genuine client+server split (React client/ + Express server/), which should trigger systems-architecture's own stated scope, but wrote no architecture reasoning anywhere. Independently verified (not self-reported) by running systems-architecture/scripts/check-architecture.js against the resulting project after the fact: verdict BLOCK, ARCHITECTURE.md exists but has none of the required Parts/Boundaries/Trust headings. See eval/README.md's forced-protocol section for why this pairs with a forced arm rather than standing alone.",
+  "scores": {
+    "product": "not_evaluated",
+    "architecture": "fail",
+    "stack": "not_evaluated",
+    "designUxInterview": "not_evaluated",
+    "acceptanceSeparation": "not_evaluated"
+  }
+}

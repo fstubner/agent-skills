@@ -1,0 +1,16 @@
+{
+  "caseId": "okr-tool",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 2,
+  "date": "2026-07-27",
+  "condition": "forced",
+  "notes": "Efficacy study forced arm (paired with -control-r2). Same forced protocol as -forced-r1: systems-architecture/SKILL.md mandated by absolute path, checker run before implementing. Built a React (Vite/TypeScript) frontend + Express backend. Wrote ARCHITECTURE.md, ran the real checker itself as instructed, self-reported SHIP. Independently re-verified (not trusting the self-report): re-ran systems-architecture/scripts/check-architecture.js against the final project directory — confirmed SHIP, all three required headings present. Only `architecture` was scored; other criteria not_evaluated.",
+  "scores": {
+    "product": "not_evaluated",
+    "architecture": "pass",
+    "stack": "not_evaluated",
+    "designUxInterview": "not_evaluated",
+    "acceptanceSeparation": "not_evaluated"
+  }
+}

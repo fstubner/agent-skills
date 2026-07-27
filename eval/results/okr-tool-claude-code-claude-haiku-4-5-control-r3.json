@@ -1,0 +1,16 @@
+{
+  "caseId": "okr-tool",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 3,
+  "date": "2026-07-27",
+  "condition": "unprimed",
+  "notes": "Efficacy study control arm (paired with -forced-r3). Task-tool subagent, no skill mentioned. Built a single Node server (server.js) + public/ static frontend, file-based JSON storage. No architecture document of any kind (no ARCHITECTURE.md, no equivalent). Independently verified with systems-architecture/scripts/check-architecture.js (post classify.cjs fix): verdict BLOCK, P-arch-doc fails outright — 'multi-part project has no architecture doc'. Only `architecture` was scored; other criteria not_evaluated.",
+  "scores": {
+    "product": "not_evaluated",
+    "architecture": "fail",
+    "stack": "not_evaluated",
+    "designUxInterview": "not_evaluated",
+    "acceptanceSeparation": "not_evaluated"
+  }
+}

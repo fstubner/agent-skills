@@ -1,0 +1,16 @@
+{
+  "caseId": "okr-tool",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 3,
+  "date": "2026-07-27",
+  "condition": "forced",
+  "notes": "Efficacy study forced arm (paired with -control-r3). Same forced protocol: systems-architecture/SKILL.md mandated by absolute path, checker run before implementing. Built a single Node server + public/ frontend. Wrote ARCHITECTURE.md with Parts/Boundaries/Trust, self-reported SHIP. Independently re-verified: re-ran systems-architecture/scripts/check-architecture.js against the final project directory — confirmed SHIP, all three required headings present. Only `architecture` was scored; other criteria not_evaluated. Across all 3 reps this rep completes the tally: 0/3 control (all BLOCK) vs. 3/3 forced (all SHIP), independently verified, not self-reported, for this one skill.",
+  "scores": {
+    "product": "not_evaluated",
+    "architecture": "pass",
+    "stack": "not_evaluated",
+    "designUxInterview": "not_evaluated",
+    "acceptanceSeparation": "not_evaluated"
+  }
+}

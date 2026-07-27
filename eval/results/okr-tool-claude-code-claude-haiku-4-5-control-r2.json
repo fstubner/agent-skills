@@ -1,0 +1,16 @@
+{
+  "caseId": "okr-tool",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 2,
+  "date": "2026-07-27",
+  "condition": "unprimed",
+  "notes": "Efficacy study control arm (paired with -forced-r2). Task-tool subagent, no skill mentioned. Built a genuine backend/ (Express) + frontend/ (React) split, each with its own package.json, no npm/yarn workspaces field. No ARCHITECTURE.md anywhere. This run exposed a real bug in core/lib/classify.cjs: readNode() only ever read the ROOT package.json, so express/react in the nested manifests were invisible, and the project misclassified as single-part — check-architecture.js said 'architecture doc not required' instead of correctly flagging the missing doc. Fixed the same day (findAllNodeManifests, commit eb91166) and re-verified against this exact project directory: corrected verdict is BLOCK, no architecture doc found on a genuinely multi-part project. Scored here using the corrected, post-fix verdict, not the buggy one the checker originally produced. Only `architecture` was scored; other criteria not_evaluated.",
+  "scores": {
+    "product": "not_evaluated",
+    "architecture": "fail",
+    "stack": "not_evaluated",
+    "designUxInterview": "not_evaluated",
+    "acceptanceSeparation": "not_evaluated"
+  }
+}
