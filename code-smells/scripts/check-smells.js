@@ -59,12 +59,41 @@ const LARGE_FILE_LINES = 400;
 const DEEP_NESTING_DEPTH = 5;
 
 function parseArgs(argv) {
-  const out = { root: '.', strict: false, reportPath: null };
+  const out = { root: '.', strict: false, reportPath: null, files: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--root') out.root = argv[++i];
     else if (a === '--strict') out.strict = true;
     else if (a === '--report' || a === '--out') out.reportPath = argv[++i];
+    else if (a === '--files') {
+      const v = argv[++i];
+      if (v) out.files = (out.files || []).concat(v.split(',').map((s) => s.trim()).filter(Boolean));
+      else out.files = out.files || [];
+    }
+  }
+  return out;
+}
+
+// --files restricts the scan to specific paths (relative to --root, or
+// absolute) instead of walking the whole tree. This exists so the checker can
+// run as a pre-commit hook: a whole-repo scan blocks the first commit on any
+// codebase that isn't already green, which gets the hook bypassed rather than
+// obeyed. Both of this skill's checks are per-file, so scoping the scan set is
+// the whole implementation — see check-organization.js for the harder case
+// where the property being checked spans files.
+//
+// Named paths that don't exist (a staged deletion) or aren't source files are
+// dropped rather than erroring: the caller passes a commit's file list, not a
+// curated one, and "that path is not something I check" is not a failure.
+function resolveScope(root, names) {
+  const out = [];
+  for (const name of names) {
+    const full = path.isAbsolute(name) ? name : path.join(root, name);
+    if (!ALL_SOURCE_EXTENSIONS.includes(path.extname(full))) continue;
+    try {
+      if (!fs.statSync(full).isFile()) continue;
+    } catch { continue; }
+    out.push(full);
   }
   return out;
 }
@@ -166,14 +195,40 @@ function assertReadableRoot(root) {
   if (!stat.isDirectory()) throw new Error(`--root is not a directory: ${root}`);
 }
 
-function run(root) {
+// Deepest brace nesting in already-cleaned source, or null if nothing exceeds
+// the limit. Extracted from run()'s scan loop rather than left inline: nested
+// inside the per-file loop it put its own result object literal at depth 6,
+// which this very checker then reported against itself. Brace counting cannot
+// tell a data literal from a control-flow block, so the fix is the one this
+// skill's own catalog prescribes for a long function — extract the cohesive
+// chunk and name it.
+function deepestNestingIn(cleaned, rel) {
+  let deepest = null;
+  let depth = 0;
+  let line = 1;
+  for (let i = 0; i < cleaned.length; i++) {
+    const ch = cleaned[i];
+    if (ch === '\n') { line++; continue; }
+    if (ch === '}') { depth = Math.max(0, depth - 1); continue; }
+    if (ch !== '{') continue;
+    depth++;
+    if (depth > DEEP_NESTING_DEPTH && (!deepest || depth > deepest.depth)) deepest = { rel, line, depth };
+  }
+  return deepest;
+}
+
+function run(root, opts = {}) {
   assertReadableRoot(root);
   const files = [];
   const truncated = { hit: false };
-  walk(root, files, truncated);
+  const scoped = Array.isArray(opts.files);
+  if (scoped) files.push(...resolveScope(root, opts.files));
+  else walk(root, files, truncated);
 
   if (files.length === 0) {
-    return [check('S-scope', 'pass', 'no source files found; size/nesting checks not applicable')];
+    return [check('S-scope', 'pass', scoped
+      ? 'no source files among the named paths; size/nesting checks not applicable'
+      : 'no source files found; size/nesting checks not applicable')];
   }
 
   const largeFiles = [];
@@ -200,21 +255,8 @@ function run(root) {
 
     if (!BRACE_LANGUAGE_EXTENSIONS.has(path.extname(file))) continue;
     braceFilesScanned++;
-    const cleaned = stripStringsAndComments(text);
-    let depth = 0;
-    let line = 1;
-    for (let i = 0; i < cleaned.length; i++) {
-      const ch = cleaned[i];
-      if (ch === '\n') { line++; continue; }
-      if (ch === '{') {
-        depth++;
-        if (depth > DEEP_NESTING_DEPTH && (!deepest || depth > deepest.depth)) {
-          deepest = { rel, line, depth };
-        }
-      } else if (ch === '}') {
-        depth = Math.max(0, depth - 1);
-      }
-    }
+    const found = deepestNestingIn(stripStringsAndComments(text), rel);
+    if (found && (!deepest || found.depth > deepest.depth)) deepest = found;
   }
 
   const checks = [];
@@ -248,7 +290,7 @@ module.exports = { run, stripStringsAndComments };
 if (require.main === module) {
   const args = parseArgs(process.argv.slice(2));
   try {
-    const checks = run(args.root);
+    const checks = run(args.root, { files: args.files });
     const hasFail = checks.some((c) => c.status === 'fail');
     const exitCode = hasFail ? 1 : args.strict && checks.some((c) => c.status !== 'pass') ? 1 : 0;
     finish(checks, args, exitCode);

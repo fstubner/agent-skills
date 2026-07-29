@@ -1254,6 +1254,67 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
     rep && rep.verdict === 'BLOCK', JSON.stringify(rep && rep.checks));
 }
 
+// ---------- 15. --files scoping (pre-commit hook viability) ----------
+// A whole-repository checker cannot be a pre-commit hook on any codebase that
+// isn't already green: the first commit after install is blocked by unrelated
+// pre-existing violations, so the hook gets bypassed or uninstalled. gitleaks
+// solves this with `protect --staged`; these two checkers had no equivalent,
+// which is what made them unusable in scripts/git-hooks/pre-commit.
+//
+// --files restricts what may FAIL to the named files. For code-smells both
+// checks are per-file, so this is a straight scan-set restriction. For
+// code-organization a cycle is inherently graph-wide (a -> b -> c -> a needs
+// all three files), so the whole graph is still built and only the REPORTING
+// is scoped: a cycle blocks when a named file participates in it, and a
+// pre-existing cycle your commit doesn't touch is grandfathered.
+{
+  const SMELLS = path.join(root, 'code-smells', 'scripts', 'check-smells.js');
+  const ORG2 = path.join(root, 'code-organization', 'scripts', 'check-organization.js');
+
+  const scoped = fs.mkdtempSync(path.join(tmpBase, 'scoped-'));
+  fs.mkdirSync(path.join(scoped, 'src'), { recursive: true });
+  // One oversized file (450 lines, over the 400 limit) and one clean one.
+  fs.writeFileSync(path.join(scoped, 'src', 'big.js'), 'const x = 1;\n'.repeat(450));
+  fs.writeFileSync(path.join(scoped, 'src', 'small.js'), 'export const ok = 1;\n');
+
+  const smellsAll = JSON.parse(runNode(SMELLS, ['--root', scoped]).stdout);
+  expect('--files: unscoped run still BLOCKs on the oversized file (baseline)',
+    smellsAll.verdict === 'BLOCK', JSON.stringify(smellsAll.checks));
+
+  const smellsClean = JSON.parse(runNode(SMELLS, ['--root', scoped, '--files', 'src/small.js']).stdout);
+  expect('--files: scoping to a clean file does NOT report the unrelated big file',
+    smellsClean.verdict === 'SHIP', JSON.stringify(smellsClean.checks));
+
+  const smellsDirty = JSON.parse(runNode(SMELLS, ['--root', scoped, '--files', 'src/big.js']).stdout);
+  expect('--files: scoping to the oversized file still fails it',
+    smellsDirty.verdict === 'BLOCK', JSON.stringify(smellsDirty.checks));
+
+  // A pre-existing cycle (a <-> b) plus an unrelated clean file.
+  const scopedOrg = fs.mkdtempSync(path.join(tmpBase, 'scoped-org-'));
+  fs.mkdirSync(path.join(scopedOrg, 'src'), { recursive: true });
+  fs.writeFileSync(path.join(scopedOrg, 'src', 'a.js'), "import './b.js';\nexport const a = 1;\n");
+  fs.writeFileSync(path.join(scopedOrg, 'src', 'b.js'), "import './a.js';\nexport const b = 1;\n");
+  fs.writeFileSync(path.join(scopedOrg, 'src', 'clean.js'), 'export const c = 1;\n');
+
+  const orgAll = JSON.parse(runNode(ORG2, ['--root', scopedOrg]).stdout);
+  expect('--files: unscoped run still BLOCKs on the pre-existing cycle (baseline)',
+    orgAll.verdict === 'BLOCK', JSON.stringify(orgAll.checks));
+
+  const orgClean = JSON.parse(runNode(ORG2, ['--root', scopedOrg, '--files', 'src/clean.js']).stdout);
+  expect('--files: a pre-existing cycle the commit does not touch is grandfathered',
+    orgClean.verdict === 'SHIP', JSON.stringify(orgClean.checks));
+
+  const orgDirty = JSON.parse(runNode(ORG2, ['--root', scopedOrg, '--files', 'src/a.js']).stdout);
+  expect('--files: a cycle the named file participates in still blocks',
+    orgDirty.verdict === 'BLOCK', JSON.stringify(orgDirty.checks));
+
+  // A named file that does not exist (e.g. a staged deletion that slipped
+  // through the hook's diff-filter) must not crash or vacuously pass.
+  const orgGone = JSON.parse(runNode(ORG2, ['--root', scopedOrg, '--files', 'src/deleted.js']).stdout);
+  expect('--files: a nonexistent named file yields no false failure',
+    orgGone.verdict !== 'BLOCK', JSON.stringify(orgGone.checks));
+}
+
 fs.rmSync(tmpBase, { recursive: true, force: true });
 console.log(failures === 0 ? '\nAll tests passed.' : `\n${failures} failure(s)`);
 process.exit(failures === 0 ? 0 : 1);

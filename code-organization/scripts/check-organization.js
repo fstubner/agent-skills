@@ -24,14 +24,76 @@ const MAX_FILES = 20000;
 const MAX_FILE_BYTES = 2 * 1024 * 1024;
 
 function parseArgs(argv) {
-  const out = { root: '.', strict: false, reportPath: null };
+  const out = { root: '.', strict: false, reportPath: null, files: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--root') out.root = argv[++i];
     else if (a === '--strict') out.strict = true;
     else if (a === '--report' || a === '--out') out.reportPath = argv[++i];
+    else if (a === '--files') {
+      const v = argv[++i];
+      if (v) out.files = (out.files || []).concat(v.split(',').map((s) => s.trim()).filter(Boolean));
+      else out.files = out.files || [];
+    }
   }
   return out;
+}
+
+// --files scopes what may FAIL to specific paths, for pre-commit-hook use
+// (a whole-repo scan blocks the first commit on any codebase that isn't
+// already green, which gets the hook bypassed rather than obeyed).
+//
+// Unlike code-smells, scoping here CANNOT mean "only scan these files": a
+// cycle a -> b -> c -> a is a property of the graph, and two of those three
+// files may be untouched by the commit. So the whole graph is still built
+// from a full walk and only the REPORTING is scoped — a cycle blocks when a
+// named file participates in it. A pre-existing cycle the commit doesn't
+// touch is grandfathered; introducing one, or editing a file already inside
+// one, is not.
+function resolveScope(root, names) {
+  const out = [];
+  for (const name of names) {
+    const full = path.resolve(path.isAbsolute(name) ? name : path.join(root, name));
+    try {
+      if (!fs.statSync(full).isFile()) continue;
+    } catch { continue; }
+    out.push(full);
+  }
+  return out;
+}
+
+// Finds a cycle that passes through `start` specifically: a path
+// start -> ... -> start. Deliberately separate from findCycle()'s global
+// three-colour DFS, which returns the first cycle anywhere and marks nodes
+// BLACK as it goes — that early-exit makes "find a cycle containing THIS
+// node" unanswerable without re-running it per node anyway. Scope sets are
+// one commit's worth of files, so the per-start cost is bounded.
+function findCycleThrough(graph, start) {
+  const stack = [];
+  const onStack = new Set();
+  const visited = new Set([start]);
+  let found = null;
+
+  function dfs(node) {
+    stack.push(node);
+    onStack.add(node);
+    for (const next of graph.get(node) || []) {
+      if (next === start) {
+        found = [...stack, start];
+        return true;
+      }
+      if (!visited.has(next) && !onStack.has(next)) {
+        visited.add(next);
+        if (dfs(next)) return true;
+      }
+    }
+    stack.pop();
+    onStack.delete(node);
+    return false;
+  }
+
+  dfs(start);
+  return found;
 }
 
 function walk(dir, out, truncated) {
@@ -168,11 +230,16 @@ function assertReadableRoot(root) {
   if (!stat.isDirectory()) throw new Error(`--root is not a directory: ${root}`);
 }
 
-function run(root) {
+function run(root, opts = {}) {
   assertReadableRoot(root);
   const files = [];
   const truncated = { hit: false };
+  // The full walk happens even when scoped — the graph must be complete for
+  // cycle detection to be correct; only the reporting is narrowed below.
   walk(root, files, truncated);
+
+  const scoped = Array.isArray(opts.files);
+  const scopeFiles = scoped ? resolveScope(root, opts.files) : [];
 
   if (files.length === 0) {
     return [check('O-scope', 'pass', 'no JS/TS files found; circular-dependency check not applicable')];
@@ -203,10 +270,22 @@ function run(root) {
   }
 
   const checks = [];
-  const cycle = findCycle(graph);
+  let cycle = null;
+  if (scoped) {
+    for (const f of scopeFiles) {
+      if (!graph.has(f)) continue;
+      cycle = findCycleThrough(graph, f);
+      if (cycle) break;
+    }
+  } else {
+    cycle = findCycle(graph);
+  }
   if (cycle) {
     const rel = cycle.map((f) => path.relative(root, f).split(path.sep).join('/'));
     checks.push(check('O-circular-deps', 'fail', `circular import: ${rel.join(' -> ')}`));
+  } else if (scoped) {
+    checks.push(check('O-circular-deps', 'pass',
+      `${scopeFiles.length} named file(s) are in no circular import (${files.length} file(s) scanned to build the graph)`));
   } else {
     checks.push(check('O-circular-deps', 'pass', `${files.length} file(s) scanned, no circular imports`));
   }
@@ -232,7 +311,7 @@ module.exports = { run, findCycle, localImportsOf };
 if (require.main === module) {
   const args = parseArgs(process.argv.slice(2));
   try {
-    const checks = run(args.root);
+    const checks = run(args.root, { files: args.files });
     const hasFail = checks.some((c) => c.status === 'fail');
     const exitCode = hasFail ? 1 : args.strict && checks.some((c) => c.status !== 'pass') ? 1 : 0;
     finish(checks, args, exitCode);

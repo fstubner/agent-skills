@@ -78,37 +78,106 @@ function runGitleaksPass(configArgs, tmpDir, label) {
   }
 }
 
-if (!isGitleaksOnPath()) {
+// A missing gitleaks skips the SECRET scan only — it must not also skip the
+// structural checks below, which have no external dependency.
+if (isGitleaksOnPath()) {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pre-commit-gitleaks-'));
+  let passes;
+  try {
+    passes = [
+      runGitleaksPass([], tmpDir, 'default'),
+      runGitleaksPass(['--config', extraConfig], tmpDir, 'extra'),
+    ];
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+
+  const crashedPass = passes.find((p) => p.crashed);
+  if (crashedPass) {
+    console.error(`pre-commit: gitleaks did not complete normally: ${crashedPass.stderr}`);
+    process.exit(1);
+  }
+
+  const leaks = passes.flatMap((p) => p.leaks);
+  if (leaks.length > 0) {
+    console.error('pre-commit: secret(s) staged (via gitleaks):');
+    for (const leak of leaks) {
+      console.error(`  ${leak.File}:${leak.StartLine} [${leak.RuleID}]`);
+    }
+    console.error('Remove the secret (and rotate it if already committed elsewhere) before committing.');
+    console.error('If this is a genuine false positive, commit with --no-verify and open an issue.');
+    process.exit(1);
+  }
+} else {
   console.error('pre-commit: gitleaks is not on PATH — secret scanning skipped, commit allowed.');
   console.error(`Install it for real protection: ${installHint()}`);
+}
+
+// ---------- Structural checks on STAGED files only ----------
+// code-smells and code-organization run with --files, scoped to what this
+// commit actually touches. Scoping is not a convenience: a whole-repo scan
+// blocks the very first commit on any codebase that isn't already green, and
+// a hook that blocks work unrelated to the change gets bypassed with
+// --no-verify or uninstalled, which is strictly worse than no hook. Same
+// reasoning as `gitleaks protect --staged` above.
+//
+// Note the asymmetry with product-acceptance, which deliberately re-runs
+// these checkers across the WHOLE project: a ship-readiness verdict must not
+// be scoped to one commit's diff. This hook is a fast local guard, not a gate.
+
+const repoRoot = path.join(__dirname, '..', '..');
+const SCOPED_CHECKERS = [
+  { skill: 'code-smells', script: path.join(repoRoot, 'code-smells', 'scripts', 'check-smells.js') },
+  { skill: 'code-organization', script: path.join(repoRoot, 'code-organization', 'scripts', 'check-organization.js') },
+];
+
+function stagedFiles() {
+  // ACMR: added/copied/modified/renamed. Deletions are excluded — a deleted
+  // file has no content to check and naming it would just be dropped anyway.
+  const r = spawnSync('git', ['diff', '--cached', '--name-only', '--diff-filter=ACMR'], { encoding: 'utf8' });
+  if (r.error || r.status !== 0) return null;
+  return r.stdout.split('\n').map((s) => s.trim()).filter(Boolean);
+}
+
+const staged = stagedFiles();
+if (staged === null) {
+  console.error('pre-commit: could not list staged files; structural checks skipped.');
   process.exit(0);
 }
+if (staged.length === 0) process.exit(0);
 
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pre-commit-gitleaks-'));
-let passes;
-try {
-  passes = [
-    runGitleaksPass([], tmpDir, 'default'),
-    runGitleaksPass(['--config', extraConfig], tmpDir, 'extra'),
-  ];
-} finally {
-  fs.rmSync(tmpDir, { recursive: true, force: true });
-}
-
-const crashedPass = passes.find((p) => p.crashed);
-if (crashedPass) {
-  console.error(`pre-commit: gitleaks did not complete normally: ${crashedPass.stderr}`);
-  process.exit(1);
-}
-
-const leaks = passes.flatMap((p) => p.leaks);
-if (leaks.length > 0) {
-  console.error('pre-commit: secret(s) staged (via gitleaks):');
-  for (const leak of leaks) {
-    console.error(`  ${leak.File}:${leak.StartLine} [${leak.RuleID}]`);
+let blocked = false;
+for (const { skill, script } of SCOPED_CHECKERS) {
+  // The hook can be copied into a project that doesn't vendor the checkers.
+  // Missing checker warns rather than blocks, same tradeoff as missing gitleaks.
+  if (!fs.existsSync(script)) {
+    console.error(`pre-commit: ${skill} checker not found at ${script} — skipped.`);
+    continue;
   }
-  console.error('Remove the secret (and rotate it if already committed elsewhere) before committing.');
-  console.error('If this is a genuine false positive, commit with --no-verify and open an issue.');
+  const r = spawnSync(process.execPath, [script, '--root', repoRoot, '--files', staged.join(',')], { encoding: 'utf8' });
+  if (r.error) {
+    console.error(`pre-commit: ${skill} could not run (${r.error.message}) — skipped.`);
+    continue;
+  }
+  let report;
+  try {
+    report = JSON.parse(r.stdout);
+  } catch {
+    console.error(`pre-commit: ${skill} emitted unparseable output — skipped.`);
+    continue;
+  }
+  const failed = (report.checks || []).filter((c) => c.status === 'fail');
+  if (failed.length > 0) {
+    blocked = true;
+    console.error(`pre-commit: ${skill} found problem(s) in staged files:`);
+    for (const c of failed) console.error(`  [${c.id}] ${c.detail}`);
+  }
+}
+
+if (blocked) {
+  console.error('');
+  console.error('These are scoped to the files you staged, not the whole repo.');
+  console.error('Fix them, or commit with --no-verify if this is a deliberate exception.');
   process.exit(1);
 }
 
