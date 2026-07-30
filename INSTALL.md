@@ -56,10 +56,61 @@ lists the current skill ids.
   find as `not_evaluated`, capping its verdict at CONDITIONAL rather than
   guessing.
 
+## As a Claude Code plugin
+
+Claude Code (CLI and desktop app) can install the whole suite as a plugin,
+which also enables the skill-invocation telemetry hook:
+
+```bash
+claude plugin marketplace add fstubner/agent-skills
+claude plugin install agent-skills@fstubner-agent-skills
+```
+
+For local development, point the marketplace at a checkout instead:
+`claude plugin marketplace add ./` from the repository root. Plugin skills
+are namespaced — `product-build` becomes `agent-skills:product-build`.
+
+## Installing is not the same as invoking
+
+**Read this before concluding the suite doesn't work.** Installed skills
+are offered to the model as a name and a one-line description; whether it
+reaches for one is its own decision. Measured here, that decision came out
+badly: across two unprimed runs on a prompt matching `product-build`'s own
+stated trigger almost verbatim — one in a Task subagent, one in a genuine
+top-level session, all 15 skills installed — **not a single skill fired**
+(`eval/results/`). A competing plugin's much more aggressive mechanism
+(injecting a whole skill's text into every session via a `SessionStart`
+hook) didn't reliably fire either.
+
+Efficacy, once a skill is actually followed, measured well on the three
+skills tested that way — 0/3 vs 3/3 for `systems-architecture`, and
+similar gaps for `cli-tooling` and `product-build`'s prompt-injection
+stance. So the content earns its place; getting it reached for is the
+unsolved half.
+
+The one mechanism observed to reliably change behaviour in this
+environment is a directive in `CLAUDE.md`, which is injected verbatim into
+every session rather than offered as an option. If you want a skill to
+actually fire, add a line to your project's `CLAUDE.md`:
+
+```markdown
+For a greenfield or multi-view build request, use the product-build skill
+before writing code. Before claiming work is done, use product-acceptance
+in a separate turn.
+```
+
+That is a workaround for a real limitation, not a feature of this suite —
+stated plainly because the alternative is you installing it, seeing no
+change, and reasonably concluding it does nothing.
+
 ## Claude Desktop (cloud)
 
-No filesystem target exists; upload skill folders through the UI. The
-vendored `scripts/vendor/` directory makes each folder self-contained.
+Distinct from the Claude Code desktop app above: claude.ai has no
+filesystem target and no plugin system. Upload skill folders through the
+UI. The vendored `scripts/vendor/` directory makes each folder
+self-contained, but skills run sandboxed there with no network access, so
+the checkers that shell out to `gitleaks` or `vale` report
+`not_evaluated` rather than running.
 
 ## Pinning
 

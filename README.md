@@ -16,17 +16,37 @@ around three ideas:
 ## What we claim (and don't)
 
 The **checkers are tested**: every gate has ship + block fixtures asserting
-the specific blocker, run in CI on Ubuntu **and Windows**. The behavioral
-claim — that these skills improve agent output — has now been measured
-twice ([eval/results/](./eval/results/), case `okr-tool`), and the honest
-result is **not good**: in both a Task-tool subagent and a genuine top-level
-`claude -p` session, with all 15 skills installed from a tagged release,
-neither run invoked a single skill on a prompt that matches `product-build`'s
-own stated trigger almost verbatim. No `PRODUCT.md`, no `ARCHITECTURE.md`, no
-design question asked, and the builder self-certified "done" in the same
-turn it built. The checkers work when run; getting an agent to run them
-unprompted is an open, unsolved problem — see the eval notes for detail. Do
-not read "the checkers are tested" as "the skills change agent behavior."
+the specific blocker, run in CI on Ubuntu **and Windows**.
+
+The behavioural claim splits into two questions that have to be measured
+separately, and conflating them is the easiest way to be wrong about this
+suite ([eval/results/](./eval/results/)):
+
+**Does a skill get used unprompted? Measured: essentially never.** In both
+a Task-tool subagent and a genuine top-level `claude -p` session, with all
+15 skills installed from a tagged release, neither run invoked a single
+skill on a prompt matching `product-build`'s own stated trigger almost
+verbatim. No `PRODUCT.md`, no `ARCHITECTURE.md`, no design question, and
+the builder self-certified "done" in the same turn it built. A competing
+plugin's far more aggressive mechanism — injecting a whole skill's text
+into every session via a `SessionStart` hook — didn't reliably fire
+either, so this is not simply a matter of weaker wording.
+
+**Does the guidance help once followed? Measured: yes, on the three skills
+tested.** Forced-exposure A/B, independently verified by re-running each
+checker rather than trusting the agent's self-report:
+`systems-architecture` 0/3 control vs 3/3 forced; `cli-tooling` 3/6 vs
+5/6; `product-build`'s prompt-injection stance 2/4 vs 4/4. Three data
+points, not a general law — the other 12 skills are untested this way.
+
+So: the content earns its place; getting it reached for is the unsolved
+half. Two things follow. Where a check can be enforced instead of
+suggested, it now is — `scripts/git-hooks/pre-commit` runs the
+deterministic checkers on staged files, no model decision involved. Where
+it can't, see [INSTALL.md](./INSTALL.md#installing-is-not-the-same-as-invoking)
+for the `CLAUDE.md` directive that did reliably change behaviour here.
+Do not read "the checkers are tested" as "the skills change agent
+behaviour."
 
 ## Skills
 
