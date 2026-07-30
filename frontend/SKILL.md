@@ -75,3 +75,25 @@ when a frontend exists, and re-runs `check-frontend` itself.
 `stack-decision.md` and `design-tokens.json` are not separately
 acceptance-gated as documents — the tokens are enforced through
 `check-frontend`'s own `F-tokens-contrast` check instead.
+
+## Red flags — inventing instead of asking
+
+"Interview first" is the rule this skill most reliably loses, because
+inventing a direction feels like *progress* and asking feels like
+stalling. In every unprimed eval run to date, the agent picked a visual
+direction unilaterally — a dark theme, a gradient, a colour-coded status
+scheme — and none asked a single design or UX question first.
+
+| Thought | Reality |
+|---|---|
+| "A clean neutral default isn't really inventing" | It is a choice about brand, and it's the one you'll be asked to redo. Neutral is not the absence of a decision. |
+| "I'll build something to react to — faster than asking" | Now they're editing your taste instead of stating theirs, and the tokens are already load-bearing. |
+| "It's obvious what this app should look like" | Obvious to you. The accent, density, and tone are exactly the things you can't infer from a feature list. |
+| "I'll ask at the end, once they can see it" | The interview exists to be cheap. After the fact it's a rewrite. |
+| "The prompt didn't mention design, so it isn't in scope" | A UI request contains a design request. Silence is unset, not unimportant. |
+| "I'll write design-direction.md from what I chose" | That inverts the artifact: it records decisions made *with* the human, not a transcript of your defaults. |
+
+**All of these mean: one batched round of questions, then build.** If
+genuinely nobody is available to answer, say plainly which direction you
+assumed and that it wasn't confirmed — an assumption on the record is
+recoverable; one buried in tokens is not.

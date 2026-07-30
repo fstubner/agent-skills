@@ -70,3 +70,27 @@ document tells you to run.
 Report SHIP / CONDITIONAL / BLOCK with the evidence (gate report plus your
 walkthrough findings). CONDITIONAL lists exactly what's open. Never soften a
 BLOCK into prose; never SHIP on "it probably works".
+
+## Red flags — stop and re-read the cap rule
+
+Same-turn self-acceptance is the single most-observed failure of this
+suite. Every unprimed eval run to date ended with the builder declaring its
+own work complete — "production-ready", "fully implemented, tested, and
+documented", "ready to use" — in the same turn it wrote the code, without
+this gate running at all. It does not feel like a violation from the
+inside; it feels like finishing.
+
+If you catch yourself thinking any of these, you are the builder:
+
+| Thought | Reality |
+|---|---|
+| "I just built it, so I know it works" | Knowing what you *intended* is the disqualification, not the qualification. That's what point 2 of the cap rule is about. |
+| "I tested it myself, that's the same thing" | Your test checks what you thought to check. The gate re-runs checkers you didn't choose and walks a flow you didn't write. |
+| "Adding `--acceptor-context separate` will give the real verdict" | The flag doesn't make you independent; it asserts you already are. Asserting it falsely is the failure. |
+| "It's a small change, a separate turn is overkill" | Size is not the variable. Independence is. |
+| "I'll note the caveats in prose alongside the SHIP" | A SHIP with caveats is a CONDITIONAL. Say CONDITIONAL. |
+| "The checkers all passed, so it ships" | The gate is necessary, not sufficient — the walkthrough and adversarial pass are yours to do. |
+
+**All of these mean: leave the cap on, or hand acceptance to a separate
+turn.** A CONDITIONAL that names what it couldn't certify is a real result.
+A SHIP you weren't positioned to give is not.
