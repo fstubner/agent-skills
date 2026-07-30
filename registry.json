@@ -56,7 +56,8 @@
       "producer": "frontend",
       "consumers": ["product-acceptance"],
       "acceptanceGated": true,
-      "requiredWhen": "frontend_present"
+      "requiredWhen": "frontend_present",
+      "requiredHeadings": ["Interview"]
     },
     {
       "id": "ux-walkthrough",

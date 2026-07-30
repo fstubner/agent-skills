@@ -153,3 +153,30 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
   const errors = report ? validate(schema, report) : ['no report'];
   expect('acceptance report validates against check-report schema', errors.length === 0, errors.join('; '));
 }
+
+// A design-direction.md that exists but records no interview must FAIL.
+// The measured failure of `frontend` is not interviewing badly, it's not
+// interviewing at all and filling the file from invented taste — which a
+// mere existence check cannot distinguish from a real one. Without this
+// test, dropping requiredHeadings from the registry entry would silently
+// restore that hole and every fixture would still pass.
+{
+  const src = path.join(root, 'fixtures', 'accept-ship');
+  const dest = path.join(tmpBase, 'accept-no-interview-' + Math.random().toString(36).slice(2, 8));
+  fs.cpSync(src, dest, { recursive: true });
+  const dd = path.join(dest, 'design-direction.md');
+  fs.writeFileSync(dd, read(dd).replace(/## Interview[\s\S]*?(?=## Mood)/, ''));
+
+  const r = runNode(path.join(root, ...ACCEPT.split('/')), ['--root', dest, '--strict']);
+  let report = null;
+  try { report = JSON.parse(r.stdout); } catch { /* asserted below */ }
+  expect('design-direction without an Interview section: emits parseable report',
+    report !== null, (r.stderr || '').slice(0, 200));
+  if (report) {
+    const c = report.checks.find((x) => x.id === 'A-design-direction');
+    expect('design-direction without an Interview section fails A-design-direction',
+      Boolean(c) && c.status === 'fail', c ? `${c.status} (${c.detail})` : 'check missing');
+    expect('design-direction without an Interview section names the missing heading',
+      Boolean(c) && /interview/i.test(c.detail || ''), c && c.detail);
+  }
+}

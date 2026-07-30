@@ -66,7 +66,7 @@ documentation of who else reads the artifact, not a gating signal).
 |---|---|---|---|---|---|---|---|
 | `PRODUCT.md` (headings: Purpose, Users, Success, MVP, Constraints) | document | product-management | systems-architecture, frontend, backend-engineering, product-acceptance | yes | always | — | — |
 | `ARCHITECTURE.md` (headings: Parts, Boundaries, Trust) | document | systems-architecture | backend-engineering, product-acceptance | yes | multi_part | — | — |
-| `design-direction.md` | document | frontend | product-acceptance | yes | frontend_present | — | — |
+| `design-direction.md` (headings: Interview) | document | frontend | product-acceptance | yes | frontend_present | — | — |
 | `ux-walkthrough.md` | document | frontend | product-acceptance | yes | frontend_present | — | — |
 | `stack-decision.md` | document | frontend | product-acceptance | no | never | — | — |
 | `design-tokens.json` | document | frontend | product-acceptance | no | never | — | — |

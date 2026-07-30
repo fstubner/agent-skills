@@ -43,6 +43,10 @@ One batched round of questions, then lock the artifacts. Aesthetics without
 an interview and flows without a primary job are stop signals, not license
 to improvise.
 
+Record the round in `design-direction.md`'s `## Interview` section — a
+required heading, enforced by acceptance. Unanswered questions get logged
+as explicit assumptions rather than silently becoming your taste.
+
 ## Engineering laws
 
 1. Existing stack wins. One framework, one icon system, one styling paradigm
@@ -93,7 +97,10 @@ scheme — and none asked a single design or UX question first.
 | "The prompt didn't mention design, so it isn't in scope" | A UI request contains a design request. Silence is unset, not unimportant. |
 | "I'll write design-direction.md from what I chose" | That inverts the artifact: it records decisions made *with* the human, not a transcript of your defaults. |
 
-**All of these mean: one batched round of questions, then build.** If
-genuinely nobody is available to answer, say plainly which direction you
-assumed and that it wasn't confirmed — an assumption on the record is
-recoverable; one buried in tokens is not.
+**All of these mean: one batched round of questions, then build.**
+
+Recording it is not optional and not prose: `design-direction.md` has a
+required `## Interview` heading and acceptance fails without it. A question
+nobody answered is recorded there as `ASSUMED <x> — not confirmed`, which
+is a valid entry. Inventing the direction and leaving the section out is
+the failure this catches.
