@@ -1,5 +1,73 @@
 # Changelog
 
+## 1.0.0-alpha.3 — 2026-07-30
+
+The release where the suite stopped guessing whether it works.
+
+**First efficacy evidence — and the honest split it forces**
+
+Two questions had been conflated: whether a skill gets *invoked*, and
+whether its guidance *helps once followed*. They measure very differently,
+so `eval/` now has two protocols and `eval-result.schema.json` a
+`condition` field (`unprimed` | `forced`) to keep them apart.
+
+- **Invocation: essentially never.** Two unprimed runs, all 15 skills
+  installed from a tag, on a prompt matching `product-build`'s own trigger
+  almost verbatim — no skill fired in either. Root-caused to the mechanism
+  level: a competing plugin's far more aggressive approach (injecting a
+  whole skill's text via `SessionStart`) didn't reliably fire either, so
+  this isn't just weaker wording.
+- **Efficacy: good, on the three skills tested.** Forced-exposure A/B,
+  every verdict independently re-verified by re-running the checker rather
+  than trusting the agent's self-report. `systems-architecture` 0/3 control
+  vs 3/3 forced; `cli-tooling` 3/6 vs 5/6; `product-build`'s
+  prompt-injection stance 2/4 vs 4/4. Three data points, not a general law
+  — 12 skills remain untested this way.
+
+README and INSTALL.md rewritten around that split, including the
+`CLAUDE.md` directive that is the one mechanism observed to reliably change
+behaviour here — labelled a workaround for a real limitation, not a feature.
+
+**Enforcement instead of suggestion**
+
+Where a check can be enforced rather than hoped for, it now is.
+`code-smells` and `code-organization` gained `--files`, and the pre-commit
+hook runs them on staged files with no model decision involved. Scoping is
+load-bearing, not a convenience: a whole-repo scan blocks the first commit
+on any codebase that isn't already green, and a hook that blocks unrelated
+work gets bypassed. A cycle is graph-wide, so `code-organization` still
+builds the full graph and scopes only the *reporting* — pre-existing cycles
+are grandfathered, ones you introduce are not.
+
+**Bugs found by dogfooding, not by looking**
+
+- `classify.cjs` read only the ROOT `package.json`, so a genuine
+  `backend/` + `frontend/` split with no workspaces field classified as
+  single-part and the architecture gate said "not required". Found via a
+  real eval run.
+- `check-smells.js` violated its own nesting rule.
+- The secret-scanner's own test tripped the secret scanner once extracted
+  to a new file (whole content entered the staged diff for the first
+  time). Fixed by assembling keys at runtime, not by allow-listing —
+  which would have blunted the scanner to protect a test.
+
+**Also**
+
+- `run-tests.mjs`: 1320 lines → 40-line orchestrator + harness + 12
+  modules. Verified behaviour-preserving by diffing output (507 unique
+  assertions identical). The hook is now installed on this repo.
+- Ships as a Claude Code plugin (`.claude-plugin/`), with a `PostToolUse`
+  telemetry hook that logs skill invocations to a gitignored per-project
+  JSONL — a hook rather than a skill, because a telemetry *skill* would
+  inherit the exact selection bias being measured.
+- Rationalization tables added to the four discipline-type skills, each
+  countering observed failures (including the injection control's verbatim
+  "if there's a real setup step required, I can run it now"). Whether they
+  change behaviour is untested — a hypothesis, held to the same standard as
+  everything else here.
+- `systems-architecture` gained "system design" trigger vocabulary without
+  widening its actual scope.
+
 ## 1.0.0-alpha.2 — 2026-07-26
 
 **Behavioral eval, honestly reported**
