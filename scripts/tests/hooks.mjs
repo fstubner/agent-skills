@@ -83,3 +83,50 @@ import {
       stagedVsWorktree.status === 0, `exit ${stagedVsWorktree.status}: ${stagedVsWorktree.stderr}`);
   }
 }
+
+// ---------- 8b. Skill-invocation telemetry hook ----------
+// The hook exists because this suite measured ~0% spontaneous skill
+// invocation (eval/results/): a telemetry SKILL would only record the
+// sessions where the model remembered to record, which is the same
+// selection bias that makes the question unanswerable. A PostToolUse hook
+// fires unconditionally, so the denominator is real.
+//
+// Every assertion below is about a failure mode that would make the hook
+// worse than useless: logging the wrong tools (drowns the signal), or
+// throwing on a malformed payload (breaks the user's session, gets the
+// hook uninstalled, takes the measurement with it).
+{
+  const LOGGER = path.join(root, 'scripts', 'log-skill-invocation.mjs');
+  const dir = fs.mkdtempSync(path.join(tmpBase, 'telemetry-'));
+  const logPath = path.join(dir, '.agent-skills-telemetry', 'invocations.jsonl');
+  const feed = (payload) => spawnSync(process.execPath, [LOGGER], { input: payload, encoding: 'utf8' });
+  const rows = () => (fs.existsSync(logPath)
+    ? fs.readFileSync(logPath, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l))
+    : []);
+
+  const skillCall = feed(JSON.stringify({
+    tool_name: 'Skill', tool_input: { skill: 'product-build' }, cwd: dir, session_id: 'sess-1',
+  }));
+  expect('telemetry: exits 0 on a real Skill payload', skillCall.status === 0, `exit ${skillCall.status}`);
+  expect('telemetry: records the skill name', rows().length === 1 && rows()[0].skill === 'product-build',
+    JSON.stringify(rows()));
+  expect('telemetry: records the session id', rows()[0] && rows()[0].session === 'sess-1', JSON.stringify(rows()));
+
+  feed(JSON.stringify({ tool_name: 'Read', tool_input: { file_path: '/x' }, cwd: dir }));
+  expect('telemetry: a non-Skill tool is NOT logged (matcher cannot be relied on alone)',
+    rows().length === 1, `${rows().length} row(s)`);
+
+  const garbage = feed('not json at all');
+  expect('telemetry: unparseable stdin exits 0 and logs nothing',
+    garbage.status === 0 && rows().length === 1, `exit ${garbage.status}, ${rows().length} row(s)`);
+
+  const empty = feed('');
+  expect('telemetry: empty stdin exits 0', empty.status === 0, `exit ${empty.status}`);
+
+  // An unrecognised payload shape must still COUNT the invocation — the
+  // whole point is the denominator. Dropping the row would silently
+  // under-report exactly when the harness changes its payload format.
+  feed(JSON.stringify({ tool_name: 'Skill', unexpected: { shape: 1 }, cwd: dir }));
+  expect('telemetry: an unknown payload shape still counts, with skill null',
+    rows().length === 2 && rows()[1].skill === null, JSON.stringify(rows()));
+}

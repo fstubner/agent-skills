@@ -17,6 +17,10 @@ Thumbs.db
 .context/
 .agent-evidence/
 **/.agent-evidence/
+# Local skill-invocation telemetry (scripts/log-skill-invocation.mjs). Per
+# project, never committed — it records what you did, not what the suite is.
+.agent-skills-telemetry/
+**/.agent-skills-telemetry/
 # Exception: one fixture intentionally COMMITS a planted, lying report to
 # prove accept-check.js ignores on-disk evidence (see
 # fixtures/accept-poisoned-report). Already tracked either way, but kept
