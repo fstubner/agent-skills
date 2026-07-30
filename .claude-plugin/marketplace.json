@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "fstubner-agent-skills",
+  "description": "Felix Stubner's personal Claude Code plugin marketplace",
+  "owner": {
+    "name": "Felix Stubner"
+  },
+  "plugins": [
+    {
+      "name": "agent-skills",
+      "source": "./",
+      "description": "Composable Agent Skills for product UI work: evidence-gated shipping, builder/acceptor separation, and a registry-first contract across 15 skills."
+    }
+  ]
+}

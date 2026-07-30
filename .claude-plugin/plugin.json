@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "agent-skills",
+  "description": "Composable Agent Skills for product UI work: evidence-gated shipping, builder/acceptor separation, and a registry-first contract across 15 skills.",
+  "author": {
+    "name": "Felix Stubner"
+  },
+  "homepage": "https://github.com/fstubner/agent-skills",
+  "repository": "https://github.com/fstubner/agent-skills",
+  "license": "MIT",
+  "keywords": ["product", "frontend", "backend", "architecture", "acceptance", "code-quality"],
+  "skills": [
+    "./product-build",
+    "./product-management",
+    "./systems-architecture",
+    "./frontend",
+    "./backend-engineering",
+    "./product-acceptance",
+    "./ai-prose-slop",
+    "./mental-models",
+    "./code-smells",
+    "./code-organization",
+    "./testing-strategy",
+    "./data-modeling",
+    "./cli-tooling",
+    "./release-engineering",
+    "./learn-from-session"
+  ]
+}
