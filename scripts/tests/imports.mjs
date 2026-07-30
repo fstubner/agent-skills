@@ -110,3 +110,39 @@ import {
   expect('--files: a nonexistent named file yields no false failure',
     orgGone.verdict !== 'BLOCK', JSON.stringify(orgGone.checks));
 }
+
+// ---------- 15b. --files scoping for data-modeling (pre-commit viability) ----------
+// Same motivation as the two checkers above: a whole-repo migration scan
+// blocks the first commit on any project with pre-existing destructive
+// migrations in its history, and a hook that blocks unrelated work gets
+// bypassed. Every check here is per-file, so this is the scan-set-restriction
+// case, not the graph case.
+{
+  const DM = path.join(root, 'data-modeling', 'scripts', 'check-migrations.js');
+  const scoped = path.join(tmpBase, 'dm-files-' + Math.random().toString(36).slice(2, 8));
+  fs.cpSync(path.join(root, 'fixtures', 'data-modeling-destructive'), scoped, { recursive: true });
+  // A clean migration the commit DOES touch, alongside the destructive one it doesn't.
+  fs.writeFileSync(path.join(scoped, 'migrations', '003_add_email.sql'),
+    'ALTER TABLE users ADD COLUMN email text;\n');
+
+  const unscoped = JSON.parse(runNode(DM, ['--root', scoped]).stdout);
+  expect('--files(dm): unscoped run still BLOCKs on the pre-existing DROP (baseline)',
+    unscoped.verdict === 'BLOCK', JSON.stringify(unscoped.checks));
+
+  const clean = JSON.parse(runNode(DM, ['--root', scoped, '--files', 'migrations/003_add_email.sql']).stdout);
+  expect('--files(dm): scoping to a clean migration does NOT report the untouched destructive one',
+    clean.verdict !== 'BLOCK', JSON.stringify(clean.checks));
+
+  const dirty = JSON.parse(runNode(DM, ['--root', scoped, '--files', 'migrations/002_drop_legacy.sql']).stdout);
+  expect('--files(dm): scoping to the destructive migration still blocks it',
+    dirty.verdict === 'BLOCK', JSON.stringify(dirty.checks));
+
+  // A commit touching only non-SQL files must not vacuously fail or crash.
+  const nonSql = JSON.parse(runNode(DM, ['--root', scoped, '--files', 'src/app.ts,README.md']).stdout);
+  expect('--files(dm): a commit with no .sql files yields no failure',
+    nonSql.verdict !== 'BLOCK', JSON.stringify(nonSql.checks));
+
+  const gone = JSON.parse(runNode(DM, ['--root', scoped, '--files', 'migrations/deleted.sql']).stdout);
+  expect('--files(dm): a nonexistent named migration yields no false failure',
+    gone.verdict !== 'BLOCK', JSON.stringify(gone.checks));
+}

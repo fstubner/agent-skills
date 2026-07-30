@@ -40,6 +40,15 @@ excludes down/rollback migrations (which are expected to contain drops by
 design) by filename convention or an inline `-- +goose Down` /
 `-- migrate:down` marker.
 
+Add `--files a.sql,b.sql` to restrict what may *fail* to specific paths
+(relative to `--root`, or absolute). That's what makes this usable as a
+pre-commit hook — see `scripts/git-hooks/pre-commit`, which runs it on
+staged files. Without scoping, the first commit on any project with a
+destructive migration already in its history is blocked by that history,
+and a hook that blocks unrelated work gets bypassed rather than obeyed.
+Migrations are exactly the kind of file where catching it at commit time
+beats catching it at acceptance: by then it may already have run.
+
 ## Rules
 
 1. **Model the invariant, not just the field.** A `discount_percent` column

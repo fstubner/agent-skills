@@ -40,12 +40,44 @@ const MAX_FILE_BYTES = 2 * 1024 * 1024;
 const VOLATILE_DEFAULT_FUNCS = '(gen_random_uuid|uuid_generate\\w*|now|clock_timestamp|random|nextval)';
 
 function parseArgs(argv) {
-  const out = { root: '.', strict: false, reportPath: null };
+  const out = { root: '.', strict: false, reportPath: null, files: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--root') out.root = argv[++i];
     else if (a === '--strict') out.strict = true;
     else if (a === '--report' || a === '--out') out.reportPath = argv[++i];
+    else if (a === '--files') {
+      const v = argv[++i];
+      if (v) out.files = (out.files || []).concat(v.split(',').map((s) => s.trim()).filter(Boolean));
+      else out.files = out.files || [];
+    }
+  }
+  return out;
+}
+
+// --files restricts the scan to specific paths (relative to --root, or
+// absolute) instead of walking the whole tree, so this checker can run as a
+// pre-commit hook without a whole-repo scan blocking the first commit on any
+// project whose migration history isn't already clean.
+//
+// Every check here is a property of one file read in isolation (a DROP, a
+// RENAME, an ADD COLUMN ... NOT NULL), so restricting the scan set IS the
+// whole implementation — the same case as check-smells.js, and unlike
+// check-organization.js, where a cycle spans files the commit may not touch
+// and only the REPORTING can be scoped.
+//
+// Named paths that don't exist (a staged deletion) or aren't .sql are dropped
+// rather than erroring: the caller passes a commit's file list, not a curated
+// one, and "that path is not a migration" is not a failure.
+function resolveScope(root, names) {
+  const out = [];
+  for (const name of names) {
+    const full = path.isAbsolute(name) ? name : path.join(root, name);
+    if (path.extname(full).toLowerCase() !== '.sql') continue;
+    try {
+      if (!fs.statSync(full).isFile()) continue;
+    } catch { continue; }
+    out.push(full);
   }
   return out;
 }
@@ -91,29 +123,48 @@ function stripSqlStringsAndComments(text) {
       continue;
     }
     if (c === "'" || c === '"') {
-      const quote = c;
-      out += ' '; i++;
-      while (i < n) {
-        if (text[i] === '\\' && i + 1 < n) {
-          out += text[i] === '\n' ? '\n' : ' ';
-          out += text[i + 1] === '\n' ? '\n' : ' ';
-          i += 2;
-          continue;
-        }
-        if (text[i] === quote) {
-          if (text[i + 1] === quote) { out += '  '; i += 2; continue; } // doubled-quote escape
-          break;
-        }
-        out += text[i] === '\n' ? '\n' : ' ';
-        i++;
-      }
-      if (i < n) { out += ' '; i++; } // closing quote
+      const scanned = blankQuoted(text, i);
+      out += scanned.out;
+      i = scanned.next;
       continue;
     }
     out += c;
     i++;
   }
   return out;
+}
+
+// Blanks one '...' or "..." run starting at the opening quote, returning the
+// blanked text and the index just past the closing quote. Extracted from
+// stripSqlStringsAndComments' main loop, where it sat at brace depth 6 and
+// this suite's own S-deep-nesting check flagged it — the quote-scanning
+// state machine is a separate concern from the outer dispatch anyway, so
+// naming it costs nothing and the nesting problem goes with it.
+function blankQuoted(text, start) {
+  const n = text.length;
+  const quote = text[start];
+  let out = ' ';
+  let i = start + 1;
+  while (i < n) {
+    // MySQL backslash escape: consume both chars so \' can't end the string.
+    if (text[i] === '\\' && i + 1 < n) {
+      out += text[i] === '\n' ? '\n' : ' ';
+      out += text[i + 1] === '\n' ? '\n' : ' ';
+      i += 2;
+      continue;
+    }
+    // Standard SQL doubled-quote escape ('') — not a terminator.
+    if (text[i] === quote && text[i + 1] === quote) {
+      out += '  ';
+      i += 2;
+      continue;
+    }
+    if (text[i] === quote) break;
+    out += text[i] === '\n' ? '\n' : ' ';
+    i++;
+  }
+  if (i < n) { out += ' '; i++; } // closing quote
+  return { out, next: i };
 }
 
 function isDownMigrationFile(relPath) {
@@ -163,11 +214,12 @@ function assertReadableRoot(root) {
   if (!stat.isDirectory()) throw new Error(`--root is not a directory: ${root}`);
 }
 
-function run(root) {
+function run(root, opts = {}) {
   assertReadableRoot(root);
   const files = [];
   const truncated = { hit: false };
-  walk(root, files, truncated);
+  if (opts.files) files.push(...resolveScope(root, opts.files));
+  else walk(root, files, truncated);
 
   const scanned = files.filter((f) => !isDownMigrationFile(path.relative(root, f).split(path.sep).join('/')));
 
@@ -244,7 +296,7 @@ module.exports = { run, stripSqlStringsAndComments, isDownMigrationFile, upPorti
 if (require.main === module) {
   const args = parseArgs(process.argv.slice(2));
   try {
-    const checks = run(args.root);
+    const checks = run(args.root, { files: args.files });
     const hasFail = checks.some((c) => c.status === 'fail');
     const exitCode = hasFail ? 1 : args.strict && checks.some((c) => c.status !== 'pass') ? 1 : 0;
     finish(checks, args, exitCode);

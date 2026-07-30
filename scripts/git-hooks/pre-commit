@@ -126,9 +126,15 @@ if (isGitleaksOnPath()) {
 // be scoped to one commit's diff. This hook is a fast local guard, not a gate.
 
 const repoRoot = path.join(__dirname, '..', '..');
+
+// Only checkers that support --files belong here. A checker without it would
+// scan the whole repo on every commit and reintroduce exactly the
+// block-the-first-commit problem --files exists to solve, so this list is
+// deliberately explicit rather than derived from "every skill with a script".
 const SCOPED_CHECKERS = [
   { skill: 'code-smells', script: path.join(repoRoot, 'code-smells', 'scripts', 'check-smells.js') },
   { skill: 'code-organization', script: path.join(repoRoot, 'code-organization', 'scripts', 'check-organization.js') },
+  { skill: 'data-modeling', script: path.join(repoRoot, 'data-modeling', 'scripts', 'check-migrations.js') },
 ];
 
 function stagedFiles() {

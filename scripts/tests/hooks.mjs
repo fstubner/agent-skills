@@ -130,3 +130,40 @@ import {
   expect('telemetry: an unknown payload shape still counts, with skill null',
     rows().length === 2 && rows()[1].skill === null, JSON.stringify(rows()));
 }
+
+// ---------- 8c. The hook's SCOPED_CHECKERS list must stay true ----------
+// Two ways this silently rots: a script gets renamed/moved and the hook
+// quietly skips it (missing checkers warn rather than block, by design), or a
+// checker is rewritten without --files and starts scanning the whole repo on
+// every commit — reintroducing the exact problem --files exists to solve.
+// Neither shows up as a test failure anywhere else.
+{
+  const hookSrc = read(path.join(root, 'scripts', 'git-hooks', 'pre-commit'));
+  const listed = [...hookSrc.matchAll(/skill:\s*'([^']+)',\s*script:\s*path\.join\(repoRoot,\s*([^)]+)\)/g)]
+    .map((m) => ({
+      skill: m[1],
+      rel: m[2].split(',').map((s) => s.trim().replace(/^'|'$/g, '')).join('/'),
+    }));
+
+  expect('pre-commit: SCOPED_CHECKERS parsed from the hook source', listed.length >= 3,
+    `parsed ${listed.length}`);
+
+  for (const { skill, rel } of listed) {
+    const full = path.join(root, ...rel.split('/'));
+    expect(`pre-commit: ${skill} checker exists at the path the hook uses`,
+      fs.existsSync(full), rel);
+    if (!fs.existsSync(full)) continue;
+
+    // Behavioural, not a grep for the string "--files": run it scoped to a
+    // path that doesn't exist and require a clean, parseable, non-blocking
+    // report. A checker that ignored --files would walk the whole repo here.
+    const r = runNode(full, ['--root', root, '--files', 'does/not/exist.xyz']);
+    let report = null;
+    try { report = JSON.parse(r.stdout); } catch { /* asserted below */ }
+    expect(`pre-commit: ${skill} honours --files (parseable report)`,
+      report !== null, (r.stderr || '').slice(0, 160));
+    expect(`pre-commit: ${skill} honours --files (no findings from an unrelated path)`,
+      report !== null && report.verdict !== 'BLOCK',
+      report ? JSON.stringify(report.checks) : 'no report');
+  }
+}
