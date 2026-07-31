@@ -167,3 +167,56 @@ import {
       report ? JSON.stringify(report.checks) : 'no report');
   }
 }
+
+// ---------- 8d. skill-usage.mjs (the reader for 8b's writer) ----------
+// Driven through the REAL logger rather than hand-written JSONL: the reader
+// and writer are a contract, and a test that fabricated the log format would
+// keep passing if the writer's shape drifted — the exact failure this pair
+// exists to detect.
+{
+  const LOGGER = path.join(root, 'scripts', 'log-skill-invocation.mjs');
+  const USAGE = path.join(root, 'scripts', 'skill-usage.mjs');
+  const proj = fs.mkdtempSync(path.join(tmpBase, 'usage-'));
+  const logPath = path.join(proj, '.agent-skills-telemetry', 'invocations.jsonl');
+  const report = () => JSON.parse(runNode(USAGE, ['--root', root, '--log', logPath, '--json']).stdout);
+
+  // Empty state is the NORMAL first run, not an error — it must exit 0 and
+  // still report the registry denominator, since "0 of 15 ever fired" is the
+  // finding this whole mechanism was built to surface.
+  const empty = runNode(USAGE, ['--root', root, '--log', logPath, '--json']);
+  expect('skill-usage: missing log exits 0', empty.status === 0, `exit ${empty.status}`);
+  const emptyRep = JSON.parse(empty.stdout);
+  expect('skill-usage: missing log reports zero invocations', emptyRep.totalInvocations === 0,
+    JSON.stringify(emptyRep.totalInvocations));
+  expect('skill-usage: missing log still lists every registered skill as never-invoked',
+    Array.isArray(emptyRep.neverInvoked) && emptyRep.neverInvoked.length === emptyRep.registrySkills,
+    `${emptyRep.neverInvoked && emptyRep.neverInvoked.length} of ${emptyRep.registrySkills}`);
+
+  const feed = (skill, session) => spawnSync(process.execPath, [LOGGER], {
+    input: JSON.stringify({ tool_name: 'Skill', tool_input: { skill }, cwd: proj, session_id: session }),
+    encoding: 'utf8',
+  });
+  feed('product-build', 's1');
+  feed('product-build', 's1');
+  feed('frontend', 's2');
+
+  const rep = report();
+  expect('skill-usage: counts invocations written by the real logger', rep.totalInvocations === 3,
+    JSON.stringify(rep.totalInvocations));
+  expect('skill-usage: tallies per skill', rep.bySkill['product-build'] === 2 && rep.bySkill.frontend === 1,
+    JSON.stringify(rep.bySkill));
+  expect('skill-usage: counts distinct sessions', rep.sessions === 2, JSON.stringify(rep.sessions));
+  expect('skill-usage: invoked skills are absent from neverInvoked',
+    !rep.neverInvoked.includes('product-build') && !rep.neverInvoked.includes('frontend'),
+    JSON.stringify(rep.neverInvoked));
+  expect('skill-usage: an uninvoked registered skill IS listed as never-invoked',
+    rep.neverInvoked.includes('code-smells'), JSON.stringify(rep.neverInvoked));
+
+  // A torn line must be counted, not silently dropped — quietly shrinking the
+  // denominator would corrupt the one number this tool exists to report.
+  fs.appendFileSync(logPath, 'CORRUPT{not json\n');
+  const withBad = report();
+  expect('skill-usage: malformed lines are counted, not silently dropped',
+    withBad.malformedLines === 1 && withBad.totalInvocations === 3,
+    `malformed=${withBad.malformedLines} total=${withBad.totalInvocations}`);
+}

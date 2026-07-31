@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.0.0-alpha.4 — 2026-07-31
+
+**One version, not two.** `plugin.json` deliberately omitted `version` so
+every commit counted as a new one during active development — but that left
+an installed plugin reporting a commit SHA while the repo reported
+`1.0.0-alpha.3`, with no way for a user to tell which release they had.
+The manifest now declares the version, and a test pins it to `VERSION`,
+asserts the file is valid semver, and fails if either drifts.
+
+**Skill usage is now readable, not just recorded.** alpha.3 shipped a
+`PostToolUse` hook that writes invocations to a gitignored JSONL; nothing
+read it back. `scripts/skill-usage.mjs` aggregates one or more logs into
+per-skill and per-project counts — and, most usefully given that unprompted
+invocation measured at ~0%, cross-references `registry.json` to list the
+skills that have **never** fired. Reports invocation only; whether a skill
+*helped* still needs the forced-exposure A/B protocol in `eval/`.
+
+**Also:** `backend-block-secret` injects its fake key at test time instead
+of committing one, so `gitleaks detect --no-git` reports no leaks on the
+working tree and no fake key ships inside the plugin. The test gained a
+control it could not previously express — the fixture must SHIP before
+injection, pinning `B-client-secrets` as the reason for the block rather
+than any other defect in the fixture.
+
 ## 1.0.0-alpha.3 — 2026-07-30
 
 The release where the suite stopped guessing whether it works.

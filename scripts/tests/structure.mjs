@@ -89,6 +89,23 @@ import {
   const version = read(path.join(root, registry.suiteVersionFile)).trim();
   const changelog = read(path.join(root, 'CHANGELOG.md'));
   expect(`CHANGELOG has an entry for VERSION (${version})`, changelog.includes(`## ${version}`));
+
+  // The plugin manifest is a SECOND place the version is stated, and the two
+  // are consumed by different audiences: `git describe` / CHANGELOG for people
+  // reading the repo, plugin.json for `claude plugin list` on an installed
+  // copy. Nothing forces them to agree, so a release that bumps one and not
+  // the other ships a plugin that misreports which version it is.
+  const manifest = JSON.parse(read(path.join(root, '.claude-plugin', 'plugin.json')));
+  expect('plugin.json declares a version', typeof manifest.version === 'string' && manifest.version.length > 0,
+    JSON.stringify(manifest.version));
+  expect(`plugin.json version matches VERSION (${version})`, manifest.version === version,
+    `plugin.json says ${manifest.version}`);
+
+  // Valid semver, so `claude plugin` and any marketplace tooling can order
+  // releases. Prerelease identifiers are dot-separated: 1.0.0-alpha.3 is
+  // valid and sorts before 1.0.0; 1.0.0alpha3 is neither.
+  const SEMVER = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/;
+  expect(`VERSION is valid semver (${version})`, SEMVER.test(version), version);
 }
 
 // ---------- 6b. ai-prose-slop patterns.md <-> Vale rule drift ----------

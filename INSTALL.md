@@ -103,6 +103,30 @@ That is a workaround for a real limitation, not a feature of this suite —
 stated plainly because the alternative is you installing it, seeing no
 change, and reasonably concluding it does nothing.
 
+### Measuring it yourself
+
+Don't take the numbers above on trust — the plugin ships a `PostToolUse`
+hook that records every skill invocation to
+`<project>/.agent-skills-telemetry/invocations.jsonl` (gitignored). Read it
+back with:
+
+```bash
+node scripts/skill-usage.mjs
+```
+
+It reports per-skill and per-project counts and, most usefully, cross-checks
+`registry.json` to list the skills that have **never** fired. An empty
+report is not an error — it is the finding.
+
+The hook is deliberate rather than a skill: a telemetry *skill* would only
+record the sessions where the model remembered to record, which is the same
+selection bias that makes the invocation question unanswerable in the first
+place.
+
+This measures invocation only. Whether a skill improved the work is a
+separate question needing the forced-exposure A/B protocol in `eval/` — a
+usage count that gets read as an efficacy signal is worse than no number.
+
 ## Claude Desktop (cloud)
 
 Distinct from the Claude Code desktop app above: claude.ai has no
