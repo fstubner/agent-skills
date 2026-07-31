@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.0.0-alpha.5 — 2026-07-31
+
+**Response style, injected rather than suggested.** `output-style/concise.md`
+sets a hard default of a few sentences, bans closing summaries and status
+theatre, and matches structure to content instead of reaching for a table.
+
+The mechanism is a SessionStart hook, chosen on evidence rather than
+preference. A skill was wrong twice over: unprompted invocation measures at
+~0%, and a rule governing every response has to be always-on rather than
+opt-in. Claude Code's output-style feature is deprecated — Anthropic's own
+explanatory-output-style plugin recreates it as a SessionStart hook, which
+is also the proof this works: that hook demonstrably shaped a whole session's
+output while installed skills did not.
+
+Rules live in plain markdown so they stay readable by any tool; only the
+injection is Claude Code specific.
+
 ## 1.0.0-alpha.4 — 2026-07-31
 
 **One version, not two.** `plugin.json` deliberately omitted `version` so

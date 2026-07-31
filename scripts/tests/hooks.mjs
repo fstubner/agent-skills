@@ -220,3 +220,51 @@ import {
     withBad.malformedLines === 1 && withBad.totalInvocations === 3,
     `malformed=${withBad.malformedLines} total=${withBad.totalInvocations}`);
 }
+
+// ---------- 8e. SessionStart output-style injection ----------
+// A response-style rule has to be always-on, so it cannot be a skill (~0%
+// unprompted invocation, eval/results/) and cannot be an output style (that
+// feature is deprecated; Anthropic's own explanatory-output-style plugin
+// recreates it as a SessionStart hook). These pin the two ways this silently
+// stops working: the file goes missing, or the hook stops emitting it.
+{
+  const INJECT = path.join(root, 'scripts', 'inject-output-style.mjs');
+  const STYLE = path.join(root, 'output-style', 'concise.md');
+  const run = (payload) => spawnSync(process.execPath, [INJECT], { input: payload, encoding: 'utf8' });
+
+  expect('output-style: concise.md exists', fs.existsSync(STYLE), STYLE);
+
+  const r = run(JSON.stringify({ hook_event_name: 'SessionStart' }));
+  expect('output-style: hook exits 0', r.status === 0, `exit ${r.status}`);
+  expect('output-style: hook emits the file verbatim', r.stdout.trimEnd() === read(STYLE).trimEnd(),
+    `emitted ${r.stdout.length} bytes, file is ${read(STYLE).length}`);
+
+  // Non-ASCII must survive. A Windows console defaults to the locale codepage,
+  // which is exactly what silently killed the harness-dispatch SessionStart
+  // hook on this machine — UnicodeEncodeError, no output, no error surfaced.
+  expect('output-style: non-ASCII survives stdout encoding', r.stdout.includes('—'),
+    'em dash lost in transit');
+
+  // Must not depend on a well-formed payload: SessionStart fires on startup,
+  // resume and compaction, and a style preference that can break a session is
+  // a style preference that gets uninstalled.
+  for (const [label, payload] of [['empty stdin', ''], ['garbage stdin', 'not json']]) {
+    const bad = run(payload);
+    expect(`output-style: ${label} still exits 0 and emits the rules`,
+      bad.status === 0 && bad.stdout.includes('Response style'), `exit ${bad.status}`);
+  }
+
+  // The rules are only reachable if the plugin actually registers the hook.
+  const hooks = JSON.parse(read(path.join(root, 'hooks', 'hooks.json')));
+  const starts = (hooks.hooks && hooks.hooks.SessionStart) || [];
+  const cmds = starts.flatMap((s) => (s.hooks || []).map((h) => h.command || ''));
+  expect('output-style: plugin registers a SessionStart hook for it',
+    cmds.some((c) => c.includes('inject-output-style.mjs')), JSON.stringify(cmds));
+
+  // The style file states a hard default; if that line goes, the whole
+  // document degrades into suggestions and the failure it exists to fix
+  // (correct but three times too long) comes straight back.
+  const styleText = read(STYLE);
+  expect('output-style: states a hard default length', /##\s*The default/i.test(styleText), 'missing');
+  expect('output-style: forbids closing summaries', /closing summary/i.test(styleText), 'missing');
+}
