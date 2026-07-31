@@ -156,3 +156,98 @@ import {
       `${nestedWfDir} exists but GitHub Actions will never read it`);
   }
 }
+
+// ---------- 2c. Paths named in a SKILL.md must exist ----------
+// Renaming templates/ -> assets/ across three skills broke nothing and the
+// suite stayed green, which is the bug: a SKILL.md pointing at a file that
+// does not exist is a dead instruction the model follows into a failure, and
+// nothing here would have caught it.
+//
+// Only backtick-quoted, skill-relative paths with a known extension are
+// checked — prose mentions and <this-skill> placeholders are not paths.
+{
+  const SUBDIRS = ['assets', 'references', 'scripts', 'templates'];
+  const PATH_RE = /`((?:assets|references|scripts|templates)\/[A-Za-z0-9._\/-]+\.[A-Za-z0-9]+)`/g;
+  let checked = 0;
+
+  for (const skill of registry.skills.map((s) => s.id)) {
+    const skillMd = path.join(root, skill, 'SKILL.md');
+    if (!fs.existsSync(skillMd)) continue;
+    const text = read(skillMd);
+    for (const m of text.matchAll(PATH_RE)) {
+      const rel = m[1];
+      checked++;
+      // Resolve against the skill OR the repo root: testing-strategy cites
+      // "this suite's own `scripts/run-tests.mjs`" as a worked example, which
+      // is a real path, just not a skill-relative one. Accepting both keeps
+      // the check honest (the file must exist somewhere) without banning a
+      // legitimate way to reference the repo itself.
+      const found = fs.existsSync(path.join(root, skill, ...rel.split('/')))
+        || fs.existsSync(path.join(root, ...rel.split('/')));
+      expect(`${skill}: SKILL.md path ${rel} exists`, found, 'referenced but missing');
+    }
+    // templates/ is the pre-canonical name for assets/ (Anthropic's skill
+    // convention: scripts/ = executable, references/ = read for context,
+    // assets/ = used in output). Pin the rename so it cannot drift back.
+    expect(`${skill}: uses assets/ not templates/`, !fs.existsSync(path.join(root, skill, 'templates')),
+      'templates/ present — canonical name is assets/');
+    // Guard against a fourth convention appearing by accident. One documented
+    // exception: ai-prose-slop/rules/ is Vale's StylesPath layout, whose shape
+    // the tool dictates — renaming it to assets/ would simply stop Vale
+    // finding the styles.
+    const EXCEPTIONS = { 'ai-prose-slop': ['rules'] };
+    const allowed = SUBDIRS.concat(EXCEPTIONS[skill] || []);
+    for (const e of fs.readdirSync(path.join(root, skill), { withFileTypes: true })) {
+      if (!e.isDirectory()) continue;
+      expect(`${skill}: subdir ${e.name} is a canonical one`, allowed.includes(e.name),
+        `unexpected dir (canonical: ${SUBDIRS.filter((s) => s !== 'templates').join(', ')})`);
+    }
+  }
+  expect('SKILL.md path references were actually found and checked', checked > 0, `${checked} found`);
+}
+
+// ---------- 2d. Cross-tool agent entrypoints ----------
+// AGENTS.md is the tool-agnostic source; CLAUDE.md exists only because Claude
+// Code looks for that name. The failure this pins is duplication: the moment
+// CLAUDE.md grows rules of its own, the two drift and whichever file a given
+// tool reads decides which version is true.
+{
+  const agentsMd = path.join(root, 'AGENTS.md');
+  const claudeMd = path.join(root, 'CLAUDE.md');
+
+  expect('AGENTS.md exists (tool-agnostic entrypoint)', fs.existsSync(agentsMd));
+  expect('CLAUDE.md exists (Claude Code looks for this name)', fs.existsSync(claudeMd));
+
+  if (fs.existsSync(claudeMd)) {
+    const claude = read(claudeMd);
+    expect('CLAUDE.md points at AGENTS.md', /AGENTS\.md/.test(claude), 'no reference');
+    // A pointer, not a second rulebook. Kept short deliberately: length here
+    // is the symptom of guidance leaking back in.
+    expect('CLAUDE.md stays a pointer, not a second copy of the rules',
+      claude.split('\n').filter((l) => l.trim()).length <= 12,
+      `${claude.split('\n').filter((l) => l.trim()).length} non-blank lines`);
+  }
+
+  if (fs.existsSync(agentsMd)) {
+    const agents = read(agentsMd);
+    // Must reference the style rules rather than restate them, for the same
+    // single-source reason.
+    expect('AGENTS.md references the shared response style',
+      /output-style\/concise\.md/.test(agents), 'no reference');
+    // Any repo-relative path AGENTS.md names must resolve — the same dead-link
+    // failure the SKILL.md check above exists for.
+    for (const m of agents.matchAll(/\]\(\.\/([A-Za-z0-9._\/-]+\.[A-Za-z0-9]+)\)/g)) {
+      expect(`AGENTS.md link ./${m[1]} resolves`,
+        fs.existsSync(path.join(root, ...m[1].split('/'))), 'referenced but missing');
+    }
+  }
+
+  // The portability table in INSTALL.md claims skills install to every
+  // harness in registry.json. If a harness is added there and the table is
+  // not updated, the docs quietly overstate coverage.
+  const install = read(path.join(root, 'INSTALL.md'));
+  for (const harness of Object.keys(registry.harnessPaths)) {
+    expect(`INSTALL.md portability table mentions harness "${harness}"`,
+      new RegExp(harness, 'i').test(install), 'harness in registry but absent from docs');
+  }
+}

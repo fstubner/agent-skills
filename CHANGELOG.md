@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.0.0-alpha.6 — 2026-07-31
+
+**Canonical skill layout.** `templates/` renamed to `assets/` in frontend,
+product-management and systems-architecture, matching Anthropic's skill
+convention: `scripts/` executable, `references/` read for context, `assets/`
+used in output. One documented exception — `ai-prose-slop/rules/` is Vale's
+StylesPath layout, whose shape the tool dictates.
+
+The rename passed the whole suite untouched, which was the real finding:
+nothing verified that a path named in a SKILL.md exists, so a dead
+instruction would have shipped silently. Now checked, along with the subdir
+names themselves.
+
+**Cross-tool entrypoints.** `AGENTS.md` holds the working instructions for
+this repo and is tool-agnostic; `CLAUDE.md` is a pointer to it and is tested
+to stay one. Two copies of the same guidance drift, and then whichever file a
+tool happens to read decides which version is true.
+
+INSTALL.md gains an honest portability matrix. Skills, checkers and the
+pre-commit hook work on Claude Code, Codex, Cursor and Antigravity; the
+plugin manifest and hooks are Claude Code only. Non-Claude users get the
+response style by pointing their own always-on context file at
+`output-style/concise.md` rather than copying it.
+
 ## 1.0.0-alpha.5 — 2026-07-31
 
 **Response style, injected rather than suggested.** `output-style/concise.md`

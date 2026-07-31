@@ -127,6 +127,40 @@ This measures invocation only. Whether a skill improved the work is a
 separate question needing the forced-exposure A/B protocol in `eval/` — a
 usage count that gets read as an efficacy signal is worse than no number.
 
+## Portability
+
+The skills are portable. The delivery mechanisms around them mostly are not,
+and it is worth knowing which is which before assuming a feature reached you.
+
+| Component | Claude Code | Codex | Cursor | Antigravity |
+|---|---|---|---|---|
+| 15 skills (`SKILL.md` + `references/`, `scripts/`, `assets/`) | ✓ | ✓ | ✓ | ✓ |
+| Checker scripts (plain Node, no harness API) | ✓ | ✓ | ✓ | ✓ |
+| Pre-commit hook (`git`, not a harness feature) | ✓ | ✓ | ✓ | ✓ |
+| `AGENTS.md` in your project | ✓ | ✓ | ✓ | ✓ |
+| Plugin install + marketplace | ✓ | — | — | — |
+| Telemetry hook, response-style injection | ✓ | — | — | — |
+
+`scripts/install.mjs` handles the first row for every harness. The two
+Claude-only rows depend on `.claude-plugin/` and `hooks/hooks.json`, which no
+other tool reads.
+
+**Non-Claude tools: the response style still works, manually.**
+`output-style/concise.md` is plain markdown with no Claude-specific syntax.
+Point your tool's own always-on context file at it — `AGENTS.md` for Codex and
+most agent CLIs, `.cursorrules` for Cursor — rather than copying the text, so
+there is one copy to keep true:
+
+```markdown
+## Response style
+Follow the rules in `.agents/output-style/concise.md`.
+```
+
+**Prefer `AGENTS.md` over a per-tool file** where your tool supports it. A
+tool-specific file (`CLAUDE.md`, `.cursorrules`) is best written as a pointer
+to it, as this repo's own `CLAUDE.md` does — two copies of the same guidance
+drift, and then which tool you happened to open decides which version is true.
+
 ## Claude Desktop (cloud)
 
 Distinct from the Claude Code desktop app above: claude.ai has no

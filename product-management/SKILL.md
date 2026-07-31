@@ -11,7 +11,7 @@ description: >-
 # Product management
 
 Produce one artifact: `PRODUCT.md` at the project root, from
-`templates/PRODUCT.md`. Ask only what you cannot infer; batch unknowns into
+`assets/PRODUCT.md`. Ask only what you cannot infer; batch unknowns into
 one short round of questions.
 
 ## Required headings
