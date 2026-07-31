@@ -46,12 +46,49 @@ assertFixture('backend-ship (task-management is not a secret)', 'backend-ship', 
   [['B-client-secrets', 'pass'], ['B-dual-orm', 'pass']]);
 assertFixture('backend-block-dual-orm', 'backend-block-dual-orm', BACKEND, [], 'BLOCK',
   [['B-dual-orm', 'fail']]);
-const secretReport = assertFixture('backend-block-secret', 'backend-block-secret', BACKEND, [], 'BLOCK',
-  [['B-client-secrets', 'fail']]);
-if (secretReport) {
-  const detail = secretReport.checks.find((c) => c.id === 'B-client-secrets').detail;
-  expect('backend-block-secret: reports path, never the value',
-    detail.includes('public/app.js') && !detail.includes('sk_live_'), detail);
+// backend-block-secret injects its secret at test time rather than committing
+// one — see the note in that fixture's public/app.js. This is NOT a test of
+// gitleaks' detection (third-party, assumed working); it pins OUR integration:
+// that check-backend invokes it at all, scans CLIENT-SERVED paths (a Next.js
+// blind spot and a src/ false positive were both real bugs here), maps the
+// result to B-client-secrets/BLOCK, and reports the path while never writing
+// the value into a report that lands on disk.
+{
+  const CLIENT_SECRET = 'sk_' + 'live_' + 'ABCDEF1234567890abcd';
+  const src = path.join(root, 'fixtures', 'backend-block-secret');
+  const dest = path.join(tmpBase, 'backend-block-secret-' + Math.random().toString(36).slice(2, 8));
+  fs.cpSync(src, dest, { recursive: true });
+  const clientFile = path.join(dest, 'public', 'app.js');
+  const runBackend = () => {
+    const r = runNode(path.join(root, ...BACKEND.split('/')), ['--root', dest, '--no-write']);
+    let report = null;
+    try { report = JSON.parse(r.stdout); } catch { /* asserted by caller */ }
+    return { r, report };
+  };
+
+  // Control: without the injected key the fixture must SHIP. The committed
+  // version could not assert this, so nothing pinned B-client-secrets as the
+  // reason for the block — any other fixture defect would have looked the same.
+  const before = runBackend();
+  expect('backend-block-secret: fixture PASSES before the secret is injected (control)',
+    Boolean(before.report) && before.report.verdict === 'SHIP',
+    before.report ? JSON.stringify(before.report.checks) : (before.r.stderr || '').slice(0, 200));
+
+  fs.appendFileSync(clientFile, `\nconst key = "${CLIENT_SECRET}";\n`);
+  const after = runBackend();
+  expect('backend-block-secret: emits parseable report', after.report !== null,
+    (after.r.stderr || '').slice(0, 200));
+  if (after.report) {
+    expect('backend-block-secret: verdict BLOCK', after.report.verdict === 'BLOCK',
+      JSON.stringify(after.report.checks));
+    const c = after.report.checks.find((x) => x.id === 'B-client-secrets');
+    expect('backend-block-secret: check B-client-secrets is fail',
+      Boolean(c) && c.status === 'fail', c ? `${c.status} (${c.detail})` : 'check missing');
+    expect('backend-block-secret: reports path, never the value',
+      Boolean(c) && c.detail.includes('public/app.js') && !c.detail.includes(CLIENT_SECRET),
+      c && c.detail);
+  }
+  expect('backend-block-secret: exit code 1', after.r.status === 1, `got ${after.r.status}`);
 }
 // The "no server" skip path had never been exercised by any fixture.
 assertFixture('backend-no-server (B-scope skip path)', 'backend-no-server', BACKEND, [], 'SHIP',
