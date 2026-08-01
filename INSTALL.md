@@ -67,8 +67,12 @@ claude plugin install agent-skills@fstubner-agent-skills
 ```
 
 For local development, point the marketplace at a checkout instead:
-`claude plugin marketplace add ./` from the repository root. Plugin skills
-are namespaced — `product-build` becomes `agent-skills:product-build`.
+`claude plugin marketplace add ./` from the repository root. Know the
+tradeoff: a directory source copies the **working tree**, gitignored files
+included — this repo once shipped 645KB of session transcripts into the
+local plugin cache that way. The GitHub source packages only tracked files,
+which is why it is the default instruction above. Plugin skills are
+namespaced — `product-build` becomes `agent-skills:product-build`.
 
 ## Installing is not the same as invoking
 

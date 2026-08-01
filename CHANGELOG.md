@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.0.0-alpha.7 — 2026-08-01
+
+The audit release: every finding from the 10k-ft review, fixed in order.
+
+- **CI ran for the first time.** The workflow triggered on main pushes and
+  PRs only, so the entire v2 rebuild had never executed in CI — every
+  'all tests pass' was one Windows machine. rebuild-v2 is now a trigger;
+  first run green on Ubuntu and Windows both.
+- **Telemetry moved to one user-level file**
+  (~/.claude/agent-skills-telemetry/). v1 wrote .agent-skills-telemetry/
+  into the cwd of every project the user touched — untracked litter in
+  repos that never opted in. Rows already carried {project, cwd}, so
+  nothing was lost by centralising.
+- **concise-style is its own plugin.** Installing a skills library should
+  not silently opt you into a global writing style; now it is a separate
+  marketplace entry, independently installable and disable-able.
+- **Packaging leak class closed.** A directory-source marketplace copies
+  the working tree, gitignored files included — 645KB of session
+  transcripts had shipped into the local plugin cache. The marketplace now
+  installs from GitHub (tracked files only), which also exercised the
+  remote-install path INSTALL.md documents; it worked, previously untested.
+- **main fast-forwarded to the rebuild.** The default branch is no longer
+  v0.4.0, which also retires 12 dependabot alerts against old fixture
+  dependencies.
+
+
 ## 1.0.0-alpha.6 — 2026-07-31
 
 **Canonical skill layout.** `templates/` renamed to `assets/` in frontend,
