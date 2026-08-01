@@ -8,18 +8,24 @@
 // selection bias that makes the question unanswerable. A PostToolUse hook
 // fires unconditionally, so the denominator is real.
 //
-// Reads the hook payload as JSON on stdin. Writes to
-// <cwd>/.agent-skills-telemetry/invocations.jsonl — per-project, because
-// "which project was this" is half the signal.
+// Reads the hook payload as JSON on stdin. Writes to ONE user-level file,
+// ~/.claude/agent-skills-telemetry/invocations.jsonl — not into the project
+// cwd. The first version wrote <cwd>/.agent-skills-telemetry/, which littered
+// an untracked directory into every repo the user touched with the plugin
+// enabled, including repos that never opted into anything. Each row carries
+// {project, cwd}, so per-project analysis lost nothing by centralising.
+// AGENT_SKILLS_TELEMETRY_DIR overrides the directory (tests use this).
 //
 // Fails silently and always exits 0. A telemetry hook that can break a
 // session, or block a tool call because a disk write failed, is worse than
 // no telemetry: it would get uninstalled, and take the measurement with it.
 
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 
-const LOG_DIR = '.agent-skills-telemetry';
+const LOG_DIR = process.env.AGENT_SKILLS_TELEMETRY_DIR
+  || path.join(os.homedir(), '.claude', 'agent-skills-telemetry');
 const LOG_FILE = 'invocations.jsonl';
 
 function readStdin() {
@@ -66,9 +72,8 @@ function main() {
   };
 
   try {
-    const dir = path.join(cwd, LOG_DIR);
-    fs.mkdirSync(dir, { recursive: true });
-    fs.appendFileSync(path.join(dir, LOG_FILE), JSON.stringify(row) + '\n');
+    fs.mkdirSync(LOG_DIR, { recursive: true });
+    fs.appendFileSync(path.join(LOG_DIR, LOG_FILE), JSON.stringify(row) + '\n');
   } catch {
     // Deliberately swallowed — see the header.
   }

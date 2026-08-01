@@ -98,8 +98,14 @@ import {
 {
   const LOGGER = path.join(root, 'scripts', 'log-skill-invocation.mjs');
   const dir = fs.mkdtempSync(path.join(tmpBase, 'telemetry-'));
-  const logPath = path.join(dir, '.agent-skills-telemetry', 'invocations.jsonl');
-  const feed = (payload) => spawnSync(process.execPath, [LOGGER], { input: payload, encoding: 'utf8' });
+  // The writer targets ONE user-level dir (not the project cwd — v1 littered
+  // .agent-skills-telemetry/ into every repo the user touched). Tests point
+  // it at a temp dir via the same env override users get.
+  const logPath = path.join(dir, 'invocations.jsonl');
+  const feed = (payload) => spawnSync(process.execPath, [LOGGER], {
+    input: payload, encoding: 'utf8',
+    env: { ...process.env, AGENT_SKILLS_TELEMETRY_DIR: dir },
+  });
   const rows = () => (fs.existsSync(logPath)
     ? fs.readFileSync(logPath, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l))
     : []);
@@ -177,7 +183,7 @@ import {
   const LOGGER = path.join(root, 'scripts', 'log-skill-invocation.mjs');
   const USAGE = path.join(root, 'scripts', 'skill-usage.mjs');
   const proj = fs.mkdtempSync(path.join(tmpBase, 'usage-'));
-  const logPath = path.join(proj, '.agent-skills-telemetry', 'invocations.jsonl');
+  const logPath = path.join(proj, 'invocations.jsonl');
   const report = () => JSON.parse(runNode(USAGE, ['--root', root, '--log', logPath, '--json']).stdout);
 
   // Empty state is the NORMAL first run, not an error — it must exit 0 and
@@ -195,6 +201,7 @@ import {
   const feed = (skill, session) => spawnSync(process.execPath, [LOGGER], {
     input: JSON.stringify({ tool_name: 'Skill', tool_input: { skill }, cwd: proj, session_id: session }),
     encoding: 'utf8',
+    env: { ...process.env, AGENT_SKILLS_TELEMETRY_DIR: proj },
   });
   feed('product-build', 's1');
   feed('product-build', 's1');

@@ -16,14 +16,20 @@
 // Usage:
 //   node scripts/skill-usage.mjs [--log <path>]... [--json] [--root <dir>]
 //
-// Default log: <cwd>/.agent-skills-telemetry/invocations.jsonl
-// Pass --log more than once to aggregate several projects together.
+// Default log: ~/.claude/agent-skills-telemetry/invocations.jsonl — one
+// user-level file for all projects (rows carry {project, cwd}), matching
+// where log-skill-invocation.mjs writes. AGENT_SKILLS_TELEMETRY_DIR
+// overrides the directory, and --log overrides the file outright.
 
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const DEFAULT_LOG = path.join('.agent-skills-telemetry', 'invocations.jsonl');
+const DEFAULT_LOG = path.join(
+  process.env.AGENT_SKILLS_TELEMETRY_DIR || path.join(os.homedir(), '.claude', 'agent-skills-telemetry'),
+  'invocations.jsonl',
+);
 
 function parseArgs(argv) {
   const out = { logs: [], json: false, root: null };
@@ -85,7 +91,7 @@ function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
     console.log('Usage: node scripts/skill-usage.mjs [--log <path>]... [--json] [--root <dir>]');
-    console.log('Default log: ' + DEFAULT_LOG + ' (relative to cwd)');
+    console.log('Default log: ' + DEFAULT_LOG);
     process.exit(0);
   }
 

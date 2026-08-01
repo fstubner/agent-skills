@@ -107,7 +107,8 @@ change, and reasonably concluding it does nothing.
 
 Don't take the numbers above on trust — the plugin ships a `PostToolUse`
 hook that records every skill invocation to
-`<project>/.agent-skills-telemetry/invocations.jsonl` (gitignored). Read it
+`~/.claude/agent-skills-telemetry/invocations.jsonl` (one user-level file;
+each row records which project). Read it
 back with:
 
 ```bash
