@@ -14,7 +14,7 @@ artifacts are acceptance-gated, and where each harness installs.
 
 ## Response style
 
-Follow [output-style/concise.md](./output-style/concise.md). It is the same
+Follow [concise-style/output-style/concise.md](./concise-style/output-style/concise.md). It is the same
 file Claude Code injects via a SessionStart hook; other tools should read it
 directly. Short version: answer first, a few sentences by default, no closing
 summaries, no status theatre.

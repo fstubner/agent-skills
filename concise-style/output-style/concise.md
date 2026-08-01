@@ -4,7 +4,7 @@ Rules for how to write a response. Not about what work to do — about what
 reaches the human afterwards.
 
 Injected every session by a SessionStart hook (see
-`scripts/inject-output-style.mjs`). Kept as plain markdown, readable by any
+`concise-style/scripts/inject-output-style.mjs`). Kept as plain markdown, readable by any
 tool, so the rules stay portable even though the injection mechanism is
 Claude Code specific.
 

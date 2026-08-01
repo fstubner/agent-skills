@@ -147,14 +147,14 @@ Claude-only rows depend on `.claude-plugin/` and `hooks/hooks.json`, which no
 other tool reads.
 
 **Non-Claude tools: the response style still works, manually.**
-`output-style/concise.md` is plain markdown with no Claude-specific syntax.
+`concise-style/output-style/concise.md` is plain markdown with no Claude-specific syntax.
 Point your tool's own always-on context file at it — `AGENTS.md` for Codex and
 most agent CLIs, `.cursorrules` for Cursor — rather than copying the text, so
 there is one copy to keep true:
 
 ```markdown
 ## Response style
-Follow the rules in `.agents/output-style/concise.md`.
+Follow the rules in `.agents/concise-style/output-style/concise.md`.
 ```
 
 **Prefer `AGENTS.md` over a per-tool file** where your tool supports it. A

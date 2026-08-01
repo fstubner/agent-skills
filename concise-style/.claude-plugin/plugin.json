@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "concise-style",
+  "version": "0.1.0",
+  "description": "Concise response style, injected every session: answer first, a few sentences by default, no closing summaries, no status theatre. Separate from agent-skills so a global writing style is opted into knowingly and can be disabled without losing the skills.",
+  "author": {
+    "name": "Felix Stubner"
+  },
+  "homepage": "https://github.com/fstubner/agent-skills",
+  "repository": "https://github.com/fstubner/agent-skills",
+  "license": "MIT",
+  "keywords": ["output-style", "concise", "response-style"]
+}

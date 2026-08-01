@@ -235,8 +235,8 @@ import {
 // recreates it as a SessionStart hook). These pin the two ways this silently
 // stops working: the file goes missing, or the hook stops emitting it.
 {
-  const INJECT = path.join(root, 'scripts', 'inject-output-style.mjs');
-  const STYLE = path.join(root, 'output-style', 'concise.md');
+  const INJECT = path.join(root, 'concise-style', 'scripts', 'inject-output-style.mjs');
+  const STYLE = path.join(root, 'concise-style', 'output-style', 'concise.md');
   const run = (payload) => spawnSync(process.execPath, [INJECT], { input: payload, encoding: 'utf8' });
 
   expect('output-style: concise.md exists', fs.existsSync(STYLE), STYLE);
@@ -262,7 +262,7 @@ import {
   }
 
   // The rules are only reachable if the plugin actually registers the hook.
-  const hooks = JSON.parse(read(path.join(root, 'hooks', 'hooks.json')));
+  const hooks = JSON.parse(read(path.join(root, 'concise-style', 'hooks', 'hooks.json')));
   const starts = (hooks.hooks && hooks.hooks.SessionStart) || [];
   const cmds = starts.flatMap((s) => (s.hooks || []).map((h) => h.command || ''));
   expect('output-style: plugin registers a SessionStart hook for it',

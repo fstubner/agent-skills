@@ -10,6 +10,11 @@
       "name": "agent-skills",
       "source": "./",
       "description": "Composable Agent Skills for product UI work: evidence-gated shipping, builder/acceptor separation, and a registry-first contract across 15 skills."
+    },
+    {
+      "name": "concise-style",
+      "source": "./concise-style",
+      "description": "Concise response style injected every session. Deliberately its own plugin: installing a skills library should not silently opt you into a global writing style, and this one can be disabled without losing the skills."
     }
   ]
 }
