@@ -3,7 +3,10 @@ permissions:
   contents: read
 on:
   push:
-    branches: [main]
+    # rebuild-v2 is listed explicitly because the entire v2 rebuild shipped
+    # without CI ever running once — pushes to a non-main branch triggered
+    # nothing, and every "all tests pass" claim was one Windows machine.
+    branches: [main, rebuild-v2]
   pull_request:
 
 jobs:
