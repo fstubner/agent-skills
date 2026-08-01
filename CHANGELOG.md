@@ -8,11 +8,11 @@ personas, no checkers, no tests, no eval data. Its two good ideas (the
 .agents/ convention, cross-tool portability) were already absorbed here.
 Of its content, two skills earned porting on substance:
 
--  — evidence-first codebase audit: every finding
+- `engineering-assessment` — evidence-first codebase audit: every finding
   cites a file/line or command output, severity from a written rubric,
   and an explicit coverage-gaps section for what was NOT examined. Adapted
   to lean on this suite's own checkers as evidence sources where they apply.
--  — topology, delegation contracts, governance,
+- `multi-agent-design` — topology, delegation contracts, governance,
   failure recovery, with the honest first step: default to a single agent
   unless you can name the specific benefit.
 
