@@ -52,6 +52,8 @@ through direct calls.
 | `cli-tooling` (no shared artifacts) | CLI surface + contract — naming, config precedence, exit codes, dry-run |
 | `release-engineering` (no shared artifacts) | CI/CD pipeline gating, deployment strategy, rollback |
 | `learn-from-session` (no shared artifacts) | Turn a correction or confirmation into a durable rule/fixture/memory |
+| `engineering-assessment` (no shared artifacts) | Evidence-first codebase audit — severity-ranked findings, coverage gaps stated |
+| `multi-agent-design` (no shared artifacts) | Multi-agent topology, delegation contracts, governance, failure recovery |
 
 Suggested starting point for a greenfield/ambiguous request: `product-build`.
 Not a required entry point — every skill above also fires directly on its own trigger.

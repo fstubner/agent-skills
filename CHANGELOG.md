@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.0.0-alpha.8 — 2026-08-01
+
+**Two skills ported from dot-agents, which is now archived.** That repo was
+an earlier attempt at the same problem — 26 skills, mostly sub-agent role
+personas, no checkers, no tests, no eval data. Its two good ideas (the
+.agents/ convention, cross-tool portability) were already absorbed here.
+Of its content, two skills earned porting on substance:
+
+-  — evidence-first codebase audit: every finding
+  cites a file/line or command output, severity from a written rubric,
+  and an explicit coverage-gaps section for what was NOT examined. Adapted
+  to lean on this suite's own checkers as evidence sources where they apply.
+-  — topology, delegation contracts, governance,
+  failure recovery, with the honest first step: default to a single agent
+  unless you can name the specific benefit.
+
+Both are judgment-only and unevaluated, like 12 of the original 15 — the
+same standard applies: no efficacy claim until a forced-exposure run
+exists. The other 24 dot-agents skills were thin role prompts duplicating
+checker-backed skills here, and were not ported.
+
+
 ## 1.0.0-alpha.7 — 2026-08-01
 
 The audit release: every finding from the 10k-ft review, fixed in order.

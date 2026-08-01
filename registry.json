@@ -7,26 +7,82 @@
   "harnessPaths": {
     "cursor": "~/.cursor/skills",
     "claude": "~/.claude/skills",
-    "codex": ["~/.codex/skills", "~/.agents/skills"],
+    "codex": [
+      "~/.codex/skills",
+      "~/.agents/skills"
+    ],
     "antigravity": "~/.gemini/antigravity-cli/skills"
   },
   "_harnessPathsNote": "Claude Desktop reads the same ~/.claude/skills as Claude Code (confirmed, no separate entry needed) and has no filesystem target for cloud use — see INSTALL.md. Codex's skill directory is genuinely unsettled upstream as of mid-2026: OpenAI's own skill-installer/skill-creator tools still default to ~/.codex/skills, current public docs point to ~/.agents/skills instead, and there are open OpenAI GitHub issues (openai/codex#28505, openai/skills#420) showing the Codex Desktop app failing to discover skills placed in ~/.agents/skills. Installing to BOTH paths (a value can be an array) is a deliberate hedge against that instability, not an assumption either one is settled — revisit once upstream converges. Antigravity CLI specifically reads ~/.gemini/antigravity-cli/skills; a broader Antigravity-product-wide path (~/.gemini/config/skills) was also reported but is not what the CLI itself was confirmed to read.",
   "skills": [
-    { "id": "product-build", "role": "Dispatcher — routes a greenfield/ambiguous request to whichever skills apply" },
-    { "id": "product-management", "role": "PRODUCT.md contract interview" },
-    { "id": "systems-architecture", "role": "Parts, boundaries, trust" },
-    { "id": "frontend", "role": "Stack, structure, design, and UX" },
-    { "id": "backend-engineering", "role": "Trusted-side laws" },
-    { "id": "product-acceptance", "role": "Independent acceptance gate" },
-    { "id": "ai-prose-slop", "role": "Prose slop editor/detector" },
-    { "id": "mental-models", "role": "Reasoning lens catalog + triage guide + four named mindsets" },
-    { "id": "code-smells", "role": "Fowler code-smell catalog + judgment guide" },
-    { "id": "code-organization", "role": "Module boundaries, dependency direction, naming" },
-    { "id": "testing-strategy", "role": "Test pyramid triage, behavior over implementation, flaky-test discipline" },
-    { "id": "data-modeling", "role": "Schema design — keys, normalization, nullability, migrations" },
-    { "id": "cli-tooling", "role": "CLI surface + contract — naming, config precedence, exit codes, dry-run" },
-    { "id": "release-engineering", "role": "CI/CD pipeline gating, deployment strategy, rollback" },
-    { "id": "learn-from-session", "role": "Turn a correction or confirmation into a durable rule/fixture/memory" }
+    {
+      "id": "product-build",
+      "role": "Dispatcher — routes a greenfield/ambiguous request to whichever skills apply"
+    },
+    {
+      "id": "product-management",
+      "role": "PRODUCT.md contract interview"
+    },
+    {
+      "id": "systems-architecture",
+      "role": "Parts, boundaries, trust"
+    },
+    {
+      "id": "frontend",
+      "role": "Stack, structure, design, and UX"
+    },
+    {
+      "id": "backend-engineering",
+      "role": "Trusted-side laws"
+    },
+    {
+      "id": "product-acceptance",
+      "role": "Independent acceptance gate"
+    },
+    {
+      "id": "ai-prose-slop",
+      "role": "Prose slop editor/detector"
+    },
+    {
+      "id": "mental-models",
+      "role": "Reasoning lens catalog + triage guide + four named mindsets"
+    },
+    {
+      "id": "code-smells",
+      "role": "Fowler code-smell catalog + judgment guide"
+    },
+    {
+      "id": "code-organization",
+      "role": "Module boundaries, dependency direction, naming"
+    },
+    {
+      "id": "testing-strategy",
+      "role": "Test pyramid triage, behavior over implementation, flaky-test discipline"
+    },
+    {
+      "id": "data-modeling",
+      "role": "Schema design — keys, normalization, nullability, migrations"
+    },
+    {
+      "id": "cli-tooling",
+      "role": "CLI surface + contract — naming, config precedence, exit codes, dry-run"
+    },
+    {
+      "id": "release-engineering",
+      "role": "CI/CD pipeline gating, deployment strategy, rollback"
+    },
+    {
+      "id": "learn-from-session",
+      "role": "Turn a correction or confirmation into a durable rule/fixture/memory"
+    },
+    {
+      "id": "engineering-assessment",
+      "role": "Evidence-first codebase audit — severity-ranked findings, coverage gaps stated"
+    },
+    {
+      "id": "multi-agent-design",
+      "role": "Multi-agent topology, delegation contracts, governance, failure recovery"
+    }
   ],
   "artifacts": [
     {
@@ -34,37 +90,61 @@
       "kind": "document",
       "file": "PRODUCT.md",
       "producer": "product-management",
-      "consumers": ["systems-architecture", "frontend", "backend-engineering", "product-acceptance"],
+      "consumers": [
+        "systems-architecture",
+        "frontend",
+        "backend-engineering",
+        "product-acceptance"
+      ],
       "acceptanceGated": true,
       "requiredWhen": "always",
-      "requiredHeadings": ["Purpose", "Users", "Success", "MVP", "Constraints"]
+      "requiredHeadings": [
+        "Purpose",
+        "Users",
+        "Success",
+        "MVP",
+        "Constraints"
+      ]
     },
     {
       "id": "architecture-doc",
       "kind": "document",
       "file": "ARCHITECTURE.md",
       "producer": "systems-architecture",
-      "consumers": ["backend-engineering", "product-acceptance"],
+      "consumers": [
+        "backend-engineering",
+        "product-acceptance"
+      ],
       "acceptanceGated": true,
       "requiredWhen": "multi_part",
-      "requiredHeadings": ["Parts", "Boundaries", "Trust"]
+      "requiredHeadings": [
+        "Parts",
+        "Boundaries",
+        "Trust"
+      ]
     },
     {
       "id": "design-direction",
       "kind": "document",
       "file": "design-direction.md",
       "producer": "frontend",
-      "consumers": ["product-acceptance"],
+      "consumers": [
+        "product-acceptance"
+      ],
       "acceptanceGated": true,
       "requiredWhen": "frontend_present",
-      "requiredHeadings": ["Interview"]
+      "requiredHeadings": [
+        "Interview"
+      ]
     },
     {
       "id": "ux-walkthrough",
       "kind": "document",
       "file": "ux-walkthrough.md",
       "producer": "frontend",
-      "consumers": ["product-acceptance"],
+      "consumers": [
+        "product-acceptance"
+      ],
       "acceptanceGated": true,
       "requiredWhen": "frontend_present"
     },
@@ -73,7 +153,9 @@
       "kind": "document",
       "file": "stack-decision.md",
       "producer": "frontend",
-      "consumers": ["product-acceptance"],
+      "consumers": [
+        "product-acceptance"
+      ],
       "acceptanceGated": false,
       "requiredWhen": "never",
       "note": "Written only when the stack was open to choose (frontend/SKILL.md). Not acceptance-gated: an existing-stack project legitimately has no stack-decision.md."
@@ -83,7 +165,9 @@
       "kind": "document",
       "file": "design-tokens.json",
       "producer": "frontend",
-      "consumers": ["product-acceptance"],
+      "consumers": [
+        "product-acceptance"
+      ],
       "acceptanceGated": false,
       "requiredWhen": "never",
       "note": "Consumed directly by frontend's own checker (F-tokens-contrast), which is itself acceptance-gated via frontend-report. Listed here so it isn't undocumented, not double-gated."
@@ -95,7 +179,9 @@
       "producer": "systems-architecture",
       "producerScript": "systems-architecture/scripts/check-architecture.js",
       "schema": "core/schemas/check-report.schema.json",
-      "consumers": ["product-acceptance"],
+      "consumers": [
+        "product-acceptance"
+      ],
       "acceptanceGated": true,
       "requiredWhen": "multi_part"
     },
@@ -106,7 +192,9 @@
       "producer": "frontend",
       "producerScript": "frontend/scripts/check-frontend.js",
       "schema": "core/schemas/check-report.schema.json",
-      "consumers": ["product-acceptance"],
+      "consumers": [
+        "product-acceptance"
+      ],
       "acceptanceGated": true,
       "requiredWhen": "frontend_present"
     },
@@ -117,7 +205,9 @@
       "producer": "backend-engineering",
       "producerScript": "backend-engineering/scripts/check-backend.js",
       "schema": "core/schemas/check-report.schema.json",
-      "consumers": ["product-acceptance"],
+      "consumers": [
+        "product-acceptance"
+      ],
       "acceptanceGated": true,
       "requiredWhen": "server_present"
     },
