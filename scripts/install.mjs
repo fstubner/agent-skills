@@ -75,15 +75,45 @@ function expandHome(p) {
   return p;
 }
 
-function copyDir(src, dest) {
+// Symlinks are RESOLVED, not preserved and not skipped.
+//
+// A Dirent from readdirSync({withFileTypes:true}) describes the link itself,
+// so isDirectory() and isFile() are BOTH false for one — the previous version
+// silently dropped any symlinked file or directory from the install, with no
+// warning and a skill that looked fine until the missing file was needed.
+//
+// Resolving rather than preserving is deliberate: an installed skill has to
+// stand alone in ~/.claude/skills, and a link back into the source checkout
+// breaks the moment that checkout moves or is deleted.
+//
+// `seen` carries realpaths so a symlink loop terminates instead of recursing
+// until the process dies.
+function copyDir(src, dest, seen = new Set()) {
+  const realSrc = fs.realpathSync(src);
+  if (seen.has(realSrc)) {
+    console.error(`WARN  symlink loop at ${src} — not following it again`);
+    return;
+  }
+  seen.add(realSrc);
+
   fs.mkdirSync(dest, { recursive: true });
   for (const e of fs.readdirSync(src, { withFileTypes: true })) {
     if (e.name === 'node_modules' || e.name === '.git') continue;
     const s = path.join(src, e.name);
     const d = path.join(dest, e.name);
-    if (e.isDirectory()) copyDir(s, d);
-    else fs.copyFileSync(s, d);
+
+    let stat;
+    try {
+      stat = fs.statSync(s); // follows the link; throws on a broken one
+    } catch {
+      console.error(`WARN  skipping ${s} — unreadable or a broken symlink`);
+      continue;
+    }
+    if (stat.isDirectory()) copyDir(s, d, seen);
+    else if (stat.isFile()) fs.copyFileSync(s, d);
+    else console.error(`WARN  skipping ${s} — not a regular file or directory`);
   }
+  seen.delete(realSrc);
 }
 
 const args = parseArgs(process.argv.slice(2));
@@ -147,9 +177,17 @@ for (const target of targets) {
         failures++;
         continue;
       }
-      fs.rmSync(dest, { recursive: true, force: true });
     }
-    copyDir(src, dest);
+    // Build beside the destination and swap it in, rather than deleting the
+    // old install and copying over the gap. The old order left a window where
+    // a crash — disk full, permissions, a killed terminal — produced a
+    // half-populated skill directory with no marker file, which the next run
+    // then refuses to touch because it looks hand-made. Staging means the
+    // failure mode is "nothing happened", and the previous install survives.
+    const staging = dest + '.installing-' + process.pid;
+    fs.rmSync(staging, { recursive: true, force: true });
+    try {
+      copyDir(src, staging);
     // Vendor the ENTIRE core so the skill works standalone. Deliberately a
     // whole-directory copy rather than an enumeration of subdirectories: the
     // previous `lib` + `schemas` list silently dropped core/gitleaks-extra.toml,
@@ -158,12 +196,23 @@ for (const target of targets) {
     // dev-checkout test because there core.lib resolves to core/lib and the
     // sibling file is reachable. Copying core/ wholesale means a new file under
     // core/ ships by default instead of by remembering to add a line here.
-    const vendor = path.join(dest, 'scripts', 'vendor');
-    copyDir(path.join(suiteRoot, 'core'), vendor);
-    fs.copyFileSync(path.join(suiteRoot, 'registry.json'), path.join(vendor, 'registry.json'));
-    fs.writeFileSync(path.join(dest, MARKER), JSON.stringify({
-      suite: registry.name, version, installedAt: new Date().toISOString(),
-    }, null, 2) + '\n');
+      const vendor = path.join(staging, 'scripts', 'vendor');
+      copyDir(path.join(suiteRoot, 'core'), vendor);
+      fs.copyFileSync(path.join(suiteRoot, 'registry.json'), path.join(vendor, 'registry.json'));
+      // Marker last: its presence is what tells a later run this directory is
+      // ours to replace, so it must not exist until everything else does.
+      fs.writeFileSync(path.join(staging, MARKER), JSON.stringify({
+        suite: registry.name, version, installedAt: new Date().toISOString(),
+      }, null, 2) + '\n');
+
+      fs.rmSync(dest, { recursive: true, force: true });
+      fs.renameSync(staging, dest);
+    } catch (e) {
+      fs.rmSync(staging, { recursive: true, force: true });
+      console.error(`FAIL  ${dest} — ${e.message} (previous install left untouched)`);
+      failures++;
+      continue;
+    }
     console.log(`ok    ${dest}`);
   }
 }

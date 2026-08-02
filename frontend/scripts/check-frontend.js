@@ -164,7 +164,13 @@ function run(root) {
         continue;
       }
       evaluated++;
-      if (ratio < 4.5) failing.push(`${label}${fgKey}/${bgKey}: ${ratio.toFixed(2)} < 4.5`);
+      // 4.5:1 on every pair, which is stricter than WCAG for large text
+      // (SC 1.4.3 allows 3:1 at 18pt / 14pt bold). A token carries no size —
+      // whichever component uses it at 13px decides whether the pair was
+      // legible — so the body-text bar is the only safe one to apply here.
+      // The measured ratio is reported so a genuine display-only token can be
+      // argued as a documented exception rather than by lowering this number.
+      if (ratio < 4.5) failing.push(`${label}${fgKey}/${bgKey}: ${ratio.toFixed(2)} < 4.5 (body-text bar; WCAG allows 3:1 only for 18pt+/14pt-bold text)`);
     }
   }
   checks.push(failing.length > 0

@@ -19,7 +19,13 @@ import {
     expect('ai-prose-slop: clean doc verdict SHIP', cleanReport.verdict === 'SHIP', cleanReport.verdict);
     const slop = runNode(script, [path.join(root, 'fixtures', 'ai-prose-slop-slop', 'doc.md')]);
     const slopReport = JSON.parse(slop.stdout);
-    expect('ai-prose-slop: slop doc verdict CONDITIONAL', slopReport.verdict === 'CONDITIONAL', slopReport.verdict);
+    // A hit is a finding, so the verdict is BLOCK. This asserted CONDITIONAL
+    // while every hit was recorded as not_evaluated — i.e. it pinned the bug:
+    // Vale ran and matched, and the report claimed the check could not run.
+    expect('ai-prose-slop: slop doc verdict BLOCK', slopReport.verdict === 'BLOCK', slopReport.verdict);
+    expect('ai-prose-slop: hits are recorded as findings, not as unevaluated checks',
+      slopReport.checks.length > 0 && slopReport.checks.every((c) => c.status === 'fail'),
+      JSON.stringify(slopReport.checks.map((c) => c.status)));
     const ids = new Set(slopReport.checks.map((c) => c.id));
     for (const rule of ['AIProseTells.InflatedVocabulary', 'AIProseTells.ThroatClearing', 'AIProseTells.WeaselAttribution',
       'AIProseTells.ImportanceInflation', 'AIProseTells.SummaryRecap', 'AIProseTells.EmDashOveruse',
@@ -44,7 +50,7 @@ import {
     const dirTarget = runNode(script, [path.join(root, 'fixtures', 'ai-prose-slop-slop')]);
     let dirReport = null;
     try { dirReport = JSON.parse(dirTarget.stdout); } catch { /* asserted below */ }
-    expect('ai-prose-slop: directory target works', dirReport?.verdict === 'CONDITIONAL', dirTarget.stderr || dirTarget.stdout);
+    expect('ai-prose-slop: directory target works', dirReport?.verdict === 'BLOCK', dirTarget.stderr || dirTarget.stdout);
 
     const reportPath = path.join(tmpBase, 'ai-prose-slop-report-test.json');
     runNode(script, [path.join(root, 'fixtures', 'ai-prose-slop-clean', 'doc.md'), '--report', reportPath]);
@@ -57,7 +63,7 @@ import {
     ]);
     let multiReport = null;
     try { multiReport = JSON.parse(multiTarget.stdout); } catch { /* asserted below */ }
-    expect('ai-prose-slop: multiple targets in one invocation', multiReport?.verdict === 'CONDITIONAL', multiTarget.stderr || multiTarget.stdout);
+    expect('ai-prose-slop: multiple targets in one invocation', multiReport?.verdict === 'BLOCK', multiTarget.stderr || multiTarget.stdout);
 
     // The `--` separator (added as hardening) must actually stop a target
     // whose name starts with "-" from being parsed as a vale flag.

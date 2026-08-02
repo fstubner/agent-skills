@@ -96,3 +96,70 @@ import {
   expect('installer: --force does replace it', forced.status === 0 && fs.existsSync(path.join(victim, 'SKILL.md')),
     forced.stderr || forced.stdout);
 }
+
+// ---------- 9c. Installer: symlinks, and failure atomicity ----------
+// A Dirent from readdirSync({withFileTypes:true}) describes the LINK, so for
+// a symlink both isDirectory() and isFile() are false — verified on Windows
+// junctions, where the old branch fell through and dropped the entry with no
+// warning. An installed skill missing a reference file looks fine until the
+// file is needed. Symlinks are now resolved (an install must stand alone;
+// a link back into the source checkout breaks when it moves).
+{
+  const INSTALL = path.join(root, 'scripts', 'install.mjs');
+  const home = fs.mkdtempSync(path.join(tmpBase, 'insthome-'));
+  const linkTarget = fs.mkdtempSync(path.join(tmpBase, 'linktarget-'));
+  fs.writeFileSync(path.join(linkTarget, 'canary.md'), 'canary content\n');
+
+  const linkPath = path.join(root, 'mental-models', 'references', '_symtest_dir');
+  let madeLink = false;
+  try {
+    fs.symlinkSync(linkTarget, linkPath, 'junction');
+    madeLink = true;
+  } catch {
+    console.log('skip  installer symlink test: cannot create links here');
+  }
+
+  if (madeLink) {
+    try {
+      // Pin the premise: if a future Node reports isDirectory() true for a
+      // junction, the old code was fine and this test is guarding nothing.
+      const dirent = fs.readdirSync(path.join(root, 'mental-models', 'references'), { withFileTypes: true })
+        .find((e) => e.name === '_symtest_dir');
+      expect('installer: a link Dirent is neither file nor directory (why the old code dropped it)',
+        Boolean(dirent) && !dirent.isDirectory() && !dirent.isFile(),
+        dirent ? `isDirectory=${dirent.isDirectory()} isFile=${dirent.isFile()}` : 'entry missing');
+
+      const r = spawnSync(process.execPath, [INSTALL, '--harness', 'claude', '--skill', 'mental-models'], {
+        encoding: 'utf8',
+        env: { ...process.env, HOME: home, USERPROFILE: home },
+      });
+      expect('installer: exits 0 with a symlinked entry present', r.status === 0, r.stderr || r.stdout);
+      const landed = path.join(home, '.claude', 'skills', 'mental-models', 'references', '_symtest_dir', 'canary.md');
+      expect('installer: symlinked content is resolved and copied, not skipped',
+        fs.existsSync(landed) && fs.readFileSync(landed, 'utf8').includes('canary content'),
+        `expected content at ${landed}`);
+    } finally {
+      fs.rmSync(linkPath, { recursive: true, force: true });
+    }
+  }
+
+  // A failed install must leave the PREVIOUS install intact. The old order
+  // deleted the destination and then copied into the gap, so a crash midway
+  // produced a half-populated directory with no marker — which the next run
+  // then refuses to touch, because a directory without the marker looks
+  // hand-made. Staging + rename makes the failure mode "nothing happened".
+  {
+    const good = spawnSync(process.execPath, [INSTALL, '--harness', 'claude', '--skill', 'cli-tooling'], {
+      encoding: 'utf8', env: { ...process.env, HOME: home, USERPROFILE: home },
+    });
+    expect('installer: baseline install succeeds', good.status === 0, good.stderr || good.stdout);
+    const installed = path.join(home, '.claude', 'skills', 'cli-tooling');
+    const marker = path.join(installed, '.agent-skills-install.json');
+    expect('installer: marker written', fs.existsSync(marker), marker);
+
+    // No staging directory may survive a successful run.
+    const strays = fs.readdirSync(path.join(home, '.claude', 'skills'))
+      .filter((n) => n.includes('.installing-'));
+    expect('installer: no staging directory left behind', strays.length === 0, strays.join(', '));
+  }
+}

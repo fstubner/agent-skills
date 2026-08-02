@@ -1,5 +1,48 @@
 # Changelog
 
+## 1.0.0-alpha.13 — 2026-08-02
+
+Four carried-over audit findings, closed.
+
+**ai-prose-slop reported every finding as `not_evaluated`.** It mapped
+anything below Vale severity `error` to "could not evaluate", and no
+shipped rule is `error` — six are `suggestion`, two `warning` — so the fail
+branch was unreachable and the skill could never report anything it found.
+The dead branch was the visible symptom; the real defect was semantic.
+`not_evaluated` means the check could not run, and the whole suite rests on
+that distinction. Vale ran. Vale matched a line. Recording that as
+absence-of-evidence made a found problem read as a missing check. A hit is
+now a `fail` with the severity in the detail, where a reader can weigh it.
+It gates nothing (`acceptanceGated: false`), so this is a report to a
+human, not a stop sign.
+
+**The installer silently dropped symlinked files.** A `Dirent` from
+`readdirSync({withFileTypes:true})` describes the link, so `isDirectory()`
+and `isFile()` are both false and the entry fell through every branch —
+verified on a Windows junction, where the old code skipped it without a
+word. Links are now resolved rather than preserved: an installed skill has
+to stand alone, and a link back into the source checkout breaks when that
+checkout moves. Loops terminate on a realpath set.
+
+**A failed install could leave a half-written skill.** The old order
+deleted the destination and copied into the gap, so a crash mid-copy left a
+populated directory with no marker — which the next run then refuses to
+touch, because an unmarked directory looks hand-made. Installs now build
+beside the target and rename in, with the marker written last. The failure
+mode is "nothing happened".
+
+**CI's branch list is gone.** It named `main` and `rebuild-v2`, which
+reproduced one level up the exact fragility the file exists to prevent —
+the v2 rebuild once shipped with CI never running because the trigger named
+a branch the work wasn't on. Every branch now runs; a wildcard cannot go
+stale.
+
+**Also:** the WCAG note is accurate. The 4.5:1 token bar is stricter than
+SC 1.4.3, which allows 3:1 for large text — that is deliberate, because a
+colour token has no size and the component that uses it at 13px is the one
+that decides. Documented as an intentional bar with a stated escape rather
+than left looking like a misreading of the standard.
+
 ## 1.0.0-alpha.12 — 2026-08-02
 
 **Falsification pass over all 17 skills.** Three independent audits asked

@@ -15,6 +15,20 @@ All color flows through `design-tokens.json`. Required: `text-main`,
 
 - `text-main` and `text-muted` must clear **4.5:1** on `surface-base`
   (`check-frontend` verifies this — F-tokens-contrast).
+
+  That is stricter than WCAG 2.2 itself, deliberately. The standard (SC
+  1.4.3, AA) asks 4.5:1 for normal text but only **3:1 for large text** —
+  18pt, or 14pt bold. A colour *token* has no size: `text-muted` is
+  whatever a component uses it at, and the component that uses it at 13px
+  is the one that decides whether the pair was legible. Checking a token at
+  3:1 would pass a colour that fails the moment it appears in body text,
+  which is where it will appear.
+
+  So: 4.5:1 on every token pair. If a token is genuinely display-only —
+  a hero headline that never renders below 18pt — say so beside it in
+  `design-direction.md` and treat a fail as a documented exception rather
+  than editing the threshold. The check reports the ratio it measured, so
+  the exception is arguable from the number rather than from taste.
 - No hex values in component styles; reference tokens.
 - Dark mode is a second token set, not per-component overrides.
 

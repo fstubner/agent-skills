@@ -2,11 +2,12 @@ name: ci
 permissions:
   contents: read
 on:
+  # Every branch, no list to maintain. The whole v2 rebuild once shipped
+  # without CI running a single time, because the trigger named a branch the
+  # work wasn't on. Replacing that with a two-name list reproduced the same
+  # fragility one level up: the next long-lived branch gets no CI until
+  # someone remembers this file exists. A wildcard cannot go stale.
   push:
-    # rebuild-v2 is listed explicitly because the entire v2 rebuild shipped
-    # without CI ever running once — pushes to a non-main branch triggered
-    # nothing, and every "all tests pass" claim was one Windows machine.
-    branches: [main, rebuild-v2]
   pull_request:
 
 jobs:

@@ -140,17 +140,38 @@ try {
   }], args, 1);
 }
 
+// A hit is a `fail`, whatever severity Vale assigned it.
+//
+// This used to map anything below `error` to `not_evaluated`, and no shipped
+// rule in rules/AIProseTells/ is `error` — six are `suggestion`, two are
+// `warning` — so the fail branch was unreachable and EVERY real finding was
+// recorded as "could not evaluate". That inverts the one semantic the whole
+// suite rests on: not_evaluated means the check could not run, and a verdict
+// is allowed to be cautious about it. Vale ran. Vale matched a line. Calling
+// that absence-of-evidence made a found problem read as a missing check, and
+// made the report's verdict meaningless in both directions.
+//
+// Severity now rides in the detail, where a reader can weigh it, rather than
+// deciding whether the finding exists. Blocking is the caller's choice: this
+// skill is acceptanceGated:false and gates nothing, so a `fail` here is a
+// report to a human, not a stop sign — see the exit-code note below.
 const checks = [];
 for (const [file, alerts] of Object.entries(parsed)) {
   for (const alert of alerts) {
     checks.push({
       id: alert.Check,
-      status: alert.Severity === 'error' ? 'fail' : 'not_evaluated',
-      detail: `${file}:${alert.Line} ${alert.Message} [${alert.Match}]`,
+      status: 'fail',
+      detail: `${file}:${alert.Line} [${alert.Severity}] ${alert.Message} [${alert.Match}]`,
     });
   }
 }
+if (checks.length === 0) {
+  checks.push({ id: 'AIProseTells', status: 'pass', detail: 'no AI-prose patterns matched' });
+}
 
-const hasError = checks.some((c) => c.status === 'fail');
-const exitCode = hasError ? 1 : args.strict && checks.length > 0 ? 1 : 0;
+// Exit 1 on any hit. Prose findings are advisory by nature — the skill's own
+// first rule is that a pattern hit is a prompt to look, not an automatic
+// delete — but a non-zero exit is how a human or a CI step learns there is
+// something to look AT. Nothing in this suite gates on it.
+const exitCode = checks.some((c) => c.status === 'fail') ? 1 : 0;
 finish(checks, args, exitCode);
