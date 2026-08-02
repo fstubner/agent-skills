@@ -9,7 +9,9 @@ description: >-
   design here" — narrower than the usual meaning of system design: this is
   specifically about parts/boundaries/trust, not API shape, scalability, or
   a single service's internals. Not for single-file scripts, styling
-  (frontend), or server implementation detail (backend-engineering).
+  (frontend), server implementation detail (backend-engineering), or how
+  one service's own files and modules are laid out (code-organization —
+  that skill sits one level below this one).
 compatibility: Requires Node 18+ to run the deterministic checker script.
 ---
 

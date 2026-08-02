@@ -1,0 +1,14 @@
+{
+  "caseId": "batch6-mental-models",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. Found all 3 planted flaws including the queue-removal coupling (\"reckless\"). Plan critique at this scale is within haiku unprompted competence.",
+  "scores": {
+    "f1RootCause": "pass",
+    "f2Rollback": "pass",
+    "f3Coupling": "pass"
+  }
+}

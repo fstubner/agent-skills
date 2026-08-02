@@ -7,7 +7,9 @@ description: >-
   rewriting working code that just happens to look unusual. Triggers when
   reviewing existing code for maintainability, when a change touches the
   same handful of files every time (a smell in itself), or when explicitly
-  asked to clean up or refactor. Not for new code being written for the
+  asked to clean up or refactor. Scoped to the code in front of you — for a
+  standing-back audit of a whole codebase, that is engineering-assessment.
+  Not for new code being written for the
   first time (a smell is a pattern that emerged under real use; guessing at
   one in advance is premature abstraction) and not a substitute for a
   linter's mechanical rules (unused vars, formatting) — this is the layer

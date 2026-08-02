@@ -1,0 +1,13 @@
+{
+  "caseId": "batch6-code-organization",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. Restructure from layers to domains: domains/order-fulfillment/ with public-exports-only index; argued from the recurring change-cost the fixture planted. Verified by manual read (grep heuristic missed the wording).",
+  "scores": {
+    "domainGrouping": "pass",
+    "namesChangeCost": "pass"
+  }
+}

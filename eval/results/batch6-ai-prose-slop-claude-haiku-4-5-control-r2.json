@@ -1,0 +1,13 @@
+{
+  "caseId": "batch6-ai-prose-slop",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 2,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. Neutral prompt: 10 -> 0 hits, length preserved. Capable models de-slop when asked to edit for publication at all.",
+  "scores": {
+    "valeClean": "pass",
+    "lengthPreserved": "pass"
+  }
+}

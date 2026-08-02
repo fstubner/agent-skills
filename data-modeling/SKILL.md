@@ -84,6 +84,17 @@ beats catching it at acceptance: by then it may already have run.
    destructive rewrite, especially once real rows exist. A one-shot
    migration that assumes a maintenance window or perfect backfill logic is
    the migration most likely to be the one that actually loses data.
+
+   The hard form of this rule, because a measured eval showed the soft form
+   does not transfer: **an up migration never contains `DROP TABLE` or
+   `DROP COLUMN`.** Not when the table is confirmed unused, not when the
+   requirements say "no longer needed" — *"nothing reads it anymore"* is
+   precisely the rationalization under which the DROP ships and then breaks
+   the still-deployed old code, the mid-rollout replica, or the rollback
+   you suddenly need. A drop is its own, clearly-marked destructive
+   migration (or a down/ file), scheduled after a deprecation window, never
+   a rider on the change that made the data unnecessary. If you find
+   yourself typing DROP in the same file that adds a column, stop.
 7. **Relational vs. document/schema-less is a query-pattern decision, not a
    fashion one.** Choose relational when data has real cross-entity
    invariants that benefit from joins and constraints; choose

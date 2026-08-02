@@ -1,0 +1,13 @@
+{
+  "caseId": "batch6-testing-strategy",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 2,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. 4/4 mutants killed with 15 tests. Second ceiling on a deliberately harder task shape.",
+  "scores": {
+    "baselinePass": "pass",
+    "mutantKills": "pass"
+  }
+}

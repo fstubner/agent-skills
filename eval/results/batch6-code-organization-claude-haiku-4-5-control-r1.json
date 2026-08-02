@@ -1,0 +1,13 @@
+{
+  "caseId": "batch6-code-organization",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. Added a services/ layer inside the existing framework buckets — recognizes the scatter but answers within routes/controllers/models.",
+  "scores": {
+    "domainGrouping": "fail",
+    "namesChangeCost": "pass"
+  }
+}

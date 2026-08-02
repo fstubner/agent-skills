@@ -1,0 +1,14 @@
+{
+  "caseId": "batch6-mental-models",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. Found all 3 planted reasoning flaws. So did control - NULL (ceiling), not a positive.",
+  "scores": {
+    "f1RootCause": "pass",
+    "f2Rollback": "pass",
+    "f3Coupling": "pass"
+  }
+}

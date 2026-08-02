@@ -1,0 +1,13 @@
+{
+  "caseId": "batch6-code-smells",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. 4/4 planted smells, decoy explicitly spared. So did control - NULL (ceiling).",
+  "scores": {
+    "smellsFound": "pass",
+    "decoySpared": "pass"
+  }
+}

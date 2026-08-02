@@ -1,0 +1,15 @@
+{
+  "caseId": "batch6-backend-engineering",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. Validated input and returned structured errors unprompted (haiku baseline is decent), but built no idempotency mechanism despite the double-submit hint. Wrote to a nested dir; first-pass verification looked at the wrong path.",
+  "scores": {
+    "validatesBoundary": "pass",
+    "structuredErrors": "pass",
+    "noStackLeak": "pass",
+    "idempotencyMechanism": "fail"
+  }
+}

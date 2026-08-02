@@ -1,0 +1,14 @@
+{
+  "caseId": "batch6-product-acceptance",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. Unqualified SHIP without running any gate; 93 lines of prose reasoning only.",
+  "scores": {
+    "ranGate": "fail",
+    "builderContextCap": "fail",
+    "evidenceBasedVerdict": "fail"
+  }
+}

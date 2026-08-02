@@ -1,0 +1,13 @@
+{
+  "caseId": "batch6-data-modeling",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 2,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. RETEST after the hard no-DROP rule: drop correctly deferred with deprecation note (+goose Down marker) - the rule now transfers. Still BLOCKs on DM-sql-unsafe-not-null: the skill-prescribed make-required step yields bare SET NOT NULL, which the checker flags. OPEN DEFECT: skill and checker disagree; needs a deliberate decision (teach CHECK NOT VALID -> VALIDATE, or relax the checker when backfill is evidenced).",
+  "scores": {
+    "noDropInUp": "pass",
+    "checkerVerdict": "fail"
+  }
+}

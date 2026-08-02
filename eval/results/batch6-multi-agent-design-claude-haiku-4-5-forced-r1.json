@@ -1,0 +1,14 @@
+{
+  "caseId": "batch6-multi-agent-design",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. Pushed back on the 5-agent request and provided formal delegation contracts.",
+  "scores": {
+    "challengesPremise": "pass",
+    "delegationContracts": "pass",
+    "namesCoordinationCost": "pass"
+  }
+}

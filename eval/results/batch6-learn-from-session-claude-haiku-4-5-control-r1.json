@@ -1,0 +1,14 @@
+{
+  "caseId": "batch6-learn-from-session",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. Good wrap-up notes including the rule and a test suggestion, but as session notes, not routed to a durable home.",
+  "scores": {
+    "capturesRuleAsClass": "pass",
+    "durableDestination": "fail",
+    "regressionTest": "pass"
+  }
+}

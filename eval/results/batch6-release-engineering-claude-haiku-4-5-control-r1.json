@@ -1,0 +1,16 @@
+{
+  "caseId": "batch6-release-engineering",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. Kept git-pull-on-box deploy, no health check, no artifact discipline; did include a rollback section.",
+  "scores": {
+    "testsGateDeploy": "fail",
+    "rollback": "pass",
+    "healthCheck": "fail",
+    "buildOnce": "fail",
+    "offGitPull": "fail"
+  }
+}

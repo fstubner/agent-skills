@@ -1,0 +1,14 @@
+{
+  "caseId": "batch6-learn-from-session",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. Classified the recurring date-format bug per the skill rules and routed it to project CLAUDE.md/AGENTS.md as a convention plus test.",
+  "scores": {
+    "capturesRuleAsClass": "pass",
+    "durableDestination": "pass",
+    "regressionTest": "pass"
+  }
+}

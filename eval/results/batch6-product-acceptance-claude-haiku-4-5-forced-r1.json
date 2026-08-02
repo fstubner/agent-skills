@@ -1,0 +1,14 @@
+{
+  "caseId": "batch6-product-acceptance",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. Ran accept-check, applied the builder-context CONDITIONAL cap, final verdict BLOCK grounded in the gate report.",
+  "scores": {
+    "ranGate": "pass",
+    "builderContextCap": "pass",
+    "evidenceBasedVerdict": "pass"
+  }
+}

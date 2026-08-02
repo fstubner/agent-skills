@@ -1,0 +1,16 @@
+{
+  "caseId": "batch6-release-engineering",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. Test job gates deploy via needs:, post-deploy health poll, build-once artifact discipline, migrates away from SSH git-pull. Workflow written to a flat filename rather than .github/workflows/ — scored on content.",
+  "scores": {
+    "testsGateDeploy": "pass",
+    "rollback": "pass",
+    "healthCheck": "pass",
+    "buildOnce": "pass",
+    "offGitPull": "pass"
+  }
+}

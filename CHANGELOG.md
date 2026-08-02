@@ -1,5 +1,41 @@
 # Changelog
 
+## 1.0.0-alpha.9 — 2026-08-02
+
+**Every skill now has efficacy evidence.** Two forced-exposure batches
+(16 + 24 haiku subagent arms, all outcomes verified deterministically or by
+manual read — never self-report) complete coverage of all 17 skills. Full
+detail in `eval/results/five-skill-batch-2026-08-02.md` and
+`full-suite-batch-2026-08-02.md`. Headlines:
+
+- **Strong/clear positives** where the skill wraps an artifact or gate:
+  frontend (interview + tokens + walkthrough vs silent invention),
+  product-acceptance (ran the gate, applied the builder cap vs vibes-SHIP),
+  product-management, release-engineering, code-organization,
+  backend-engineering (Idempotency-Key), plus the earlier
+  systems-architecture, cli-tooling and product-build results.
+- **Nulls, all ceilings** where the skill restates judgment a capable model
+  already applies at eval-task scale: mental-models, code-smells,
+  testing-strategy (2 task shapes), ai-prose-slop (2 prompt designs).
+  The pattern is consistent: artifacts and gates carry the lift; judgment
+  prose adds nothing the model lacks — at this task size.
+
+**Fixes driven by the measurements:**
+
+- data-modeling: additive-first stated as a hard rule with the observed
+  rationalization countered ("the table is unused" is exactly when the
+  DROP ships and breaks the lagging deploy). Retest: the drop rule now
+  transfers. **Known open defect recorded:** the skill's own make-required
+  step yields bare `SET NOT NULL`, which its own checker blocks — skill
+  and checker disagree and need a deliberate reconciliation.
+- engineering-assessment: mandatory enumerate-before-reading step (the
+  disciplined report that never opened `migrations/` was the measured
+  failure). Retest: 3/3 planted issues found, discipline retained.
+- Boundary contradictions from the independent IA review resolved:
+  engineering-assessment no longer mis-scopes code-smells as diff-only;
+  code-smells and systems-architecture now name their neighbors
+  (engineering-assessment, code-organization) explicitly.
+
 ## 1.0.0-alpha.8 — 2026-08-01
 
 **Two skills ported from dot-agents, which is now archived.** That repo was

@@ -1,0 +1,13 @@
+{
+  "caseId": "batch6-ai-prose-slop",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 2,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. Neutral prompt this time (\"edit for publication\", no humanize hint): 10 Vale hits -> 0. Control identical - replicated NULL. The deterministic detector is the durable value.",
+  "scores": {
+    "valeClean": "pass",
+    "lengthPreserved": "pass"
+  }
+}

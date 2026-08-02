@@ -1,0 +1,13 @@
+{
+  "caseId": "batch6-testing-strategy",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 2,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. Redesigned task (stateful async retry, 4 mutants incl. error paths): 4/4 killed. Control identical - replicated NULL across two task shapes.",
+  "scores": {
+    "baselinePass": "pass",
+    "mutantKills": "pass"
+  }
+}

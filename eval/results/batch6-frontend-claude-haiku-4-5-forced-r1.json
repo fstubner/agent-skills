@@ -1,0 +1,17 @@
+{
+  "caseId": "batch6-frontend",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. Full artifact set including design-direction.md with Interview section and ASSUMED entries (the alpha.7 required-heading fix behaving as designed); ran check-frontend itself, verdict SHIP.",
+  "scores": {
+    "designDirection": "pass",
+    "interviewSection": "pass",
+    "assumedEntries": "pass",
+    "uxWalkthrough": "pass",
+    "tokens": "pass",
+    "ranChecker": "pass"
+  }
+}

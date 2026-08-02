@@ -5,10 +5,11 @@ description: >-
   findings, each citing a file/line or command output, plus an explicit list
   of what was NOT examined. Triggers on "audit this codebase", "engineering
   assessment", "health check", "technical evaluation", "how bad is this
-  code". Not for reviewing one diff or PR (code-smells covers the structural
-  layer of that), not a ship/no-ship gate (product-acceptance), and not a
-  substitute for running this suite's own checkers — where they apply, run
-  them and cite their reports as evidence.
+  code". Not for reviewing specific code you are already touching — that is
+  code-smells' territory at any scale, not only diffs; this skill is the
+  standing-back, whole-system audit. Not a ship/no-ship gate
+  (product-acceptance), and not a substitute for running this suite's own
+  checkers — where they apply, run them and cite their reports as evidence.
 ---
 
 # Engineering Assessment
@@ -52,7 +53,19 @@ itself — most of the areas below have no checker and rest on your reading.
 
 Evidence comes from two sources: reading code and running tools.
 
-#### 3a. Code Reading
+#### 3a. Enumerate Before Reading
+
+List every directory and file in scope **before** assessing anything, and
+keep that listing against your findings until the end. This step exists
+because a measured eval showed the failure concretely: an assessment with
+exemplary structure — rubric severities, an Unconfirmed section, a Coverage
+Gaps section — that simply never opened `migrations/` and missed a
+destructive migration a naive reviewer caught. A disciplined report about
+gaps is not a substitute for not having them. Directories that look like
+plumbing (`migrations/`, `config/`, `scripts/`, `.github/`) are in scope
+precisely because nobody reads them.
+
+#### 3b. Code Reading
 
 Systematically examine the in-scope areas. For each area, look for:
 
@@ -73,7 +86,7 @@ Systematically examine the in-scope areas. For each area, look for:
 - **Dependencies**: outdated packages, known vulnerabilities, license
   compatibility, unnecessary dependencies.
 
-#### 3b. Run Available Checks
+#### 3c. Run Available Checks
 
 When available, run targeted build, test, lint, type-check, and
 static-analysis commands. Typical commands to attempt (adapt to the stack):

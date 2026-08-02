@@ -1,0 +1,17 @@
+{
+  "caseId": "batch6-frontend",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. index.html + styles.css + script.js only; whole visual direction invented silently, no artifacts.",
+  "scores": {
+    "designDirection": "fail",
+    "interviewSection": "fail",
+    "assumedEntries": "fail",
+    "uxWalkthrough": "fail",
+    "tokens": "fail",
+    "ranChecker": "fail"
+  }
+}
