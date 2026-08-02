@@ -1,0 +1,13 @@
+{
+  "caseId": "batch5-testing-strategy",
+  "harness": "claude-code-task-tool",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Both reps 3/3 mutant kills with 16-20 exhaustive tests, unprompted. Ceiling reached without the skill.",
+  "scores": {
+    "baselinePass": "pass",
+    "mutantKills": "pass"
+  }
+}

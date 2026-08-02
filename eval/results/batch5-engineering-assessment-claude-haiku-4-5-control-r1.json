@@ -1,0 +1,16 @@
+{
+  "caseId": "batch5-engineering-assessment",
+  "harness": "claude-code-task-tool",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Control: found all 3 planted issues but 296 rambling lines, no coverage-gaps statement, no confirmed/suspected split.",
+  "scores": {
+    "foundPlantedSecret": "pass",
+    "foundPlantedMigration": "pass",
+    "foundPlantedCircular": "pass",
+    "coverageGapsSection": "fail",
+    "evidenceCitations": "pass"
+  }
+}

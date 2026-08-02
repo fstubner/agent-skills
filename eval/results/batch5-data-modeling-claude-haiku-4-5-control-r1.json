@@ -1,0 +1,12 @@
+{
+  "caseId": "batch5-data-modeling",
+  "harness": "claude-code-task-tool",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Both control reps BLOCK (DROP TABLE in up migration; c1 also used a rename-based NOT NULL path). Identical failure mode to forced - no skill lift measured.",
+  "scores": {
+    "checkerVerdict": "fail"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "caseId": "batch5-data-modeling",
+  "harness": "claude-code-task-tool",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "BOTH forced reps BLOCK under our own check-migrations: plain DROP TABLE in an up migration; f1 combined the DROP with the column add in one file. Skill text failed to transfer additive-first under the bait \"table is no longer used\". Recorded as a content defect.",
+  "scores": {
+    "checkerVerdict": "fail"
+  }
+}

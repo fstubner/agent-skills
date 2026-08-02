@@ -1,0 +1,13 @@
+{
+  "caseId": "batch5-testing-strategy",
+  "harness": "claude-code-task-tool",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Both reps: 3/3 mutants killed. But control also 3/3 - ceiling; task too small to discriminate. Null result, not a positive.",
+  "scores": {
+    "baselinePass": "pass",
+    "mutantKills": "pass"
+  }
+}
