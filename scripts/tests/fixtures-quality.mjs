@@ -148,3 +148,47 @@ import {
   expect('data-modeling: no .sql files (DM-sql-scope skip path — e.g. an ORM-schema or NoSQL project)',
     noSqlReport?.verdict === 'SHIP' && noSqlReport.checks[0]?.id === 'DM-sql-scope', JSON.stringify(noSqlReport));
 }
+
+// ---------- 4e. data-modeling: SET NOT NULL, safe vs bare ----------
+// A forced-exposure eval (2026-08-02) caught this checker contradicting
+// data-modeling/SKILL.md: the skill prescribes add-nullable -> backfill ->
+// make-required, and the checker failed the final step unconditionally, so
+// following the skill produced SQL the skill's own checker blocked.
+//
+// Resolution: bare SET NOT NULL IS dangerous (ACCESS EXCLUSIVE + full scan),
+// so the check stays — but a CHECK ... NOT VALID that has been VALIDATEd
+// makes PG12+ skip the scan, and that sequence now passes. The preamble sits
+// in EARLIER migration files on purpose, because splitting it is the whole
+// point: one long transaction is what you are avoiding. That is why the
+// checker collects validated constraints across all files before judging any.
+{
+  const MIG = path.join(root, 'data-modeling', 'scripts', 'check-migrations.js');
+  const runFx = (fx) => {
+    const r = runNode(MIG, ['--root', path.join(root, 'fixtures', fx), '--no-write']);
+    let report = null;
+    try { report = JSON.parse(r.stdout); } catch { /* asserted below */ }
+    return { r, report };
+  };
+
+  const safe = runFx('data-modeling-safe-not-null');
+  expect('data-modeling safe NOT NULL: emits parseable report', safe.report !== null,
+    (safe.r.stderr || '').slice(0, 200));
+  if (safe.report) {
+    expect('data-modeling: CHECK NOT VALID -> VALIDATE -> SET NOT NULL is SHIP',
+      safe.report.verdict === 'SHIP', JSON.stringify(safe.report.checks));
+    const c = safe.report.checks.find((x) => x.id === 'DM-sql-unsafe-not-null');
+    expect('data-modeling: DM-sql-unsafe-not-null passes for the validated sequence',
+      Boolean(c) && c.status === 'pass', c ? `${c.status} (${c.detail})` : 'check missing');
+  }
+
+  const bare = runFx('data-modeling-bare-not-null');
+  expect('data-modeling bare NOT NULL: emits parseable report', bare.report !== null,
+    (bare.r.stderr || '').slice(0, 200));
+  if (bare.report) {
+    expect('data-modeling: bare SET NOT NULL (no validated constraint) still BLOCKs',
+      bare.report.verdict === 'BLOCK', JSON.stringify(bare.report.checks));
+    const c = bare.report.checks.find((x) => x.id === 'DM-sql-unsafe-not-null');
+    expect('data-modeling: DM-sql-unsafe-not-null fails for a bare SET NOT NULL',
+      Boolean(c) && c.status === 'fail', c ? `${c.status} (${c.detail})` : 'check missing');
+  }
+}

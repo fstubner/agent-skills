@@ -183,6 +183,18 @@ function splitStatements(cleanedText) {
   return cleanedText.split(';').map((s) => s.trim()).filter(Boolean);
 }
 
+// "public"."Users" and public.users are the same table for our purposes:
+// quotes stripped, schema dropped, lowercased. Postgres folds unquoted
+// identifiers to lower case, so this is only wrong for a deliberately
+// case-sensitive quoted name — rare enough to accept, and erring toward
+// treating them as the same table only ever suppresses a warning that the
+// author already went out of their way to make safe.
+function normalizeTable(raw) {
+  const bare = String(raw).replace(/"/g, '');
+  const last = bare.includes('.') ? bare.slice(bare.lastIndexOf('.') + 1) : bare;
+  return last.toLowerCase();
+}
+
 function check(id, status, detail) {
   return { id, status, detail };
 }
@@ -233,6 +245,21 @@ function run(root, opts = {}) {
   const volatileDefaults = [];
   let skippedForSize = 0;
 
+  // Tables with a CHECK (col IS NOT NULL) constraint that has been VALIDATEd
+  // somewhere in the scanned set. Postgres 12+ recognises such a constraint
+  // and skips the full-table scan when SET NOT NULL then runs, which turns
+  // the one genuinely dangerous step of the add-nullable -> backfill ->
+  // make-required sequence into a fast metadata change.
+  //
+  // Collected across ALL files before judging any, because the safe pattern
+  // is deliberately split over separate migrations (NOT VALID, then VALIDATE,
+  // then SET NOT NULL) to avoid holding one long transaction. Flagging
+  // SET NOT NULL without checking for that preamble made this checker
+  // contradict data-modeling/SKILL.md's own prescribed sequence — caught by
+  // a forced-exposure eval, 2026-08-02.
+  const validatedNotNull = new Set();
+  const fileStatements = new Map();
+
   for (const file of scanned) {
     let raw;
     try {
@@ -245,14 +272,23 @@ function run(root, opts = {}) {
     const cleanedFull = stripSqlStringsAndComments(upPortionOnly(raw));
     const statements = splitStatements(cleanedFull);
 
+    fileStatements.set(rel, statements);
+    for (const stmt of statements) {
+      const validated = stmt.match(/\bALTER\s+TABLE\s+(?:ONLY\s+)?([\w."]+)[\s\S]*?\bVALIDATE\s+CONSTRAINT\b/i);
+      if (validated) validatedNotNull.add(normalizeTable(validated[1]));
+    }
+  }
+
+  for (const [rel, statements] of fileStatements) {
     for (const stmt of statements) {
       if (/\bDROP\s+(TABLE|COLUMN)\b/i.test(stmt)) drops.push(rel);
       if (/\bRENAME\s+(COLUMN|TO)\b/i.test(stmt)) renames.push(rel);
       if (/\bADD\s+COLUMN\b/i.test(stmt) && /\bNOT\s+NULL\b/i.test(stmt) && !/\bDEFAULT\b/i.test(stmt)) {
         unsafeNotNull.push(`${rel} (ADD COLUMN ... NOT NULL with no DEFAULT)`);
       }
-      if (/\bALTER\s+COLUMN\s+\S+\s+SET\s+NOT\s+NULL\b/i.test(stmt)) {
-        unsafeNotNull.push(`${rel} (SET NOT NULL requires a full-table scan)`);
+      const setNotNull = stmt.match(/\bALTER\s+TABLE\s+(?:ONLY\s+)?([\w."]+)[\s\S]*?\bALTER\s+COLUMN\s+\S+\s+SET\s+NOT\s+NULL\b/i);
+      if (setNotNull && !validatedNotNull.has(normalizeTable(setNotNull[1]))) {
+        unsafeNotNull.push(`${rel} (SET NOT NULL full-scans and holds ACCESS EXCLUSIVE; add a CHECK ... NOT VALID and VALIDATE it first)`);
       }
       if (/\bADD\s+COLUMN\b/i.test(stmt) && new RegExp(`\\bDEFAULT\\s+${VOLATILE_DEFAULT_FUNCS}\\s*\\(`, 'i').test(stmt)) {
         volatileDefaults.push(rel);

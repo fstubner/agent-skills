@@ -1,0 +1,14 @@
+{
+  "caseId": "batch7-data-modeling",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 3,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. CLOSED LOOP after fixing both sides of the skill<->checker contradiction. The skill now teaches CHECK ... NOT VALID -> VALIDATE -> SET NOT NULL; the checker now accepts SET NOT NULL when a validated constraint on that table exists anywhere in the migration set, and still fails a bare one. Agent produced 6 migrations: nullable add, backfill, CHECK NOT VALID, VALIDATE, SET NOT NULL, and a deprecation NOTE for legacy_sessions with the DROP deferred to a separate scheduled migration. check-migrations verdict SHIP, all 4 checks pass. First data-modeling arm to pass.",
+  "scores": {
+    "noDropInUp": "pass",
+    "safeNotNullSequence": "pass",
+    "checkerVerdict": "pass"
+  }
+}

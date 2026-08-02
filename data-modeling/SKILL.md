@@ -95,6 +95,31 @@ beats catching it at acceptance: by then it may already have run.
    migration (or a down/ file), scheduled after a deprecation window, never
    a rider on the change that made the data unnecessary. If you find
    yourself typing DROP in the same file that adds a column, stop.
+
+   The make-required step has its own trap. `ALTER COLUMN x SET NOT NULL`
+   looks like the harmless end of the sequence, but on Postgres it takes an
+   ACCESS EXCLUSIVE lock and full-scans the table to verify — on a large
+   table that is an outage, and it is the step most likely to be run
+   casually because the preceding backfill felt like the hard part. Do it in
+   three migrations instead:
+
+   ```sql
+   -- 1. instant: records the intent, verifies nothing yet
+   ALTER TABLE users ADD CONSTRAINT users_email_not_null
+     CHECK (email IS NOT NULL) NOT VALID;
+
+   -- 2. scans, but takes only SHARE UPDATE EXCLUSIVE — reads and writes continue
+   ALTER TABLE users VALIDATE CONSTRAINT users_email_not_null;
+
+   -- 3. now a fast metadata change: Postgres 12+ trusts the validated
+   --    constraint and skips the scan
+   ALTER TABLE users ALTER COLUMN email SET NOT NULL;
+   ```
+
+   `check-migrations` enforces exactly this: a bare `SET NOT NULL` fails,
+   the same statement preceded by a VALIDATEd constraint on that table
+   passes. On MySQL/SQLite, where this pattern does not exist, state in a
+   comment which tool performs the equivalent safe change and why.
 7. **Relational vs. document/schema-less is a query-pattern decision, not a
    fashion one.** Choose relational when data has real cross-entity
    invariants that benefit from joins and constraints; choose
