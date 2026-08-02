@@ -1,0 +1,16 @@
+{
+  "caseId": "batch8-testing-strategy",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. TRIGGER-MATCHED re-run; see trigger-matched-batch-2026-08-02.md for the argued match. All six planted problems found — and so were they in control. 958 words for the same findings the control made in 449. GENUINE NULL on a trigger-matched task: an existing green suite with a wall-clock flake, an implementation-detail test, seven near-duplicates and two escaped bugs. Open question is whether scale is the variable (200 tests, a parallelism-only flake) or whether the content restates model-native judgment.",
+  "scores": {
+    "foundFlaky": "pass",
+    "foundImplDetail": "pass",
+    "foundRedundancy": "pass",
+    "foundEscapedBugs": "pass",
+    "foundVacuousAssertion": "pass"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "caseId": "batch8-testing-strategy",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. TRIGGER-MATCHED re-run; see trigger-matched-batch-2026-08-02.md for the argued match. All six found unprompted, concisely. See the forced arm: this null is real, not an artefact of task design.",
+  "scores": {
+    "foundFlaky": "pass",
+    "foundImplDetail": "pass",
+    "foundRedundancy": "pass",
+    "foundEscapedBugs": "pass",
+    "foundVacuousAssertion": "pass"
+  }
+}

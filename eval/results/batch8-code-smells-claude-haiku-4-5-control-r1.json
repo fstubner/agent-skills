@@ -1,0 +1,15 @@
+{
+  "caseId": "batch8-code-smells",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. TRIGGER-MATCHED re-run; see trigger-matched-batch-2026-08-02.md for the argued match. Competent snapshot review: found the four layers and proposed consolidating them, but never opened the history and never named the pattern. Structurally could not find the defect, because the defect is not in the snapshot. 1154 words. This is the result the earlier single-file eval was incapable of producing.",
+  "scores": {
+    "namedShotgunSurgery": "fail",
+    "usedCommitHistory": "fail",
+    "identifiedLayers": "pass",
+    "proposedConsolidation": "pass"
+  }
+}

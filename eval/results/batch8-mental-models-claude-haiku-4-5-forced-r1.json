@@ -1,0 +1,15 @@
+{
+  "caseId": "batch8-mental-models",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. TRIGGER-MATCHED re-run; see trigger-matched-batch-2026-08-02.md for the argued match. Reached the dropped index, ruled out the widget on the feature-flag evidence, cited the stale pg_stat reading, AND produced the full reasoning record: candidates with discriminating evidence, explicit ruled-out, and a falsification condition. 448 words.",
+  "scores": {
+    "reachedRealCause": "pass",
+    "ruledOutObviousSuspect": "pass",
+    "enumeratedCandidates": "pass",
+    "reasoningRecord": "pass"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "caseId": "batch8-mental-models",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. TRIGGER-MATCHED re-run; see trigger-matched-batch-2026-08-02.md for the argued match. Same correct conclusion — haiku solves this unaided — but asserts it: no enumerated candidates, no discriminating-evidence step, no falsification condition. 317 words. The skill did not change the ANSWER; it changed whether the reasoning is inspectable. Narrower claim than a conclusion-quality win, and should not be reported as one.",
+  "scores": {
+    "reachedRealCause": "pass",
+    "ruledOutObviousSuspect": "pass",
+    "enumeratedCandidates": "fail",
+    "reasoningRecord": "fail"
+  }
+}
