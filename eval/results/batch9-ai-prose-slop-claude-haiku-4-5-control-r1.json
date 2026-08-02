@@ -1,0 +1,20 @@
+{
+  "caseId": "batch9-ai-prose-slop",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent. TRIGGER-MATCHED: fixture verified SHIP with ZERO deterministic hits before either arm ran, so only judgment-only patterns were in play. See prose-judgment-batch-2026-08-02.md. 1/7 removed — only the faux-insight opener, the most obviously filler-like. Produced a competent, unremarkable edit that left every other planted pattern intact.",
+  "scores": {
+    "binaryContrast": "fail",
+    "fauxInsight": "pass",
+    "colonReveal": "fail",
+    "fakeStrongVerbs": "fail",
+    "negativeListing": "fail",
+    "rhetoricalQuestion": "fail",
+    "synonymCycling": "fail",
+    "factsPreserved": "pass",
+    "lengthPreserved": "pass"
+  }
+}

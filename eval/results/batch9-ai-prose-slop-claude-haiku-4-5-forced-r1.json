@@ -1,0 +1,20 @@
+{
+  "caseId": "batch9-ai-prose-slop",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "forced",
+  "notes": "Task-tool subagent. TRIGGER-MATCHED: fixture verified SHIP with ZERO deterministic hits before either arm ran, so only judgment-only patterns were in play. See prose-judgment-batch-2026-08-02.md. 4/7 judgment-only patterns removed. Got the ones with a recognisable local shape; missed the rhetorical question, the negative listing, and the synonym cycling — the last being invisible in any single sentence, which is the property that keeps it out of a regex. First evidence the prose guidance does anything the model does not do unprompted; not a clean win.",
+  "scores": {
+    "binaryContrast": "pass",
+    "fauxInsight": "pass",
+    "colonReveal": "pass",
+    "fakeStrongVerbs": "pass",
+    "negativeListing": "fail",
+    "rhetoricalQuestion": "fail",
+    "synonymCycling": "fail",
+    "factsPreserved": "pass",
+    "lengthPreserved": "pass"
+  }
+}
