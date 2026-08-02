@@ -40,14 +40,16 @@ exactly the noise this skill exists to avoid.
 
 ## Rules
 
-1. **Capture the why, not just the what.** "The prompt-injection rule was
-   too weak" is a fact; "it was too weak because it let a model reason
-   itself into treating an urgent-sounding embedded instruction as
-   authorized, so the fix needed an explicit don't-revisit-under-pushback
-   clause, not just a stronger warning" is the version that helps someone
-   avoid the same failure differently next time. This is `mental-models`'
-   record-the-why applied at the scale of a whole session instead of one
-   decision.
+1. **Capture the why, not just the what.** Every entry has three fields:
+   what happened, the mechanism that made it happen, and the artifact that
+   changed as a result. "The prompt-injection rule was too weak" is only
+   the first. The mechanism — "it let a model reason itself into treating
+   an urgent-sounding embedded instruction as authorized" — is what lets
+   someone recognise the same failure wearing different clothes, and the
+   artifact is what makes the lesson survive this conversation. An entry
+   missing the mechanism is a note; one missing the artifact changed
+   nothing. This is `mental-models`' record-the-why at the scale of a whole
+   session instead of one decision.
 2. **A confirmation is as worth keeping as a correction.** A non-obvious
    choice that worked (keeping `frontend`/`backend-engineering` asymmetric
    on purpose, re-running acceptance checks fresh instead of trusting
@@ -59,9 +61,12 @@ exactly the noise this skill exists to avoid.
    general-purpose skill where it will misfire on the next project that
    doesn't share it.
 4. **Don't let "this might be useful someday" justify capturing everything.**
-   The discipline is the same one `code-smells` applies to speculative
-   generality: a lesson earns a durable home by having actually mattered
-   once, not by seeming like it plausibly could someday.
+   Every entry cites the moment it came from — the correction, the failing
+   run, the thing that broke. A lesson with no citable moment is a
+   prediction about the future dressed as experience, and predictions
+   accumulate until nobody reads the file. Same discipline `code-smells`
+   applies to speculative generality: it earns a durable home by having
+   actually mattered once.
 5. **When the mistake is mechanical, prefer a test over a note.** A note
    says "remember not to do this"; a regression fixture makes doing it
    impossible to ship unnoticed. Reach for `testing-strategy`'s discipline

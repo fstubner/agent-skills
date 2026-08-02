@@ -40,8 +40,12 @@ Add an OKR and see it in the list.
    "click" and "result" reads as broken, not fast.
 3. **Every error path has a next action** — retry, edit, or go back. Dead
    ends are bugs.
-4. **Refresh mid-flow must not corrupt** — reload during the primary job
-   lands somewhere sensible.
+4. **Refresh mid-flow must not corrupt.** For each step of the primary job,
+   the walkthrough states where a reload lands and what happens to
+   in-progress data — one line per step, in the form
+   `reload at step N -> <named view>, <data: preserved | cleared | refetched>`.
+   "Lands somewhere sensible" is not a specification; the next reader cannot
+   tell whether losing a half-filled form was the design or the bug.
 5. **Focus and keyboard**: the primary job is completable by keyboard;
    focus-visible is never suppressed.
 6. If a state's behavior isn't in the walkthrough, it doesn't exist —

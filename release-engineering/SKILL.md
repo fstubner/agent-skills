@@ -43,10 +43,12 @@ by eye regardless of platform.
    environment it happened to be built for isn't actually the thing that
    was tested in staging.
 4. **Every release needs a rollback path defined before it ships, not
-   discovered during an incident.** If reverting takes longer than the
-   original deploy, or requires a human to remember non-obvious manual
-   steps, the release process is incomplete regardless of how good the
-   forward path is. Blue-green (two full environments, swap traffic) and
+   discovered during an incident.** The bar is one documented command or
+   one pipeline action — if reverting needs a sequence of manual steps
+   someone must recall correctly at 3am, the release process is incomplete
+   regardless of how good the forward path is. Write the rollback into
+   `RELEASE.md` as a literal command; a description of a rollback is not a
+   rollback, and the difference only shows up when you need it. Blue-green (two full environments, swap traffic) and
    canary (shift a small percentage of traffic first) both exist
    specifically to make "stop, this is bad" fast and cheap — pick based on
    whether the risk is "this build is broken" (blue-green: swap back
@@ -55,8 +57,12 @@ by eye regardless of platform.
 5. **Decouple deploying code from releasing behavior.** A feature flag lets
    a bad change be turned off in seconds without a rollback or a redeploy —
    the code shipped, but the behavior didn't activate for anyone until the
-   flag flips. Reserve this for changes risky or reversible enough to be
-   worth the flag's own complexity; not every change needs one.
+   flag flips. Not every change needs one — the flag has its own cost, and
+   an un-removed flag becomes permanent branching nobody dares delete. So
+   the decision gets recorded rather than assumed: the PR says
+   `flagged: yes|no — <reason>`, and a flag that is on gets a removal
+   condition at the same time. Whether a flag was "worth it" is arguable
+   forever; whether the line is there is not.
 6. **Schema migrations are a deploy hazard on their own timeline, not part
    of the code deploy.** A code rollback after a forward-only schema change
    leaves old code running against a schema it doesn't understand. Sequence
@@ -69,3 +75,9 @@ by eye regardless of platform.
    have — "the deploy command exited 0" and "the service is actually
    healthy" are different claims, and conflating them is the same mistake
    `product-acceptance` refuses to make about a checker's own report.
+
+   A gate that watches and then does nothing is theatre, so the pipeline
+   states what a bad reading triggers: roll back automatically, halt the
+   rollout, or page someone — one of the three, named, before the deploy
+   runs. "We'll look at the dashboard" decides nothing at 3am, which is
+   when the reading arrives.

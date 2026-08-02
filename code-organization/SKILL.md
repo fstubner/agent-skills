@@ -61,24 +61,45 @@ means editing three or more top-level folders.
    `check-organization.js` catches the literal-import-cycle case of this
    automatically; the direction-of-dependency judgment (which side *should*
    depend on which) is still yours to make.
+
+   When it reports one, there are exactly three fixes, and "add a lazy
+   `require` inside the function" is not among them — that hides the cycle
+   from the checker while keeping it in the design:
+   - **Merge** the modules, if the cycle exists because they are genuinely
+     one concept (the usual case for a 2-cycle).
+   - **Extract** the shared piece both need into a third module that
+     neither imports back — the usual case when both modules are large and
+     only their overlap is entangled.
+   - **Invert** one direction: the lower-level module takes a callback or
+     an injected interface instead of importing the higher-level one.
 2. **Cohesion inside a module, low coupling between them.** Things that
    change together belong together; things that change independently
-   should be free to, without one edit forcing the other to be touched. If
-   two modules always change in lockstep, question whether they're really
-   one module.
-3. **Name for the domain, not the implementation.** A folder named
-   `utils/` or `helpers/` is a name that describes nothing — it's where
-   things go when no one decided what they actually are. If a file could
-   fit in five different folders, that's a sign its actual responsibility
-   hasn't been named yet, not that `utils/` is a legitimate category.
-4. **A new module earns its own file/folder by having a reason to change
-   independently of its neighbors — not by line count.** Splitting a file
-   because it's "gotten long" without an actual seam is
-   `code-smells`' speculative-generality mistake wearing a different hat.
-5. **Public surface should be smaller than total surface.** A module that
-   exposes everything (every internal helper, every intermediate type) gives
-   callers no signal about what's actually meant to be depended on. Export
-   what's meant to be used; keep the rest reachable only from inside.
+   should be free to, without one edit forcing the other to be touched.
+   "Always change in lockstep" is measurable, and `code-smells`'
+   `check-cochange.js` measures it — it reads `git log` and reports files
+   that appear together in most of the commits touching either. Run it
+   before proposing a structure; if it names a set of files spread across
+   directories, that set is the module the current layout is missing, and
+   your proposal should create it rather than guessing at seams.
+3. **Name for the domain, not the implementation.** A folder named `utils/`,
+   `helpers/`, `common/`, `shared/`, `misc/` or `lib/` describes nothing —
+   it's where things go when no one decided what they actually are. Those
+   names are the observable form of the rule; grep for them. Renaming the
+   folder is not the fix, though: the contents belong wherever their actual
+   responsibility lives, which is usually more than one place.
+4. **A new module earns its own file/folder by changing independently of
+   its neighbors — not by line count.** The evidence is the same co-change
+   data as rule 2: a file that repeatedly changes without its neighbors has
+   a seam; one that never changes alone does not, however long it is.
+   Splitting on length without that evidence is `code-smells`'
+   speculative-generality mistake wearing a different hat.
+5. **Public surface should be smaller than total surface.** Nothing that is
+   never imported from outside its own module appears in that module's
+   public entry point — checkable with an unused-exports pass (`ts-prune`,
+   `knip`, or a grep for each exported name across the rest of the tree).
+   A module that exposes every internal helper gives callers no signal
+   about what's meant to be depended on, and every one of those exports is
+   a thing you can no longer change freely.
 6. **This overlaps with `systems-architecture` and `code-smells` on
    purpose, at different scales.** `systems-architecture` decides where the
    trust boundary between services sits; this skill decides how one side of

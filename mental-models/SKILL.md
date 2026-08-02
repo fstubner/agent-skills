@@ -84,22 +84,55 @@ enough to apply it well.
 | The Pragmatist | A decision is stuck chasing a perfect answer; scope is creeping | Foundational work and hard correctness boundaries (security, data integrity) |
 | The Explorer | The approach space isn't known yet; a plan has quietly become the only plan considered | Timelines — has no built-in stop, pair it with the coverage test |
 
+## The reasoning record
+
+Everything below is unverifiable without this. "I considered alternatives"
+and "I thought about root causes" leave no trace, so neither you nor a
+reviewer can tell a lens that was applied from one that was named. Every
+application of this skill ends with a short block, in the response or in
+the artifact it produced:
+
+```
+Lens: <which one>
+Chose it because: <one line — what about the problem selected this lens>
+Candidates: <2+ possibilities considered>
+Distinguishing evidence: <what would tell them apart — and what you found>
+Ruled out: <candidate> because <observation, not intuition>
+Defensibility: <the load-bearing claim> — <what would have to be true for
+  this to be wrong, and whether you checked>
+```
+
+The block is the deliverable of the skill. Its absence means the skill was
+not applied, whatever the prose around it says. Fields may be short; none
+may be empty, and "Distinguishing evidence: n/a" is only honest when you
+genuinely cannot obtain any — say why.
+
+Fill it as you go, not afterwards. Written at the end it becomes a
+justification of a conclusion already reached, which is the failure the
+skill exists to prevent.
+
 ## Rules
 
 1. **Triage before applying.** Picking the wrong lens isn't a safe default
    — it actively hides what the right lens would have surfaced. The same
    goes for picking a mindset: the Skeptic and the Explorer pull in opposite
    directions on purpose (converge vs. diverge) and must never run at the
-   same moment, only in sequence.
+   same moment, only in sequence. Observable: the `Lens` and `Chose it
+   because` lines exist and name one lens, not several.
 2. **Every lens ends at the defensibility check.** A conclusion that can't
    survive "is this true, can I defend it" isn't done, regardless of which
-   lens produced it. For a genuinely high-stakes conclusion, self-assessment
-   has a real limit — see "Escalating it for a high-stakes conclusion" in
-   `references/meta-lenses.md` for getting an actually independent second
-   opinion instead of re-reading your own reasoning and nodding.
+   lens produced it. Observable: the `Defensibility` line states what would
+   have to be true for the conclusion to be WRONG — a restatement of the
+   conclusion doesn't satisfy it. For a genuinely high-stakes conclusion,
+   self-assessment has a real limit — see "Escalating it for a high-stakes
+   conclusion" in `references/meta-lenses.md` for getting an actually
+   independent second opinion instead of re-reading your own reasoning and
+   nodding.
 3. **A workable answer is not the same as a complete one.** That's the
    whole point of the coverage test — don't stop at the first thing that
-   fits.
+   fits. Observable: `Candidates` lists at least two, and each one not
+   chosen has a `Ruled out ... because` citing something observed. One
+   candidate means the coverage test didn't run.
 4. **This overlaps with `ai-prose-slop` on purpose.** The defensibility
    check is the same discipline ai-prose-slop applies to prose (no
    unsupported superlatives, no fabricated examples), applied here to

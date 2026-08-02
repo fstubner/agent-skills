@@ -43,9 +43,12 @@ scan/audit/flag a draft without rewriting it.
    digressions, level of polish.
 2. Run `<this-skill>/scripts/check-prose.js` for the deterministic hits, then
    apply `references/patterns.md`'s judgment-only patterns by eye.
-3. Make the **minimum effective edit**. Fix slop, not style. Leave sentences
-   that already sound like a specific person alone — don't make every
-   paragraph equally tidy.
+3. Make the **minimum effective edit**. Fix slop, not style. The diff is the
+   check: every changed line contains a flagged pattern, and sentences with
+   no hit come through byte-identical. A tidying pass over untouched
+   sentences is how a writer's voice gets sanded off one edit at a time —
+   and it looks the same in the diff as real work, which is why the rule is
+   about the diff rather than the intent.
 4. Prefer concrete facts, numbers, and named sources over abstractions and
    vague attribution. Prefer active voice and direct verbs over "serves as" /
    "plays a role in" constructions.
@@ -55,9 +58,11 @@ scan/audit/flag a draft without rewriting it.
 ## Rules
 
 1. **Voice over uniformity.** The goal is intentional writing, not writing
-   that reads as if no one wrote it. A pattern hit is a prompt to look, not an
-   automatic delete — check whether it's load-bearing for this writer's voice
-   before cutting it.
+   that reads as if no one wrote it. A pattern hit is a prompt to look, not
+   an automatic delete. When you keep one, the "What changed" section says
+   so: `kept "<quote>" — load-bearing because <reason>`. Otherwise a kept
+   hit and a missed hit are indistinguishable to the writer, and the whole
+   point is that they can tell which of their habits you decided to leave.
 2. **Evidence over verdicts.** Never claim to detect whether text is
    AI-authored. Name the specific pattern and quote it; let the reader judge.
    This applies to chat replies as much as published prose — the same habits
@@ -73,9 +78,11 @@ scan/audit/flag a draft without rewriting it.
    the user's go-ahead.
 5. **Judgment-only patterns still count.** Some real patterns (binary-contrast
    framing, colon-reveal drama, synonym cycling, robotic rhythm) are too
-   context-dependent for a regex — see `references/patterns.md`. Catch these
-   by eye during an edit or detect pass; don't wait for tooling that can't
-   exist without heavy false positives.
+   context-dependent for a regex — see `references/patterns.md`. Walk that
+   list explicitly and report each category as either quoted hits or
+   `none found`. A category you never mention is indistinguishable from one
+   you never looked for, and these are exactly the patterns that survive a
+   pass because no tool complained about them.
 
 ## How to work
 

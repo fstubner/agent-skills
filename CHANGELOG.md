@@ -1,5 +1,54 @@
 # Changelog
 
+## 1.0.0-alpha.12 — 2026-08-02
+
+**Falsification pass over all 17 skills.** Three independent audits asked
+one question of every rule: what would you OBSERVE if this were violated?
+About forty rules had no answer, and a rule nobody can check is advice
+wearing a rule's clothes — it is exactly what gets skipped at the end of a
+long build, and nothing downstream can tell that it was.
+
+Each is now tied to something a reader can look at. A sample of what
+changed, and what it changed to:
+
+- `mental-models` gains a **reasoning record** — lens, why that lens,
+  candidates, the evidence distinguishing them, what was ruled out and on
+  what observation, and what would have to be true for the conclusion to be
+  wrong. This is the skill's deliverable now. It was the one skill whose
+  rules were entirely internal ("triage before applying", "ends at the
+  defensibility check"), which made it both unenforceable and untestable;
+  the record fixes both at once.
+- `frontend`: "reload lands somewhere sensible" — the canonical
+  unfalsifiable sentence — becomes a per-step line naming the view and
+  whether data is preserved, cleared or refetched. Density becomes a named
+  category with a spacing base. Accessibility and responsive laws, all
+  observable but none with a consequence, now fail acceptance as
+  undocumented states.
+- `product-management`: "Success must be observable" was itself not
+  observable. Now: one `<user> can <verb> <object>` line, and a banned
+  list of words that name a feeling rather than an event.
+- `code-smells`: a smell ends in the catalog's fix or one line naming the
+  constraint that makes it correct here. New abstractions need two real
+  call sites at merge time.
+- `code-organization`: "if two modules always change in lockstep" is now
+  measured by `check-cochange.js` rather than eyeballed, and a reported
+  cycle has three named fixes — merge, extract, invert — with the lazy
+  `require` that hides it from the checker called out as not one of them.
+- `testing-strategy`: coverage argued by surviving mutants rather than by
+  percentage; the "unless the sequence is the contract" escape now costs a
+  comment naming the contract.
+- `release-engineering`: rollback is a literal command in `RELEASE.md`, and
+  a health gate must name what a bad reading triggers — roll back, halt, or
+  page. A gate that watches and does nothing is theatre.
+- `systems-architecture`: "an edge you can't describe in one line" becomes
+  four single-valued fields; "until volume proves otherwise" becomes a
+  recorded number or `none yet`.
+
+The pattern in nearly every case: the rule described a mental state
+(checked, considered, matched, sensible) and the fix names the artifact
+that state would leave behind. Where no artifact was possible the rule was
+cut rather than kept as decoration.
+
 ## 1.0.0-alpha.11 — 2026-08-02
 
 **code-smells can now detect shotgun surgery.** Its own trigger names the

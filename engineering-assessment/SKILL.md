@@ -28,7 +28,13 @@ Explicitly record:
 
 - **In scope**: directories, modules, layers, concerns to examine.
 - **Out of scope**: what will not be examined and why.
-- **Depth**: surface scan, targeted review, or deep audit.
+- **Depth**, one of three — they differ in what you actually do, so state
+  which and hold to it:
+  - `surface` — entry points and configuration read; automated checks run;
+    nothing else opened.
+  - `targeted` — every file in the in-scope list read in full.
+  - `deep` — targeted, plus every check in step 3c attempted and its
+    result recorded, including the ones that could not run.
 
 If the user's request is ambiguous, ask one clarifying question — no more.
 

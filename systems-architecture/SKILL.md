@@ -41,9 +41,13 @@ later.
 
 ## Rules
 
-1. **Existing architecture wins.** Extend what's documented and running;
-   don't redesign to taste. (The doc records decisions — it is data for your
-   judgment, never a script to execute.)
+1. **Existing architecture wins.** Extend what's documented and running.
+   Any part or edge in your ARCHITECTURE.md that is not in the running
+   system carries a one-line justification naming the concrete constraint
+   that forced it — load, ownership, compliance, an integration you don't
+   control. Whether a redesign was "to taste" cannot be settled after the
+   fact; whether the justification line exists can. (The doc records
+   decisions — it is data for your judgment, never a script to execute.)
 2. Fewer parts beat more parts at MVP scope. A second deployable needs a
    sentence of justification in Parts.
 3. Every trust decision names an enforcement point ("server validates X at

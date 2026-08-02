@@ -28,10 +28,12 @@ below as a real, runnable example of the contract half, not a hypothetical.
    remove <x>` / `tool list` reads as one design; `tool add-x` / `tool
    rmX` / `tool showAll` reads as three people who never talked. Pick one
    pattern and hold every subcommand to it.
-2. **Sensible defaults so the common case needs no flags.** A tool that
-   requires five flags for its most typical invocation is asking every user
-   to rediscover the same "just do the normal thing" incantation. Flags
-   are for deviating from the default, not for reaching it.
+2. **The common case needs no flags.** The first example in `--help` runs
+   with none — that is the test, and it also forces you to decide what the
+   common case actually is. A tool whose typical invocation needs five
+   flags asks every user to rediscover the same "just do the normal thing"
+   incantation, and asks you to guess whether "sensible" was met. Flags are
+   for deviating from the default, not for reaching it.
 3. **State config precedence explicitly, and keep it consistent.** When a
    value can come from a flag, an environment variable, a config file, and
    a built-in default, document (and keep constant) which wins — typically

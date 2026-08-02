@@ -63,17 +63,25 @@ beats catching it at acceptance: by then it may already have run.
    number where a bounded, named concept belongs. Push what you can into a
    `CHECK` constraint, an enum, or a `NOT NULL` rather than trusting every
    caller to enforce it in application code.
-2. **A nullable column needs a reason, not just a "maybe."** If a value is
-   "usually required, occasionally not," that's often a sign the "not"
-   cases are a genuinely different kind of row — model them as a separate,
-   optional relationship instead of making every reader check for null.
-   Reserve null for values that are truly optional for every row, not as a
-   default hedge against being wrong about what's required.
+2. **A nullable column needs a reason, not just a "maybe."** Every nullable
+   column carries a comment — in the migration or the schema — saying which
+   rows legitimately lack the value. Writing it is the check: if the answer
+   is "rows where we haven't got round to it yet", the column wanted a
+   default or a separate table, not a null. If a value is "usually
+   required, occasionally not," the "not" cases are often a genuinely
+   different kind of row — model them as a separate, optional relationship
+   instead of making every reader check for null. Reserve null for values
+   truly optional for every row, not as a default hedge against being wrong
+   about what's required.
 3. **Normalize until it hurts, then denormalize on purpose.** Start
    normalized — one fact stored in one place — so an update can't leave two
-   copies disagreeing. Denormalize only for a specific, measured need (a
-   read pattern that's actually slow), and record why, so a future reader
-   doesn't "fix" the duplication back into an update anomaly.
+   copies disagreeing. Every denormalized field carries a comment naming
+   the read pattern that forced it and, where you have one, the measurement
+   (the slow query, the p95). "It'll be faster" is available for any schema
+   at any time and so decides nothing; a named query is something a future
+   reader can re-measure and, if it's gone, undo. Without that comment
+   they can only guess whether the duplication is load-bearing, and the
+   safe guess is to leave it forever.
 4. **Enforce referential integrity at the database when you can.**
    Application-level checks get bypassed by the next script, migration, or
    direct database access that doesn't go through that code path. A real
@@ -127,7 +135,12 @@ beats catching it at acceptance: by then it may already have run.
    passes. On MySQL/SQLite, where this pattern does not exist, state in a
    comment which tool performs the equivalent safe change and why.
 7. **Relational vs. document/schema-less is a query-pattern decision, not a
-   fashion one.** Choose relational when data has real cross-entity
+   fashion one.** Choosing document/schema-less requires naming, in the
+   design notes, either the field that genuinely varies per record or the
+   cross-entity join you do not need — one concrete thing about this data.
+   No such sentence means the choice was made on familiarity, which is the
+   failure this rule exists to catch and is invisible in the finished
+   schema. Choose relational when data has real cross-entity
    invariants that benefit from joins and constraints; choose
    document/schema-less when the shape genuinely varies per record and
    forcing a fixed schema would just move the flexibility into a JSON blob

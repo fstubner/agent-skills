@@ -88,21 +88,29 @@ enough to fix it well.
 1. **A smell is a prompt to look, not a verdict.** Some of these are the
    correct tradeoff under real constraints (a data clump kept flat because a
    struct would need to cross a serialization boundary that doesn't support
-   it). Check before cutting.
+   it). Each smell you report ends one of two ways: the catalog's `Fix:`
+   applied, or one line saying which constraint makes it correct here. A
+   smell listed with neither is the finding nobody acts on — and "I checked
+   before cutting" leaves no trace, so the line is the check.
 2. **Don't refactor code you weren't asked to touch.** Flag a smell noticed
    in passing; don't rewrite it as a side effect of an unrelated change —
    that's how a small fix turns into an unreviewable diff.
-3. **Fix the smell, not the symptom's symptom.** Renaming a god object's
-   methods to sound tidier isn't a fix; splitting its responsibilities is.
-   If a full fix is out of scope right now, say what the real fix would be
-   and why it's deferred, rather than a cosmetic pass that reads as done.
+3. **Fix the smell, not the symptom's symptom.** Apply the `Fix:` bullet
+   the catalog names for that smell — renaming a god object's methods to
+   sound tidier is not the entry for God Object, splitting responsibilities
+   is. If the real fix is out of scope, name it and say why it's deferred.
+   A change that touches the smelly code without matching its catalog fix
+   is a cosmetic pass that reads as done, and reads that way to the next
+   person too.
 4. **New code doesn't get pre-emptively "de-smelled."** Primitive obsession
    and speculative generality are opposite failure modes of the same
    instinct — guessing at the abstraction a smell would eventually demand,
-   before real use revealed whether it was needed. Write the plain version
-   first; let a real second use justify the abstraction (see
-   `mental-models`' functional decomposition, which builds toward what's
-   needed, not what might be needed).
+   before real use revealed whether it was needed. The countable form: a
+   new interface, base class, generic parameter, or config flag needs two
+   real call sites at merge time. With one, inline it and wait — the second
+   call site is the evidence that the abstraction matches reality rather
+   than your prediction of it. (See `mental-models`' functional
+   decomposition, which builds toward what's needed, not what might be.)
 5. **This overlaps with `code-organization` on purpose, at a different
    scale.** A smell is local — one function, one class, one file. If the
    pattern repeats across the whole codebase (every module doing its own

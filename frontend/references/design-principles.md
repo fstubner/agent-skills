@@ -26,8 +26,11 @@ All color flows through `design-tokens.json`. Required: `text-main`,
 3. **Spacing on a grid** (4 or 8px). Alignment is the cheapest polish.
 4. **Interactive states exist**: hover, focus-visible, active, disabled.
    A button without a visible focus state is unfinished, not minimal.
-5. **Density matches the job** — data tools run tight, marketing runs airy;
-   the direction doc says which this is.
+5. **Density matches the job** — data tools run tight, marketing runs airy.
+   `design-direction.md`'s Density line names one of `tight | regular |
+   airy`, and the spacing scale follows it: tight bases on 4px, regular on
+   8px, airy on 8px with a larger step. Checkable against the tokens, unlike
+   "feels right for the content".
 
 ## Responsive
 
@@ -66,6 +69,23 @@ Beyond focus-visible (law 4 above):
 4. **Motion respects `prefers-reduced-motion`.** Any animation longer than
    a state-change transition (parallax, auto-playing carousels, scroll-tied
    effects) gets a reduced/disabled variant.
+
+### What happens when one of these is broken
+
+Every law on this page is checkable by inspection, and none of them has a
+checker script — `check-frontend` only verifies token contrast. Without a
+stated consequence they are advice, and advice is what gets skipped at the
+end of a long build.
+
+So: **each law above is a `ux-walkthrough.md` line or a BLOCK.** The
+walkthrough records, per view, the narrowest viewport it was verified at
+and that focus, keyboard, labels, non-color status, alt text and reduced
+motion were checked. `product-acceptance` treats a view with no such line
+the way it treats any undocumented state — unbuilt, not assumed-fine.
+
+That is a deliberately cheap bar. It does not prove the laws were followed;
+it makes the claim explicit and attributable rather than silent, which is
+the most a document-level gate can honestly do.
 
 ## Anti-patterns
 

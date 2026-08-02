@@ -31,4 +31,8 @@ including the constraint from `PRODUCT.md` that drove it, if one did.
 - No vanilla multi-view apps by accident — vanilla is a decision with a
   rationale, or it's a smell.
 - Don't add a state library, CSS framework, or component kit until a
-  concrete pain names it.
+  concrete pain names it. Each one added gets a line in
+  `stack-decision.md`: `<package> — added because <the specific problem it
+  solved>`. After the fact nobody can tell a pain-driven addition from a
+  reflex, so the line is the difference; a dependency with no line is the
+  reflex.

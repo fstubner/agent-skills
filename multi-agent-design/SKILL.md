@@ -32,15 +32,22 @@ Before designing an agent team, answer these questions honestly:
    single context window.
 2. **Are there distinct subtasks with different expertise requirements?** If the
    work is homogeneous, multiple agents add cost without benefit.
-3. **Is there a meaningful decomposition boundary?** If subtasks are tightly
-   coupled with constant cross-references, a single agent with a structured
-   prompt often outperforms a team.
+3. **Is there a meaningful decomposition boundary?** Count the handoffs a
+   subtask needs before it can finish. More than one round-trip back to the
+   manager for context means it was never a separable subtask, and a single
+   agent with a structured prompt will outperform the team.
 4. **Does the task require parallel execution for time or cost reasons?**
    Parallelism is a valid reason only when subtasks are genuinely independent.
 
 **Decision rule:** Default to a single agent. Escalate to multi-agent only when
 you can name the specific benefit (specialization, parallelism, context
-isolation) and that benefit outweighs coordination cost.
+isolation).
+
+Write the comparison down before building: single-agent versus the proposed
+team, in rough wall-clock and token cost, with the benefit named. Rough is
+fine — the number is not the point. Committing to one before you build is,
+because afterwards every topology can be justified, and this step exists to
+be capable of returning "one agent".
 
 ---
 
@@ -108,8 +115,11 @@ escalation:
   success criterion.
 - Every agent MUST have explicit failure criteria so the system knows when to
   stop retrying.
-- Input and output schemas should be as precise as possible. Vague handoffs
-  cause cascading failures.
+- Input and output schemas are a typed field list — name, type, required or
+  not — never a prose sentence. "Returns a summary of the findings" is not a
+  schema; the receiving agent cannot parse against it and a mismatch surfaces
+  as a downstream failure with no obvious cause. If a schema field reads as a
+  paragraph, it has not been specified yet.
 - Constraints must include at least a token budget and a wall-clock timeout.
 - Escalation behavior must be defined for both failure and ambiguity.
 

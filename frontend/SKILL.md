@@ -53,8 +53,10 @@ as explicit assumptions rather than silently becoming your taste.
    — the checker blocks on splits (`F-dual-framework`, `F-dual-icons`).
 2. Stack open? Decide per `references/stack-selection.md`, record one page in
    `stack-decision.md` (choice, two runners-up, why).
-3. Structure follows the framework's convention; don't hand-roll a bundler
-   setup when the framework ships one.
+3. Structure follows the framework's convention: no hand-written bundler
+   config (`webpack.config.*`, `rollup.config.*`, a custom `esbuild` script)
+   when the chosen framework ships a build. If one exists anyway,
+   `stack-decision.md` says what the framework's own build could not do.
 
 ## Design laws
 

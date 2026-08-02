@@ -44,7 +44,11 @@ coupling forcing every test through the whole stack).
    rename a private helper, without any actual behavior changing, is
    coupled to the wrong thing — it will resist refactoring instead of
    enabling it. Assert on inputs and outputs or observable effects, not
-   internal call sequences, unless the sequence itself is the contract.
+   internal call sequences. The exception — when the sequence IS the
+   contract, as with a transaction that must commit before the webhook
+   fires — is real but easily borrowed by any mock-heavy test, so it costs
+   a comment at the assertion naming the contract it pins. Without one, an
+   order assertion is coupling.
 2. **Pin the specific reason for failure, not just pass/fail.** A test that
    only checks "did the build succeed" can't tell you the build failed for
    the wrong reason. `run-tests.mjs`'s fixture tests assert the exact check
@@ -62,18 +66,22 @@ coupling forcing every test through the whole stack).
    proving the gate ignores it. The same principle applies to any test that
    could be satisfied by a mock recording "yes, this happened" instead of
    checking that it actually did.
-4. **Cover the skip and edge paths, not just the happy path.** A path
-   that's never been exercised (an early-return, a "not applicable" branch)
-   is a path with zero real coverage no matter what the rest of the suite
-   looks like. This suite found and fixed exactly this gap more than once —
-   `frontend-no-ui` and `backend-no-server` didn't exist until someone
+4. **Cover the skip and edge paths, not just the happy path.** Enumerate
+   them rather than trusting a total: every early return, every `else` or
+   default branch, and every "not applicable" path in the code you touched
+   gets a test that reaches it. A branch-coverage report scoped to the diff
+   makes this countable; reading the diff and listing its branches works
+   too. A line-coverage percentage does not — it can be high with every
+   early return unexercised. This suite found exactly that gap more than
+   once: `frontend-no-ui` and `backend-no-server` didn't exist until someone
    noticed every prior fixture assumed the feature was present.
-5. **A regression test should exist because something broke, not because
-   coverage looked thin.** A percentage doesn't distinguish between
-   thoroughly tested logic and one assertion that happens to execute every
-   line. Prefer mutation-style thinking: if this specific line were wrong,
-   would any test actually fail? If not, that's the gap to close, not an
-   arbitrary line the coverage tool flagged.
+5. **Close the gap a mutant would find, not the one a percentage reports.**
+   For each line you believe is load-bearing, change it — flip the
+   comparison, drop the negation, return early — and confirm a test goes
+   red. A surviving mutant is a real gap with a name; an uncovered line the
+   tool flagged may be trivial. This is exactly how the checkers here are
+   verified, and it is the only coverage argument in this suite that has
+   ever caught anything.
 6. **A flaky test is worse than no test.** It trains people to re-run
    instead of investigate, and once that habit forms, a real failure gets
    the same shrug. Fix the flakiness or delete the test — a red build
