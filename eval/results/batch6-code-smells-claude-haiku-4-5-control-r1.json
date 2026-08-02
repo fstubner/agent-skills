@@ -5,7 +5,7 @@
   "runIndex": 1,
   "date": "2026-08-02",
   "condition": "unprimed",
-  "notes": "Task-tool subagent. 4/4 planted smells found and the unusual-but-fine decoy explicitly left alone, unprompted.",
+  "notes": "SUPERSEDED - see CORRECTION-2026-08-02-underpowered-nulls.md. This run tested a task that did NOT match the skill's stated trigger, so the null result measures nothing about the skill. Original note follows. || Task-tool subagent. 4/4 planted smells found and the unusual-but-fine decoy explicitly left alone, unprompted.",
   "scores": {
     "smellsFound": "pass",
     "decoySpared": "pass"

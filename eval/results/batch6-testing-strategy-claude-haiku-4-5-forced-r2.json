@@ -5,7 +5,7 @@
   "runIndex": 2,
   "date": "2026-08-02",
   "condition": "forced",
-  "notes": "Task-tool subagent. Redesigned task (stateful async retry, 4 mutants incl. error paths): 4/4 killed. Control identical - replicated NULL across two task shapes.",
+  "notes": "SUPERSEDED - see CORRECTION-2026-08-02-underpowered-nulls.md. This run tested a task that did NOT match the skill's stated trigger, so the null result measures nothing about the skill. Original note follows. || Task-tool subagent. Redesigned task (stateful async retry, 4 mutants incl. error paths): 4/4 killed. Control identical - replicated NULL across two task shapes.",
   "scores": {
     "baselinePass": "pass",
     "mutantKills": "pass"

@@ -5,7 +5,7 @@
   "runIndex": 1,
   "date": "2026-08-02",
   "condition": "forced",
-  "notes": "Task-tool subagent. Found all 3 planted reasoning flaws. So did control - NULL (ceiling), not a positive.",
+  "notes": "SUPERSEDED - see CORRECTION-2026-08-02-underpowered-nulls.md. This run tested a task that did NOT match the skill's stated trigger, so the null result measures nothing about the skill. Original note follows. || Task-tool subagent. Found all 3 planted reasoning flaws. So did control - NULL (ceiling), not a positive.",
   "scores": {
     "f1RootCause": "pass",
     "f2Rollback": "pass",

@@ -5,7 +5,7 @@
   "runIndex": 2,
   "date": "2026-08-02",
   "condition": "forced",
-  "notes": "Task-tool subagent. Neutral prompt this time (\"edit for publication\", no humanize hint): 10 Vale hits -> 0. Control identical - replicated NULL. The deterministic detector is the durable value.",
+  "notes": "SUPERSEDED - see CORRECTION-2026-08-02-underpowered-nulls.md. This run tested a task that did NOT match the skill's stated trigger, so the null result measures nothing about the skill. Original note follows. || Task-tool subagent. Neutral prompt this time (\"edit for publication\", no humanize hint): 10 Vale hits -> 0. Control identical - replicated NULL. The deterministic detector is the durable value.",
   "scores": {
     "valeClean": "pass",
     "lengthPreserved": "pass"

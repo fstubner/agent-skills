@@ -82,6 +82,24 @@ Isolates "does following this guidance help" from "will the model choose
 to follow it" — the two are independent, and only forcing the content in
 front of the model removes the second variable.
 
+**Precondition — the task must match the skill's own stated trigger, and
+the result file must argue that match before the run is scored.**
+
+This step exists because four skills were reported as showing zero lift on
+2026-08-02 when the tasks had tested the opposite of what those skills
+claim to be for: `code-smells` was given one small file when its trigger
+is the multi-file, temporal shotgun-surgery pattern; `mental-models` was
+given a plan with three obvious flaws when its trigger is a cause that is
+*not* obvious. A null on a task the skill disclaims measures nothing about
+the skill, and nothing in this protocol caught it because the protocol
+never asked. See `results/CORRECTION-2026-08-02-underpowered-nulls.md`.
+
+Concretely, before running: quote the skill's `description` trigger
+clause, state which part of it the task exercises, and name the part it
+does not. If the task only exercises behaviour the model plainly does
+unprompted, the task is too easy and a null will be uninterpretable —
+build a harder one first.
+
 1. Fresh session, empty project, skills installed from a tag. Explicitly
    instruct the agent to read one specific skill's real `SKILL.md` (by
    absolute path) and follow it as a hard requirement, including running

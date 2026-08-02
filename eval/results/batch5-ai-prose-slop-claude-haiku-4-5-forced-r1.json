@@ -5,7 +5,7 @@
   "runIndex": 1,
   "date": "2026-08-02",
   "condition": "forced",
-  "notes": "Task-tool subagent (not a top-level session). Both reps: 0 Vale hits (draft had 10). But control identical - the control prompt itself stated the goal (\"read like a competent human wrote it\"). Objective leak; null result. Redesign with a neutral prompt.",
+  "notes": "SUPERSEDED - see CORRECTION-2026-08-02-underpowered-nulls.md. This run tested a task that did NOT match the skill's stated trigger, so the null result measures nothing about the skill. Original note follows. || Task-tool subagent (not a top-level session). Both reps: 0 Vale hits (draft had 10). But control identical - the control prompt itself stated the goal (\"read like a competent human wrote it\"). Objective leak; null result. Redesign with a neutral prompt.",
   "scores": {
     "valeClean": "pass",
     "lengthPreserved": "pass"

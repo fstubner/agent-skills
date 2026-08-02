@@ -5,7 +5,7 @@
   "runIndex": 1,
   "date": "2026-08-02",
   "condition": "unprimed",
-  "notes": "Task-tool subagent. Found all 3 planted flaws including the queue-removal coupling (\"reckless\"). Plan critique at this scale is within haiku unprompted competence.",
+  "notes": "SUPERSEDED - see CORRECTION-2026-08-02-underpowered-nulls.md. This run tested a task that did NOT match the skill's stated trigger, so the null result measures nothing about the skill. Original note follows. || Task-tool subagent. Found all 3 planted flaws including the queue-removal coupling (\"reckless\"). Plan critique at this scale is within haiku unprompted competence.",
   "scores": {
     "f1RootCause": "pass",
     "f2Rollback": "pass",

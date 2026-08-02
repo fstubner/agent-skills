@@ -5,7 +5,7 @@
   "runIndex": 1,
   "date": "2026-08-02",
   "condition": "unprimed",
-  "notes": "Task-tool subagent (not a top-level session). Both reps 3/3 mutant kills with 16-20 exhaustive tests, unprompted. Ceiling reached without the skill.",
+  "notes": "SUPERSEDED - see CORRECTION-2026-08-02-underpowered-nulls.md. This run tested a task that did NOT match the skill's stated trigger, so the null result measures nothing about the skill. Original note follows. || Task-tool subagent (not a top-level session). Both reps 3/3 mutant kills with 16-20 exhaustive tests, unprompted. Ceiling reached without the skill.",
   "scores": {
     "baselinePass": "pass",
     "mutantKills": "pass"

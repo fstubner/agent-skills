@@ -5,7 +5,7 @@
   "runIndex": 2,
   "date": "2026-08-02",
   "condition": "unprimed",
-  "notes": "Task-tool subagent. Neutral prompt: 10 -> 0 hits, length preserved. Capable models de-slop when asked to edit for publication at all.",
+  "notes": "SUPERSEDED - see CORRECTION-2026-08-02-underpowered-nulls.md. This run tested a task that did NOT match the skill's stated trigger, so the null result measures nothing about the skill. Original note follows. || Task-tool subagent. Neutral prompt: 10 -> 0 hits, length preserved. Capable models de-slop when asked to edit for publication at all.",
   "scores": {
     "valeClean": "pass",
     "lengthPreserved": "pass"
