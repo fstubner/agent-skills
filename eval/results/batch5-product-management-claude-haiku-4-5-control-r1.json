@@ -1,11 +1,11 @@
 {
   "caseId": "batch5-product-management",
-  "harness": "claude-code-task-tool",
+  "harness": "claude-code",
   "model": "claude-haiku-4-5-20251001",
   "runIndex": 1,
   "date": "2026-08-02",
   "condition": "unprimed",
-  "notes": "Control: six ad-hoc docs (product-brief, feature-scope, user-stories, success-metrics, open-questions, reply), no PRODUCT.md, 0/5 required headings. Asked reasonable questions but produced nothing the acceptance gate can consume.",
+  "notes": "Task-tool subagent (not a top-level session). Control: six ad-hoc docs (product-brief, feature-scope, user-stories, success-metrics, open-questions, reply), no PRODUCT.md, 0/5 required headings. Asked reasonable questions but produced nothing the acceptance gate can consume.",
   "scores": {
     "productMdExists": "fail",
     "requiredHeadings": "fail"

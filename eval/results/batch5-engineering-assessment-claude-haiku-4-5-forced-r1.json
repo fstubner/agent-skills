@@ -1,11 +1,11 @@
 {
   "caseId": "batch5-engineering-assessment",
-  "harness": "claude-code-task-tool",
+  "harness": "claude-code",
   "model": "claude-haiku-4-5-20251001",
   "runIndex": 1,
   "date": "2026-08-02",
   "condition": "forced",
-  "notes": "Forced arm: rubric severities, Unconfirmed section, Coverage Gaps section, 39 path citations in 126 lines - but missed the planted destructive migration entirely (never examined migrations/). Discipline up, coverage down.",
+  "notes": "Task-tool subagent (not a top-level session). Forced arm: rubric severities, Unconfirmed section, Coverage Gaps section, 39 path citations in 126 lines - but missed the planted destructive migration entirely (never examined migrations/). Discipline up, coverage down.",
   "scores": {
     "foundPlantedSecret": "pass",
     "foundPlantedMigration": "fail",

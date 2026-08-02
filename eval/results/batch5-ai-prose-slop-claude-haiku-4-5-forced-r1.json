@@ -1,11 +1,11 @@
 {
   "caseId": "batch5-ai-prose-slop",
-  "harness": "claude-code-task-tool",
+  "harness": "claude-code",
   "model": "claude-haiku-4-5-20251001",
   "runIndex": 1,
   "date": "2026-08-02",
   "condition": "forced",
-  "notes": "Both reps: 0 Vale hits (draft had 10). But control identical - the control prompt itself stated the goal (\"read like a competent human wrote it\"). Objective leak; null result. Redesign with a neutral prompt.",
+  "notes": "Task-tool subagent (not a top-level session). Both reps: 0 Vale hits (draft had 10). But control identical - the control prompt itself stated the goal (\"read like a competent human wrote it\"). Objective leak; null result. Redesign with a neutral prompt.",
   "scores": {
     "valeClean": "pass",
     "lengthPreserved": "pass"

@@ -1,11 +1,11 @@
 {
   "caseId": "batch5-ai-prose-slop",
-  "harness": "claude-code-task-tool",
+  "harness": "claude-code",
   "model": "claude-haiku-4-5-20251001",
   "runIndex": 1,
   "date": "2026-08-02",
   "condition": "unprimed",
-  "notes": "Both reps 0 Vale hits. See forced-arm note: objective leaked via the prompt; discriminates nothing.",
+  "notes": "Task-tool subagent (not a top-level session). Both reps 0 Vale hits. See forced-arm note: objective leaked via the prompt; discriminates nothing.",
   "scores": {
     "valeClean": "pass",
     "lengthPreserved": "pass"

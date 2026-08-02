@@ -1,11 +1,11 @@
 {
   "caseId": "batch5-product-management",
-  "harness": "claude-code-task-tool",
+  "harness": "claude-code",
   "model": "claude-haiku-4-5-20251001",
   "runIndex": 1,
   "date": "2026-08-02",
   "condition": "forced",
-  "notes": "Forced arm: exact PRODUCT.md with all 5 required headings (Purpose/Users/Success/MVP/Constraints) plus reply.md. Verified by heading regex, same logic as accept-check.",
+  "notes": "Task-tool subagent (not a top-level session). Forced arm: exact PRODUCT.md with all 5 required headings (Purpose/Users/Success/MVP/Constraints) plus reply.md. Verified by heading regex, same logic as accept-check.",
   "scores": {
     "productMdExists": "pass",
     "requiredHeadings": "pass"
