@@ -1,5 +1,42 @@
 # Changelog
 
+## 1.0.0-alpha.10 — 2026-08-02
+
+Audit release. Two independent adversarial audits (skill content, repo
+infrastructure) plus a hand-run probe suite against the checkers.
+
+**Security: the pre-commit hook could be switched off by the commit it was
+inspecting.** It ran gitleaks with neither `--config` nor
+`--ignore-gitleaks-allow`, so a committed `.gitleaks.toml` containing
+`[allowlist] paths = [".*"]`, or an inline `gitleaks:allow` comment,
+disabled the scan. `check-backend.js` has always passed both flags for
+exactly this reason, and `core/gitleaks-defaults.toml`'s own header
+records the verification — a live `ghp_` token going from fail to pass by
+adding that file. The hook never applied the mitigation. It matters
+locally for the same reason it matters in the gate: the thing being
+scanned is also the thing that can write the config, and an agent that
+wants its commit to pass can write both. Both bypasses now have tests,
+each confirmed failing against the unhardened hook first.
+
+**`ux-walkthrough.md` was the only acceptance-gated document with no
+content requirement** — existence was the whole check, so a file
+containing `TODO` passed the gate. Now requires the three sections its own
+template defines.
+
+**`plugin.json`'s skills array was cross-checked against nothing.** A skill
+added to `registry.json` and the filesystem but not appended there would
+pass every test and then simply not load for an installed user. The lists
+matched by inspection, not construction. Now pinned in both directions,
+plus `marketplace.json` — which nothing validated at all — is checked to
+resolve to real, name-matching manifests.
+
+**Known, unfixed, recorded:** every shipped Vale rule is
+`suggestion`/`warning`, and `check-prose.js` maps only `error` to a
+failing check, so `ai-prose-slop` can never BLOCK. Combined with its
+measured-zero efficacy that is two independent signals the skill does less
+than its framing implies; deciding what it should be is a design call, not
+a patch.
+
 ## 1.0.0-alpha.9 — 2026-08-02
 
 **Every skill now has efficacy evidence.** Two forced-exposure batches

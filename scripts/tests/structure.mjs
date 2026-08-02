@@ -251,3 +251,51 @@ import {
       new RegExp(harness, 'i').test(install), 'harness in registry but absent from docs');
   }
 }
+
+// ---------- 2e. plugin.json <-> registry <-> marketplace ----------
+// The manifest's skills array was cross-checked against nothing. A skill added
+// to registry.json AND the filesystem but never appended here would pass every
+// fixture, schema and registry test — and then simply not load for anyone who
+// installed the plugin. The two lists matched by inspection, not by
+// construction. Same drift class as VERSION vs plugin.json version, which is
+// already pinned; this side was not. Found by audit, 2026-08-02.
+{
+  const manifest = JSON.parse(read(path.join(root, '.claude-plugin', 'plugin.json')));
+  const declared = (manifest.skills || []).map((s) => s.replace(/^\.\//, ''));
+  const registered = registry.skills.map((s) => s.id);
+
+  const missingFromManifest = registered.filter((id) => !declared.includes(id));
+  expect('plugin.json declares every registered skill',
+    missingFromManifest.length === 0,
+    `registered but not shipped: ${missingFromManifest.join(', ')}`);
+
+  const extraInManifest = declared.filter((id) => !registered.includes(id));
+  expect('plugin.json declares no skill absent from the registry',
+    extraInManifest.length === 0,
+    `shipped but not registered: ${extraInManifest.join(', ')}`);
+
+  // Each declared path must actually contain a skill, or the plugin ships a
+  // dangling entry that fails at load time rather than here.
+  for (const id of declared) {
+    expect(`plugin.json path ./${id} contains a SKILL.md`,
+      fs.existsSync(path.join(root, id, 'SKILL.md')), 'declared but missing on disk');
+  }
+
+  // The marketplace is the other file a user's install actually reads, and
+  // nothing validated it at all.
+  const market = JSON.parse(read(path.join(root, '.claude-plugin', 'marketplace.json')));
+  expect('marketplace.json lists at least one plugin',
+    Array.isArray(market.plugins) && market.plugins.length > 0, JSON.stringify(market.plugins));
+  for (const p of market.plugins || []) {
+    const src = String(p.source || '').replace(/^\.\//, '') || '.';
+    const manifestPath = src === '.' || src === ''
+      ? path.join(root, '.claude-plugin', 'plugin.json')
+      : path.join(root, src, '.claude-plugin', 'plugin.json');
+    expect(`marketplace entry "${p.name}" resolves to a plugin.json`,
+      fs.existsSync(manifestPath), manifestPath);
+    if (!fs.existsSync(manifestPath)) continue;
+    const m = JSON.parse(read(manifestPath));
+    expect(`marketplace entry "${p.name}" matches that manifest's own name`,
+      m.name === p.name, `marketplace says ${p.name}, manifest says ${m.name}`);
+  }
+}

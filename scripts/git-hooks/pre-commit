@@ -36,6 +36,15 @@ const os = require('os');
 const path = require('path');
 
 const extraConfig = path.join(__dirname, '..', '..', 'core', 'gitleaks-extra.toml');
+// Gitleaks' own default ruleset, passed EXPLICITLY. Without --config, gitleaks
+// auto-discovers <target>/.gitleaks.toml, so a committed
+// `[allowlist] paths = [".*"]` switches the scan off — see that file's header,
+// where a live ghp_ token went from fail to pass purely by adding it.
+// check-backend.js has always passed this; this hook did not, so the bypass
+// worked locally. It matters here for the same reason it matters there: the
+// thing being scanned is also the thing that can write the config, and an
+// agent that wants its commit to pass can write both.
+const defaultConfig = path.join(__dirname, '..', '..', 'core', 'gitleaks-defaults.toml');
 const LEAKS_FOUND_CODE = 2; // distinct from gitleaks' own fixed exit 1 for an internal error
 
 function installHint() {
@@ -56,6 +65,10 @@ function runGitleaksPass(configArgs, tmpDir, label) {
   const reportPath = path.join(tmpDir, `report-${label}.json`);
   const result = spawnSync('gitleaks', [
     'protect', '--staged', '--no-banner', '--redact',
+    // An inline `gitleaks:allow` comment is written by whoever is committing.
+    // Honouring it here would let the commit under inspection wave itself
+    // through — same reasoning as check-backend.js, which also passes this.
+    '--ignore-gitleaks-allow',
     '--report-format', 'json', '--report-path', reportPath,
     '--exit-code', String(LEAKS_FOUND_CODE),
     ...configArgs,
@@ -85,7 +98,7 @@ if (isGitleaksOnPath()) {
   let passes;
   try {
     passes = [
-      runGitleaksPass([], tmpDir, 'default'),
+      runGitleaksPass(['--config', defaultConfig], tmpDir, 'default'),
       runGitleaksPass(['--config', extraConfig], tmpDir, 'extra'),
     ];
   } finally {

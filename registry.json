@@ -146,7 +146,13 @@
         "product-acceptance"
       ],
       "acceptanceGated": true,
-      "requiredWhen": "frontend_present"
+      "requiredWhen": "frontend_present",
+      "_requiredHeadingsNote": "Was the only acceptance-gated document with no content requirement, so existence was the whole check and a file containing 'TODO' passed the gate (probe, 2026-08-02). These match frontend/assets/ux-walkthrough.md's own sections, so a filled-in template satisfies them by construction.",
+      "requiredHeadings": [
+        "Primary job",
+        "Steps",
+        "States"
+      ]
     },
     {
       "id": "stack-decision",
