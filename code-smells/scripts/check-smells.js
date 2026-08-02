@@ -57,6 +57,10 @@ const MAX_FILES = 20000;
 const MAX_FILE_BYTES = 2 * 1024 * 1024;
 const LARGE_FILE_LINES = 400;
 const DEEP_NESTING_DEPTH = 5;
+// Longest line that still reads as human-authored source. Minified bundles run
+// to tens of thousands of characters on one line; hand-written code with a
+// 1000-char line is already the problem this check reports.
+const MINIFIED_LINE_CHARS = 1000;
 
 function parseArgs(argv) {
   const out = { root: '.', strict: false, reportPath: null, files: null };
@@ -252,6 +256,19 @@ function run(root, opts = {}) {
     // so a file exactly at the limit was reported as over it.
     const lineCount = text.replace(/\n$/, '').split('\n').length;
     if (lineCount > LARGE_FILE_LINES) largeFiles.push(`${rel} (${lineCount} lines)`);
+
+    // Line count alone is defeated by minified or generated code: a 200KB
+    // bundle on one line reads as a 1-line file and passes cleanly. Longest
+    // line is the cheap discriminator — human-authored source essentially
+    // never has a 1000-character line, and minified output essentially always
+    // does. Reported under the same check id because the reader's problem is
+    // identical (a file nobody can read), with the reason spelled out.
+    let longest = 0;
+    for (const line of text.split('\n')) if (line.length > longest) longest = line.length;
+    if (longest > MINIFIED_LINE_CHARS) {
+      largeFiles.push(`${rel} (${longest}-char line — minified or generated; review the source it was built from, not this)`);
+      continue; // brace-depth on minified code measures nothing
+    }
 
     if (!BRACE_LANGUAGE_EXTENSIONS.has(path.extname(file))) continue;
     braceFilesScanned++;

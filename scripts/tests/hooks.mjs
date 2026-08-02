@@ -275,3 +275,38 @@ import {
   expect('output-style: states a hard default length', /##\s*The default/i.test(styleText), 'missing');
   expect('output-style: forbids closing summaries', /closing summary/i.test(styleText), 'missing');
 }
+
+// ---------- 8f. The hook exempts fixtures/ from CONTENT checks only ----------
+// fixtures/ is deliberately defective — that is its whole function. Running
+// the scoped checkers over it blocked the commit that ADDED a block-fixture,
+// i.e. the hook forbidding the test data that proves the hook works. Caught
+// the first time a minified-bundle fixture was staged.
+//
+// The exemption must stay narrow in two directions, both pinned here: it
+// covers fixtures/ and nothing else, and it does NOT extend to gitleaks,
+// because a real credential in fixtures/ is a real leak regardless of what
+// the directory is for.
+{
+  const src = read(path.join(root, 'scripts', 'git-hooks', 'pre-commit'));
+
+  const exemptBlock = src.match(/const CONTENT_EXEMPT = \[([^\]]*)\]/);
+  expect('pre-commit: CONTENT_EXEMPT is declared', Boolean(exemptBlock), 'not found');
+  if (exemptBlock) {
+    const patterns = exemptBlock[1].match(/\/\^?[^/]+\//g) || [];
+    expect('pre-commit: exemption covers fixtures/ and nothing else',
+      patterns.length === 1 && /fixtures/.test(patterns[0]), JSON.stringify(patterns));
+  }
+
+  // The scoped checkers must receive the FILTERED list. Passing the unfiltered
+  // one would make the exemption dead code that reads as protection.
+  expect('pre-commit: scoped checkers are given the filtered file list',
+    /'--files',\s*checkable\.join/.test(src) && !/'--files',\s*staged\.join/.test(src),
+    'checkers still receive the unfiltered staged list');
+
+  // gitleaks must run before, and independently of, the exemption.
+  const gitleaksAt = src.indexOf('gitleaks protect');
+  const exemptAt = src.indexOf('CONTENT_EXEMPT');
+  expect('pre-commit: gitleaks scans staged files regardless of the exemption',
+    gitleaksAt !== -1 && exemptAt !== -1 && gitleaksAt < exemptAt,
+    `gitleaks@${gitleaksAt} exempt@${exemptAt}`);
+}

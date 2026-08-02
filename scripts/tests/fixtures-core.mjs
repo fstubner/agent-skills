@@ -217,3 +217,40 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
       Boolean(c) && /interview/i.test(c.detail || ''), c && c.detail);
   }
 }
+
+// ---------- 4f. Vacuous-section and minified-file false passes ----------
+// Found by adversarial probe, 2026-08-02. Both were SHIPs that should have
+// been BLOCKs — the worst class of defect this suite can have, since a gate
+// that passes the document it exists to reject is worse than no gate.
+//
+// The section one is a repeat of v0.4's vacuous gate one level down: that fix
+// stopped a bare mention in PROSE satisfying a heading requirement, but a
+// heading with NOTHING UNDER IT still passed. An agent that knows the gate
+// checks headings produces exactly that document.
+assertFixture('arch-block-empty-sections (headings present, all bodies empty)',
+  'arch-block-empty-sections', ARCH, [], 'BLOCK',
+  [['P-section-parts', 'fail'], ['P-section-boundaries', 'fail'], ['P-section-trust', 'fail']]);
+
+// A copied-but-unfilled template must not pass on the strength of its own
+// guidance comments — assets/ templates are all written with HTML comments.
+assertFixture('arch-block-template-comments (bodies contain only template comments)',
+  'arch-block-template-comments', ARCH, [], 'BLOCK',
+  [['P-section-parts', 'fail'], ['P-section-boundaries', 'fail'], ['P-section-trust', 'fail']]);
+
+// Minified/generated code defeats a line-count size check: 160KB on one line
+// reads as a 1-line file. Longest-line is the discriminator.
+{
+  const SMELLS = path.join(root, 'code-smells', 'scripts', 'check-smells.js');
+  const r = runNode(SMELLS, ['--root', path.join(root, 'fixtures', 'code-smells-minified'), '--no-write']);
+  let report = null;
+  try { report = JSON.parse(r.stdout); } catch { /* asserted below */ }
+  expect('code-smells minified: emits parseable report', report !== null, (r.stderr || '').slice(0, 200));
+  if (report) {
+    expect('code-smells: a single-line minified bundle BLOCKs (line count alone misses it)',
+      report.verdict === 'BLOCK', JSON.stringify(report.checks));
+    const c = report.checks.find((x) => x.id === 'S-large-file');
+    expect('code-smells: S-large-file names the long line, not a line count',
+      Boolean(c) && c.status === 'fail' && /char line/.test(c.detail || ''),
+      c ? c.detail : 'check missing');
+  }
+}

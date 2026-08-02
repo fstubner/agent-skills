@@ -145,12 +145,25 @@ function stagedFiles() {
   return r.stdout.split('\n').map((s) => s.trim()).filter(Boolean);
 }
 
+// Paths whose CONTENT is deliberately defective and must stay that way.
+// fixtures/ exists so a checker can be proven to catch a circular import, a
+// 400-line file, a destructive migration. Running the same checkers over it
+// blocks the commit that adds a block-fixture — the hook forbidding the test
+// data that proves the hook works. Caught the first time a minified-bundle
+// fixture was added, 2026-08-02.
+//
+// Only these checkers skip it. gitleaks above still scans fixtures/, because
+// a REAL credential committed there is a real leak no matter what the
+// directory is for.
+const CONTENT_EXEMPT = [/^fixtures\//];
+
 const staged = stagedFiles();
 if (staged === null) {
   console.error('pre-commit: could not list staged files; structural checks skipped.');
   process.exit(0);
 }
-if (staged.length === 0) process.exit(0);
+const checkable = staged.filter((f) => !CONTENT_EXEMPT.some((re) => re.test(f)));
+if (checkable.length === 0) process.exit(0);
 
 let blocked = false;
 for (const { skill, script } of SCOPED_CHECKERS) {
@@ -160,7 +173,7 @@ for (const { skill, script } of SCOPED_CHECKERS) {
     console.error(`pre-commit: ${skill} checker not found at ${script} — skipped.`);
     continue;
   }
-  const r = spawnSync(process.execPath, [script, '--root', repoRoot, '--files', staged.join(',')], { encoding: 'utf8' });
+  const r = spawnSync(process.execPath, [script, '--root', repoRoot, '--files', checkable.join(',')], { encoding: 'utf8' });
   if (r.error) {
     console.error(`pre-commit: ${skill} could not run (${r.error.message}) — skipped.`);
     continue;

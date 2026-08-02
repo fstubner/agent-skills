@@ -26,6 +26,35 @@ function hasHeading(text, name) {
   return new RegExp(`^#{1,6}\\s+${escaped}\\b`, 'im').test(text);
 }
 
+// hasHeading's stricter sibling: the heading must exist AND have something
+// under it. v0.4's gate was vacuous because a bare mention in prose satisfied
+// it; that was fixed, but the SAME vacuity survived one level down — an
+// ARCHITECTURE.md consisting of "## Parts\n\n## Boundaries\n\n## Trust\n"
+// passed every section check and shipped, which is exactly the document the
+// gate exists to reject. Found by adversarial probe, 2026-08-02.
+//
+// HTML comments do NOT count as content, deliberately: every template in
+// assets/ uses them for guidance, so a copied-but-unfilled template must
+// fail rather than pass on its own instructions.
+function sectionHasContent(text, name) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const start = new RegExp(`^(#{1,6})\\s+${escaped}\\b[^\\n]*$`, 'im').exec(text);
+  if (!start) return false;
+
+  const level = start[1].length;
+  const after = text.slice(start.index + start[0].length);
+  // Stop at the next heading of the same or higher rank; deeper subheadings
+  // are part of this section and their content counts toward it.
+  const next = new RegExp(`^#{1,${level}}\\s+\\S`, 'm').exec(after);
+  const body = next ? after.slice(0, next.index) : after;
+
+  const meaningful = body
+    .replace(/<!--[\s\S]*?-->/g, '')   // template guidance comments
+    .replace(/^[\s>*+-]+$/gm, '')      // empty list markers / blockquote gutters
+    .trim();
+  return meaningful.length >= 3;
+}
+
 function check(id, status, detail = '') {
   if (!['pass', 'fail', 'not_evaluated'].includes(status)) {
     throw new Error(`invalid check status "${status}" for ${id}`);
@@ -101,4 +130,4 @@ function runCli({ skill, reportFile, runFn, argv, parseArgs, evidenceDir }) {
   }
 }
 
-module.exports = { readText, hasHeading, check, computeVerdict, makeReport, writeReport, resolveReportPath, runCli };
+module.exports = { readText, hasHeading, sectionHasContent, check, computeVerdict, makeReport, writeReport, resolveReportPath, runCli };

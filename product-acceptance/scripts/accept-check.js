@@ -26,7 +26,7 @@ const { corePaths } = require('./resolve-core.cjs');
 const core = corePaths();
 const { parseArgs } = require(path.join(core.lib, 'args.cjs'));
 const { classify, conditionMet } = require(path.join(core.lib, 'classify.cjs'));
-const { readText, hasHeading, check, runCli, computeVerdict } = require(path.join(core.lib, 'report.cjs'));
+const { readText, sectionHasContent, check, runCli, computeVerdict } = require(path.join(core.lib, 'report.cjs'));
 const { validate } = require(path.join(core.lib, 'schema.cjs'));
 const registry = require(core.registry);
 
@@ -39,7 +39,7 @@ function checkDocumentArtifact(root, artifact, checks) {
     return;
   }
   const text = readText(p);
-  const missing = (artifact.requiredHeadings || []).filter((h) => !hasHeading(text, h));
+  const missing = (artifact.requiredHeadings || []).filter((h) => !sectionHasContent(text, h));
   checks.push(missing.length > 0
     ? check(`A-${artifact.id}`, 'fail', `${artifact.file} missing heading(s): ${missing.join(', ')}`)
     : check(`A-${artifact.id}`, 'pass', artifact.file));

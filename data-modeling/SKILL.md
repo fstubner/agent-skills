@@ -40,6 +40,12 @@ excludes down/rollback migrations (which are expected to contain drops by
 design) by filename convention or an inline `-- +goose Down` /
 `-- migrate:down` marker.
 
+Known limit, verified by probe: SQL built at runtime inside a `DO $$ ... $$`
+block is invisible to it, because the statement text lives in a string
+literal and string contents are blanked before matching (that blanking is
+what stops a DROP mentioned in a comment from failing the check). Dynamic
+DDL therefore needs your own review — the checker will not see it.
+
 Add `--files a.sql,b.sql` to restrict what may *fail* to specific paths
 (relative to `--root`, or absolute). That's what makes this usable as a
 pre-commit hook — see `scripts/git-hooks/pre-commit`, which runs it on

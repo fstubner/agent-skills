@@ -11,7 +11,7 @@ const { corePaths } = require('./resolve-core.cjs');
 const core = corePaths();
 const { parseArgs } = require(path.join(core.lib, 'args.cjs'));
 const { classify, ARCH_DOC_CANDIDATES } = require(path.join(core.lib, 'classify.cjs'));
-const { readText, hasHeading, check, runCli } = require(path.join(core.lib, 'report.cjs'));
+const { readText, sectionHasContent, check, runCli } = require(path.join(core.lib, 'report.cjs'));
 const registry = require(core.registry);
 
 const HEADINGS = ['Parts', 'Boundaries', 'Trust'];
@@ -39,9 +39,9 @@ function run(root) {
   checks.push(check('P-arch-doc', 'pass', cls.archDocPath));
   const text = readText(path.join(root, cls.archDocPath));
   for (const h of HEADINGS) {
-    checks.push(hasHeading(text, h)
+    checks.push(sectionHasContent(text, h)
       ? check(`P-section-${h.toLowerCase()}`, 'pass')
-      : check(`P-section-${h.toLowerCase()}`, 'fail', `${cls.archDocPath} has no "## ${h}" heading`));
+      : check(`P-section-${h.toLowerCase()}`, 'fail', `${cls.archDocPath}: "## ${h}" is missing or empty — a heading with nothing under it documents nothing`));
   }
   return checks;
 }
