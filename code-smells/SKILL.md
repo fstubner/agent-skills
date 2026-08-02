@@ -34,10 +34,32 @@ and **nesting depth** (brace-delimited languages only: JS/TS and the
 C-family, not Python/Ruby's indentation-based nesting or Go's braces,
 whose raw-string escaping this checker's string-stripping doesn't handle
 safely — see the script's own header for the exact reasoning). Run it:
-`node <this-skill>/scripts/check-smells.js --root <dir>`. Everything else
-in the table below — duplication, feature envy, primitive obsession, and
-the rest — needs a human reader; a codebase in any language gets the same
-judgment-only treatment for those.
+`node <this-skill>/scripts/check-smells.js --root <dir>`.
+
+**Shotgun surgery is the third checkable one, and it is the reason this
+skill has a second script.** It is the one smell in the catalog that
+cannot be seen in a file at all — it lives in the change history, in the
+fact that adding one field keeps forcing edits across four layers. Reading
+a snapshot can never surface it, which is why the trigger in this skill's
+own description names it and why a review that only opens the files in
+front of it will always miss it:
+
+```bash
+node <this-skill>/scripts/check-cochange.js --root <dir> [--commits 200]
+```
+
+It reads `git log`, and for each file asks which others are almost always
+in the same commit. Three or more such partners spread across three or
+more top-level directories is the signal: a concept with no home. Files
+inside ONE directory moving together is cohesion, not a smell, and is not
+reported. Too little history reports `not_evaluated` rather than a
+confident pass — under twenty source commits, a pattern is not
+distinguishable from coincidence. It is a review-time check, not a
+pre-commit one: it describes the history, not the commit you are making.
+
+Everything else in the table below — duplication, feature envy, primitive
+obsession, and the rest — needs a human reader; a codebase in any language
+gets the same judgment-only treatment for those.
 
 ## Catalog
 

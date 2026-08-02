@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.0.0-alpha.11 — 2026-08-02
+
+**code-smells can now detect shotgun surgery.** Its own trigger names the
+pattern — "a change touches the same handful of files every time" — and
+`references/catalog.md` defined it and gave a fix, but nothing in the skill
+could FIND it. Every other check here is single-file and static; this one
+cannot be, because the smell does not exist in a snapshot. It lives in the
+change history.
+
+`scripts/check-cochange.js` reads `git log` and, for each file, asks which
+others are almost always in the same commit. Three or more such partners
+spread across three or more top-level directories is the signal: a concept
+with no home. Files inside one directory moving together is cohesion and is
+not reported. Under twenty source commits it returns `not_evaluated` rather
+than a confident pass.
+
+This is also part of why the earlier null eval result for this skill was
+uninterpretable: the test was limited to single-file smells, measuring a
+capability the skill did not have. Review-time only, deliberately not in the
+pre-commit hook — it describes history, not the commit being made.
+
+**Registry invariant corrected.** "Exactly one report per producer" assumed
+one checker per skill. The hazard it actually guards is a checker picking
+the wrong report file, so the rule is now one report per SCRIPT — plus, when
+a skill has several checkers, each must select its report by id rather than
+by producer, verified against the script source.
+
 ## 1.0.0-alpha.10 — 2026-08-02
 
 Audit release. Two independent adversarial audits (skill content, repo

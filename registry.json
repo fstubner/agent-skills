@@ -218,6 +218,18 @@
       "requiredWhen": "server_present"
     },
     {
+      "id": "cochange-report",
+      "kind": "report",
+      "file": ".agent-evidence/cochange-report.json",
+      "producer": "code-smells",
+      "producerScript": "code-smells/scripts/check-cochange.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Shotgun surgery read from git history. Not acceptance-gated: it describes how a codebase has CHANGED, which a fresh project legitimately has no data for, and a ship decision should not hinge on commit-history volume. Review-time signal, recorded so it is not undocumented."
+    },
+    {
       "id": "acceptance-report",
       "kind": "report",
       "file": ".agent-evidence/acceptance-report.json",

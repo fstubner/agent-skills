@@ -192,3 +192,87 @@ import {
       Boolean(c) && c.status === 'fail', c ? `${c.status} (${c.detail})` : 'check missing');
   }
 }
+
+// ---------- 4g. code-smells: shotgun surgery from git history ----------
+// The one smell in the catalog that cannot be seen in a file. code-smells'
+// own trigger names it — "a change touches the same handful of files every
+// time" — but the skill had no way to FIND it until this checker existed:
+// the catalog defined the pattern and gave a fix, and nothing detected it.
+// That gap is also why an eval limited to single-file smells concluded the
+// skill added nothing (see eval/results/CORRECTION-2026-08-02-*).
+//
+// Real git repos are built here rather than mocking `git log`, because the
+// parsing of its output is half of what can break.
+{
+  const CHECKER = path.join(root, 'code-smells', 'scripts', 'check-cochange.js');
+  const mkRepo = (name) => {
+    const d = fs.mkdtempSync(path.join(tmpBase, name + '-'));
+    const git = (...a) => spawnSync('git', ['-C', d, ...a], { encoding: 'utf8' });
+    git('init', '-q');
+    git('config', 'user.email', 't@e.com');
+    git('config', 'user.name', 'T');
+    return { d, git };
+  };
+  const touch = (d, rel, s) => {
+    const p = path.join(d, rel);
+    fs.mkdirSync(path.dirname(p), { recursive: true });
+    fs.appendFileSync(p, s);
+  };
+  const verdictOf = (d) => {
+    const r = runNode(CHECKER, ['--root', d, '--no-write']);
+    try { return JSON.parse(r.stdout).checks[0]; } catch { return { status: 'ERR', detail: (r.stderr || '').slice(0, 160) }; }
+  };
+
+  // A. Adding a field forces edits in four layers, every time. The smell.
+  {
+    const { d, git } = mkRepo('sg-dirty');
+    const layers = ['api/routes.js', 'db/schema.js', 'ui/form.js', 'validation/rules.js'];
+    for (const f of layers) touch(d, f, '// init\n');
+    git('add', '-A'); git('commit', '-qm', 'init');
+    for (let i = 0; i < 24; i++) {
+      for (const f of layers) touch(d, f, `// field ${i}\n`);
+      git('add', '-A'); git('commit', '-qm', `field ${i}`);
+    }
+    const c = verdictOf(d);
+    expect('code-smells: shotgun surgery across 4 layers is detected', c.status === 'fail', `${c.status}: ${c.detail}`);
+    expect('code-smells: the finding names the co-changing files',
+      c.status === 'fail' && /api\/routes\.js/.test(c.detail) && /db\/schema\.js/.test(c.detail), c.detail);
+  }
+
+  // B. Same volume of history, but each change stays inside one module.
+  // Cohesion must NOT be reported — this is what good structure looks like,
+  // and flagging it would make the check unusable on a healthy codebase.
+  {
+    const { d, git } = mkRepo('sg-clean');
+    const mods = { orders: ['orders/index.js', 'orders/model.js', 'orders/api.js'],
+                   billing: ['billing/index.js', 'billing/model.js', 'billing/api.js'] };
+    for (const fs_ of Object.values(mods)) for (const f of fs_) touch(d, f, '// init\n');
+    git('add', '-A'); git('commit', '-qm', 'init');
+    for (const [name, files] of Object.entries(mods)) {
+      for (let i = 0; i < 15; i++) {
+        for (const f of files) touch(d, f, `// ${name} ${i}\n`);
+        git('add', '-A'); git('commit', '-qm', `${name} ${i}`);
+      }
+    }
+    const c = verdictOf(d);
+    expect('code-smells: cohesive single-module changes are NOT flagged', c.status === 'pass', `${c.status}: ${c.detail}`);
+  }
+
+  // C. Too little history must be not_evaluated, never a confident pass —
+  // the suite's standing rule that absent evidence never reads as success.
+  {
+    const { d, git } = mkRepo('sg-thin');
+    touch(d, 'a.js', 'x'); touch(d, 'b.js', 'x');
+    git('add', '-A'); git('commit', '-qm', 'one');
+    const c = verdictOf(d);
+    expect('code-smells: thin history is not_evaluated, not a pass', c.status === 'not_evaluated', `${c.status}: ${c.detail}`);
+  }
+
+  // D. Not a git repo at all: same rule.
+  {
+    const d = fs.mkdtempSync(path.join(tmpBase, 'sg-nogit-'));
+    fs.writeFileSync(path.join(d, 'a.js'), 'x');
+    const c = verdictOf(d);
+    expect('code-smells: a non-git directory is not_evaluated', c.status === 'not_evaluated', `${c.status}: ${c.detail}`);
+  }
+}

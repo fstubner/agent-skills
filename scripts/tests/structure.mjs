@@ -75,9 +75,25 @@ import {
     // so exactly one such entry must exist per report-producing skill —
     // ambiguity here would make a checker pick the wrong reportFile silently.
     if (a.kind === 'report' && a.producerScript && a.file) {
-      const matches = registry.artifacts.filter((x) => x.producer === a.producer && x.kind === 'report');
-      expect(`registry: exactly one report artifact for producer "${a.producer}"`, matches.length === 1,
-        `found ${matches.length}`);
+      // One SCRIPT, one report file. This is the invariant that actually
+      // matters: a checker must be able to find its own report unambiguously.
+      const sameScript = registry.artifacts.filter((x) => x.producerScript === a.producerScript && x.kind === 'report');
+      expect(`registry: exactly one report artifact for script "${a.producerScript}"`,
+        sameScript.length === 1, `found ${sameScript.length}`);
+
+      // A skill MAY have several checkers (code-smells has a static one and a
+      // git-history one), but then a by-producer lookup is ambiguous and would
+      // silently pick whichever came first. Any script belonging to such a
+      // skill must therefore select its report BY ID.
+      const sameProducer = registry.artifacts.filter((x) => x.producer === a.producer && x.kind === 'report');
+      if (sameProducer.length > 1) {
+        const src = read(path.join(root, ...a.producerScript.split('/')));
+        const byProducer = /\.producer\s*===\s*(skill|'|")/.test(src);
+        const byId = new RegExp(`\\.id\\s*===\\s*['"]${a.id}['"]`).test(src);
+        expect(`registry: "${a.producerScript}" selects its report by id (producer "${a.producer}" has ${sameProducer.length})`,
+          byId && !byProducer,
+          byProducer ? 'uses the ambiguous by-producer lookup' : 'no by-id lookup found');
+      }
     }
   }
 }
