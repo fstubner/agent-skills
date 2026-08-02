@@ -1,0 +1,24 @@
+version: 2
+
+# Only the repo root and CI are watched for updates.
+#
+# fixtures/ is deliberately absent. Those manifests are test data, not
+# dependencies: they exist so the project classifier can recognise a
+# Django/Express/Prisma project from its manifest shape. Nothing is installed
+# from them and no fixture code runs. Listing them here produced a steady
+# stream of version-bump PRs against versions that are pinned old ON PURPOSE
+# — several are the very thing a fixture asserts a checker detects.
+#
+# Note this file governs update PRs only. Security ALERTS come from the
+# dependency graph and ignore it; the fixture alerts are dismissed
+# separately as not-used, which is what that dismissal reason is for.
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
