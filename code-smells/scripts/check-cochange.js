@@ -11,7 +11,7 @@
 // The signal: a change to one concept keeps forcing edits across files that
 // have no structural reason to move together. Concretely, for each file A we
 // ask which other files B are almost always in the same commit. If A has
-// several such partners spread across different top-level directories, the
+// several such partners spread across different directories, the
 // concept those files jointly implement has no home — that is the smell, and
 // the fix (per the catalog) is to give it one.
 //
@@ -44,7 +44,7 @@ const MIN_COMMITS = 20;
 const MIN_SUPPORT = 4;
 // Of the commits touching A, this share must also touch B.
 const CONFIDENCE = 0.7;
-// How many always-together partners, in how many distinct top-level dirs,
+// How many always-together partners, in how many distinct directories,
 // before it reads as a missing seam rather than normal cohesion. Files inside
 // ONE directory changing together is what a well-organised module looks like;
 // the smell is the spread.
@@ -80,8 +80,18 @@ function gitCommits(root, limit) {
   return commits;
 }
 
-function topDir(file) {
-  const i = file.indexOf('/');
+// The file's containing directory, not its first path segment.
+//
+// First-segment was the original approach and it made the check nearly inert
+// on the most common layout there is: in a src/-rooted project, src/api,
+// src/db and src/ui all reduce to "src", the spread test sees one directory,
+// and textbook shotgun surgery across four layers reports clean. Found when a
+// deliberately-smelly eval fixture came back SHIP.
+//
+// Containing directory is the right granularity anyway — the question is
+// whether a change crosses module boundaries, and modules are directories.
+function dirOf(file) {
+  const i = file.lastIndexOf('/');
   return i === -1 ? '.' : file.slice(0, i);
 }
 
@@ -112,7 +122,7 @@ function findShotgunSurgery(commits) {
       if (ratio >= CONFIDENCE) partners.push({ file: other, ratio });
     }
     if (partners.length < MIN_PARTNERS) continue;
-    const dirs = new Set([topDir(file), ...partners.map((p) => topDir(p.file))]);
+    const dirs = new Set([dirOf(file), ...partners.map((p) => dirOf(p.file))]);
     if (dirs.size < MIN_DIRS) continue; // cohesive module, not a smell
     partners.sort((a, b) => b.ratio - a.ratio);
     findings.push({ file, commits: n, partners: partners.slice(0, 6), dirs: dirs.size });

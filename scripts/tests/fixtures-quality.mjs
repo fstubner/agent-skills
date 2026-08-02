@@ -276,3 +276,37 @@ import {
     expect('code-smells: a non-git directory is not_evaluated', c.status === 'not_evaluated', `${c.status}: ${c.detail}`);
   }
 }
+
+// E. src/-rooted layout — the common real-world shape, and a false negative
+// until 2026-08-02. The spread test originally compared FIRST path segments,
+// so src/api, src/db and src/ui all reduced to "src", one directory, and
+// textbook four-layer shotgun surgery reported clean. Nearly every JS project
+// is src/-rooted, so the check was close to inert where it mattered most.
+// Caught by an eval fixture built to exhibit the smell coming back SHIP.
+{
+  const CHECKER = path.join(root, 'code-smells', 'scripts', 'check-cochange.js');
+  const d = fs.mkdtempSync(path.join(tmpBase, 'sg-srcroot-'));
+  const git = (...a) => spawnSync('git', ['-C', d, ...a], { encoding: 'utf8' });
+  git('init', '-q');
+  git('config', 'user.email', 't@e.com');
+  git('config', 'user.name', 'T');
+
+  const layers = ['src/api/routes.js', 'src/db/queries.js', 'src/ui/forms.js', 'src/types/index.js'];
+  for (const f of layers) {
+    fs.mkdirSync(path.join(d, path.dirname(f)), { recursive: true });
+    fs.writeFileSync(path.join(d, f), '// module\n');
+  }
+  git('add', '-A'); git('commit', '-qm', 'init');
+  for (let i = 0; i < 22; i++) {
+    for (const f of layers) fs.appendFileSync(path.join(d, f), `// field ${i}\n`);
+    git('add', '-A'); git('commit', '-qm', `add field ${i}`);
+  }
+
+  const r = runNode(CHECKER, ['--root', d, '--no-write']);
+  let c = null;
+  try { c = JSON.parse(r.stdout).checks[0]; } catch { /* asserted below */ }
+  expect('code-smells: shotgun surgery is detected under a src/-rooted layout',
+    Boolean(c) && c.status === 'fail', c ? `${c.status}: ${c.detail}` : (r.stderr || '').slice(0, 160));
+  expect('code-smells: the spread is counted per directory, not per first segment',
+    Boolean(c) && /across 4 directories/.test(c.detail || ''), c && c.detail);
+}
