@@ -43,9 +43,17 @@ assertFixture('multipart-python-frontend (multiPart detected with zero package.j
 // backend-ship contains the literal string "task-management" in a client
 // file — regression test for the v0.4 secret scanner that BLOCKed on it.
 assertFixture('backend-ship (task-management is not a secret)', 'backend-ship', BACKEND, [], 'SHIP',
-  [['B-client-secrets', 'pass'], ['B-dual-orm', 'pass']]);
+  [['B-client-secrets', 'pass'], ['B-dual-orm', 'pass'], ['B-session-cookie', 'pass']]);
 assertFixture('backend-block-dual-orm', 'backend-block-dual-orm', BACKEND, [], 'BLOCK',
   [['B-dual-orm', 'fail']]);
+// B-session-cookie. backend-block-insecure-cookie is backend-ship with one
+// difference — a session cookie set HttpOnly-only — so the BLOCK can come
+// from nothing else. backend-ship's pass is discriminating in the other
+// direction: it sets a fully-flagged session cookie AND an unflagged
+// `theme` cookie, so an implementation that flagged every cookie would
+// fail there.
+assertFixture('backend-block-insecure-cookie (session cookie without Secure/SameSite)',
+  'backend-block-insecure-cookie', BACKEND, [], 'BLOCK', [['B-session-cookie', 'fail']]);
 // backend-block-secret injects its secret at test time rather than committing
 // one — see the note in that fixture's public/app.js. This is NOT a test of
 // gitleaks' detection (third-party, assumed working); it pins OUR integration:

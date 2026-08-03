@@ -56,3 +56,11 @@ offered because none is monitored.
   showing a key *format* is not reported as a leak. Reports file paths and
   rule ids only — matched values never appear in reports or output (gitleaks
   redacts them at the source).
+- **Session-cookie flags** (`B-session-cookie`) block a session-like cookie
+  set without `HttpOnly`, `Secure` and `SameSite`, including a flag written
+  but set to `false` or `SameSite=None`. Scoped to session-like names on
+  purpose: preference cookies and the double-submit CSRF cookie are
+  legitimately script-readable, and a check that flagged them would be
+  noise. Authorization depth and rate limiting are reviewed by hand — see
+  `backend-engineering/references/server-laws.md`. This suite does not
+  claim to verify them.

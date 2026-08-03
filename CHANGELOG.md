@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.0.0-alpha.15 — 2026-08-03
+
+**Security depth in backend-engineering** — the gap the IA audit ranked
+first. The skill had five laws and none of them mentioned authorization,
+sessions, or rate limiting: a server could satisfy every law with an
+`ARCHITECTURE.md`, one ORM, no leaked keys, and an endpoint that hands any
+caller any user's rows.
+
+Two laws added. Law 6 is authorization checked where the data is owned —
+not at the router, where a second entry point added later bypasses it —
+plus session-cookie handling. Law 7 is limits on anything an anonymous
+caller can reach.
+
+One measurable projection ships with them: `B-session-cookie` blocks a
+session-like cookie set without `HttpOnly`, `Secure` and `SameSite`, in
+Express, Fastify, Koa, Next, Hono, Flask/Django and Go syntax. A flag
+written but set to `false`, or `SameSite=None`, counts as missing rather
+than present. The check is scoped to session-like cookie names on purpose:
+preference cookies and the double-submit CSRF token are legitimately
+script-readable, and a check that flagged them would be noise nobody reads.
+
+The rest is judgment, and says so. `references/server-laws.md` gains the
+review procedure for both laws — ownership in the query, enumeration on the
+read path, session invalidation on logout and role change, per-IP versus
+per-account limits, where the limit actually lives. Six red-flag rows cover
+the rationalizations that get past them ("it's behind auth middleware",
+"the id is a UUID", "Secure breaks localhost").
+
 ## 1.0.0-alpha.14 — 2026-08-02
 
 **Routing is injected now, not discovered.** A `SessionStart` hook prints

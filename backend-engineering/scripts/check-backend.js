@@ -118,6 +118,92 @@ function scanForClientSecrets(root) {
     : check('B-client-secrets', 'pass', 'no secrets in client-reachable paths (gitleaks)');
 }
 
+// ---------- Session-cookie flags (law 6's measurable projection) ----------
+// Authorization and rate limiting are judgment-verified — no static check
+// can tell a correct ownership check from a plausible-looking one. Cookie
+// flags are the exception: whether a session cookie was set HttpOnly,
+// Secure and SameSite is a syntactic fact, and getting it wrong is the
+// single most common way a session is handed to an attacker.
+//
+// Scoped to SESSION-LIKE cookie names on purpose. Requiring HttpOnly on
+// every cookie would false-flag the deliberately JS-readable ones (theme,
+// locale, and the CSRF token in the double-submit pattern, which must be
+// readable by design) — so the check would be noise and get ignored.
+const SOURCE_EXT = /\.(c|m)?[jt]sx?$|\.(py|go|rb|php|java|rs)$/;
+const COOKIE_SET_PATTERNS = [
+  /\bres\.cookie\s*\(/g,                    // Express
+  /\breply\.setCookie\s*\(/g,               // Fastify
+  /\bcookies\s*\(\s*\)\s*\.set\s*\(/g,      // Next.js app router
+  /\bcookies\.set\s*\(/g,                   // Koa (ctx.cookies.set), Sveltekit
+  /\bsetCookie\s*\(/g,                      // Hono, generic helpers
+  /\bset_cookie\s*\(/g,                     // Flask, Django, Starlette
+  /\bSetCookie\s*\(/g,                      // Go (http.SetCookie)
+];
+const SESSION_NAME = /sess|sid|auth|token|jwt|login|refresh|access|identity|remember/i;
+const NOT_SESSION_NAME = /csrf|xsrf/i;
+const REQUIRED_COOKIE_FLAGS = [
+  { name: 'httpOnly', present: /http_?only/i, disabled: /http_?only\s*[:=]\s*(false|0|nil)\b/i },
+  { name: 'secure', present: /\bsecure\b/i, disabled: /\bsecure\s*[:=]\s*(false|0|nil)\b/i },
+  // SameSite=None is not a weaker setting of the flag, it is the absence of
+  // the protection the flag exists for — cross-site requests carry the
+  // cookie again.
+  { name: 'sameSite', present: /same_?site/i, disabled: /same_?site\s*[:=]\s*(false|["']?none["']?|http\.SameSiteNoneMode)\b/i },
+];
+const MAX_CALL_CHARS = 1200;
+
+// The call's own argument text, from the opening paren to its match. Naive
+// depth counting: a paren inside a string literal would end the slice early,
+// which can only SHORTEN what we look at — the failure direction is a missed
+// flag, i.e. a false BLOCK the author fixes by writing the flag, never a
+// silent pass.
+function callSlice(text, openParenIndex) {
+  let depth = 0;
+  const end = Math.min(text.length, openParenIndex + MAX_CALL_CHARS);
+  for (let i = openParenIndex; i < end; i++) {
+    if (text[i] === '(') depth++;
+    else if (text[i] === ')' && --depth === 0) return text.slice(openParenIndex, i + 1);
+  }
+  return text.slice(openParenIndex, end);
+}
+
+function cookieFindingsIn(relPath, text) {
+  const findings = [];
+  for (const pattern of COOKIE_SET_PATTERNS) {
+    pattern.lastIndex = 0;
+    let m;
+    while ((m = pattern.exec(text)) !== null) {
+      const slice = callSlice(text, m.index + m[0].length - 1);
+      const nameMatch = /['"`]([^'"`]{1,64})['"`]/.exec(slice);
+      const name = nameMatch ? nameMatch[1] : '';
+      if (!SESSION_NAME.test(name) || NOT_SESSION_NAME.test(name)) continue;
+      const missing = REQUIRED_COOKIE_FLAGS
+        .filter((f) => !f.present.test(slice) || f.disabled.test(slice))
+        .map((f) => f.name);
+      if (missing.length === 0) continue;
+      const line = text.slice(0, m.index).split('\n').length;
+      findings.push(`${relPath}:${line} cookie "${name}" missing ${missing.join(', ')}`);
+    }
+  }
+  return findings;
+}
+
+function scanSessionCookies(cls) {
+  const findings = [];
+  let scanned = 0;
+  for (let i = 0; i < cls.rel.length; i++) {
+    if (!SOURCE_EXT.test(cls.rel[i])) continue;
+    const text = cls.readFileSafe(i);
+    if (text === null) continue;
+    scanned++;
+    findings.push(...cookieFindingsIn(cls.rel[i], text));
+  }
+  if (findings.length > 0) {
+    return check('B-session-cookie', 'fail', findings.join('; '));
+  }
+  return check('B-session-cookie', 'pass',
+    `no session cookie set without HttpOnly/Secure/SameSite (${scanned} source file(s) scanned)`);
+}
+
 function run(root) {
   const cls = classify(root, { evidenceDir: registry.evidenceDir });
   const checks = [];
@@ -165,6 +251,7 @@ function run(root) {
   // separate, narrower concern: it can only affect server/frontend/
   // multiPart detection (and so B-arch-doc indirectly), not this check.
   checks.push(scanForClientSecrets(root));
+  checks.push(scanSessionCookies(cls));
   if (cls.truncated) {
     checks.push(check('B-scan-completeness', 'not_evaluated',
       'project-type file walk hit the safety cap; server/frontend/multi-part detection may be incomplete'));
@@ -173,7 +260,7 @@ function run(root) {
   return checks;
 }
 
-module.exports = { run, isServerOnlyPath };
+module.exports = { run, isServerOnlyPath, cookieFindingsIn };
 
 if (require.main === module) {
   const artifact = registry.artifacts.find((a) => a.producer === 'backend-engineering' && a.kind === 'report');

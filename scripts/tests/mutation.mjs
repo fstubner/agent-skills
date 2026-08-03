@@ -127,3 +127,37 @@ import {
   expect('gen-contract --check FAILS when the contract drifts from registry.json',
     r.status !== 0, `exit ${r.status}`);
 }
+
+// ---------- 13c. B-session-cookie: name scoping and flag detection ----------
+// The fixture pair proves the check fires end to end on Express. These pin
+// the parts a fixture can't reach cheaply: the other ecosystems' call
+// syntax, the deliberate exclusion of CSRF and preference cookies, and
+// flags written but set to false.
+{
+  const { cookieFindingsIn } = await import(
+    pathToFileUrl(path.join(root, 'backend-engineering', 'scripts', 'check-backend.js')));
+  const flagged = (src) => cookieFindingsIn('f.x', src).length > 0;
+
+  expect('cookie: Flask set_cookie without flags is flagged',
+    flagged('resp.set_cookie("session", v)'));
+  expect('cookie: Flask set_cookie with all three passes',
+    !flagged('resp.set_cookie("session", v, httponly=True, secure=True, samesite="Lax")'));
+  expect('cookie: Go http.SetCookie with all three passes',
+    !flagged('http.SetCookie(w, &http.Cookie{Name: "sid", HttpOnly: true, Secure: true, SameSite: http.SameSiteLaxMode})'));
+  expect('cookie: Go http.SetCookie missing Secure is flagged',
+    flagged('http.SetCookie(w, &http.Cookie{Name: "sid", HttpOnly: true, SameSite: http.SameSiteLaxMode})'));
+  expect('cookie: Next.js cookies().set is recognized',
+    flagged('cookies().set("auth_token", t, { httpOnly: true })'));
+
+  // Scoping — these must NOT be flagged, or the check becomes noise.
+  expect('cookie: a preference cookie is not session material',
+    !flagged("res.cookie('theme', 'dark', { maxAge: 1000 })"));
+  expect('cookie: a double-submit CSRF cookie must stay JS-readable',
+    !flagged("res.cookie('csrf_token', t, { secure: true, sameSite: 'lax' })"));
+
+  // A flag named but disabled is worse than absent, not better.
+  expect('cookie: httpOnly:false counts as missing',
+    flagged("res.cookie('sid', s, { httpOnly: false, secure: true, sameSite: 'lax' })"));
+  expect('cookie: sameSite:"none" counts as missing',
+    flagged("res.cookie('sid', s, { httpOnly: true, secure: true, sameSite: 'none' })"));
+}

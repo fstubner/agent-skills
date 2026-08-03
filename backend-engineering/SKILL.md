@@ -42,10 +42,17 @@ this file.) Acceptance re-runs this checker; a backend BLOCK blocks the ship.
 5. **Mutations are safe to retry** where the client can double-submit:
    idempotency keys or natural idempotency, stated in a comment at the
    handler.
+6. **Authorization is checked where the data is owned**, not only at the
+   router, and session cookies are `HttpOnly`, `Secure`, `SameSite`.
+   `B-session-cookie` blocks on a session-like cookie set without all
+   three; the ownership half is judgment.
+7. **Anything an anonymous caller can reach has a limit** — rate limit,
+   quota, or body-size cap — on login, password reset, signup, search, and
+   any endpoint that sends mail or spends money.
 
-Laws 4-5 are judgment-verified (see `references/server-laws.md`) — the
-checker measures 1-3's measurable projections only, and never claims to
-verify what it can't.
+Laws 4-7 are judgment-verified (see `references/server-laws.md`) apart from
+the cookie-flag projection of law 6 — the checker measures 1-3 and that one,
+and never claims to verify what it can't.
 
 ## Red flags — the laws under deadline
 
@@ -63,6 +70,12 @@ entirely.
 | "It's a public/test key, so it doesn't matter" | Then it costs nothing to move it server-side. Deciding a key is harmless is the step that's wrong often enough to be worth not taking. |
 | "Returning the raw error is more useful for debugging" | To the attacker too. Structured code out, stack trace to the log. |
 | "Double-submit is unlikely here" | Unlikely is a load statement, not a correctness one. Say why it's safe in a comment at the handler, or make it idempotent. |
+| "The route is behind auth middleware, so the handler is safe" | Middleware proves *who* is calling, not *what they own*. `GET /orders/:id` with a valid session still needs to check that the order is theirs. |
+| "The id is a UUID, nobody can guess it" | Unguessable is not unauthorized. Ids leak through logs, referrers, screenshots and support tickets. |
+| "It's an admin-only screen" | The screen is not the endpoint. Anyone who can reach the URL can reach the handler. |
+| "Secure breaks it on localhost" | Then set it from an env flag, not by dropping it. A cookie shipped without `Secure` is a cookie shipped over plaintext eventually. |
+| "Rate limiting is an infrastructure concern, we'll add it at the edge later" | Login and password-reset are the endpoints attacked first and the edge config is the thing that gets forgotten. Name where the limit lives, now. |
 
 **All of these mean: fix it now, while it's one line.** The checker will
-find 1-3 at acceptance; nothing will find 4-5 except you.
+find 1-3 and the cookie flags at acceptance; nothing will find the rest
+except you.
