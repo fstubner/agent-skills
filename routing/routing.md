@@ -6,7 +6,7 @@ artifacts that later checks depend on.
 
 | When the request is… | Use |
 |---|---|
-| a new app, tool, dashboard or site built from scratch | `agent-skills:product-build` **before writing code** |
+| creative work: a new app, a new feature, a component, a behaviour change | `agent-skills:product-build` **before writing code** — it agrees a design first, then dispatches |
 | "is this done", "can we ship", any readiness claim | `agent-skills:product-acceptance`, in a separate turn from the build |
 | UI work: components, styling, layout, "make it look better" | `agent-skills:frontend` |
 | server or API work | `agent-skills:backend-engineering` |
@@ -22,12 +22,11 @@ artifacts that later checks depend on.
 Not every request needs one. A one-line tweak in a locked codebase, a
 question about someone else's error message, a shell command — just answer.
 
-**If another skill also claims the request**, run `product-build` first and
-let it dispatch. It is a router, not a workflow — it takes one turn, names
-which skills apply, and writes the artifacts acceptance later reads. A
-planning or brainstorming skill from elsewhere can run inside that dispatch;
-running it *instead* leaves those artifacts unwritten, and the acceptance
-gate then has nothing to check.
+**If another plugin's brainstorming or planning skill also claims the
+request**, use `product-build`. It covers the same ground — design agreed
+before code — and then dispatches to the skills that write the artifacts
+the acceptance gate reads. Running the other one instead leaves those
+unwritten, and acceptance has nothing to check.
 
 **Why this is injected rather than left to discovery.** Measured on this
 suite: across five unprimed runs with the skills installed, visible and

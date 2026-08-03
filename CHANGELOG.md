@@ -1,5 +1,40 @@
 # Changelog
 
+## 1.0.0-alpha.17 — 2026-08-03
+
+**`product-build` becomes the design gate, and the eighteenth skill is not
+added.** An earlier cut of this release added a `brainstorming` skill to
+take the slot `superpowers:brainstorming` holds. It was reverted before
+release: it duplicated `product-management`'s interview and
+`product-build`'s dispatch almost line for line, which is the information
+architecture problem this suite already had one of.
+
+`mental-models` was the other candidate and is the wrong home — a catalog
+of reasoning lenses has no gate and no approval step, and its own
+description says it complements domain skills rather than replacing them.
+
+What was actually missing sat in `product-build`, which was two things
+short of covering the slot: its trigger only claimed greenfield product-UI,
+so a new feature in an existing codebase reached no skill at all; and it
+had no rule against building before a design was agreed. Both are now in
+it:
+
+- **The gate** — no code, no scaffolding, no file creation until the user
+  agrees to a design. Reading the codebase to inform questions is expected;
+  a skeleton is a design decision made silently.
+- **A stopping rule** — before each question, name which part of the design
+  it decides; when the next one decides nothing, present. Three to six
+  questions for most work.
+- **Approaches that differ on a stated axis**, with permission to offer one
+  when only one is real.
+- **A skip clause used out loud** — a decided one-liner, a bug fix that is
+  its own diagnosis. A gate that runs over those is a gate people switch
+  off.
+
+Depth still belongs to the siblings: `product-management` for the contract
+interview, `mental-models` when the approach space isn't known, `frontend`
+for direction, `systems-architecture` for boundaries.
+
 ## 1.0.0-alpha.16 — 2026-08-03
 
 **The two entry-point skills now instruct instead of labelling.** With

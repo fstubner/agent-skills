@@ -1,17 +1,53 @@
 ---
 name: product-build
 description: >-
-  You MUST use this before writing code for a greenfield or ambiguous
-  product-UI request — a brand new app, a "build this" request, a dashboard
-  or tool MVP, or multi-view feature work with no obvious single starting
-  skill. It routes to the sibling skills and produces the artifacts
-  acceptance later checks for, so starting to build without it means those
-  checks have nothing to read. Not for finalizing or accepting finished
-  work (product-acceptance), not for one-line tweaks in a locked codebase,
-  and not for compiling or CI questions.
+  You MUST use this before writing code for creative work — a new app, a
+  new feature, a new component, added functionality, or a change to how
+  something behaves. It gets a design agreed before anything is built, then
+  routes to the sibling skills that do the depth and produce the artifacts
+  acceptance later checks for; building without it means those checks have
+  nothing to read. Skip it, in one sentence, when the user has already
+  decided and is asking you to type, and for one-line tweaks, bug fixes
+  whose fix is the diagnosis, compiling and CI questions. Not for
+  finalizing or accepting finished work (product-acceptance).
 ---
 
 # Product build (dispatcher)
+
+## Design before code
+
+**No code, no scaffolding, no file creation until the user has agreed to a
+design.** Reading the codebase to inform questions is expected; writing
+"just the skeleton" is the move this gate exists to stop — a skeleton is a
+design decision made silently and then defended.
+
+How much design depends on the work, and the sibling skills own the depth:
+
+| The unknown | Where it gets resolved |
+|---|---|
+| What we're building and for whom | `product-management` — the PRODUCT.md interview |
+| Which approach, when the space isn't known yet | `mental-models` — divergent generation, then convergent narrowing, with the reasoning record as output |
+| Look, feel, and the primary user job | `frontend` — its own interview, never invented |
+| Parts, boundaries, trust | `systems-architecture` |
+
+What this skill owns is the gate itself:
+
+- **Ask one question per message**, and before each one name to yourself
+  which part of the design it decides. When the next question decides
+  nothing, stop asking and present. Most work needs three to six.
+- **Offer approaches that differ on a stated axis** — scope, technology,
+  what gets deferred. Two honest options beat three padded ones; if only
+  one approach is real, say that instead of manufacturing a choice.
+- **Present the design scaled to the work** — a few sentences for something
+  small — and include what you are deliberately *not* building.
+- **Then dispatch.** The agreement is what the sibling skills turn into
+  `PRODUCT.md`, `design-direction.md` and the rest.
+
+Running this over a decided one-liner is how a gate earns its way into
+being switched off. The skip clause in the description is load-bearing:
+use it out loud, in one sentence, and move on.
+
+## Dispatch
 
 Dispatch; don't do domain work here. Depth lives in the sibling skills, each
 of which fires fine on its own when addressed directly (e.g. "make this
