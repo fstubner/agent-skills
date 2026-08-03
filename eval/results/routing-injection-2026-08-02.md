@@ -17,15 +17,27 @@ observed rather than inferred.
 |---|---|---|
 | No routing, shipped description | 2 | 0 |
 | No routing, imperative description | 3 | 0 |
-| **Routing injected** | 3 | **2 — both `superpowers:*`** |
+| **Routing injected** | 3 | **3 — all `superpowers:*`** |
 
 ```
 2026-08-03T02:07:49Z -> superpowers:brainstorming
 2026-08-03T02:08:28Z -> superpowers:writing-plans
+2026-08-03T02:11:46Z -> superpowers:subagent-driven-development
 ```
 
-Zero `agent-skills:*` calls. Zero `PRODUCT.md`, `design-direction.md` or
-any other artifact. All three trials shipped a single HTML file.
+Zero `agent-skills:*` calls. Zero `PRODUCT.md`, `design-direction.md`,
+`ARCHITECTURE.md`, `ux-walkthrough.md` or `stack-decision.md` in any trial.
+
+It went further than "picked a different skill". In trial 1 `superpowers`
+ran its whole workflow — brainstorm, then write a plan, then dispatch
+parallel implementation subagents — and produced a 51-file React + Express
++ SQLite monorepo with a 14-task breakdown. Trials 2 and 3 produced one
+HTML file each.
+
+(An earlier reading of this run recorded 2 calls and "all three trials
+shipped a single HTML file". That sample was taken while trial 1 was still
+running its implementation agents. Corrected here; the direction of the
+finding is unchanged and the magnitude is larger.)
 
 ## What this changes
 
