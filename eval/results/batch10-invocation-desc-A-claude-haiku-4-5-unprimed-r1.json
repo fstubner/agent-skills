@@ -1,0 +1,13 @@
+{
+  "caseId": "batch10-invocation-desc-A",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent, n=2 trials pooled. SHIPPED description. 2 unprimed trials on the current plugin install: zero Skill calls (telemetry hook registered and silent throughout), zero skill artifacts. Discovery confound ruled out first — a subagent asked to list its own tools, without reading any files, reported the Skill tool and all 17 agent-skills:* namespaced skills. They were visible; the model declined to reach for them. See invocation-description-ab-2026-08-02.md.",
+  "scores": {
+    "skillInvoked": "fail",
+    "artifactsProduced": "fail"
+  }
+}

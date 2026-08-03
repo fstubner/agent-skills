@@ -1,0 +1,13 @@
+{
+  "caseId": "batch10-invocation-desc-B",
+  "harness": "claude-code",
+  "model": "claude-haiku-4-5-20251001",
+  "runIndex": 1,
+  "date": "2026-08-02",
+  "condition": "unprimed",
+  "notes": "Task-tool subagent, n=3 trials pooled. TRIGGER-MATCHED description rewrite: leads with \"Use this FIRST, before writing any code\", quotes the literal phrasings a user would type (\"build me an X\", \"can you get started on X\", \"I need an app for X\"), and states the cost of skipping. 3 unprimed trials with deliberately varied surface prompts INCLUDING those exact phrases: zero Skill calls, zero artifacts, every trial straight to code. Reverted after the test — no measurable effect, and its pushier voice overstates a case the evidence does not support. See invocation-description-ab-2026-08-02.md.",
+  "scores": {
+    "skillInvoked": "fail",
+    "artifactsProduced": "fail"
+  }
+}
