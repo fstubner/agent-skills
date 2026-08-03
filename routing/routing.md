@@ -22,6 +22,13 @@ artifacts that later checks depend on.
 Not every request needs one. A one-line tweak in a locked codebase, a
 question about someone else's error message, a shell command — just answer.
 
+**If another skill also claims the request**, run `product-build` first and
+let it dispatch. It is a router, not a workflow — it takes one turn, names
+which skills apply, and writes the artifacts acceptance later reads. A
+planning or brainstorming skill from elsewhere can run inside that dispatch;
+running it *instead* leaves those artifacts unwritten, and the acceptance
+gate then has nothing to check.
+
 **Why this is injected rather than left to discovery.** Measured on this
 suite: across five unprimed runs with the skills installed, visible and
 namespaced, on prompts matching their own stated triggers, a skill was

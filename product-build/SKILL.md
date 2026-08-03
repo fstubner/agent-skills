@@ -1,11 +1,14 @@
 ---
 name: product-build
 description: >-
-  Entry point for greenfield or ambiguous product-UI requests: a brand new
-  app, a "build this" request, a dashboard or tool MVP, or multi-view
-  feature work with no obvious single starting skill. Not for finalizing or
-  accepting finished work (product-acceptance), not for one-line tweaks in
-  a locked codebase, and not for compiling or CI questions.
+  You MUST use this before writing code for a greenfield or ambiguous
+  product-UI request — a brand new app, a "build this" request, a dashboard
+  or tool MVP, or multi-view feature work with no obvious single starting
+  skill. It routes to the sibling skills and produces the artifacts
+  acceptance later checks for, so starting to build without it means those
+  checks have nothing to read. Not for finalizing or accepting finished
+  work (product-acceptance), not for one-line tweaks in a locked codebase,
+  and not for compiling or CI questions.
 ---
 
 # Product build (dispatcher)

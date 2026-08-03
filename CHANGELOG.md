@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.0.0-alpha.16 — 2026-08-03
+
+**The two entry-point skills now instruct instead of labelling.** With
+routing injected, alpha.14 measured skills firing for the first time — and
+`superpowers:brainstorming` taking every one of the three, on prompts
+`product-build` also covers. Its description opens "You MUST use this
+before any creative work". `product-build`'s opened "Entry point for
+greenfield or ambiguous product-UI requests". One is an instruction, the
+other is a category name, and the instruction won.
+
+So `product-build` and `product-acceptance` now open with what they require
+and say what is lost by skipping them: the artifacts the acceptance gate
+reads. The routing table adds a precedence line — if two skills claim a
+request, dispatch through `product-build` first; another tool's planning
+skill can run *inside* that dispatch, just not instead of it.
+
+This is a deliberate escalation and it has a cost: if every skill in every
+plugin opens with "You MUST", the phrase stops carrying anything. Two
+skills here use it, both gates rather than techniques. Untested whether it
+actually wins the selection — the alpha.14 run would need repeating.
+
 ## 1.0.0-alpha.15 — 2026-08-03
 
 **Security depth in backend-engineering** — the gap the IA audit ranked

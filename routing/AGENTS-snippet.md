@@ -36,6 +36,12 @@ artifacts that later checks depend on:
 
 Not everything needs one. A one-line tweak, a question about an error
 message, a shell command — just answer.
+
+If another skill also claims the request, run **product-build** first and
+let it dispatch. It is a router, not a workflow — one turn, names which
+skills apply, writes the artifacts acceptance later reads. Another tool's
+planning skill can run inside that dispatch; running it instead leaves
+those artifacts unwritten.
 ```
 
 ---

@@ -1,8 +1,9 @@
 ---
 name: product-acceptance
 description: >-
-  Independent acceptance gate before claiming work is done. Triggers on
-  "ship it", "is this done", "accept this", or any other readiness claim.
+  You MUST use this before telling anyone work is done, shippable or
+  finished. Independent acceptance gate; triggers on "ship it", "is this
+  done", "accept this", or any other readiness claim.
   Must run in a separate context/turn from the build — the builder never
   self-accepts. Not for building or fixing (product-build routes that).
 compatibility: Requires Node 18+ to re-run the sibling checker scripts.
