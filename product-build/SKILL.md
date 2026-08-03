@@ -6,7 +6,8 @@ description: >-
   or tool MVP, or multi-view feature work with no obvious single starting
   skill. It routes to the sibling skills and produces the artifacts
   acceptance later checks for, so starting to build without it means those
-  checks have nothing to read. Not for finalizing or accepting finished
+  checks have nothing to read. Runs after brainstorming has produced an
+  approved design, or straight away when the user has already decided. Not for finalizing or accepting finished
   work (product-acceptance), not for one-line tweaks in a locked codebase,
   and not for compiling or CI questions.
 ---

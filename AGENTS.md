@@ -8,7 +8,7 @@ For using the suite in your own projects, see [INSTALL.md](./INSTALL.md).
 
 ## What this repo is
 
-A suite of 17 composable Agent Skills plus the deterministic checkers that
+A suite of 18 composable Agent Skills plus the deterministic checkers that
 back them. `registry.json` is the source of truth: skills, artifacts, which
 artifacts are acceptance-gated, and where each harness installs.
 

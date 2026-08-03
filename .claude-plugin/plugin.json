@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "agent-skills",
-  "version": "1.0.0-alpha.16",
-  "description": "Composable Agent Skills for product UI work: evidence-gated shipping, builder/acceptor separation, and a registry-first contract across 17 skills.",
+  "version": "1.0.0-alpha.17",
+  "description": "Composable Agent Skills for product UI work: evidence-gated shipping, builder/acceptor separation, and a registry-first contract across 18 skills.",
   "author": {
     "name": "Felix Stubner"
   },
@@ -18,6 +18,7 @@
     "code-quality"
   ],
   "skills": [
+    "./brainstorming",
     "./product-build",
     "./product-management",
     "./systems-architecture",

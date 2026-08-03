@@ -1,5 +1,35 @@
 # Changelog
 
+## 1.0.0-alpha.17 — 2026-08-03
+
+**A `brainstorming` skill, taking the slot outright.** alpha.16 sharpened
+two descriptions to compete for the design-first request;
+`superpowers:brainstorming` still covers ground this suite had no skill
+for — a new feature in an existing codebase is creative work, and neither
+`product-build` (greenfield product-UI router) nor `product-management`
+(the PRODUCT.md interview) claims it.
+
+So the suite now has its own, and it differs where the incumbent is weak:
+
+- **An explicit skip rule.** A renamed function, a bug fix that is its own
+  diagnosis, a decision the user already made — say so in one sentence and
+  skip. "Every project regardless of perceived simplicity" is why people
+  turn design gates off.
+- **A stopping rule for the interview.** Before each question, name which
+  part of the design it decides; if it decides nothing, stop asking. Three
+  to six questions for most things.
+- **Approaches that differ on a stated axis**, and permission to offer one
+  when only one is real. Three near-identical options manufacture a
+  decision the user then has to make.
+- **The brief is written after approval**, so the file records an
+  agreement rather than a proposal, and it carries a "how we would know
+  this was wrong" section. A design with no such observation is a
+  preference.
+
+The gate itself is kept: no code, no scaffolding, no implementation skill
+until the user approves. Terminal state is `product-build`, which
+dispatches the domain skills and writes what acceptance reads.
+
 ## 1.0.0-alpha.16 — 2026-08-03
 
 **The two entry-point skills now instruct instead of labelling.** With

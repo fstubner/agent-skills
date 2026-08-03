@@ -139,7 +139,7 @@ and it is worth knowing which is which before assuming a feature reached you.
 
 | Component | Claude Code | Codex | Cursor | Antigravity |
 |---|---|---|---|---|
-| 17 skills (`SKILL.md` + `references/`, `scripts/`, `assets/`) | ✓ | ✓ | ✓ | ✓ |
+| 18 skills (`SKILL.md` + `references/`, `scripts/`, `assets/`) | ✓ | ✓ | ✓ | ✓ |
 | Checker scripts (plain Node, no harness API) | ✓ | ✓ | ✓ | ✓ |
 | Pre-commit hook (`git`, not a harness feature) | ✓ | ✓ | ✓ | ✓ |
 | `AGENTS.md` in your project | ✓ | ✓ | ✓ | ✓ |
