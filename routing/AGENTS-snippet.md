@@ -19,11 +19,8 @@ The agent-skills suite is installed. For these requests, use the named
 skill rather than working from memory — each carries rules and produces
 artifacts that later checks depend on:
 
-- Any creative work — a new feature, component, or behaviour change →
-  **brainstorming** before writing code, unless the user has already
-  decided and is asking you to type.
-- New app, tool, dashboard or site from scratch → **brainstorming**, then
-  **product-build** to dispatch.
+- New app, tool, dashboard or site from scratch → **product-build**, before
+  writing code.
 - "Is this done", "can we ship" → **product-acceptance**, in a separate turn
   from the build. The builder never accepts its own work.
 - UI: components, styling, layout, "make it look better" → **frontend**.
@@ -40,9 +37,11 @@ artifacts that later checks depend on:
 Not everything needs one. A one-line tweak, a question about an error
 message, a shell command — just answer.
 
-If another tool's planning or brainstorming skill also claims the request,
-use these two instead. They cover the same ground and write the artifacts
-the acceptance gate reads.
+If another skill also claims the request, run **product-build** first and
+let it dispatch. It is a router, not a workflow — one turn, names which
+skills apply, writes the artifacts acceptance later reads. Another tool's
+planning skill can run inside that dispatch; running it instead leaves
+those artifacts unwritten.
 ```
 
 ---

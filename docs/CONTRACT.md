@@ -37,7 +37,6 @@ through direct calls.
 
 | Skill | Role |
 |---|---|
-| `brainstorming` (no shared artifacts) | Design gate — intent, approaches, an approved brief before any code |
 | `product-build` (no shared artifacts) | Dispatcher — routes a greenfield/ambiguous request to whichever skills apply |
 | `product-management` | PRODUCT.md contract interview |
 | `systems-architecture` | Parts, boundaries, trust |
