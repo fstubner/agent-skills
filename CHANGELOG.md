@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.0.0-alpha.14 — 2026-08-02
+
+**Routing is injected now, not discovered.** A `SessionStart` hook prints
+`routing/routing.md` — a trigger-to-skill table — into every session.
+
+The evidence forcing this: five unprimed runs with the skills installed,
+visible and namespaced (a subagent asked to list its own tools reported all
+17), on prompts matching the skills' own stated triggers, produced **zero**
+invocations. Rewriting a description to lead with an imperative and quote
+the user's literal phrasing scored the same zero. A name in a list does not
+displace the instinct to start working, and no amount of description
+polish changed that.
+
+So the routing moved to the one mechanism this suite has repeatedly
+measured as reliable: text read every session. `concise-style/` already
+proved the shape works — it demonstrably governed a whole session's output
+while installed skills went untouched.
+
+`routing/AGENTS-snippet.md` carries the same table in a form any tool
+reads — paste into `AGENTS.md`, `CLAUDE.md` or `.cursorrules`. It also
+points at the third mechanism, which asks nothing of the model at all: the
+pre-commit hook running the deterministic checkers on staged files.
+
 ## 1.0.0-alpha.13 — 2026-08-02
 
 Four carried-over audit findings, closed.
