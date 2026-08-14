@@ -57,9 +57,9 @@ scan/audit/flag a draft without rewriting it.
 
 ## Rules
 
-1. **Voice over uniformity.** The goal is intentional writing, not writing
-   that reads as if no one wrote it. A pattern hit is a prompt to look, not
-   an automatic delete. When you keep one, the "What changed" section says
+1. **Voice over uniformity.** The goal is writing that reads as if someone
+   chose every word. A pattern hit is a prompt to look, not an automatic
+   delete. When you keep one, the "What changed" section says
    so: `kept "<quote>" — load-bearing because <reason>`. Otherwise a kept
    hit and a missed hit are indistinguishable to the writer, and the whole
    point is that they can tell which of their habits you decided to leave.

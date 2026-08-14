@@ -1,3 +1,19 @@
+<!--
+This file quotes every string the style forbids, so the existence-style rules
+match their own catalog and the skill cannot scan its own repo. They are
+switched off here for that reason, and only here. EmDashOveruse stays on: it
+counts density per paragraph rather than matching a word list, so it is still
+meaningful in a document about prose, and the judgment-only patterns were
+never Vale's to catch anyway.
+-->
+<!-- vale AIProseTells.InflatedVocabulary = NO -->
+<!-- vale AIProseTells.ThroatClearing = NO -->
+<!-- vale AIProseTells.WeaselAttribution = NO -->
+<!-- vale AIProseTells.ImportanceInflation = NO -->
+<!-- vale AIProseTells.SummaryRecap = NO -->
+<!-- vale AIProseTells.UnsupportedSuperlative = NO -->
+<!-- vale AIProseTells.ParallelFlourish = NO -->
+
 # Pattern catalog
 
 Each pattern below is a **habit**, not proof of authorship — humans produce every one
@@ -34,10 +50,11 @@ The list below is generated from `rules/AIProseTells/InflatedVocabulary.yml` —
 see the caveat after it for words that were deliberately left out:
 <!-- gen-patterns:tokens InflatedVocabulary.yml -->*delve, delves, delving, leverage, leverages, leveraging, foster, fosters, fostering, utilize, utilizes, utilizing, streamline, streamlines, streamlining, cutting-edge, paradigm shift, game-changer, game-changing, tapestry, multifaceted, meticulous, meticulously, paramount, transformative, elevate, elevates, elevating, harnessing, empower, empowers, empowering, facilitate, facilitates, facilitating, seamless, seamlessly, holistic, holistically, supercharge, supercharges, supercharging, unlock the power/potential of, robust, robustly, realm.*<!-- /gen-patterns -->
 
-- **Why it reads as slop:** these words showed up disproportionately in
-  post-2022 model output relative to baseline human writing on the same topics;
-  readers now recognize them as a tell independent of whether they're deployed
-  well.
+- **Why it reads as slop:** readers now recognize these words as a tell,
+  independent of whether any one of them is deployed well - which is reason
+  enough to avoid them even where one genuinely fits. The list is maintained
+  by observation, not measured against a corpus; add a word when it starts
+  reading that way, and say so in the commit.
 - **Fix:** name the plain action or quality instead. *"Leverage the API"* → *"call
   the API."* *"A robust solution"* → say what makes it hold up under load, or cut
   the adjective.
