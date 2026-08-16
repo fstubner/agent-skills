@@ -28,6 +28,8 @@ import {
     ['package imports are ignored', "import React from 'react';", []],
     ['type-only import creates no runtime edge', "import type { X } from './a';", []],
     ['type-only re-export creates no runtime edge', "export type { X } from './a';", []],
+    ['commented import creates no edge', "// import x from './a';\n/* require('./b') */", []],
+    ['import-like text in a string creates no edge', "const example = \"import x from './a';\";", []],
   ];
   for (const [label, src, want] of CASES) {
     const got = localImportsOf(src);

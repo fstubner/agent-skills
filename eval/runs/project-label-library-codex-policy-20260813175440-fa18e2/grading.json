@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "project-label-library",
+  "assertions": [
+    {
+      "id": "formats-statuses",
+      "status": "fail",
+      "evidence": "[\"Atlas   App [active]\",\"Atlas   App [paused]\",\"Atlas   App [archived]\"]"
+    },
+    {
+      "id": "validates-boundary",
+      "status": "pass",
+      "evidence": "blank=true; unknown=true"
+    },
+    {
+      "id": "preserves-api",
+      "status": "pass",
+      "evidence": "value=\"Atlas App\""
+    },
+    {
+      "id": "scope-discipline",
+      "status": "pass",
+      "evidence": "type=module; dependencies=0; tests=0"
+    }
+  ]
+}

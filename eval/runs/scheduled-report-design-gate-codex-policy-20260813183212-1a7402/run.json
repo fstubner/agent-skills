@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "scheduled-report-design-gate-codex-policy-20260813183212-1a7402",
+  "caseId": "scheduled-report-design-gate",
+  "caseRevision": 1,
+  "caseSha256": "34474d38a52e88c49cb2b069ca8cc3f6fe408686a9d0fc8e84506b82c4635975",
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-13T18:32:12.664Z",
+  "finishedAt": "2026-08-13T18:33:42.674Z",
+  "durationMs": 90010,
+  "totalTokens": 81264,
+  "costUsd": null,
+  "costCredits": 1.202455,
+  "exitCode": 0,
+  "artifactSha256": "54a5649fb26d76d5cc1dcdfc3b0122397ee2787ad150ad62eb9fef828fd27345",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 2,
+    "notEvaluated": 0,
+    "total": 4
+  }
+}

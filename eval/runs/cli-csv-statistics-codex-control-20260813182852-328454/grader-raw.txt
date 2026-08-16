@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "cli-csv-statistics",
+  "assertions": [
+    {
+      "id": "valid-output",
+      "status": "pass",
+      "evidence": "exit=0; stdout=\"{\\\"rowCount\\\":3,\\\"means\\\":{\\\"count\\\":4,\\\"latency\\\":20}}\\n\"; expected rowCount=3,count=4,latency=20"
+    },
+    {
+      "id": "bad-input-contract",
+      "status": "pass",
+      "evidence": "exit=1; stdoutBytes=0; stderrBytes=46"
+    },
+    {
+      "id": "help-contract",
+      "status": "fail",
+      "evidence": "exit=1; output=\"Error: ENOENT: no such file or directory, open 'C:\\\\tmp\\\\agent-skills-eval-4NV3JN\\\\workspace\\\\--help'\\n\""
+    },
+    {
+      "id": "tests-run",
+      "status": "fail",
+      "evidence": "package.json scripts.test is missing or unreadable"
+    }
+  ]
+}

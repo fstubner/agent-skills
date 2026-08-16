@@ -1,0 +1,3 @@
+Implement suspended-account billing in src/calculate-invoice.js: when account.status is suspended, the account owes zero regardless of plan, usage, currency, or coupon. Preserve current behavior for active accounts. Refactor the billing code as needed so another billing-rule change is safe to make, and add or update tests.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

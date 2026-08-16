@@ -1,5 +1,9 @@
 # Install
 
+> **EVIDENCE STATUS: UNVALIDATED.** Installation is supported and the
+> deterministic checkers are fixture-tested. Behavioural efficacy is not yet
+> established under the repository's v2 evaluation standard.
+
 ## Requirements
 
 Node 18+. No npm install, no network — the installer only copies files.
@@ -14,19 +18,17 @@ it's absent: `ai-prose-slop` wants [Vale](https://vale.sh);
 ```bash
 node scripts/install.mjs --harness claude       # ~/.claude/skills (Claude Code + Claude Desktop, same path)
 node scripts/install.mjs --harness cursor       # ~/.cursor/skills
-node scripts/install.mjs --harness codex        # ~/.codex/skills AND ~/.agents/skills (see note below)
+node scripts/install.mjs --harness codex        # ~/.agents/skills
 node scripts/install.mjs --harness antigravity  # ~/.gemini/antigravity-cli/skills
 node scripts/install.mjs --harness all
 node scripts/install.mjs --dest /path/to/skills   # anywhere else
 ```
 
-Codex installs to **two** paths deliberately: its own skill directory
-convention is unsettled upstream as of mid-2026 (OpenAI's skill-installer
-tooling still defaults to `~/.codex/skills`; current docs point to
-`~/.agents/skills`; the Codex Desktop app has open bugs failing to discover
-skills in the latter). Installing to both is a hedge against that
-instability, not a claim that either one is settled — see
-`registry.json`'s `_harnessPathsNote`.
+Codex installs to its documented shared path, `~/.agents/skills`. Older
+versions also copied each skill to `~/.codex/skills`; Codex CLI 0.146.0 loads
+both roots and exposes those as duplicate catalog entries. A successful Codex
+install now removes only legacy copies bearing this installer's ownership
+marker. Hand-managed directories are left untouched.
 
 Windows, macOS, and Linux: identical commands (`~` is expanded by the
 installer, not the shell). Run them from the suite checkout root.
@@ -56,15 +58,94 @@ lists the current skill ids.
   find as `not_evaluated`, capping its verdict at CONDITIONAL rather than
   guessing.
 
-## As a Claude Code plugin
+## As a marketplace plugin
 
-Claude Code (CLI and desktop app) can install the whole suite as a plugin,
-which also enables the skill-invocation telemetry hook:
+The repository contains native marketplace metadata for Claude Code, Codex CLI
+and ChatGPT desktop, and Cursor. All three point at the same generated,
+self-contained package under `plugins/agent-skills`; it contains the 17 skills
+and their checker runtime. Availability and installation differ by product, as
+documented below. Telemetry and the optional concise response style are not
+enabled by installing the plugin.
+
+Claude Code (CLI and desktop app):
 
 ```bash
 claude plugin marketplace add fstubner/agent-skills
 claude plugin install agent-skills@fstubner-agent-skills
 ```
+
+Codex CLI can add and track this repository as a marketplace source:
+
+```bash
+codex plugin marketplace add fstubner/agent-skills --ref main
+```
+
+The CLI command configures the catalog source; OpenAI documents installation
+and local plugin testing in the ChatGPT desktop app. Restart the app, open the
+Plugins Directory in Work mode or Codex, select **Felix Stubner Agent Skills**
+as the marketplace, then install `agent-skills`. A repository marketplace is an
+authoring, testing, and team-distribution source. It is separate from the
+universal public Plugins Directory shared by ChatGPT and Codex; appearing there
+requires OpenAI's publication process. See [OpenAI's plugin packaging and
+marketplace documentation](https://developers.openai.com/plugins/build/plugins).
+
+Cursor has three documented installation paths:
+
+- **Public Marketplace:** after the plugin is reviewed and listed, open
+  **Customize** in Cursor, find the plugin, select **Install**, and choose user
+  or project scope. This repository is not public-Marketplace-listed merely
+  because it contains a manifest.
+- **Team marketplace:** a Teams or Enterprise administrator opens
+  **Dashboard → Plugins → Add Marketplace**, chooses **Import from Repo**, and
+  supplies `https://github.com/fstubner/agent-skills`. Enable **Auto Refresh**
+  if the Cursor GitHub App is installed and updates should follow repository
+  pushes. Team members then install it from **Customize**.
+- **Local testing:** copy or link `plugins/agent-skills` to
+  `~/.cursor/plugins/local/agent-skills`, then restart Cursor or run
+  **Developer: Reload Window**.
+
+See [Cursor's official Plugins documentation](https://cursor.com/docs/plugins)
+for Marketplace review, team import, update, and local-development behavior.
+
+Antigravity CLI uses a native plugin package rather than a repository
+marketplace. Clone the repository, install its generated package, and verify
+that the CLI loaded it:
+
+```bash
+git clone https://github.com/fstubner/agent-skills.git
+cd agent-skills
+agy plugin install ./plugins/agent-skills
+agy plugin list
+```
+
+The package has Antigravity's required root `plugin.json` and a `skills/`
+directory. The manifest deliberately has no version field because the current
+Antigravity schema rejects additional properties. The generated-package check
+still prevents it from drifting from the repository source.
+
+Antigravity IDE discovers workspace skills from
+`<workspace-root>/.agents/skills` and global skills from
+`~/.gemini/config/skills`. These IDE paths are distinct from Antigravity CLI's
+standalone global-skills path, `~/.gemini/antigravity-cli/skills`.
+See Antigravity's official [CLI plugin](https://antigravity.google/docs/cli/plugins)
+and [IDE Agent Skills](https://antigravity.google/docs/skills) references.
+
+Gemini CLI can install this repository directly as an extension. Use
+`--auto-update` if you want Gemini to fetch future releases automatically:
+
+```bash
+gemini extensions install https://github.com/fstubner/agent-skills --auto-update
+gemini extensions list
+gemini extensions update agent-skills
+# Local development: changes are visible without reinstalling.
+gemini extensions link /path/to/agent-skills
+```
+
+Gemini copies an extension on installation; without `--auto-update`, run
+`gemini extensions update agent-skills` explicitly. Restart Gemini CLI after
+installing or updating so the new extension contents are loaded.
+See the official [Gemini extension reference](https://geminicli.com/docs/extensions/reference/)
+for lifecycle and source-selection options.
 
 For local development, point the marketplace at a checkout instead:
 `claude plugin marketplace add ./` from the repository root. Know the
@@ -81,16 +162,16 @@ are offered to the model as a name and a one-line description; whether it
 reaches for one is its own decision. Measured here, that decision came out
 badly: across two unprimed runs on a prompt matching `product-build`'s own
 stated trigger almost verbatim — one in a Task subagent, one in a genuine
-top-level session, all 15 skills installed — **not a single skill fired**
+top-level session, every skill in that release installed — **not a single skill fired**
 (`eval/results/`). A competing plugin's much more aggressive mechanism
 (injecting a whole skill's text into every session via a `SessionStart`
 hook) didn't reliably fire either.
 
-Efficacy, once a skill is actually followed, measured well on the three
-skills tested that way — 0/3 vs 3/3 for `systems-architecture`, and
-similar gaps for `cli-tooling` and `product-build`'s prompt-injection
-stance. So the content earns its place; getting it reached for is the
-unsolved half.
+The historical forced runs are not credible efficacy evidence: they lack
+complete raw traces and output bundles, mostly use one trial, and do not
+separate a concise-policy baseline from the full skill. They remain available
+for audit, but the current answer to whether skills improve outcomes is
+**unknown**.
 
 The one mechanism observed to reliably change behaviour in this
 environment is a directive in `CLAUDE.md`, which is injected verbatim into
@@ -109,19 +190,47 @@ change, and reasonably concluding it does nothing.
 
 ### Measuring it yourself
 
-Don't take the numbers above on trust — the plugin ships a `PostToolUse`
-hook that records every skill invocation to
-`~/.claude/agent-skills-telemetry/invocations.jsonl` (one user-level file;
-each row records which project). Read it
-back with:
+Don't take the numbers above on trust. Install user-level observers for the
+harnesses you use:
+
+```bash
+node scripts/install-telemetry.mjs --harness all
+# or: claude | codex | cursor | antigravity
+```
+
+This is deliberately separate from `install.mjs`: it merges global harness
+configuration and records local metadata, so installing a skill must not opt
+you in silently. Existing hooks are preserved and rerunning the command is
+idempotent. Remove the hook entries with
+`node scripts/install-telemetry.mjs --harness all --remove`; the local log is
+left in place.
+
+All four adapters write to
+`~/.agent-skills-telemetry/invocations.jsonl`. The reader also includes the
+old Claude-only log at
+`~/.claude/agent-skills-telemetry/invocations.jsonl`, so upgrading does not
+erase history. Read the combined data with:
 
 ```bash
 node scripts/skill-usage.mjs
 ```
 
-It reports per-skill and per-project counts and, most usefully, cross-checks
-`registry.json` to list the skills that have **never** fired. An empty
-report is not an error — it is the finding.
+It reports per-skill, per-project, per-harness, and per-evidence counts and,
+most usefully, cross-checks `registry.json` to list skills that have **never**
+fired. An empty report is not an error — it is the finding.
+
+The evidence is not identical across harnesses. Claude exposes a first-class
+`Skill` tool call. Codex and Cursor expose successful tool/file reads, so the
+adapter records a registered skill's `SKILL.md` being read. Antigravity's
+documented `PostInvocation` hook exposes its transcript path; the adapter
+records registered `SKILL.md` read requests found there and deduplicates them
+by conversation step. Its evidence label is `skill-file-read-request`, not a
+claim that the requested tool completed. Every row labels these distinctions;
+do not collapse a file read into a stronger first-class invocation claim.
+
+Codex requires a one-time trust review for newly installed command hooks. Run
+`/hooks` in Codex and review the `agent-skills-telemetry` command before
+expecting Codex rows. The other harnesses load their user hook files directly.
 
 The hook is deliberate rather than a skill: a telemetry *skill* would only
 record the sessions where the model remembered to record, which is the same
@@ -143,12 +252,15 @@ and it is worth knowing which is which before assuming a feature reached you.
 | Checker scripts (plain Node, no harness API) | ✓ | ✓ | ✓ | ✓ |
 | Pre-commit hook (`git`, not a harness feature) | ✓ | ✓ | ✓ | ✓ |
 | `AGENTS.md` in your project | ✓ | ✓ | ✓ | ✓ |
-| Plugin install + marketplace | ✓ | — | — | — |
-| Telemetry hook, response-style injection | ✓ | — | — | — |
+| Repository plugin marketplace | ✓ | ✓ | ✓ | — |
+| Native plugin / extension package | ✓ | ✓ | ✓ | ✓ |
+| Standard skills / extension install | ✓ | ✓ | ✓ | ✓ |
+| Telemetry observer | ✓ | ✓ | ✓ | ✓ |
+| Response-style injection | ✓ | — | — | — |
 
-`scripts/install.mjs` handles the first row for every harness. The two
-Claude-only rows depend on `.claude-plugin/` and `hooks/hooks.json`, which no
-other tool reads.
+`scripts/install.mjs` handles skill installation for every harness.
+`scripts/install-telemetry.mjs` installs the harness-native observers above.
+Response-style injection remains Claude-plugin-specific.
 
 **Non-Claude tools: the response style still works, manually.**
 `concise-style/output-style/concise.md` is plain markdown with no Claude-specific syntax.

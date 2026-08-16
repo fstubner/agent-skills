@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "id": "shipping-fee-regression-suite",
+  "skill": "testing-strategy",
+  "revision": 1,
+  "prompt": "Several shipping-fee regressions reached production. Strengthen the automated tests for src/shipping-fee.js. Do not change production behavior or add dependencies; make npm test the test entry point.",
+  "fixture": "eval/fixtures-v2/shipping-fee-regression-suite",
+  "grader": "eval/graders-v2/shipping-fee-regression-suite.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "stable-baseline", "description": "The submitted suite repeatedly passes unchanged production code", "kind": "outcome" },
+    { "id": "public-behavior", "description": "Tests survive a private-helper rename with behavior unchanged", "kind": "quality" },
+    { "id": "kills-threshold-mutant", "description": "Tests catch a free-shipping boundary regression", "kind": "outcome" },
+    { "id": "kills-unsupported-mutant", "description": "Tests catch an unsupported-country contract regression", "kind": "outcome" },
+    { "id": "kills-member-mutant", "description": "Tests catch removal of the member discount", "kind": "outcome" }
+  ]
+}

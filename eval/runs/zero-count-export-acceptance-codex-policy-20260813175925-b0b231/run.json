@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "zero-count-export-acceptance-codex-policy-20260813175925-b0b231",
+  "caseId": "zero-count-export-acceptance",
+  "caseRevision": 1,
+  "caseSha256": "10ab03d0730169f625666fd510b8038aacd5d157e9667080703b5b322c77f32e",
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-13T17:59:25.066Z",
+  "finishedAt": "2026-08-13T18:00:08.684Z",
+  "durationMs": 43618,
+  "totalTokens": 72068,
+  "costUsd": null,
+  "costCredits": 0.952855,
+  "exitCode": 0,
+  "artifactSha256": "8e9600a43ae92202163b8b106d965d7af5fedbcbce8382d9d56084162ffabe12",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

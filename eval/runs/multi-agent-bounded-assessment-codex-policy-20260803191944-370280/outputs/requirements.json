@@ -1,0 +1,18 @@
+{
+  "job": "daily read-only policy assessment",
+  "targets": {
+    "count": 240,
+    "providers": ["aws", "azure", "gcp"]
+  },
+  "deadline_minutes": 10,
+  "target_independence": "each tenant can be assessed without another tenant's result",
+  "provider_api_concurrency_limit": 4,
+  "global_concurrency_limit": 12,
+  "partial_results_acceptable": true,
+  "side_effects": "assessment is read-only; remediation is forbidden without human approval",
+  "output": "one consolidated report with tenant-level evidence",
+  "failure_expectations": {
+    "rate_limit": "retry at most once with backoff",
+    "tenant_timeout": "report partial status and continue unaffected tenants"
+  }
+}

@@ -1,0 +1,93 @@
+name: runtime-smoke
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 5 * * 2'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: runtime-smoke-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native-installs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - name: Install integrity-locked harness CLIs
+        run: |
+          npm ci --prefix tooling/runtime-smoke
+          echo "$GITHUB_WORKSPACE/tooling/runtime-smoke/node_modules/.bin" >> "$GITHUB_PATH"
+      - name: Claude native validation and install
+        run: |
+          claude plugin validate ./plugins/agent-skills --strict
+          claude plugin marketplace add "$GITHUB_WORKSPACE" --scope user
+          claude plugin install agent-skills@fstubner-agent-skills --scope user
+          node scripts/verify-installed-package.mjs --search-root "$HOME/.claude/plugins"
+      - name: Codex native marketplace install
+        run: |
+          codex plugin marketplace add "$GITHUB_WORKSPACE" --json
+          codex plugin add agent-skills@fstubner-agent-skills --json
+          node scripts/verify-installed-package.mjs --search-root "$HOME/.codex/plugins"
+      - name: Cursor documented local-layout smoke
+        run: |
+          mkdir -p "$RUNNER_TEMP/cursor/plugins/local"
+          cp -R plugins/agent-skills "$RUNNER_TEMP/cursor/plugins/local/agent-skills"
+          node scripts/verify-installed-package.mjs --search-root "$RUNNER_TEMP/cursor/plugins/local"
+          echo 'Cursor exposes no documented headless plugin loader; this verifies its documented local layout and packaged runtime only.'
+      - name: Install checksum-pinned Antigravity CLI 1.1.12
+        shell: bash
+        run: |
+          URL='https://storage.googleapis.com/antigravity-public/antigravity-cli/1.1.12-5877618327814144/linux-x64/cli_linux_x64.tar.gz'
+          ARCHIVE="$RUNNER_TEMP/antigravity-cli.tar.gz"
+          curl --fail --show-error --location "$URL" --output "$ARCHIVE"
+          echo 'c1ee7b8a02a85144142fdb942923b638c47674ecb4969c0d80f82317846c4c4c6976a430186622d6fbf5f33a827ab9c5a64950d15ff830b5cc3ce48c84ff4501  '"$ARCHIVE" | sha512sum --check
+          mkdir -p "$RUNNER_TEMP/antigravity-bin"
+          tar -xzf "$ARCHIVE" -C "$RUNNER_TEMP/antigravity-bin" antigravity
+          mv "$RUNNER_TEMP/antigravity-bin/antigravity" "$RUNNER_TEMP/antigravity-bin/agy"
+          chmod +x "$RUNNER_TEMP/antigravity-bin/agy"
+          echo "$RUNNER_TEMP/antigravity-bin" >> "$GITHUB_PATH"
+      - name: Antigravity native validation and install
+        run: |
+          agy --version
+          agy plugin validate "$GITHUB_WORKSPACE/plugins/agent-skills"
+          agy plugin install "$GITHUB_WORKSPACE/plugins/agent-skills"
+          agy plugin list
+          # Antigravity 1.1.12 currently stages here, while its CLI docs still
+          # name ~/.gemini/antigravity-cli/plugins. Search the product-owned
+          # root and require exactly one complete package so either layout is
+          # accepted without silently passing duplicate installs.
+          node scripts/verify-installed-package.mjs --search-root "$HOME/.gemini"
+
+  gemini-install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - name: Install integrity-locked Gemini CLI
+        run: |
+          npm ci --prefix tooling/runtime-smoke
+          echo "$GITHUB_WORKSPACE/tooling/runtime-smoke/node_modules/.bin" >> "$GITHUB_PATH"
+      - name: Gemini native validation and install
+        env:
+          GEMINI_CLI_TRUST_WORKSPACE: 'true'
+        run: |
+          gemini extensions validate .
+          gemini extensions install "$GITHUB_WORKSPACE" --consent --skip-settings
+          gemini extensions list
+          node scripts/verify-installed-package.mjs --search-root "$HOME/.gemini/extensions"

@@ -4,7 +4,7 @@ import os from 'os';
 import path from 'path';
 import {
   root, registry, read, expect, runNode, walk, pathToFileUrl,
-  tmpBase, runFixture, assertFixture, ARCH, BACKEND, FRONTEND, ACCEPT,
+  tmpBase, runFixture, assertFixture, ARCH, BACKEND, FRONTEND, ACCEPT, SMOKE,
 } from './harness.mjs';
 
 
@@ -67,6 +67,7 @@ assertFixture('backend-block-insecure-cookie (session cookie without Secure/Same
   const dest = path.join(tmpBase, 'backend-block-secret-' + Math.random().toString(36).slice(2, 8));
   fs.cpSync(src, dest, { recursive: true });
   const clientFile = path.join(dest, 'public', 'app.js');
+  const originalClient = read(clientFile);
   const runBackend = () => {
     const r = runNode(path.join(root, ...BACKEND.split('/')), ['--root', dest, '--no-write']);
     let report = null;
@@ -97,7 +98,52 @@ assertFixture('backend-block-insecure-cookie (session cookie without Secure/Same
       c && c.detail);
   }
   expect('backend-block-secret: exit code 1', after.r.status === 1, `got ${after.r.status}`);
+
+  fs.writeFileSync(clientFile, originalClient);
+  const apiClient = path.join(dest, 'src', 'api', 'client.js');
+  fs.mkdirSync(path.dirname(apiClient), { recursive: true });
+  fs.writeFileSync(apiClient, `export const key = "${CLIENT_SECRET}";\n`);
+  const apiRun = runBackend();
+  const apiCheck = apiRun.report?.checks.find((x) => x.id === 'B-client-secrets');
+  expect('backend-block-secret: generic src/api client code is scanned',
+    apiCheck?.status === 'fail' && apiCheck.detail.includes('src/api/client.js'),
+    apiCheck?.detail || JSON.stringify(apiRun.report));
 }
+
+{
+  const src = path.join(root, 'fixtures', 'backend-ship');
+  const dest = path.join(tmpBase, 'cookie-name-spoof-' + Math.random().toString(36).slice(2, 8));
+  fs.cpSync(src, dest, { recursive: true });
+  const server = path.join(dest, 'server.js');
+  fs.appendFileSync(server, '\nres.cookie("session_Secure_HttpOnly_SameSite", value);\n');
+  const r = runNode(path.join(root, ...BACKEND.split('/')), ['--root', dest, '--no-write']);
+  const report = JSON.parse(r.stdout);
+  expect('backend cookie flags cannot be spoofed through the cookie name',
+    report.checks.find((c) => c.id === 'B-session-cookie')?.status === 'fail',
+    JSON.stringify(report.checks));
+}
+// check-smoke: the deterministic floor under acceptance's A-runtime. The
+// pair is minimal-difference — smoke-block-broken-scripts is smoke-ship
+// with the test/ directory deleted, so the BLOCK can only come from the
+// script target that no longer resolves and the tests that no longer exist.
+assertFixture('smoke-ship (scripts resolve, tests exist)', 'smoke-ship', SMOKE, [], 'SHIP',
+  [['R-script-targets', 'pass'], ['R-entry-points', 'pass'], ['R-test-command', 'pass'], ['R-tests-present', 'pass']]);
+assertFixture('smoke-block-broken-scripts (test script points at a missing dir)',
+  'smoke-block-broken-scripts', SMOKE, [], 'BLOCK',
+  [['R-script-targets', 'fail'], ['R-tests-present', 'fail'], ['R-entry-points', 'pass']]);
+{
+  const { localPathTokens } = await import(
+    pathToFileUrl(path.join(root, 'release-engineering', 'scripts', 'check-smoke.js')));
+  const has = (cmd, t) => localPathTokens(cmd).includes(t);
+  expect('smoke: node --test <dir> yields the dir', has('node --test test/', 'test/'));
+  expect('smoke: a relative path is a target', has('node ./src/index.js', './src/index.js'));
+  expect('smoke: a bare package name is not a path', localPathTokens('eslint .').length === 0,
+    JSON.stringify(localPathTokens('eslint .')));
+  expect('smoke: globs are left alone', localPathTokens('node --test "test/**/*.test.js"').length === 0);
+  expect('smoke: shell variables are left alone', localPathTokens('node $ENTRY').length === 0);
+  expect('smoke: flags are not paths', localPathTokens('tsc --noEmit').length === 0);
+}
+
 // The "no server" skip path had never been exercised by any fixture.
 assertFixture('backend-no-server (B-scope skip path)', 'backend-no-server', BACKEND, [], 'SHIP',
   [['B-scope', 'pass']]);
@@ -146,11 +192,11 @@ assertFixture('frontend-no-package-json (F-dual-framework not_evaluated)', 'fron
 // regression test for v0.4's open backend loop — a backend BLOCK must
 // block the ship.
 assertFixture('accept-ship (separate context)', 'accept-ship', ACCEPT,
-  ['--acceptor-context', 'separate'], 'SHIP',
-  [['A-independent', 'pass'], ['A-product-contract', 'pass'],
+  ['--acceptor-context', 'separate', '--runtime-verified'], 'SHIP',
+  [['A-independent', 'pass'], ['A-runtime', 'pass'], ['A-product-contract', 'pass'],
    ['D-systems-architecture', 'pass'], ['D-frontend', 'pass'], ['D-backend-engineering', 'pass']]);
 assertFixture('accept-ship (same context caps at CONDITIONAL)', 'accept-ship', ACCEPT,
-  [], 'CONDITIONAL', [['A-independent', 'not_evaluated']]);
+  [], 'CONDITIONAL', [['A-independent', 'not_evaluated'], ['A-runtime', 'not_evaluated']]);
 assertFixture('accept-block-backend (backend BLOCK blocks the ship)', 'accept-block-backend', ACCEPT,
   ['--acceptor-context', 'separate'], 'BLOCK', [['D-backend-engineering', 'fail']]);
 assertFixture('accept-block-noproduct', 'accept-block-noproduct', ACCEPT,
@@ -161,6 +207,18 @@ assertFixture('accept-block-noproduct', 'accept-block-noproduct', ACCEPT,
 // different claims and the gate must not conflate them.
 assertFixture('accept-block-thin-product (PRODUCT.md present, Constraints heading missing)', 'accept-block-thin-product', ACCEPT,
   ['--acceptor-context', 'separate'], 'BLOCK', [['A-product-contract', 'fail']]);
+{
+  const dest = path.join(tmpBase, 'accept-placeholder-' + Math.random().toString(36).slice(2, 8));
+  fs.cpSync(path.join(root, 'fixtures', 'accept-ship'), dest, { recursive: true });
+  const product = path.join(dest, 'PRODUCT.md');
+  fs.writeFileSync(product, read(product).replace(/(## Users\s*)[\s\S]*?(?=\n## )/, '$1\nTODO\n'));
+  const r = runNode(path.join(root, ...ACCEPT.split('/')),
+    ['--root', dest, '--no-write', '--acceptor-context', 'separate', '--runtime-verified']);
+  const report = JSON.parse(r.stdout);
+  expect('acceptance: placeholder-only required sections do not count as evidence',
+    report.checks.find((c) => c.id === 'A-product-contract')?.status === 'fail',
+    JSON.stringify(report.checks));
+}
 // Regression for mutant M10 (accept-check trusts a stale/planted on-disk
 // report instead of re-running the producer): this fixture COMMITS a
 // hand-written backend-report.json claiming verdict SHIP, while the real
@@ -194,7 +252,7 @@ assertFixture('accept-block-arch-heading (ARCHITECTURE.md present, Trust heading
 {
   const { validate } = await import(pathToFileUrl(path.join(root, 'core', 'lib', 'schema.cjs')));
   const schema = JSON.parse(read(path.join(root, 'core', 'schemas', 'check-report.schema.json')));
-  const { report } = runFixture('accept-ship', ACCEPT, ['--acceptor-context', 'separate']);
+  const { report } = runFixture('accept-ship', ACCEPT, ['--acceptor-context', 'separate', '--runtime-verified']);
   const errors = report ? validate(schema, report) : ['no report'];
   expect('acceptance report validates against check-report schema', errors.length === 0, errors.join('; '));
 }

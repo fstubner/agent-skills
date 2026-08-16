@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/log-skill-invocation.mjs\"",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/log-skill-invocation.mjs\" --harness claude",
             "shell": "bash"
           }
         ]

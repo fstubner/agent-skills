@@ -1,0 +1,15 @@
+{
+  "name": "csv-stats-cli",
+  "version": "1.0.0",
+  "description": "CSV statistics analyzer CLI",
+  "main": "src/cli.js",
+  "bin": {
+    "csv-stats": "src/cli.js"
+  },
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "keywords": ["csv", "cli", "statistics"],
+  "author": "",
+  "license": "MIT"
+}

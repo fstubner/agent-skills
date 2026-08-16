@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "multi-agent-bounded-assessment-codex-policy-20260803191944-370280",
+  "caseId": "multi-agent-bounded-assessment",
+  "caseRevision": 1,
+  "caseSha256": "3384dcb3343dd89f65662af2654777418838a487e6dd07e09812bf1ab2a4f84c",
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-03T19:17:47.000Z",
+  "finishedAt": "2026-08-03T19:19:44.000Z",
+  "durationMs": 117669,
+  "totalTokens": 158988,
+  "costUsd": null,
+  "costCredits": 1.52429,
+  "exitCode": 0,
+  "artifactSha256": "6d6c7f4f1168fee9d4956cb6a2898db82276d6d33b5c6000ab67342d29f5be84",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 1,
+    "failed": 4,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

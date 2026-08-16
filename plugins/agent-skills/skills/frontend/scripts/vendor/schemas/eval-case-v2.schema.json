@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Reproducible agent-skill evaluation case",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "skill", "revision", "prompt", "fixture", "grader", "conditions", "assertions"],
+  "properties": {
+    "schemaVersion": { "const": 2 },
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "skill": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "skills": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+    },
+    "revision": { "type": "integer", "minimum": 1 },
+    "prompt": { "type": "string", "minLength": 20 },
+    "fixture": { "type": "string", "minLength": 1 },
+    "grader": { "type": "string", "minLength": 1 },
+    "checker": { "type": "string", "minLength": 1 },
+    "conditions": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "enum": ["control", "policy", "checker", "skill"] }
+    },
+    "assertions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "kind"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "description": { "type": "string", "minLength": 5 },
+          "kind": { "enum": ["outcome", "quality", "cost", "invocation"] }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,762 @@
+{
+  "schemaVersion": 1,
+  "id": "priority-skills-luna-screen-2026-08-13",
+  "purpose": "Preliminary single-harness efficacy screen; not promotion evidence by itself",
+  "harness": "codex",
+  "model": "gpt-5.6-luna",
+  "seed": "priority-skills-luna-screen-2026-08-13-v1",
+  "conditions": [
+    "control",
+    "policy",
+    "skill"
+  ],
+  "trials": 3,
+  "expectedRuns": 90,
+  "hardBudgetCredits": 137,
+  "maxPerRunCredits": 5,
+  "timeoutMs": 600000,
+  "skills": {
+    "product-build": [
+      "scheduled-report-design-gate",
+      "project-label-library"
+    ],
+    "testing-strategy": [
+      "shipping-fee-regression-suite",
+      "retry-delay-regression-suite"
+    ],
+    "cli-tooling": [
+      "cli-csv-statistics",
+      "json-config-setter"
+    ],
+    "engineering-assessment": [
+      "engineering-assessment-hidden-risks",
+      "job-ledger-ordering-assessment"
+    ],
+    "product-acceptance": [
+      "stale-pass-review",
+      "zero-count-export-acceptance"
+    ]
+  },
+  "runs": [
+    {
+      "key": "json-config-setter:policy:2",
+      "runId": "json-config-setter-codex-policy-20260813171813-f27242",
+      "costCredits": 1.232385,
+      "totalTokens": 99768,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "json-config-setter:control:3",
+      "runId": "json-config-setter-codex-control-20260813171940-b75a85",
+      "costCredits": 1.418295,
+      "totalTokens": 98714,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "project-label-library:skill:3",
+      "runId": "project-label-library-codex-skill-20260813172059-945e36",
+      "costCredits": 0.747485,
+      "totalTokens": 79630,
+      "passed": 4,
+      "total": 4
+    },
+    {
+      "key": "retry-delay-regression-suite:control:2",
+      "runId": "retry-delay-regression-suite-codex-control-20260813172141-2eddc0",
+      "costCredits": 0.70583,
+      "totalTokens": 60587,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "zero-count-export-acceptance:skill:3",
+      "runId": "zero-count-export-acceptance-codex-skill-20260813172238-99dcc0",
+      "costCredits": 1.70201,
+      "totalTokens": 185892,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "shipping-fee-regression-suite:control:3",
+      "runId": "shipping-fee-regression-suite-codex-control-20260813172342-193b48",
+      "costCredits": 0.64163,
+      "totalTokens": 59454,
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "key": "engineering-assessment-hidden-risks:policy:2",
+      "runId": "engineering-assessment-hidden-risks-codex-policy-20260813172434-6f7149",
+      "costCredits": 1.07602,
+      "totalTokens": 102461,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "stale-pass-review:policy:3",
+      "runId": "stale-pass-review-codex-policy-20260813172547-e4b143",
+      "costCredits": 0.73009,
+      "totalTokens": 71848,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "job-ledger-ordering-assessment:policy:2",
+      "runId": "job-ledger-ordering-assessment-codex-policy-20260813172630-b3be40",
+      "costCredits": 0.97094,
+      "totalTokens": 89259,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "scheduled-report-design-gate:control:1",
+      "runId": "scheduled-report-design-gate-codex-control-20260813172734-e660a0",
+      "costCredits": 1.424165,
+      "totalTokens": 93389,
+      "passed": 2,
+      "total": 4
+    },
+    {
+      "key": "stale-pass-review:skill:1",
+      "runId": "stale-pass-review-codex-skill-20260813172902-8cfdda",
+      "costCredits": 1.412375,
+      "totalTokens": 145573,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "stale-pass-review:policy:1",
+      "runId": "stale-pass-review-codex-policy-20260813173000-bab091",
+      "costCredits": 0.81731,
+      "totalTokens": 85424,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "job-ledger-ordering-assessment:policy:1",
+      "runId": "job-ledger-ordering-assessment-codex-policy-20260813173049-349a43",
+      "costCredits": 0.96513,
+      "totalTokens": 88430,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "engineering-assessment-hidden-risks:skill:2",
+      "runId": "engineering-assessment-hidden-risks-codex-skill-20260813173152-19a78e",
+      "costCredits": 1.27813,
+      "totalTokens": 114157,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "job-ledger-ordering-assessment:skill:2",
+      "runId": "job-ledger-ordering-assessment-codex-skill-20260813173322-8f25e5",
+      "costCredits": 1.957135,
+      "totalTokens": 120152,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "json-config-setter:skill:3",
+      "runId": "json-config-setter-codex-skill-20260813173642-7e0310",
+      "costCredits": 1.34329,
+      "totalTokens": 123934,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "cli-csv-statistics:control:3",
+      "runId": "cli-csv-statistics-codex-control-20260813173812-a167da",
+      "costCredits": 0.80082,
+      "totalTokens": 60795,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "cli-csv-statistics:control:2",
+      "runId": "cli-csv-statistics-codex-control-20260813173912-167204",
+      "costCredits": 0.820545,
+      "totalTokens": 61139,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "cli-csv-statistics:policy:1",
+      "runId": "cli-csv-statistics-codex-policy-20260813174014-9c0c67",
+      "costCredits": 0.938035,
+      "totalTokens": 75954,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "shipping-fee-regression-suite:control:2",
+      "runId": "shipping-fee-regression-suite-codex-control-20260813174120-beb7d6",
+      "costCredits": 0.825475,
+      "totalTokens": 59350,
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "key": "shipping-fee-regression-suite:policy:2",
+      "runId": "shipping-fee-regression-suite-codex-policy-20260813174209-eec402",
+      "costCredits": 0.86205,
+      "totalTokens": 89440,
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "key": "cli-csv-statistics:skill:2",
+      "runId": "cli-csv-statistics-codex-skill-20260813174305-af48a5",
+      "costCredits": 1.419,
+      "totalTokens": 87210,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "engineering-assessment-hidden-risks:skill:1",
+      "runId": "engineering-assessment-hidden-risks-codex-skill-20260813174425-2b6d09",
+      "costCredits": 1.03741,
+      "totalTokens": 97762,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "engineering-assessment-hidden-risks:policy:3",
+      "runId": "engineering-assessment-hidden-risks-codex-policy-20260813174545-33bb76",
+      "costCredits": 1.00449,
+      "totalTokens": 89646,
+      "passed": 1,
+      "total": 5
+    },
+    {
+      "key": "zero-count-export-acceptance:policy:3",
+      "runId": "zero-count-export-acceptance-codex-policy-20260813174652-a78d53",
+      "costCredits": 0.722525,
+      "totalTokens": 72382,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "shipping-fee-regression-suite:policy:1",
+      "runId": "shipping-fee-regression-suite-codex-policy-20260813174747-d036a9",
+      "costCredits": 0.904635,
+      "totalTokens": 59842,
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "key": "scheduled-report-design-gate:skill:1",
+      "runId": "scheduled-report-design-gate-codex-skill-20260813174838-960a82",
+      "costCredits": 0.51774,
+      "totalTokens": 37699,
+      "passed": 4,
+      "total": 4
+    },
+    {
+      "key": "retry-delay-regression-suite:policy:1",
+      "runId": "retry-delay-regression-suite-codex-policy-20260813174908-d44c18",
+      "costCredits": 0.474605,
+      "totalTokens": 60182,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "cli-csv-statistics:policy:2",
+      "runId": "cli-csv-statistics-codex-policy-20260813174959-1f948f",
+      "costCredits": 0.86403,
+      "totalTokens": 90120,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "shipping-fee-regression-suite:skill:2",
+      "runId": "shipping-fee-regression-suite-codex-skill-20260813175119-428c47",
+      "costCredits": 0.805515,
+      "totalTokens": 78403,
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "key": "project-label-library:skill:2",
+      "runId": "project-label-library-codex-skill-20260813175216-562137",
+      "costCredits": 0.966955,
+      "totalTokens": 65728,
+      "passed": 4,
+      "total": 4
+    },
+    {
+      "key": "shipping-fee-regression-suite:skill:3",
+      "runId": "shipping-fee-regression-suite-codex-skill-20260813175301-b9b3e0",
+      "costCredits": 0.74244,
+      "totalTokens": 77275,
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "key": "zero-count-export-acceptance:policy:1",
+      "runId": "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0",
+      "costCredits": 0.731435,
+      "totalTokens": 73325,
+      "passed": 1,
+      "total": 5
+    },
+    {
+      "key": "project-label-library:policy:3",
+      "runId": "project-label-library-codex-policy-20260813175440-fa18e2",
+      "costCredits": 0.80685,
+      "totalTokens": 74825,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "shipping-fee-regression-suite:policy:3",
+      "runId": "shipping-fee-regression-suite-codex-policy-20260813175529-0571dc",
+      "costCredits": 0.66958,
+      "totalTokens": 60022,
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "key": "scheduled-report-design-gate:policy:2",
+      "runId": "scheduled-report-design-gate-codex-policy-20260813175622-4bb18d",
+      "costCredits": 1.622345,
+      "totalTokens": 161296,
+      "passed": 1,
+      "total": 4
+    },
+    {
+      "key": "project-label-library:control:1",
+      "runId": "project-label-library-codex-control-20260813175848-771d8e",
+      "costCredits": 0.594595,
+      "totalTokens": 58006,
+      "passed": 4,
+      "total": 4
+    },
+    {
+      "key": "zero-count-export-acceptance:policy:2",
+      "runId": "zero-count-export-acceptance-codex-policy-20260813175925-b0b231",
+      "costCredits": 0.952855,
+      "totalTokens": 72068,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "zero-count-export-acceptance:control:2",
+      "runId": "zero-count-export-acceptance-codex-control-20260813180008-30c8a5",
+      "costCredits": 0.742325,
+      "totalTokens": 72754,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "retry-delay-regression-suite:policy:2",
+      "runId": "retry-delay-regression-suite-codex-policy-20260813180057-ce733b",
+      "costCredits": 0.67878,
+      "totalTokens": 60160,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "scheduled-report-design-gate:control:3",
+      "runId": "scheduled-report-design-gate-codex-control-20260813180145-712868",
+      "costCredits": 1.36878,
+      "totalTokens": 110976,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "retry-delay-regression-suite:control:1",
+      "runId": "retry-delay-regression-suite-codex-control-20260813180330-83a8d9",
+      "costCredits": 0.65188,
+      "totalTokens": 59529,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "engineering-assessment-hidden-risks:control:1",
+      "runId": "engineering-assessment-hidden-risks-codex-control-20260813180415-ec0fbf",
+      "costCredits": 1.2761,
+      "totalTokens": 145622,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "zero-count-export-acceptance:control:1",
+      "runId": "zero-count-export-acceptance-codex-control-20260813180530-904a75",
+      "costCredits": 0.70439,
+      "totalTokens": 71295,
+      "passed": 1,
+      "total": 5
+    },
+    {
+      "key": "scheduled-report-design-gate:policy:3",
+      "runId": "scheduled-report-design-gate-codex-policy-20260813180613-1a951b",
+      "costCredits": 1.373175,
+      "totalTokens": 126907,
+      "passed": 2,
+      "total": 4
+    },
+    {
+      "key": "retry-delay-regression-suite:skill:3",
+      "runId": "retry-delay-regression-suite-codex-skill-20260813180755-c2ff25",
+      "costCredits": 0.790385,
+      "totalTokens": 66609,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "stale-pass-review:skill:2",
+      "runId": "stale-pass-review-codex-skill-20260813180845-181390",
+      "costCredits": 1.321565,
+      "totalTokens": 180528,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "json-config-setter:skill:2",
+      "runId": "json-config-setter-codex-skill-20260813180952-34b718",
+      "costCredits": 0.987695,
+      "totalTokens": 83920,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "json-config-setter:policy:3",
+      "runId": "json-config-setter-codex-policy-20260813181056-9f314b",
+      "costCredits": 0.92074,
+      "totalTokens": 64870,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "job-ledger-ordering-assessment:policy:3",
+      "runId": "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24",
+      "costCredits": 0.99004,
+      "totalTokens": 89313,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "stale-pass-review:control:2",
+      "runId": "stale-pass-review-codex-control-20260813181315-a417ce",
+      "costCredits": 0.86175,
+      "totalTokens": 58480,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "scheduled-report-design-gate:skill:2",
+      "runId": "scheduled-report-design-gate-codex-skill-20260813181354-fe2b8b",
+      "costCredits": 0.954065,
+      "totalTokens": 70651,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "engineering-assessment-hidden-risks:control:3",
+      "runId": "engineering-assessment-hidden-risks-codex-control-20260813181500-12e016",
+      "costCredits": 0.84956,
+      "totalTokens": 74725,
+      "passed": 0,
+      "total": 5
+    },
+    {
+      "key": "retry-delay-regression-suite:control:3",
+      "runId": "retry-delay-regression-suite-codex-control-20260813181559-e38c94",
+      "costCredits": 0.69528,
+      "totalTokens": 60180,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "json-config-setter:policy:1",
+      "runId": "json-config-setter-codex-policy-20260813181647-e0f2f9",
+      "costCredits": 0.977385,
+      "totalTokens": 66589,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "retry-delay-regression-suite:skill:1",
+      "runId": "retry-delay-regression-suite-codex-skill-20260813181801-c8d424",
+      "costCredits": 0.629775,
+      "totalTokens": 80439,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "stale-pass-review:skill:3",
+      "runId": "stale-pass-review-codex-skill-20260813181849-1a5723",
+      "costCredits": 1.17601,
+      "totalTokens": 147532,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "project-label-library:policy:2",
+      "runId": "project-label-library-codex-policy-20260813181953-0a7b0c",
+      "costCredits": 0.76086,
+      "totalTokens": 73197,
+      "passed": 4,
+      "total": 4
+    },
+    {
+      "key": "zero-count-export-acceptance:skill:1",
+      "runId": "zero-count-export-acceptance-codex-skill-20260813182045-5d2068",
+      "costCredits": 1.34527,
+      "totalTokens": 175437,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "engineering-assessment-hidden-risks:skill:3",
+      "runId": "engineering-assessment-hidden-risks-codex-skill-20260813182155-a4295e",
+      "costCredits": 1.2491,
+      "totalTokens": 111281,
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "key": "shipping-fee-regression-suite:control:1",
+      "runId": "shipping-fee-regression-suite-codex-control-20260813182321-706c6d",
+      "costCredits": 0.65073,
+      "totalTokens": 59658,
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "key": "json-config-setter:control:1",
+      "runId": "json-config-setter-codex-control-20260813182409-73e2f8",
+      "costCredits": 1.20078,
+      "totalTokens": 109071,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "job-ledger-ordering-assessment:control:3",
+      "runId": "job-ledger-ordering-assessment-codex-control-20260813182533-fab6c0",
+      "costCredits": 0.972885,
+      "totalTokens": 100114,
+      "passed": 1,
+      "total": 5
+    },
+    {
+      "key": "stale-pass-review:policy:2",
+      "runId": "stale-pass-review-codex-policy-20260813182639-74da59",
+      "costCredits": 0.77891,
+      "totalTokens": 83868,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "job-ledger-ordering-assessment:skill:3",
+      "runId": "job-ledger-ordering-assessment-codex-skill-20260813182724-6d67c3",
+      "costCredits": 1.425475,
+      "totalTokens": 146113,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "cli-csv-statistics:control:1",
+      "runId": "cli-csv-statistics-codex-control-20260813182852-328454",
+      "costCredits": 1.014735,
+      "totalTokens": 90834,
+      "passed": 2,
+      "total": 4
+    },
+    {
+      "key": "zero-count-export-acceptance:control:3",
+      "runId": "zero-count-export-acceptance-codex-control-20260813183002-64d59e",
+      "costCredits": 0.62743,
+      "totalTokens": 84118,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "retry-delay-regression-suite:skill:2",
+      "runId": "retry-delay-regression-suite-codex-skill-20260813183042-52e6aa",
+      "costCredits": 0.77241,
+      "totalTokens": 66360,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "stale-pass-review:control:3",
+      "runId": "stale-pass-review-codex-control-20260813183129-26f7b2",
+      "costCredits": 0.67069,
+      "totalTokens": 70417,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "scheduled-report-design-gate:policy:1",
+      "runId": "scheduled-report-design-gate-codex-policy-20260813183212-1a7402",
+      "costCredits": 1.202455,
+      "totalTokens": 81264,
+      "passed": 2,
+      "total": 4
+    },
+    {
+      "key": "project-label-library:skill:1",
+      "runId": "project-label-library-codex-skill-20260813183342-9dd203",
+      "costCredits": 0.65427,
+      "totalTokens": 65421,
+      "passed": 4,
+      "total": 4
+    },
+    {
+      "key": "retry-delay-regression-suite:policy:3",
+      "runId": "retry-delay-regression-suite-codex-policy-20260813183420-86f8a5",
+      "costCredits": 0.695705,
+      "totalTokens": 60407,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "cli-csv-statistics:skill:3",
+      "runId": "cli-csv-statistics-codex-skill-20260813183507-6c9449",
+      "costCredits": 1.066865,
+      "totalTokens": 100852,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "job-ledger-ordering-assessment:control:2",
+      "runId": "job-ledger-ordering-assessment-codex-control-20260813183725-76ca7f",
+      "costCredits": 1.08786,
+      "totalTokens": 115445,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "scheduled-report-design-gate:skill:3",
+      "runId": "scheduled-report-design-gate-codex-skill-20260813183836-f0828a",
+      "costCredits": 0.51814,
+      "totalTokens": 37705,
+      "passed": 4,
+      "total": 4
+    },
+    {
+      "key": "job-ledger-ordering-assessment:skill:1",
+      "runId": "job-ledger-ordering-assessment-codex-skill-20260813183908-7c04a7",
+      "costCredits": 1.31557,
+      "totalTokens": 128000,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "cli-csv-statistics:policy:3",
+      "runId": "cli-csv-statistics-codex-policy-20260813184028-bf7fb6",
+      "costCredits": 1.18684,
+      "totalTokens": 76479,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "job-ledger-ordering-assessment:control:1",
+      "runId": "job-ledger-ordering-assessment-codex-control-20260813184132-3b9e9d",
+      "costCredits": 1.352,
+      "totalTokens": 112847,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "cli-csv-statistics:skill:1",
+      "runId": "cli-csv-statistics-codex-skill-20260813184241-bcc4a4",
+      "costCredits": 1.29346,
+      "totalTokens": 69620,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "engineering-assessment-hidden-risks:control:2",
+      "runId": "engineering-assessment-hidden-risks-codex-control-20260813184350-7d22bb",
+      "costCredits": 1.03714,
+      "totalTokens": 112533,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "json-config-setter:skill:1",
+      "runId": "json-config-setter-codex-skill-20260813184455-efabd1",
+      "costCredits": 1.168365,
+      "totalTokens": 115139,
+      "passed": 5,
+      "total": 5
+    },
+    {
+      "key": "project-label-library:control:2",
+      "runId": "project-label-library-codex-control-20260813184612-8d703a",
+      "costCredits": 0.66666,
+      "totalTokens": 59692,
+      "passed": 4,
+      "total": 4
+    },
+    {
+      "key": "stale-pass-review:control:1",
+      "runId": "stale-pass-review-codex-control-20260813184650-698987",
+      "costCredits": 0.95651,
+      "totalTokens": 71336,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "json-config-setter:control:2",
+      "runId": "json-config-setter-codex-control-20260813184732-18d1ff",
+      "costCredits": 1.174735,
+      "totalTokens": 99712,
+      "passed": 3,
+      "total": 5
+    },
+    {
+      "key": "engineering-assessment-hidden-risks:policy:1",
+      "runId": "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f",
+      "costCredits": 1.49874,
+      "totalTokens": 119578,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "project-label-library:policy:1",
+      "runId": "project-label-library-codex-policy-20260813185015-e191a4",
+      "costCredits": 0.841365,
+      "totalTokens": 86581,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "shipping-fee-regression-suite:skill:1",
+      "runId": "shipping-fee-regression-suite-codex-skill-20260813185111-4846c2",
+      "costCredits": 0.751285,
+      "totalTokens": 66165,
+      "passed": 4,
+      "total": 5
+    },
+    {
+      "key": "zero-count-export-acceptance:skill:2",
+      "runId": "zero-count-export-acceptance-codex-skill-20260813185202-d24ed6",
+      "costCredits": 1.289615,
+      "totalTokens": 179295,
+      "passed": 2,
+      "total": 5
+    },
+    {
+      "key": "scheduled-report-design-gate:control:2",
+      "runId": "scheduled-report-design-gate-codex-control-20260813185341-f44403",
+      "costCredits": 1.155705,
+      "totalTokens": 93201,
+      "passed": 3,
+      "total": 4
+    },
+    {
+      "key": "project-label-library:control:3",
+      "runId": "project-label-library-codex-control-20260813185509-e3e798",
+      "costCredits": 0.66546,
+      "totalTokens": 59729,
+      "passed": 3,
+      "total": 4
+    }
+  ]
+}

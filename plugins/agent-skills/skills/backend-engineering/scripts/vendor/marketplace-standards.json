@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "schemas": [
+    {
+      "id": "claude-plugin",
+      "url": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+      "sha256": "3f69938d71a47a72fa60050b2050dd620054708911defc1c1dcd7188dcb169f5"
+    },
+    {
+      "id": "cursor-plugin",
+      "url": "https://raw.githubusercontent.com/cursor/plugins/main/schemas/plugin.schema.json",
+      "sha256": "a393b758901803fcf5cfe0d77bda8a83e987d32c3377dfce2d9edf445af884ed"
+    },
+    {
+      "id": "cursor-marketplace",
+      "url": "https://raw.githubusercontent.com/cursor/plugins/main/schemas/marketplace.schema.json",
+      "sha256": "1aae96a24c2796419933bc8bfe3a1255394e7199c35740b36325e0ce6dbc253d"
+    }
+  ],
+  "documents": [
+    {
+      "id": "codex-plugins",
+      "url": "https://developers.openai.com/plugins/build/plugins",
+      "requiredText": [".agents/plugins/marketplace.json", ".codex-plugin/plugin.json"]
+    },
+    {
+      "id": "gemini-extensions",
+      "url": "https://geminicli.com/docs/extensions/reference/",
+      "requiredText": ["gemini-extension.json", "gemini extensions install"]
+    },
+    {
+      "id": "antigravity-plugins",
+      "url": "https://antigravity.google/docs/cli/plugins",
+      "requiredText": ["plugin.json", "agy plugin install"]
+    }
+  ]
+}

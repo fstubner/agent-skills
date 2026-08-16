@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "ai-prose-voice-edit-codex-skill-20260803191126-b9418d",
+  "caseId": "ai-prose-voice-edit",
+  "caseRevision": 1,
+  "caseSha256": "368fe54a77802d471351124d1745acd60038ffd208e33494698763622521a8f6",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-desktop 0.146.0-alpha.9.2",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-03T19:10:21.000Z",
+  "finishedAt": "2026-08-03T19:11:26.000Z",
+  "durationMs": 65509,
+  "totalTokens": 253319,
+  "costUsd": null,
+  "costCredits": 1.519715,
+  "exitCode": 0,
+  "artifactSha256": "1ab2271561ea8d9b7a4b37059368ad1f8b932586f309d1d81f4683c61c632b1d",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

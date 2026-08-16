@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "shipping-fee-regression-suite",
+  "assertions": [
+    {
+      "id": "stable-baseline",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "public-behavior",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "kills-threshold-mutant",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "kills-unsupported-mutant",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "kills-member-mutant",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    }
+  ]
+}

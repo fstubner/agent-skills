@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "tool-library-contract",
+  "assertions": [
+    {
+      "id": "required-headings",
+      "status": "fail",
+      "evidence": "required=Purpose, Users, Success, MVP, Constraints"
+    },
+    {
+      "id": "observable-success",
+      "status": "fail",
+      "evidence": "section missing or empty"
+    },
+    {
+      "id": "bounded-mvp",
+      "status": "fail",
+      "evidence": "bullets=0"
+    },
+    {
+      "id": "scope-cut",
+      "status": "fail",
+      "evidence": "section missing or empty"
+    },
+    {
+      "id": "no-fabrication",
+      "status": "fail",
+      "evidence": "section missing or empty"
+    }
+  ]
+}

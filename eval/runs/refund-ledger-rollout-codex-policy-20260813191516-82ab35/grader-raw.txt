@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "caseId": "refund-ledger-rollout",
+  "assertions": [
+    {
+      "id": "additive-schema",
+      "status": "pass",
+      "evidence": "files=002_create_refunds.sql,003_refund_ledger_indexes.sql, additive=true, ledger=true, amount=true, idempotency=true, paymentReference=true"
+    },
+    {
+      "id": "server-boundary",
+      "status": "fail",
+      "evidence": "missingAuth=400, crossAccount=404, fractionalAmount=400"
+    },
+    {
+      "id": "refund-invariant",
+      "status": "fail",
+      "evidence": "first=201/undefined, replay=200/undefined, excessive=409"
+    },
+    {
+      "id": "structured-errors",
+      "status": "fail",
+      "evidence": "400:{\"code\":\"invalid_amount\"} | 404:{\"code\":\"not_found\"} | 409:{\"code\":\"refund_exceeds_payment\"}"
+    },
+    {
+      "id": "regression-suite",
+      "status": "fail",
+      "evidence": "canonicalCommand=true, exit=0, files=test\\server.test.js, boundaryCoverage=false, output=TAP version 13\n# Subtest: refunds are authorized, capped, and idempotent\nok 1 - refunds are authorized, capped, and idempotent\n  ---\n  duration_ms: 40.0272\n  type: 'test'\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 1\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 200.3626\n"
+    },
+    {
+      "id": "immutable-release",
+      "status": "fail",
+      "evidence": "tagTrigger=false, uploadAndDownload=false, needsBuild=false, testsBeforeArtifact=false, immutableActions=false"
+    },
+    {
+      "id": "literal-rollback",
+      "status": "fail",
+      "evidence": "release documentation missing"
+    }
+  ]
+}

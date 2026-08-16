@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "cli-csv-statistics",
+  "assertions": [
+    {
+      "id": "valid-output",
+      "status": "pass",
+      "evidence": "exit=0; stdout=\"{\\\"rowCount\\\":3,\\\"count\\\":4,\\\"latency\\\":20}\\n\"; expected rowCount=3,count=4,latency=20"
+    },
+    {
+      "id": "bad-input-contract",
+      "status": "fail",
+      "evidence": "exit=0; stdoutBytes=15; stderrBytes=0"
+    },
+    {
+      "id": "help-contract",
+      "status": "pass",
+      "evidence": "exit=0; output=\"Usage: cli <csv-path>\\n\\nAnalyze a CSV file and output JSON with row count and means of numeric columns.\\n\\nArguments:\\n  csv-path    Path to the CSV file to analyze\\n\\nOptions:\\n  --help      Show this help message\\n  --version   Show version number\\n\\nExample:\\n  cli sample.csv\\n\\n\""
+    },
+    {
+      "id": "tests-run",
+      "status": "fail",
+      "evidence": "package.json scripts.test is missing or unreadable"
+    }
+  ]
+}

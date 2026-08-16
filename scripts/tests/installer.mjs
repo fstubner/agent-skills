@@ -7,22 +7,70 @@ import {
   tmpBase, runFixture, assertFixture, ARCH, BACKEND, FRONTEND, ACCEPT,
 } from './harness.mjs';
 
-// ---------- 9. Installer: array-valued harnessPaths (codex installs to two dirs) ----------
-// codex is the one harness with a multi-path entry (registry.json's
-// _harnessPathsNote explains why) — this proves install.mjs actually
-// expands it to multiple targets rather than silently installing to only
-// the first, which no other test here would catch (every other harness is
-// a single string and wouldn't exercise the Array.isArray branch at all).
+// ---------- 9. Installer: Codex uses one canonical path and removes its legacy duplicate ----------
 {
   const fakeHome = fs.mkdtempSync(path.join(tmpBase, 'installer-fakehome-'));
+  const legacy = path.join(fakeHome, '.codex', 'skills', 'mental-models');
+  fs.mkdirSync(legacy, { recursive: true });
+  fs.writeFileSync(path.join(legacy, 'SKILL.md'), 'legacy managed copy');
+  fs.writeFileSync(path.join(legacy, '.agent-skills-install.json'), JSON.stringify({
+    suite: registry.name, version: '0.0.0',
+  }));
   const r = spawnSync(process.execPath, [path.join(root, 'scripts', 'install.mjs'), '--harness', 'codex', '--skill', 'mental-models'],
     { cwd: root, encoding: 'utf8', env: { ...process.env, HOME: fakeHome, USERPROFILE: fakeHome } });
   expect('install.mjs --harness codex: exits 0', r.status === 0, r.stderr || r.stdout);
-  expect('install.mjs --harness codex: installs to ~/.codex/skills',
-    fs.existsSync(path.join(fakeHome, '.codex', 'skills', 'mental-models', 'SKILL.md')));
   expect('install.mjs --harness codex: installs to ~/.agents/skills',
     fs.existsSync(path.join(fakeHome, '.agents', 'skills', 'mental-models', 'SKILL.md')));
-  expect('install.mjs --harness codex: reports 2 target(s)', /2 target\(s\)/.test(r.stdout), r.stdout);
+  expect('install.mjs --harness codex: removes its obsolete managed ~/.codex/skills copy',
+    !fs.existsSync(legacy));
+  expect('install.mjs --harness codex: reports 1 target(s)', /1 target\(s\)/.test(r.stdout), r.stdout);
+}
+
+// ---------- 9a. Telemetry installer: preserve, merge, deduplicate, remove ----------
+{
+  const fakeHome = fs.mkdtempSync(path.join(tmpBase, 'telemetry-home-'));
+  const env = { ...process.env, HOME: fakeHome, USERPROFILE: fakeHome };
+  const script = path.join(root, 'scripts', 'install-telemetry.mjs');
+  const claudeSettings = path.join(fakeHome, '.claude', 'settings.json');
+  fs.mkdirSync(path.dirname(claudeSettings), { recursive: true });
+  fs.writeFileSync(claudeSettings, JSON.stringify({ hooks: { PostToolUse: [{ matcher: 'Bash', hooks: [{ command: 'keep-me' }] }] } }));
+
+  const run = (extra = []) => spawnSync(process.execPath, [script, '--harness', 'all', ...extra], {
+    cwd: root, encoding: 'utf8', env,
+  });
+  const first = run();
+  const second = run();
+  expect('telemetry installer: installs all harness hooks', first.status === 0, first.stderr || first.stdout);
+  expect('telemetry installer: rerun is idempotent', second.status === 0, second.stderr || second.stdout);
+  expect('telemetry installer: copies a standalone adapter and registry',
+    fs.existsSync(path.join(fakeHome, '.agent-skills-telemetry', 'adapter', 'log-skill-invocation.mjs'))
+      && fs.existsSync(path.join(fakeHome, '.agent-skills-telemetry', 'adapter', 'registry.json')));
+
+  const claude = JSON.parse(fs.readFileSync(claudeSettings, 'utf8'));
+  expect('telemetry installer: preserves existing Claude hooks',
+    claude.hooks.PostToolUse.some((item) => item.hooks?.some((hook) => hook.command === 'keep-me')));
+  expect('telemetry installer: does not duplicate Claude hook on rerun',
+    claude.hooks.PostToolUse.filter((item) => item.hooks?.some((hook) => hook.command?.includes('agent-skills-telemetry'))).length === 1);
+
+  const codex = JSON.parse(fs.readFileSync(path.join(fakeHome, '.codex', 'hooks.json'), 'utf8'));
+  const cursor = JSON.parse(fs.readFileSync(path.join(fakeHome, '.cursor', 'hooks.json'), 'utf8'));
+  const antigravity = JSON.parse(fs.readFileSync(path.join(fakeHome, '.gemini', 'config', 'hooks.json'), 'utf8'));
+  expect('telemetry installer: Codex uses a PostToolUse observer',
+    codex.hooks.PostToolUse.length === 1 && /Bash/.test(codex.hooks.PostToolUse[0].matcher)
+      && /shell_command/.test(codex.hooks.PostToolUse[0].matcher));
+  expect('telemetry installer: Cursor observes successful Read tools',
+    cursor.version === 1 && cursor.hooks.postToolUse.length === 1 && cursor.hooks.postToolUse[0].matcher === 'Read');
+  expect('telemetry installer: Antigravity observes transcripts after model invocation',
+    antigravity['agent-skills-telemetry']?.PostInvocation?.length === 1);
+
+  const removed = run(['--remove']);
+  expect('telemetry installer: remove exits 0', removed.status === 0, removed.stderr || removed.stdout);
+  const removedClaude = JSON.parse(fs.readFileSync(claudeSettings, 'utf8'));
+  const removedAg = JSON.parse(fs.readFileSync(path.join(fakeHome, '.gemini', 'config', 'hooks.json'), 'utf8'));
+  expect('telemetry installer: remove preserves unrelated hooks',
+    removedClaude.hooks.PostToolUse.some((item) => item.hooks?.some((hook) => hook.command === 'keep-me')));
+  expect('telemetry installer: remove deletes only its Antigravity entry',
+    !('agent-skills-telemetry' in removedAg));
 }
 
 // ---------- 9b. INSTALLED skills must actually run ----------
@@ -90,6 +138,13 @@ import {
     { cwd: root, encoding: 'utf8' });
   expect('installer: refuses a directory it did not create', r.status !== 0, `exit ${r.status}`);
   expect('installer: leaves the pre-existing file intact', fs.existsSync(path.join(victim, 'PRECIOUS.txt')));
+  fs.writeFileSync(path.join(victim, '.agent-skills-install.json'),
+    JSON.stringify({ suite: 'foreign-suite', version: '9.9.9' }));
+  const foreign = spawnSync(process.execPath,
+    [path.join(root, 'scripts', 'install.mjs'), '--dest', dest, '--skill', 'mental-models'],
+    { cwd: root, encoding: 'utf8' });
+  expect('installer: a foreign marker does not prove ownership',
+    foreign.status !== 0 && fs.existsSync(path.join(victim, 'PRECIOUS.txt')), foreign.stderr || foreign.stdout);
   const forced = spawnSync(process.execPath,
     [path.join(root, 'scripts', 'install.mjs'), '--dest', dest, '--skill', 'mental-models', '--force'],
     { cwd: root, encoding: 'utf8' });

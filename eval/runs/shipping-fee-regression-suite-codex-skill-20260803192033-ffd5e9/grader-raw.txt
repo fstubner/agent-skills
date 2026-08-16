@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "shipping-fee-regression-suite",
+  "assertions": [
+    {
+      "id": "stable-baseline",
+      "status": "pass",
+      "evidence": "exits=0,0,0,0,0,0"
+    },
+    {
+      "id": "public-behavior",
+      "status": "pass",
+      "evidence": "changed=true; exit=0; output=\"\\n> test\\n> node --test\\n\\n✔ normalizes country codes by trimming whitespace and ignoring case (0.7934ms)\\n✔ returns null for countries without a supported shipping rate (0.1266ms)\\n✔ applies the free-shipping threshold at exactly 100 in either country (0.1094ms)\\n✔ charges the standard Ireland rate below \""
+    },
+    {
+      "id": "kills-threshold-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    },
+    {
+      "id": "kills-unsupported-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    },
+    {
+      "id": "kills-member-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    }
+  ]
+}

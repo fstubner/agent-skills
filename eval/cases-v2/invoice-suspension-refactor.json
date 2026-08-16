@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "id": "invoice-suspension-refactor",
+  "skill": "code-smells",
+  "revision": 1,
+  "prompt": "Implement suspended-account billing in src/calculate-invoice.js: when account.status is suspended, the account owes zero regardless of plan, usage, currency, or coupon. Preserve current behavior for active accounts. Refactor the billing code as needed so another billing-rule change is safe to make, and add or update tests.",
+  "fixture": "eval/fixtures-v2/invoice-suspension-refactor",
+  "grader": "eval/graders-v2/invoice-suspension-refactor.mjs",
+  "checker": "code-smells/scripts/check-smells.js",
+  "conditions": ["control", "policy", "checker", "skill"],
+  "assertions": [
+    { "id": "suspended-zero", "description": "Suspended accounts owe zero across billing variants", "kind": "outcome" },
+    { "id": "active-regression", "description": "Existing active-account totals are preserved", "kind": "outcome" },
+    { "id": "nesting-resolved", "description": "The touched billing implementation no longer has excessive nesting", "kind": "quality" },
+    { "id": "tests-run", "description": "The submitted automated test command exists and passes", "kind": "outcome" }
+  ]
+}

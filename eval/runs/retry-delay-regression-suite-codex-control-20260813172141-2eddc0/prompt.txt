@@ -1,0 +1,3 @@
+Retry timing regressions have reached production. Strengthen the automated tests for src/retry-delay.js. Do not change production behavior or add dependencies; make npm test the test entry point.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

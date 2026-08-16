@@ -39,6 +39,10 @@ export function expect(name, cond, detail = '') {
   if (cond) console.log(`ok    ${name}`);
   else {
     failures++;
+    // Individual test modules are also run directly during focused work.
+    // Make those invocations fail closed instead of relying only on the
+    // aggregate runner's final failureCount() check.
+    process.exitCode = 1;
     console.log(`FAIL  ${name}${detail ? ` — ${detail}` : ''}`);
   }
 }
@@ -100,3 +104,4 @@ export const ARCH = 'systems-architecture/scripts/check-architecture.js';
 export const BACKEND = 'backend-engineering/scripts/check-backend.js';
 export const FRONTEND = 'frontend/scripts/check-frontend.js';
 export const ACCEPT = 'product-acceptance/scripts/accept-check.js';
+export const SMOKE = 'release-engineering/scripts/check-smoke.js';

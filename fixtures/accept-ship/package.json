@@ -1,1 +1,7 @@
-{ "name": "fx", "dependencies": { "express": "^4.19.0", "prisma": "^5.0.0" } }
+{
+  "name": "fx",
+  "scripts": {
+    "test": "node --test test/server.test.js"
+  },
+  "dependencies": { "express": "^4.19.0", "prisma": "^5.0.0" }
+}

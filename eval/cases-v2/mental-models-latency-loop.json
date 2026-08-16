@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "id": "mental-models-latency-loop",
+  "skill": "mental-models",
+  "revision": 1,
+  "prompt": "Diagnose the latency incident using the files in incident/. Identify the cause or causes, recommend the safest first action, and write diagnosis.md. Make the reasoning auditable enough that another engineer can challenge it.",
+  "fixture": "eval/fixtures-v2/mental-models-latency-loop",
+  "grader": "eval/graders-v2/mental-models-latency-loop.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "interacting-causes", "description": "Diagnosis captures the interacting load, fan-out, saturation, and retry loop", "kind": "outcome" },
+    { "id": "distinguishing-evidence", "description": "Diagnosis cites temporal and metric evidence that distinguishes candidates", "kind": "outcome" },
+    { "id": "deploy-decoy-ruled-out", "description": "Earlier deployment is downgraded using observed timing", "kind": "outcome" },
+    { "id": "safe-first-action", "description": "First mitigation is reversible and attacks the observed feedback loop", "kind": "outcome" },
+    { "id": "auditable-reasoning", "description": "Reasoning exposes lens choice, candidates, evidence, rejection, and falsifier", "kind": "quality" }
+  ]
+}

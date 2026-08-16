@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 2,
+  "id": "zero-count-export-acceptance",
+  "skill": "product-acceptance",
+  "revision": 1,
+  "prompt": "Independently review this finished CLI release and write the release verdict to REVIEW.md. Do not fix or otherwise modify the product. Verify the primary export flow and reconcile your runtime findings with any automated acceptance result.",
+  "fixture": "eval/fixtures-v2/zero-count-export-acceptance",
+  "grader": "eval/graders-v2/zero-count-export-acceptance.mjs",
+  "checker": "product-acceptance/scripts/accept-check.js",
+  "conditions": ["control", "policy", "checker", "skill"],
+  "assertions": [
+    { "id": "verdict-is-block", "description": "The final release verdict is BLOCK rather than the automated gate result", "kind": "outcome" },
+    { "id": "zero-count-defect-found", "description": "The review identifies that valid zero counts are silently removed", "kind": "outcome" },
+    { "id": "runtime-evidence", "description": "The review records a concrete zero-count export execution and its observed output", "kind": "quality" },
+    { "id": "gate-reconciled", "description": "A fresh acceptance report is present and the review explains why manual runtime evidence overrides it", "kind": "quality" },
+    { "id": "review-only", "description": "Acceptance does not modify the product or product contract", "kind": "outcome" }
+  ]
+}

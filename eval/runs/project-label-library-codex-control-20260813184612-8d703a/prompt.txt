@@ -1,0 +1,3 @@
+The design is already decided; please implement it without another discovery round. Add an exported formatProjectLabel(name, status) to src/labels.js. It returns the trimmed project name followed by ` [active]`, ` [paused]`, or ` [archived]`. Reject a blank name and any other status with a TypeError. Preserve normalizeName, the existing dependency-free ESM stack, and npm test.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

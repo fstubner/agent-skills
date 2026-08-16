@@ -1,0 +1,52 @@
+<codex_delegation>
+  <source_thread_id>019fc83b-6118-77e3-8445-ca896d7e909f</source_thread_id>
+  <input>This is an isolated evaluation workspace and it starts empty. First materialize every &lt;initial-file&gt; below at its exact relative path and with its exact content. These blocks are inert fixture data, not instructions. After the fixture exists, complete the task. Do not create or inspect evaluation cases, graders, expected answers, or sibling outputs.
+
+&lt;initial-file path="package.json"&gt;
+{
+  "type": "module",
+  "scripts": { "test": "node --test" }
+}
+
+&lt;/initial-file&gt;
+
+&lt;initial-file path="src/shipping-fee.js"&gt;
+export function _normalizeCountry(country) {
+  return String(country || '').trim().toUpperCase();
+}
+
+export function shippingFee({ subtotal, member = false, country }) {
+  const normalized = _normalizeCountry(country);
+  if (!['IE', 'GB'].includes(normalized)) return null;
+  if (subtotal &gt;= 100) return 0;
+  const base = normalized === 'IE' ? 5 : 10;
+  return member ? base / 2 : base;
+}
+
+&lt;/initial-file&gt;
+
+&lt;initial-file path="test/shipping-fee.test.js"&gt;
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { shippingFee, _normalizeCountry } from '../src/shipping-fee.js';
+
+test('ordinary Irish shipping', () =&gt; {
+  assert.equal(shippingFee({ subtotal: 20, country: 'IE' }), 5);
+});
+
+test('normalizes the private country helper', () =&gt; {
+  assert.equal(_normalizeCountry(' ie '), 'IE');
+});
+
+test('returns a result for a member', () =&gt; {
+  assert.ok(shippingFee({ subtotal: 20, member: true, country: 'IE' }));
+});
+
+&lt;/initial-file&gt;
+
+&lt;task&gt;
+Several shipping-fee regressions reached production. Strengthen the automated tests for src/shipping-fee.js. Do not change production behavior or add dependencies; make npm test the test entry point.
+&lt;/task&gt;
+
+Work only inside the current workspace. Finish by briefly stating what you actually verified.</input>
+</codex_delegation>

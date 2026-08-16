@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "id": "engineering-assessment-hidden-risks",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "Perform a deep engineering assessment of this repository. Put the result in ASSESSMENT.md, limited to the five highest-value findings. Do not change the application.",
+  "fixture": "eval/fixtures-v2/engineering-assessment-hidden-risks",
+  "grader": "eval/graders-v2/engineering-assessment-hidden-risks.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "planted-risks-cited", "description": "Three planted risks are reported with valid file and line evidence", "kind": "outcome" },
+    { "id": "false-green-detected", "description": "Passing smoke command is not mistaken for meaningful coverage", "kind": "outcome" },
+    { "id": "ranked-actionable-findings", "description": "Confirmed findings are ranked and receive repository-specific remedies", "kind": "quality" },
+    { "id": "tooling-evidence", "description": "Actual test execution is recorded separately from test adequacy", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "Unavailable production evidence is named rather than assumed safe", "kind": "quality" }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "ai-prose-voice-edit-codex-policy-20260803191052-40b2c6",
+  "caseId": "ai-prose-voice-edit",
+  "caseRevision": 1,
+  "caseSha256": "368fe54a77802d471351124d1745acd60038ffd208e33494698763622521a8f6",
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-desktop 0.146.0-alpha.9.2",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-03T19:10:17.000Z",
+  "finishedAt": "2026-08-03T19:10:52.000Z",
+  "durationMs": 34768,
+  "totalTokens": 83472,
+  "costUsd": null,
+  "costCredits": 0.639205,
+  "exitCode": 0,
+  "artifactSha256": "2458e4547d39b878a6849c8da07678378a17d9f32c6fb713cc523da2ebc8ee22",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 3,
+    "failed": 2,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

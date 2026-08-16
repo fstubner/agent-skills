@@ -84,12 +84,7 @@ import {
   }
 }
 
-// ---------- 8b. Skill-invocation telemetry hook ----------
-// The hook exists because this suite measured ~0% spontaneous skill
-// invocation (eval/results/): a telemetry SKILL would only record the
-// sessions where the model remembered to record, which is the same
-// selection bias that makes the question unanswerable. A PostToolUse hook
-// fires unconditionally, so the denominator is real.
+// ---------- 8b. Cross-harness skill-invocation telemetry ----------
 //
 // Every assertion below is about a failure mode that would make the hook
 // worse than useless: logging the wrong tools (drowns the signal), or
@@ -102,7 +97,7 @@ import {
   // .agent-skills-telemetry/ into every repo the user touched). Tests point
   // it at a temp dir via the same env override users get.
   const logPath = path.join(dir, 'invocations.jsonl');
-  const feed = (payload) => spawnSync(process.execPath, [LOGGER], {
+  const feed = (harness, payload) => spawnSync(process.execPath, [LOGGER, '--harness', harness], {
     input: payload, encoding: 'utf8',
     env: { ...process.env, AGENT_SKILLS_TELEMETRY_DIR: dir },
   });
@@ -110,31 +105,73 @@ import {
     ? fs.readFileSync(logPath, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l))
     : []);
 
-  const skillCall = feed(JSON.stringify({
-    tool_name: 'Skill', tool_input: { skill: 'product-build' }, cwd: dir, session_id: 'sess-1',
+  const skillCall = feed('claude', JSON.stringify({
+    tool_name: 'Skill', tool_input: { skill: 'product-build' }, cwd: dir, session_id: 'sess-1', tool_use_id: 't1',
   }));
   expect('telemetry: exits 0 on a real Skill payload', skillCall.status === 0, `exit ${skillCall.status}`);
   expect('telemetry: records the skill name', rows().length === 1 && rows()[0].skill === 'product-build',
     JSON.stringify(rows()));
   expect('telemetry: records the session id', rows()[0] && rows()[0].session === 'sess-1', JSON.stringify(rows()));
+  expect('telemetry: labels Claude first-class tool evidence',
+    rows()[0]?.harness === 'claude' && rows()[0]?.evidence === 'skill-tool-call', JSON.stringify(rows()[0]));
 
-  feed(JSON.stringify({ tool_name: 'Read', tool_input: { file_path: '/x' }, cwd: dir }));
+  feed('claude', JSON.stringify({ tool_name: 'Read', tool_input: { file_path: '/x' }, cwd: dir }));
   expect('telemetry: a non-Skill tool is NOT logged (matcher cannot be relied on alone)',
     rows().length === 1, `${rows().length} row(s)`);
 
-  const garbage = feed('not json at all');
+  const garbage = feed('claude', 'not json at all');
   expect('telemetry: unparseable stdin exits 0 and logs nothing',
     garbage.status === 0 && rows().length === 1, `exit ${garbage.status}, ${rows().length} row(s)`);
 
-  const empty = feed('');
+  const empty = feed('claude', '');
   expect('telemetry: empty stdin exits 0', empty.status === 0, `exit ${empty.status}`);
 
   // An unrecognised payload shape must still COUNT the invocation — the
   // whole point is the denominator. Dropping the row would silently
   // under-report exactly when the harness changes its payload format.
-  feed(JSON.stringify({ tool_name: 'Skill', unexpected: { shape: 1 }, cwd: dir }));
+  feed('claude', JSON.stringify({ tool_name: 'Skill', unexpected: { shape: 1 }, cwd: dir }));
   expect('telemetry: an unknown payload shape still counts, with skill null',
     rows().length === 2 && rows()[1].skill === null, JSON.stringify(rows()));
+
+  feed('codex', JSON.stringify({
+    hook_event_name: 'PostToolUse', tool_name: 'Bash',
+    tool_input: { command: 'Get-Content -Raw C:\\Users\\test\\.codex\\skills\\frontend\\SKILL.md' },
+    cwd: dir, session_id: 'cx-1', tool_use_id: 'cx-tool-1',
+  }));
+  expect('telemetry: Codex records a registered SKILL.md read',
+    rows().length === 3 && rows()[2].harness === 'codex' && rows()[2].skill === 'frontend'
+      && rows()[2].evidence === 'skill-file-read', JSON.stringify(rows()));
+
+  feed('codex', JSON.stringify({
+    tool_name: 'apply_patch', tool_input: { patch: 'mention frontend/SKILL.md without reading it' }, cwd: dir,
+  }));
+  expect('telemetry: Codex does not turn an arbitrary SKILL.md reference into usage',
+    rows().length === 3, JSON.stringify(rows()));
+
+  feed('cursor', JSON.stringify({
+    hook_event_name: 'postToolUse', tool_name: 'Read',
+    tool_input: { path: 'C:\\Users\\test\\.cursor\\skills\\data-modeling\\SKILL.md' },
+    cwd: dir, conversation_id: 'cur-1', tool_use_id: 'cur-tool-1',
+  }));
+  expect('telemetry: Cursor records a successful registered SKILL.md read',
+    rows().length === 4 && rows()[3].harness === 'cursor' && rows()[3].skill === 'data-modeling',
+    JSON.stringify(rows()));
+
+  const transcript = path.join(dir, 'antigravity-transcript.jsonl');
+  fs.writeFileSync(transcript, JSON.stringify({
+    step_index: 7,
+    tool_calls: [{ name: 'view_file', args: { AbsolutePath: 'C:\\Users\\test\\.gemini\\antigravity-cli\\skills\\testing-strategy\\SKILL.md', IsSkillFile: true } }],
+  }) + '\n');
+  const antigravity = JSON.stringify({
+    hook_event_name: 'PostInvocation', conversationId: 'ag-1', transcriptPath: transcript,
+    workspacePaths: [dir],
+  });
+  feed('antigravity', antigravity);
+  feed('antigravity', antigravity);
+  expect('telemetry: Antigravity transcript reads are recorded once by stable step id',
+    rows().length === 5 && rows()[4].harness === 'antigravity'
+      && rows()[4].skill === 'testing-strategy'
+      && rows()[4].evidence === 'skill-file-read-request', JSON.stringify(rows()));
 }
 
 // ---------- 8c. The hook's SCOPED_CHECKERS list must stay true ----------
@@ -198,21 +235,30 @@ import {
     Array.isArray(emptyRep.neverInvoked) && emptyRep.neverInvoked.length === emptyRep.registrySkills,
     `${emptyRep.neverInvoked && emptyRep.neverInvoked.length} of ${emptyRep.registrySkills}`);
 
-  const feed = (skill, session) => spawnSync(process.execPath, [LOGGER], {
+  const feed = (skill, session) => spawnSync(process.execPath, [LOGGER, '--harness', 'claude'], {
     input: JSON.stringify({ tool_name: 'Skill', tool_input: { skill }, cwd: proj, session_id: session }),
     encoding: 'utf8',
     env: { ...process.env, AGENT_SKILLS_TELEMETRY_DIR: proj },
   });
   feed('product-build', 's1');
   feed('product-build', 's1');
-  feed('frontend', 's2');
+  feed('agent-skills:frontend', 's2');
 
   const rep = report();
   expect('skill-usage: counts invocations written by the real logger', rep.totalInvocations === 3,
     JSON.stringify(rep.totalInvocations));
   expect('skill-usage: tallies per skill', rep.bySkill['product-build'] === 2 && rep.bySkill.frontend === 1,
     JSON.stringify(rep.bySkill));
+  expect('skill-usage: normalizes the Claude plugin namespace', !('agent-skills:frontend' in rep.bySkill),
+    JSON.stringify(rep.bySkill));
+  expect('skill-usage: distinguishes registered-suite calls from other skills', rep.registeredInvocations === 3,
+    JSON.stringify(rep.registeredInvocations));
+  expect('skill-usage: scopes registered project totals to this suite', rep.registeredByProject?.[path.basename(proj)] === 3,
+    JSON.stringify(rep.registeredByProject));
   expect('skill-usage: counts distinct sessions', rep.sessions === 2, JSON.stringify(rep.sessions));
+  expect('skill-usage: reports harness and evidence dimensions',
+    rep.byHarness?.claude === 3 && rep.byEvidence?.['skill-tool-call'] === 3,
+    JSON.stringify({ byHarness: rep.byHarness, byEvidence: rep.byEvidence }));
   expect('skill-usage: invoked skills are absent from neverInvoked',
     !rep.neverInvoked.includes('product-build') && !rep.neverInvoked.includes('frontend'),
     JSON.stringify(rep.neverInvoked));
@@ -226,6 +272,14 @@ import {
   expect('skill-usage: malformed lines are counted, not silently dropped',
     withBad.malformedLines === 1 && withBad.totalInvocations === 3,
     `malformed=${withBad.malformedLines} total=${withBad.totalInvocations}`);
+
+  const duplicate = { schemaVersion: 1, at: new Date().toISOString(), harness: 'cursor',
+    skill: 'frontend', evidence: 'skill-file-read', project: 'x', cwd: '/x', session: 's3', event: 'same-event' };
+  fs.appendFileSync(logPath, JSON.stringify(duplicate) + '\n' + JSON.stringify(duplicate) + '\n');
+  const deduped = report();
+  expect('skill-usage: concurrent hooks cannot double-count one stable event',
+    deduped.totalInvocations === 4 && deduped.duplicateEvents === 1,
+    `total=${deduped.totalInvocations} duplicates=${deduped.duplicateEvents}`);
 }
 
 // ---------- 8e. SessionStart output-style injection ----------

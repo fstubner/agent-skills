@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "id": "job-ledger-ordering-assessment",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "Perform a deep engineering assessment of this repository and write ASSESSMENT.md. Limit the report to the four highest-value confirmed findings, do not change the application, and keep unconfirmed risks separate.",
+  "fixture": "eval/fixtures-v2/job-ledger-ordering-assessment",
+  "grader": "eval/graders-v2/job-ledger-ordering-assessment.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "cross-tree-risks-cited", "description": "The report identifies the three planted risks across source, migrations, and operations with exact evidence", "kind": "outcome" },
+    { "id": "false-green-detected", "description": "The passing test is correctly reported as assertion-free and non-protective", "kind": "outcome" },
+    { "id": "ranked-actionable-findings", "description": "Confirmed findings are severity-ranked and have repository-specific remedies", "kind": "quality" },
+    { "id": "scope-and-tooling-honest", "description": "The report states deep scope, records the test result, and names meaningful coverage gaps", "kind": "quality" },
+    { "id": "assessment-only", "description": "The assessment does not modify repository inputs", "kind": "outcome" }
+  ]
+}

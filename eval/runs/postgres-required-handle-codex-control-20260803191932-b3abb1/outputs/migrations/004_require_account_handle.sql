@@ -1,0 +1,2 @@
+ALTER TABLE accounts
+  ALTER COLUMN handle SET NOT NULL;

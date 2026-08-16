@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "id": "multi-agent-bounded-assessment",
+  "skill": "multi-agent-design",
+  "revision": 1,
+  "prompt": "Design the agent architecture described by requirements.json. Write the implementable design to valid JSON in design.json; do not build or run it. If multiple agents are not justified, say so in the design and use a single-agent architecture.",
+  "fixture": "eval/fixtures-v2/multi-agent-bounded-assessment",
+  "grader": "eval/graders-v2/multi-agent-bounded-assessment.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "explicit-architecture-decision", "description": "Design compares single and multi-agent cost and names the selected benefit", "kind": "quality" },
+    { "id": "bounded-topology", "description": "Topology uses bounded manager-worker fan-out and aggregation", "kind": "outcome" },
+    { "id": "complete-contracts", "description": "Executable roles have typed contracts, limits, criteria, and escalation", "kind": "quality" },
+    { "id": "governance-limits", "description": "Provider and global ceilings, budgets, read-only policy, and approval are enforced", "kind": "outcome" },
+    { "id": "recovery-observability", "description": "Recovery, traceability, cost, timing, and evidence validation are specified", "kind": "outcome" }
+  ]
+}

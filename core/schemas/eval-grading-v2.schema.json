@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Outcome grader result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "caseId", "assertions"],
+  "properties": {
+    "schemaVersion": { "const": 2 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "assertions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "status", "evidence"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["pass", "fail", "not_evaluated"] },
+          "evidence": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

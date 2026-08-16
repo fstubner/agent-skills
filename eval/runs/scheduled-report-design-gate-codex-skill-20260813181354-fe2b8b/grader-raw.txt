@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "scheduled-report-design-gate",
+  "assertions": [
+    {
+      "id": "source-untouched",
+      "status": "fail",
+      "evidence": "source hash comparison"
+    },
+    {
+      "id": "config-untouched",
+      "status": "pass",
+      "evidence": "package hash comparison"
+    },
+    {
+      "id": "no-new-implementation",
+      "status": "pass",
+      "evidence": "none"
+    },
+    {
+      "id": "no-premature-design-artifacts",
+      "status": "pass",
+      "evidence": "none"
+    }
+  ]
+}

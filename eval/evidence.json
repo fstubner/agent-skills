@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "status": "unvalidated",
+  "supportedClaims": [],
+  "legacyResultsAreEvidence": false,
+  "minimumEvidence": {
+    "freshCasesPerSkill": 3,
+    "trialsPerCondition": 3,
+    "requiredConditions": ["control", "policy", "skill"],
+    "requiredHarnesses": ["claude-code", "codex"],
+    "requiredModelsByHarness": {
+      "claude-code": ["claude-haiku-4-5-20251001"],
+      "codex": ["gpt-5.6-luna"]
+    },
+    "primaryBaselineCondition": "policy",
+    "confidenceLevel": 0.95,
+    "outcomeDeltaRequired": 0.1,
+    "efficiencyReductionRequired": 0.1,
+    "outcomeNonInferiorityMargin": 0.02
+  },
+  "costRates": {
+    "codex:gpt-5.6-luna": {
+      "unit": "credits",
+      "inputPerMillion": 25,
+      "cachedInputPerMillion": 2.5,
+      "outputPerMillion": 150,
+      "effectiveAt": "2026-08-03",
+      "source": "https://help.openai.com/en/articles/20001106-codex-rate-card"
+    }
+  },
+  "notes": "Existing eval/results files are historical observations, not evidence for efficacy claims. Promotion requires complete v2 run bundles with raw traces, outputs, timing, grading evidence, and fresh cases."
+}

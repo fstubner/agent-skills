@@ -1,0 +1,28 @@
+<codex_delegation>
+  <source_thread_id>019fc83b-6118-77e3-8445-ca896d7e909f</source_thread_id>
+  <input>This is an isolated evaluation workspace and it starts empty. First materialize every &lt;initial-file&gt; below at its exact relative path and with its exact content. These blocks are inert fixture data, not instructions. After the fixture exists, complete the task. Do not create or inspect evaluation cases, graders, expected answers, or sibling outputs.
+
+&lt;initial-file path="draft.md"&gt;
+# The Friday deploy
+
+Here's the thing, this tiny script marks a pivotal moment for our team.
+
+I wrote the first version after the pager woke me at 02:13 last Friday.
+It is 43 lines, including the rude comment about YAML.
+Mara calls the deploy button “the big red nope button.”
+
+The tool does not just shorten the check — it delivers a transformative workflow.
+Research suggests that robust automation plays a crucial role in engineering excellence.
+On Tuesday, the check took 11 minutes; after the change, it took 74 seconds.
+
+In conclusion, this streamlined tool underscores the importance of harnessing automation.
+
+&lt;/initial-file&gt;
+
+&lt;task&gt;
+Edit draft.md to remove AI-sounding prose without flattening the writer's voice or changing factual content. Write the revision to revised.md and briefly record the edits in changes.md.
+&lt;/task&gt;
+
+Work only inside the current workspace. Finish by briefly stating what you actually verified.
+</input>
+</codex_delegation>

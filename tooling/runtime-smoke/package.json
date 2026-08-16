@@ -1,0 +1,11 @@
+{
+  "name": "agent-skills-runtime-smoke-toolchain",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Integrity-locked host CLIs used only by CI runtime installation smokes.",
+  "dependencies": {
+    "@anthropic-ai/claude-code": "2.1.220",
+    "@google/gemini-cli": "0.43.0",
+    "@openai/codex": "0.146.0"
+  }
+}

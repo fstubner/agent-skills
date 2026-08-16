@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "self-serve-project-invites-codex-policy-20260813192011-c22ffc",
+  "caseId": "self-serve-project-invites",
+  "caseRevision": 1,
+  "caseSha256": "50569d377c18c5aa5f50a5a22448a483aee9f0cc2d83244075b393aa18ba23dc",
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-13T19:20:11.491Z",
+  "finishedAt": "2026-08-13T19:21:51.799Z",
+  "durationMs": 100308,
+  "totalTokens": 101524,
+  "costUsd": null,
+  "costCredits": 1.366495,
+  "exitCode": 0,
+  "artifactSha256": "c54b6b631366c854b53c1cfedc231a757112eb83319d9c2fa7ec768f61958824",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 1,
+    "failed": 5,
+    "notEvaluated": 0,
+    "total": 6
+  }
+}

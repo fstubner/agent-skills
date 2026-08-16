@@ -18,11 +18,14 @@ import { failureCount, cleanup } from './tests/harness.mjs';
 
 const MODULES = [
   'structure.mjs',        // syntax, registry <-> filesystem, contract drift, CI location
+  'plugin-bundles.mjs',   // generated Claude/Codex/Cursor/Antigravity packages do not drift
+  'marketplace-standards.mjs', // cross-marketplace names, roots, and release versions agree
   'schema.mjs',           // schema validator units, empty-checks fail-closed
   'fixtures-core.mjs',    // architecture / backend / frontend / acceptance fixtures
   'fixtures-quality.mjs', // code-organization, code-smells, data-modeling fixtures
   'prose.mjs',            // ai-prose-slop (skips only when vale is absent)
   'eval-assets.mjs',      // eval case + result shape validation
+  'eval-v2.mjs',          // reproducible cases, graders, evidence bundles, claim quarantine
   'hooks.mjs',            // pre-commit secret scanning (skips only when gitleaks is absent)
   'installer.mjs',        // harnessPaths, installed-skill smoke test, clobber refusal
   'fail-closed.mjs',      // unreadable root, gitleaks precision, self-declared verdicts

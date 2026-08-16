@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "id": "refund-ledger-rollout",
+  "skill": "data-modeling",
+  "skills": ["data-modeling", "backend-engineering", "testing-strategy", "release-engineering", "product-acceptance"],
+  "revision": 1,
+  "prompt": "Ship the refund-ledger change as a rolling PostgreSQL deployment. Multiple application versions may run concurrently. Preserve createServer(options), whose payments option contains {id, owner, amountCents}; implement POST /payments/:id/refunds using Bearer account authentication, an integer amountCents, and Idempotency-Key. A refund cannot exceed the payment's unrefunded amount, another account must not learn whether a payment exists, and a retry must return the original refund. Add ordered up-migrations without rewriting 001, add regression tests, and make the tag release build one immutable artifact after tests with a documented literal rollback command.",
+  "fixture": "eval/fixtures-v2/refund-ledger-rollout",
+  "grader": "eval/graders-v2/refund-ledger-rollout.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "additive-schema", "description": "The rolling migration is additive and enforces ledger invariants", "kind": "outcome" },
+    { "id": "server-boundary", "description": "Authentication, ownership, and amount validation are enforced", "kind": "outcome" },
+    { "id": "refund-invariant", "description": "Retries are stable and total refunds cannot exceed the payment", "kind": "outcome" },
+    { "id": "structured-errors", "description": "Client failures are structured without internal leakage", "kind": "quality" },
+    { "id": "regression-suite", "description": "The project test command exercises the refund boundary and passes", "kind": "outcome" },
+    { "id": "immutable-release", "description": "Tag release tests first and publishes the exact artifact built once", "kind": "outcome" },
+    { "id": "literal-rollback", "description": "Operators receive an executable rollback command", "kind": "quality" }
+  ]
+}

@@ -1,0 +1,22 @@
+# Gitleaks' own default ruleset, and nothing else.
+#
+# This file exists solely to STOP gitleaks auto-discovering a config from the
+# directory being scanned. Its documented precedence is:
+#   1. --config/-c   2. GITLEAKS_CONFIG   3. GITLEAKS_CONFIG_TOML
+#   4. (target path)/.gitleaks.toml
+#
+# Without an explicit --config, rule 4 applies — so a repo under audit could
+# ship its own `.gitleaks.toml` containing `[allowlist] paths = [".*"]` and
+# switch off the secret scan that is inspecting it. Verified: a live ghp_ token
+# went from `fail` to `pass` purely by adding that file. product-acceptance is
+# explicitly designed to run against an untrusted finished repo, so the audited
+# tree must not get a vote on how it is audited.
+#
+# Passing this file as --config wins the precedence race while `useDefault`
+# keeps the full upstream ruleset intact (verified: a ghp_ token is still
+# caught with this config supplied and a hostile .gitleaks.toml present).
+#
+# Consumers pair this with --ignore-gitleaks-allow, which neutralises the other
+# in-tree bypass: an inline `gitleaks:allow` comment on the offending line.
+[extend]
+useDefault = true

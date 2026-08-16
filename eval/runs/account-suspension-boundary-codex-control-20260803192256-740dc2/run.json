@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "account-suspension-boundary-codex-control-20260803192256-740dc2",
+  "caseId": "account-suspension-boundary",
+  "caseRevision": 1,
+  "caseSha256": "4deeddaa06518dc89356bd49eaba70c21ca83298ee4ea63e98ac093747c70efb",
+  "condition": "control",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-03T19:18:08.000Z",
+  "finishedAt": "2026-08-03T19:22:56.000Z",
+  "durationMs": 288845,
+  "totalTokens": 504527,
+  "costUsd": null,
+  "costCredits": 2.27668,
+  "exitCode": 0,
+  "artifactSha256": "d650a133ac17f97656f2c12a557201ccdb3cb7fe692deaf63380a62b8fbc1316",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 3,
+    "failed": 2,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

@@ -1,13 +1,21 @@
 # agent-skills v2
 
+> **EVIDENCE STATUS: UNVALIDATED.** The deterministic checkers have fixture
+> tests. No behavioural efficacy claim currently meets this repository's v2
+> evidence standard.
+
 **Version:** [VERSION](./VERSION) · **Changelog:** [CHANGELOG.md](./CHANGELOG.md) · **License:** MIT
 
-Agent Skills suite for product UI work (Cursor / Claude Code / Codex), built
+Agent Skills suite for product and software delivery (Claude Code / Codex /
+Cursor / Antigravity), built
 around three ideas:
 
 - **Evidence-gated shipping** — deterministic checkers emit unified reports;
   the acceptance gate **re-runs them fresh** and never trusts JSON on disk.
-- **Builder ≠ acceptor** — SHIP is unreachable from the context that built.
+- **Builder ≠ acceptor** — the gate caps at CONDITIONAL unless the acceptor
+  asserts independence. Enforced by discipline, not mechanism: the flags are
+  claims a builder could make falsely, which is exactly what the skill's
+  red-flag table is for.
 - **Registry-first contract** — [`registry.json`](./registry.json) is the
   single machine-readable source for skills and artifacts;
   [`docs/CONTRACT.md`](./docs/CONTRACT.md) is generated from it and CI fails
@@ -24,7 +32,7 @@ suite ([eval/results/](./eval/results/)):
 
 **Does a skill get used unprompted? Measured: essentially never.** In both
 a Task-tool subagent and a genuine top-level `claude -p` session, with all
-15 skills installed from a tagged release, neither run invoked a single
+of the skills in the then-current tagged release installed, neither run invoked a single
 skill on a prompt matching `product-build`'s own stated trigger almost
 verbatim. No `PRODUCT.md`, no `ARCHITECTURE.md`, no design question, and
 the builder self-certified "done" in the same turn it built. A competing
@@ -32,27 +40,36 @@ plugin's far more aggressive mechanism — injecting a whole skill's text
 into every session via a `SessionStart` hook — didn't reliably fire
 either, so this is not simply a matter of weaker wording.
 
-**Does the guidance help once followed? Measured: yes, on the three skills
-tested.** Forced-exposure A/B, independently verified by re-running each
-checker rather than trusting the agent's self-report:
-`systems-architecture` 0/3 control vs 3/3 forced; `cli-tooling` 3/6 vs
-5/6; `product-build`'s prompt-injection stance 2/4 vs 4/4. Three data
-points, not a general law — the other 12 skills are untested this way.
+Set against that, passive telemetry over twelve days of ordinary work
+records **19 invocations of these skills across 8 unrelated projects**, and
+none of the competing plugin
+([field-telemetry-2026-08-16.md](./eval/results/field-telemetry-2026-08-16.md)).
+The two are not in conflict: the hook cannot tell whether the human typed
+the skill's name or the model chose it, so field usage says the skills get
+reached for, and says nothing yet about who reaches.
 
-So: the content earns its place; getting it reached for is the unsolved
-half. Two things follow. Where a check can be enforced instead of
-suggested, it now is — `scripts/git-hooks/pre-commit` runs the
-deterministic checkers on staged files, no model decision involved. Where
-it can't, see [INSTALL.md](./INSTALL.md#installing-is-not-the-same-as-invoking)
-for the `CLAUDE.md` directive that did reliably change behaviour here.
+**Does the guidance help once followed? Unknown.** The historical forced
+runs lack the raw transcripts, output bundles, cost data, replication, and
+case provenance required for a defensible comparison. They are retained as
+legacy observations, not efficacy evidence. New runs use isolated control,
+concise-policy, checker, and skill conditions with outcome graders; see
+[`eval/README.md`](./eval/README.md).
+
+Where a rule can be enforced instead of suggested,
+`scripts/git-hooks/pre-commit` runs deterministic checkers on staged files.
+Whether the prose skills add value beyond a concise policy or those checkers
+remains an open experimental question. See
+[INSTALL.md](./INSTALL.md#installing-is-not-the-same-as-invoking).
+That section also documents the `CLAUDE.md` directive that did reliably change
+behaviour here.
 Do not read "the checkers are tested" as "the skills change agent
 behaviour."
 
 ## Skills
 
 This is a composable set, not a pipeline. Each skill fires on its own
-trigger and works standalone; skills never call each other directly. Nine of
-the fifteen additionally read or write a handful of named artifacts (below) —
+trigger and works standalone; skills never call each other directly. Ten of
+the seventeen additionally read or write a handful of named artifacts (below) —
 that's the entire coupling mechanism. (Some skills also point a reader at a
 sibling's reference files for further detail — e.g. `mental-models`'
 mindsets citing its own lens files — which is a documentation cross-link,
@@ -75,6 +92,8 @@ not a runtime call.)
 | [`cli-tooling`](./cli-tooling/) | CLI surface + contract — naming, config precedence, exit codes, dry-run |
 | [`release-engineering`](./release-engineering/) | CI/CD pipeline gating, deployment strategy, rollback |
 | [`learn-from-session`](./learn-from-session/) | Turn a correction or confirmation into a durable rule/fixture/memory |
+| [`engineering-assessment`](./engineering-assessment/) | Whole-codebase audit — severity-ranked findings, each citing file/line or command output, plus what was not examined |
+| [`multi-agent-design`](./multi-agent-design/) | Whether multi-agent is justified at all (default: no), topology, delegation contracts, failure recovery |
 
 ## How they compose
 
@@ -103,6 +122,13 @@ required headings, gating rules) is generated into
 node scripts/install.mjs --harness claude     # or cursor | codex | all
 ```
 
+The GitHub repository contains marketplace metadata for Claude Code, Codex
+CLI/ChatGPT desktop, and Cursor team imports and local testing, plus native
+Gemini and Antigravity CLI packages. Public directory listing is a
+separate review and publication step. See
+[INSTALL.md](./INSTALL.md#as-a-marketplace-plugin) for the supported install
+paths and exact portability limits.
+
 The installer never overwrites directories it didn't create (use `--force`
 to override), takes no default target, and touches no network. Details and
 per-harness paths: [INSTALL.md](./INSTALL.md).
@@ -113,14 +139,16 @@ per-harness paths: [INSTALL.md](./INSTALL.md).
 node systems-architecture/scripts/check-architecture.js --root . --strict
 node frontend/scripts/check-frontend.js --root . --strict
 node backend-engineering/scripts/check-backend.js --root . --strict
+node release-engineering/scripts/check-smoke.js --root . --strict
 node product-acceptance/scripts/accept-check.js --root . --strict
 ```
 
 That acceptance command is the **capped** one — it's the correct default,
 and its verdict tops out at CONDITIONAL by design. Builder ≠ acceptor is
-this suite's whole architectural claim: SHIP is unreachable from the
-context that built, so uncapping it isn't a `--strict`-style verbosity
-flag, it's a claim that this run is genuinely independent. Only add
+this suite's whole architectural claim, and nothing in the code can tell
+which context it is running in: uncapping isn't a `--strict`-style
+verbosity flag, it's an assertion that this run is genuinely independent,
+and it is only as true as the person or agent making it. Only add
 `--acceptor-context separate` if all three conditions in
 [`product-acceptance/SKILL.md`](./product-acceptance/SKILL.md) hold —
 starting with "this conversation did not write or edit the code being

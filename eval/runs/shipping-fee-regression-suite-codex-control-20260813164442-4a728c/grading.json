@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "shipping-fee-regression-suite",
+  "assertions": [
+    {
+      "id": "stable-baseline",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: workspace is mounted read-only"
+    },
+    {
+      "id": "public-behavior",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: workspace is mounted read-only"
+    },
+    {
+      "id": "kills-threshold-mutant",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: workspace is mounted read-only"
+    },
+    {
+      "id": "kills-unsupported-mutant",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: workspace is mounted read-only"
+    },
+    {
+      "id": "kills-member-mutant",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: workspace is mounted read-only"
+    }
+  ]
+}

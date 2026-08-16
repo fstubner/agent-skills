@@ -14,11 +14,10 @@
 //   Options: --force, --help, --skill <id>[,<id>...] (default: all skills —
 //     this is a composable set, not a suite, so any subset is a valid install)
 //
-// A registry.harnessPaths entry may be a single path or an array of paths —
-// codex is an array (see registry.json's _harnessPathsNote): its own skill
-// directory convention is genuinely unsettled upstream right now, so this
-// installer hedges by writing to every documented candidate rather than
-// guessing which one the user's actual Codex surface reads from.
+// A registry.harnessPaths entry may be a single path or an array of paths.
+// legacyHarnessPaths contains former targets whose marker-bearing installs
+// can be removed after a successful migration; foreign directories are never
+// touched.
 
 import fs from 'fs';
 import os from 'os';
@@ -34,7 +33,7 @@ const allIds = registry.skills.map((s) => s.id);
 
 const USAGE = `agent-skills installer v${version}
 
-  node scripts/install.mjs --harness cursor|claude|codex|all
+  node scripts/install.mjs --harness cursor|claude|codex|antigravity|all
   node scripts/install.mjs --dest <directory>
 
 Options:
@@ -171,8 +170,12 @@ for (const target of targets) {
       continue;
     }
     if (fs.existsSync(dest)) {
-      const hasMarker = fs.existsSync(path.join(dest, MARKER));
-      if (!hasMarker && !args.force) {
+      let ownsDestination = false;
+      try {
+        const marker = JSON.parse(fs.readFileSync(path.join(dest, MARKER), 'utf8'));
+        ownsDestination = marker.suite === registry.name;
+      } catch { /* absent, malformed, or foreign markers do not prove ownership */ }
+      if (!ownsDestination && !args.force) {
         console.error(`SKIP  ${dest} exists and was not created by this installer — rerun with --force to replace it`);
         failures++;
         continue;
@@ -205,8 +208,16 @@ for (const target of targets) {
         suite: registry.name, version, installedAt: new Date().toISOString(),
       }, null, 2) + '\n');
 
-      fs.rmSync(dest, { recursive: true, force: true });
-      fs.renameSync(staging, dest);
+      const backup = dest + '.previous-' + process.pid;
+      fs.rmSync(backup, { recursive: true, force: true });
+      if (fs.existsSync(dest)) fs.renameSync(dest, backup);
+      try {
+        fs.renameSync(staging, dest);
+        fs.rmSync(backup, { recursive: true, force: true });
+      } catch (swapError) {
+        if (fs.existsSync(backup) && !fs.existsSync(dest)) fs.renameSync(backup, dest);
+        throw swapError;
+      }
     } catch (e) {
       fs.rmSync(staging, { recursive: true, force: true });
       console.error(`FAIL  ${dest} — ${e.message} (previous install left untouched)`);
@@ -214,6 +225,29 @@ for (const target of targets) {
       continue;
     }
     console.log(`ok    ${dest}`);
+  }
+}
+
+// Migrate installer-owned copies away from obsolete harness paths only after
+// every requested current-target install succeeds. This is intentionally
+// per-skill: unrelated user content under the legacy root is left untouched.
+if (failures === 0 && args.harness) {
+  const picked = args.harness === 'all' ? Object.keys(registry.harnessPaths) : [args.harness];
+  for (const harness of picked) {
+    for (const legacyPath of registry.legacyHarnessPaths?.[harness] ?? []) {
+      const legacyRoot = expandHome(legacyPath);
+      for (const skill of selectedSkills) {
+        const legacyDest = path.join(legacyRoot, skill.id);
+        let ownsDestination = false;
+        try {
+          const marker = JSON.parse(fs.readFileSync(path.join(legacyDest, MARKER), 'utf8'));
+          ownsDestination = marker.suite === registry.name;
+        } catch { /* absent, malformed, or foreign installs stay untouched */ }
+        if (!ownsDestination) continue;
+        fs.rmSync(legacyDest, { recursive: true, force: true });
+        console.log(`clean ${legacyDest} (obsolete managed install)`);
+      }
+    }
   }
 }
 

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "shipping-fee-regression-suite-codex-control-20260813174120-beb7d6",
+  "caseId": "shipping-fee-regression-suite",
+  "caseRevision": 1,
+  "caseSha256": "5f04bd9ede07d3086223db5e758d422736730223d2cbd8c631909fd276e64563",
+  "condition": "control",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-13T17:41:20.469Z",
+  "finishedAt": "2026-08-13T17:42:09.276Z",
+  "durationMs": 48807,
+  "totalTokens": 59350,
+  "costUsd": null,
+  "costCredits": 0.825475,
+  "exitCode": 0,
+  "artifactSha256": "490d2f2b079c2ab6fbb8308155079a6cb95327c3470a00c037b2305c945e3fd3",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

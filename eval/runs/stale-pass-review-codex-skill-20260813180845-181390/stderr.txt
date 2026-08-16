@@ -1,0 +1,7 @@
+npm notice
+npm notice New major version of npm available! 10.9.0 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+Reading additional input from stdin...
+2026-08-13T18:09:30.777226Z ERROR codex_core::tools::router: error=exec_command failed for `/bin/bash -lc 'tmpdir=$(mktemp -d); cp -a .agent-input/product-acceptance/scripts "$tmpdir/"; node "$tmpdir/scripts/accept-check.cjs" --root . --strict; gate_status=$?; rm -rf "$tmpdir"; exit "$gate_status"'`: CreateProcess { message: "Rejected(\"`/bin/bash -lc 'tmpdir=$(mktemp -d); cp -a .agent-input/product-acceptance/scripts \\\"$tmpdir/\\\"; node \\\"$tmpdir/scripts/accept-check.cjs\\\" --root . --strict; gate_status=$?; rm -rf \\\"$tmpdir\\\"; exit \\\"$gate_status\\\"'` rejected: rm -f style commands are not permitted. Use a safer approach\")" }

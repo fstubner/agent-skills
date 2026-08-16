@@ -1,0 +1,7 @@
+Build a dependency-free Node.js CLI at src/cli.js with this interface: config-set set <json-file> <dotted-key> <json-value>. It must update a nested JSON value atomically, support --dry-run without writing, and be safe to repeat. JSON results belong on stdout; diagnostics belong on stderr. Provide accurate --help and an npm test entry point.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/cli-tooling/SKILL.md
+Load only references relevant to this task.

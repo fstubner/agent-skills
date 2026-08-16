@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "id": "postgres-required-handle",
+  "skill": "data-modeling",
+  "revision": 1,
+  "prompt": "Prepare PostgreSQL migrations for a rolling deployment. Existing production rows must gain a unique required account handle derived from username, and the obsolete display_name column should eventually be retired. Multiple application versions may run concurrently during deployment. Add new ordered up-migration files under migrations/; do not rewrite the existing migration.",
+  "fixture": "eval/fixtures-v2/postgres-required-handle",
+  "grader": "eval/graders-v2/postgres-required-handle.mjs",
+  "checker": "data-modeling/scripts/check-migrations.js",
+  "conditions": ["control", "policy", "checker", "skill"],
+  "assertions": [
+    { "id": "additive-rollout", "description": "Up migrations avoid destructive drops and renames", "kind": "outcome" },
+    { "id": "required-without-scan", "description": "Required handle uses a validated matching constraint before SET NOT NULL", "kind": "outcome" },
+    { "id": "backfill", "description": "Existing rows receive a deterministic handle before it becomes required", "kind": "outcome" },
+    { "id": "unique-handle", "description": "The final schema enforces handle uniqueness", "kind": "outcome" }
+  ]
+}

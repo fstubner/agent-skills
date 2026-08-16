@@ -1,0 +1,3 @@
+Reading additional input from stdin...
+2026-08-13T16:44:44.809224Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+2026-08-13T16:45:21.072769Z ERROR codex_core::tools::router: error=patch rejected: writing is blocked by read-only sandbox; rejected by user approval settings

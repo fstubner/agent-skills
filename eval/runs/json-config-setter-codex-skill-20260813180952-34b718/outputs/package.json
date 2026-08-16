@@ -1,0 +1,8 @@
+{
+  "name": "config-set",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dependency-free nested JSON configuration updater",
+  "bin": { "config-set": "src/cli.js" },
+  "scripts": { "test": "node --check src/cli.js && node src/cli.js --help" }
+}

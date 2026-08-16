@@ -1,0 +1,18 @@
+extends: existence
+message: "'%s' is a throat-clearing opener — delete it and start with the point."
+link: ../../references/patterns.md
+level: suggestion
+ignorecase: true
+tokens:
+  - here's the thing
+  - let me be clear
+  - i'll be honest
+  - to be honest
+  - simply put
+  - at its core
+  - it's worth noting that
+  - it is worth noting that
+  - it's important to note that
+  - it is important to note that
+  - needless to say
+  - the truth is

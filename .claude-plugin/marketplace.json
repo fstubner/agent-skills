@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "agent-skills",
-      "source": "./",
+      "source": "./plugins/agent-skills",
       "description": "Composable Agent Skills for product UI work: evidence-gated shipping, builder/acceptor separation, and a registry-first contract across 17 skills."
     },
     {

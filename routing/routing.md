@@ -32,7 +32,14 @@ unwritten, and acceptance has nothing to check.
 suite: across five unprimed runs with the skills installed, visible and
 namespaced, on prompts matching their own stated triggers, a skill was
 invoked **zero** times. Rewriting a description to quote the user's literal
-words changed nothing. The skills are not being missed for lack of a good
-name — a name in a list does not displace the instinct to just start
-working. So the routing is stated here, where it is read every session,
-instead of being hoped for.
+words changed nothing. A name in a list does not displace the instinct to
+just start working, so the routing is stated here, where it is read every
+session, instead of being hoped for.
+
+**How well that works: partially, and not on real work.** On three short
+prompts this table moved a model from invoking nothing to invoking
+something. On a full build — an app with sign-in, a schema migration and a
+CLI — it produced **zero** invocations and an output directory identical to
+the control's. Text asking a model to route is the weakest of this suite's
+three mechanisms; the checkers, which ask nothing, are the strongest. If
+you want the rules applied rather than available, run the checkers.

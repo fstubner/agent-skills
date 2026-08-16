@@ -1,0 +1,8 @@
+extends: existence
+message: "'%s' restates what the reader just read — end on the last concrete point instead."
+link: ../../references/patterns.md
+level: suggestion
+scope: paragraph
+ignorecase: false
+raw:
+  - '(?m)^(In conclusion|To summarize|In summary|All in all|To wrap up|Overall),'

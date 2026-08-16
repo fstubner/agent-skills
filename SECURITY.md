@@ -36,9 +36,9 @@ offered because none is monitored.
   `--ignore-gitleaks-allow` plus a neutral `--gitleaks-ignore-path`. Without
   those, a repo could disable the scan inspecting it by committing an
   allowlist config, an inline `gitleaks:allow` comment, or a `.gitleaksignore`.
-  The **pre-commit hook deliberately does not do this**: there the repo's own
-  gitleaks configuration is the developer's own, and honouring a deliberate
-  team allowlist is correct behaviour for a local convenience hook.
+  The **pre-commit hook uses the same fail-resistant policy**: it explicitly
+  runs the suite's default and supplementary configurations and ignores
+  inline allow comments, so staged content cannot disable its own scan.
 - **The installer** writes only into the target you name, never deletes
   directories it didn't create (marker file) without `--force`, and makes no
   network requests. Scripts read no env secrets and shell out only with

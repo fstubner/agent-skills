@@ -1,0 +1,7 @@
+{
+  "name": "csv-mean-cli",
+  "private": true,
+  "scripts": {
+    "test": "node test/cli.test.js"
+  }
+}

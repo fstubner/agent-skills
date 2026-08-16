@@ -1,0 +1,5 @@
+Reading additional input from stdin...
+2026-08-13T16:48:07.679280Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+2026-08-13T16:48:16.599388Z ERROR codex_core::tools::router: error=`"C:\\Program Files\\WindowsApps\\Microsoft.PowerShell_7.6.4.0_x64__8wekyb3d8bbwe\\pwsh.exe" -Command "Get-ChildItem -Force; rg --files -g '"'!node_modules'"' -g '"'!**/evaluation**'"' -g '"'!**/grader**'"' -g '"'!**/expected**'"' | Sort-Object"` rejected: blocked by policy
+2026-08-13T16:48:42.004612Z ERROR codex_core::tools::router: error=patch rejected: writing is blocked by read-only sandbox; rejected by user approval settings
+2026-08-13T16:48:44.627942Z ERROR codex_core::tools::router: error=`"C:\\Program Files\\WindowsApps\\Microsoft.PowerShell_7.6.4.0_x64__8wekyb3d8bbwe\\pwsh.exe" -Command 'npm test'` rejected: blocked by policy

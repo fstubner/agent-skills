@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "postgres-required-handle",
+  "assertions": [
+    {
+      "id": "additive-rollout",
+      "status": "fail",
+      "evidence": "files=003_add_account_handle.sql,004_backfill_account_handle.sql,005_enforce_account_handle.sql,006_retire_display_name.sql; checker=BLOCK; DROP/RENAME=true"
+    },
+    {
+      "id": "required-without-scan",
+      "status": "fail",
+      "evidence": "unsafe-not-null=fail; matching safe sequence=false"
+    },
+    {
+      "id": "backfill",
+      "status": "fail",
+      "evidence": "UPDATE accounts from username=false"
+    },
+    {
+      "id": "unique-handle",
+      "status": "pass",
+      "evidence": "unique handle constraint/index=true"
+    }
+  ]
+}

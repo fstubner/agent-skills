@@ -1,0 +1,1 @@
+{"name":"refund-ledger","private":true,"type":"module","scripts":{"test":"node --test","build":"npm test && docker build --pull --tag refund-ledger:${TAG:?TAG is required} ."}}

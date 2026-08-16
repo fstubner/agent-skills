@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "mental-models-latency-loop-codex-control-20260803191620-0b5c5f",
+  "caseId": "mental-models-latency-loop",
+  "caseRevision": 1,
+  "caseSha256": "2d66df7f578f18afa47efefccdc0475ab9e0a8c7c5fe0914759514368ad166a2",
+  "condition": "control",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-03T19:14:02.000Z",
+  "finishedAt": "2026-08-03T19:16:20.000Z",
+  "durationMs": 137909,
+  "totalTokens": 825464,
+  "costUsd": null,
+  "costCredits": 4.011795,
+  "exitCode": 0,
+  "artifactSha256": "bfac263cb1690a2c86c087c29d96d22515ef4191ab1d6495d659b2cae4ae461b",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

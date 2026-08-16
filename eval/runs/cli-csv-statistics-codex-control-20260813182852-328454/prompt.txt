@@ -1,0 +1,3 @@
+Build a dependency-free Node.js command-line program at src/cli.js. It accepts one CSV path and writes JSON containing rowCount and the arithmetic mean of every numeric column. The repository includes sample input, but your implementation must handle unseen CSV files. Make it usable as a real non-interactive CLI and add any tests you consider necessary.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

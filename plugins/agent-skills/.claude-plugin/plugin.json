@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "agent-skills",
+  "version": "1.0.0-alpha.21",
+  "description": "Composable, evidence-gated skills for product and software delivery.",
+  "author": {
+    "name": "Felix Stubner"
+  },
+  "repository": "https://github.com/fstubner/agent-skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/product-build",
+    "./skills/product-management",
+    "./skills/systems-architecture",
+    "./skills/frontend",
+    "./skills/backend-engineering",
+    "./skills/product-acceptance",
+    "./skills/ai-prose-slop",
+    "./skills/mental-models",
+    "./skills/code-smells",
+    "./skills/code-organization",
+    "./skills/testing-strategy",
+    "./skills/data-modeling",
+    "./skills/cli-tooling",
+    "./skills/release-engineering",
+    "./skills/learn-from-session",
+    "./skills/engineering-assessment",
+    "./skills/multi-agent-design"
+  ]
+}

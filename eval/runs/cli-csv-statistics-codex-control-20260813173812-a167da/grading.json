@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "cli-csv-statistics",
+  "assertions": [
+    {
+      "id": "valid-output",
+      "status": "pass",
+      "evidence": "exit=0; stdout=\"{\\\"rowCount\\\":3,\\\"count\\\":4,\\\"latency\\\":20}\\n\"; expected rowCount=3,count=4,latency=20"
+    },
+    {
+      "id": "bad-input-contract",
+      "status": "pass",
+      "evidence": "exit=1; stdoutBytes=0; stderrBytes=33"
+    },
+    {
+      "id": "help-contract",
+      "status": "fail",
+      "evidence": "exit=1; output=\"Error: ENOENT: no such file or directory, open 'C:\\\\tmp\\\\agent-skills-eval-hmj1OB\\\\workspace\\\\--help'\\n\""
+    },
+    {
+      "id": "tests-run",
+      "status": "pass",
+      "evidence": "command=node --test; exit=0; output=\"\\n> test\\n> node --test\\n\\n✔ summarizes numeric columns and counts data rows (1.5ms)\\n✔ handles quoted commas, escaped quotes, blanks, and CRLF (0.2354ms)\\n✔ reports no numeric columns for nonnumeric data (0.2ms)\\nℹ tests 3\\nℹ suites 0\\nℹ pass 3\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 98.1759\\n\""
+    }
+  ]
+}

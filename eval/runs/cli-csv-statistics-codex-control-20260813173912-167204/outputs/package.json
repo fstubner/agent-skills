@@ -1,0 +1,11 @@
+{
+  "name": "csv-means-cli",
+  "version": "1.0.0",
+  "private": true,
+  "bin": {
+    "csv-means": "src/cli.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}

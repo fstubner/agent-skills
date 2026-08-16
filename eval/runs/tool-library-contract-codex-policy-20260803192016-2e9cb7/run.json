@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "tool-library-contract-codex-policy-20260803192016-2e9cb7",
+  "caseId": "tool-library-contract",
+  "caseRevision": 1,
+  "caseSha256": "aa57b1930c259a20dc386b7a0a40caf3e1de1fb812ff76e8752ffedd40dd71e1",
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-03T19:18:24.000Z",
+  "finishedAt": "2026-08-03T19:20:16.000Z",
+  "durationMs": 112063,
+  "totalTokens": 271973,
+  "costUsd": null,
+  "costCredits": 2.18726,
+  "exitCode": 0,
+  "artifactSha256": "a0047e9efa8c317c0a446cb24c7b5ef097c73ca2f15f3973d0a57557d1ad2370",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 0,
+    "failed": 5,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}
