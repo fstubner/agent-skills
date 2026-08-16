@@ -31,6 +31,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const NEWLINE = String.fromCharCode(10); // line separator for --files-from
 const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.agent-evidence', 'fixtures', 'testdata', 'examples', '.claude', '.cursor', '.codex', '.agents', '.aider', '.worktrees']);
 const DOWN_FILENAME_RE = /(\.down\.sql|_down\.sql|\.rollback\.sql)$/i;
 const DOWN_DIR_RE = /(^|[/\\])(down|revert|rollback)([/\\]|$)/i;
@@ -50,6 +51,17 @@ function parseArgs(argv) {
       const v = argv[++i];
       if (v) out.files = (out.files || []).concat(v.split(',').map((s) => s.trim()).filter(Boolean));
       else out.files = out.files || [];
+    }
+    // Same scan-set restriction as --files, read from a newline-delimited
+    // file. A commit touching a couple of thousand paths overflows the
+    // command line (ENAMETOOLONG on Windows), and the pre-commit hook then
+    // SKIPPED this checker with a warning — a gate that silently stops
+    // running on exactly the largest commits.
+    else if (a === '--files-from') {
+      const p = argv[++i];
+      let text = '';
+      try { text = fs.readFileSync(p, 'utf8'); } catch { text = ''; }
+      out.files = (out.files || []).concat(text.split(NEWLINE).map((s) => s.trim()).filter(Boolean));
     }
   }
   return out;
