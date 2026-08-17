@@ -1,0 +1,15 @@
+Build a dependency-free Node.js CLI at src/cli.js with this interface: config-set set <json-file> <dotted-key> <json-value>. It must update a nested JSON value atomically, support --dry-run without writing, and be safe to repeat. JSON results belong on stdout; diagnostics belong on stderr. Provide accurate --help and an npm test entry point.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Apply this concise engineering policy:
+
+# Engineering policy baseline
+
+- Clarify material unknowns before committing to architecture or UX.
+- Prefer the smallest coherent implementation that satisfies the request.
+- Validate inputs and authorization at trust boundaries.
+- Use additive, backwards-compatible data changes for rolling deploys.
+- Add focused automated tests for critical behavior and failure paths.
+- Run the product, tests, and build before claiming completion.
+- Report remaining uncertainty explicitly.

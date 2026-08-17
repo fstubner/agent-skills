@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "id": "json-config-setter",
+  "skill": "cli-tooling",
+  "revision": 1,
+  "prompt": "Build a dependency-free Node.js CLI at src/cli.js with this interface: config-set set <json-file> <dotted-key> <json-value>. It must update a nested JSON value atomically, support --dry-run without writing, and be safe to repeat. JSON results belong on stdout; diagnostics belong on stderr. Provide accurate --help and an npm test entry point.",
+  "fixture": "eval/fixtures-v2/json-config-setter",
+  "grader": "eval/graders-v2/json-config-setter.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "dry-run-contract", "description": "Dry-run previews the exact change without mutating the file", "kind": "outcome" },
+    { "id": "apply-idempotent", "description": "Applying the same update twice is successful and stable", "kind": "outcome" },
+    { "id": "stream-contract", "description": "Machine output is parseable JSON with no diagnostic contamination", "kind": "quality" },
+    { "id": "error-contract", "description": "Malformed input fails nonzero with empty stdout and actionable stderr", "kind": "outcome" },
+    { "id": "help-and-tests", "description": "Help is discoverable and the submitted test command passes", "kind": "quality" }
+  ]
+}

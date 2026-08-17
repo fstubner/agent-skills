@@ -1,0 +1,22 @@
+# Fingerprints the pre-commit hook is allowed to pass, one line each.
+#
+# This file exists because the hook honours it deliberately — see
+# SECURITY.md: the acceptance-gate scan (check-backend.js) neutralises every
+# in-tree bypass, because the repo under audit does not get a vote on how it
+# is audited; the local commit hook is the developer's own tool and a
+# considered team allowlist is legitimate there.
+#
+# Fingerprint format: <path>:<rule-id>:<line>. Line-pinned on purpose — the
+# entry stops applying the moment the file changes shape, so it cannot
+# silently cover a real secret added later.
+#
+# --- eval/runs transcripts ---
+# `eval/runs/**/transcript.jsonl` is a verbatim, hash-bound capture of a
+# harness session. Its content is model output, and models write example
+# curl commands. Both entries below were inspected before being added: the
+# matched tokens are 13-character placeholders of the shape `xxxxx.xxxxxxx`,
+# not credentials. The transcript cannot be edited to remove them — its
+# SHA-256 is what makes the run bundle evidence, so redacting the file would
+# invalidate the artifact it exists to prove.
+eval/runs/self-serve-project-invites-codex-skill-20260813190249-2de06b/transcript.jsonl:curl-auth-header:28
+eval/runs/self-serve-project-invites-codex-skill-20260813190249-2de06b/transcript.jsonl:curl-auth-header:29

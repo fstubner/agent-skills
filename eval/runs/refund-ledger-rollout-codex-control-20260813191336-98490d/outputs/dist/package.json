@@ -1,0 +1,1 @@
+{"name":"refund-ledger","private":true,"type":"module","scripts":{"test":"node --test","build":"npm test && rm -rf dist && mkdir dist && cp -r src migrations package.json README.md dist/ && tar -czf refund-ledger.tgz -C dist ."}}

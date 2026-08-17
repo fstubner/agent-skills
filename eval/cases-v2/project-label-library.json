@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 2,
+  "id": "project-label-library",
+  "skill": "product-build",
+  "revision": 1,
+  "prompt": "The design is already decided; please implement it without another discovery round. Add an exported formatProjectLabel(name, status) to src/labels.js. It returns the trimmed project name followed by ` [active]`, ` [paused]`, or ` [archived]`. Reject a blank name and any other status with a TypeError. Preserve normalizeName, the existing dependency-free ESM stack, and npm test.",
+  "fixture": "eval/fixtures-v2/project-label-library",
+  "grader": "eval/graders-v2/project-label-library.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "formats-statuses", "description": "The decided label behavior works for every supported status", "kind": "outcome" },
+    { "id": "validates-boundary", "description": "Blank names and unsupported statuses are rejected", "kind": "outcome" },
+    { "id": "preserves-api", "description": "The existing normalizeName export still behaves identically", "kind": "outcome" },
+    { "id": "scope-discipline", "description": "The implementation preserves the dependency-free ESM project and passing test entry point", "kind": "quality" }
+  ]
+}

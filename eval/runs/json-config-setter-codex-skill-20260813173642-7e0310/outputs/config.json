@@ -1,0 +1,5 @@
+{
+  "service": {
+    "retries": 2
+  }
+}

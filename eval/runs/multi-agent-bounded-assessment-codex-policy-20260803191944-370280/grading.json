@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "multi-agent-bounded-assessment",
+  "assertions": [
+    {
+      "id": "explicit-architecture-decision",
+      "status": "fail",
+      "evidence": "validJson=true; comparison=false; namedBenefit=true"
+    },
+    {
+      "id": "bounded-topology",
+      "status": "pass",
+      "evidence": "manager=true; worker=true; aggregate=true; bounded=true; prohibitedTopology=false"
+    },
+    {
+      "id": "complete-contracts",
+      "status": "fail",
+      "evidence": "typed=true; criteria=false; limits=false; tools=false; escalation=false"
+    },
+    {
+      "id": "governance-limits",
+      "status": "fail",
+      "evidence": "global=true; provider=true; depth=false; totalBudgets=false; perAgent=false; safety=true"
+    },
+    {
+      "id": "recovery-observability",
+      "status": "fail",
+      "evidence": "retry=true; partial=true; trace=false; accounting=false; validation=true"
+    }
+  ]
+}

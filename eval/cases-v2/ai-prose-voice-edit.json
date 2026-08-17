@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 2,
+  "id": "ai-prose-voice-edit",
+  "skill": "ai-prose-slop",
+  "revision": 1,
+  "prompt": "Edit draft.md to remove AI-sounding prose without flattening the writer's voice or changing factual content. Write the revision to revised.md and briefly record the edits in changes.md.",
+  "fixture": "eval/fixtures-v2/ai-prose-voice-edit",
+  "grader": "eval/graders-v2/ai-prose-voice-edit.mjs",
+  "checker": "ai-prose-slop/scripts/check-prose.js",
+  "conditions": ["control", "policy", "checker", "skill"],
+  "assertions": [
+    { "id": "patterns-removed", "description": "Deterministic prose patterns are removed from the revision", "kind": "outcome" },
+    { "id": "voice-preserved", "description": "Clean voice-bearing lines remain byte-identical", "kind": "quality" },
+    { "id": "facts-preserved", "description": "Factual anchors survive without invented numeric claims", "kind": "outcome" },
+    { "id": "judgment-pattern-fixed", "description": "Binary contrast is removed while its factual claim survives", "kind": "quality" },
+    { "id": "evidence-not-verdict", "description": "Change notes name patterns without claiming AI authorship", "kind": "quality" }
+  ]
+}

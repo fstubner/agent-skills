@@ -1,0 +1,163 @@
+{
+  "design_version": "1.0",
+  "purpose": "Daily read-only policy assessment for 240 tenants across AWS, Azure, and GCP, producing one consolidated report with tenant-level evidence.",
+  "architecture_choice": {
+    "mode": "multi_agent",
+    "justification": "The tenants are independent and numerous enough to require bounded parallelism to meet the 10-minute deadline. A single sequential agent would not provide sufficient throughput, while unbounded agents could violate provider and global concurrency limits."
+  },
+  "components": [
+    {
+      "id": "assessment_coordinator",
+      "type": "orchestrator",
+      "responsibilities": [
+        "Validate the run request and tenant inventory.",
+        "Create exactly one assessment task per tenant.",
+        "Dispatch tasks to the bounded worker pool.",
+        "Track task lifecycle, deadlines, retries, and partial outcomes.",
+        "Collect worker results and pass them to the report assembler.",
+        "Stop dispatching new work when the run deadline leaves insufficient time for a tenant attempt and final assembly."
+      ],
+      "must_not": [
+        "Invoke remediation or mutate tenant/provider state.",
+        "Use one tenant's result as input to another tenant's assessment.",
+        "Exceed the global provider-call concurrency budget."
+      ]
+    },
+    {
+      "id": "tenant_assessment_worker_pool",
+      "type": "bounded_worker_pool",
+      "worker_count": 12,
+      "responsibilities": [
+        "Assess one tenant at a time using only that tenant's credentials, configuration, and provider adapter.",
+        "Gather policy findings and source evidence in a deterministic result envelope.",
+        "Return a complete, partial, failed, or timed_out tenant result without blocking unrelated tenants."
+      ],
+      "isolation": "Each task has an isolated execution context and tenant-scoped state; no worker may read or write another tenant's task state."
+    },
+    {
+      "id": "provider_call_gate",
+      "type": "shared_concurrency_controller",
+      "limits": {
+        "global_in_flight_provider_calls": 12,
+        "per_provider_in_flight_provider_calls": {
+          "aws": 4,
+          "azure": 4,
+          "gcp": 4
+        }
+      },
+      "acquisition": "Every provider API call must acquire both a global slot and the slot for its provider before execution, and release both in a finally-equivalent cleanup path.",
+      "fairness": "Use FIFO queues per provider with bounded global admission so one provider cannot consume another provider's quota."
+    },
+    {
+      "id": "provider_adapters",
+      "type": "read_only_adapter_set",
+      "providers": ["aws", "azure", "gcp"],
+      "contract": {
+        "input": "tenant_id, provider, read_only_credentials, policy_scope",
+        "output": "normalized_policy_observations with provider_resource_identifiers and source_references",
+        "allowed_operations": ["read", "list", "describe", "get_policy_state"],
+        "forbidden_operations": ["create", "update", "delete", "attach", "detach", "execute", "remediate"]
+      }
+    },
+    {
+      "id": "report_assembler",
+      "type": "deterministic_aggregator",
+      "responsibilities": [
+        "Validate every tenant result envelope.",
+        "Preserve tenant-level evidence and status.",
+        "Mark missing, timed-out, and failed tenants explicitly.",
+        "Produce one consolidated report ordered by tenant_id, with run metadata and summary counts."
+      ],
+      "must_not": [
+        "Suppress partial or failed tenant results.",
+        "Convert missing evidence into a passing finding.",
+        "Perform remediation."
+      ]
+    }
+  ],
+  "execution_model": {
+    "run_deadline_minutes": 10,
+    "deadline_policy": "Use a monotonic run deadline. Reserve a small finalization window for aggregation and persistence; cancel or mark any unfinished tenant task at the tenant deadline and continue aggregation.",
+    "task_lifecycle": [
+      "queued",
+      "running",
+      "retrying",
+      "completed",
+      "partial",
+      "failed",
+      "timed_out",
+      "cancelled_at_run_deadline"
+    ],
+    "dispatch": {
+      "unit": "one tenant assessment task",
+      "max_in_flight_tenant_tasks": 12,
+      "queueing": "Maintain a durable queue keyed by run_id and tenant_id; acknowledge a task only after its result envelope is durably recorded.",
+      "independence": "Tasks may run concurrently and must not depend on results, locks, or conversation state belonging to other tenants."
+    },
+    "provider_call_rule": "A worker may issue multiple calls for its tenant only through provider_call_gate; the gate, rather than worker count alone, is authoritative for concurrency."
+  },
+  "failure_handling": {
+    "rate_limit": {
+      "max_retries": 1,
+      "backoff": "Exponential or provider-recommended backoff with jitter, bounded by the tenant and run deadlines.",
+      "after_retry_exhausted": "Record a failed or partial tenant result with the provider error category and all evidence gathered before failure."
+    },
+    "tenant_timeout": {
+      "action": "Cancel outstanding calls where the provider client supports cancellation, release all gate slots, and emit a timed_out result with partial evidence.",
+      "continuation": "Release the worker immediately so unaffected queued tenants can proceed."
+    },
+    "credential_or_permission_error": "Do not retry unless classified as transient; report the tenant as failed with a non-sensitive error category and affected policy scope.",
+    "worker_crash": "Return the task to the queue only if its attempt lease has expired and the run deadline permits; otherwise emit a failed result. Ensure result writes are idempotent by run_id and tenant_id.",
+    "consolidation_failure": "Retry aggregation idempotently from recorded result envelopes; never rerun completed tenant assessments solely because report assembly failed."
+  },
+  "result_contract": {
+    "required_fields": {
+      "run_id": "string",
+      "tenant_id": "string",
+      "provider": "aws|azure|gcp",
+      "status": "completed|partial|failed|timed_out|cancelled_at_run_deadline",
+      "started_at": "RFC3339 timestamp",
+      "finished_at": "RFC3339 timestamp",
+      "findings": "array of normalized policy findings",
+      "evidence": "array of tenant-scoped evidence records",
+      "errors": "array of categorized, non-secret error records"
+    },
+    "finding_minimum": ["policy_id", "severity", "state", "resource_scope", "evidence_ids"],
+    "evidence_minimum": ["evidence_id", "provider", "api_operation", "resource_identifier_or_scope", "observed_at", "redacted_observation"],
+    "security_rules": [
+      "Never place credentials, access tokens, secrets, or full sensitive payloads in findings, evidence, logs, or the consolidated report.",
+      "Apply tenant authorization before every provider call.",
+      "Keep evidence provenance sufficient for review while redacting sensitive fields."
+    ]
+  },
+  "consolidated_report_contract": {
+    "required_sections": [
+      "run_metadata",
+      "summary_counts",
+      "tenant_results",
+      "incomplete_tenants",
+      "policy_and_evidence_provenance"
+    ],
+    "summary_counts": ["total_tenants", "completed", "partial", "failed", "timed_out", "cancelled_at_run_deadline"],
+    "completeness_rule": "The report is publishable when all recorded task outcomes are included and every tenant without a complete outcome is explicitly listed as incomplete."
+  },
+  "side_effect_controls": {
+    "mode": "read_only",
+    "enforcement": [
+      "Provider adapters expose only allowlisted read operations.",
+      "Credentials are scoped to read-only permissions where supported.",
+      "The worker tool manifest excludes remediation tools and mutation methods.",
+      "Any remediation recommendation is informational only and requires separate human approval and a separate execution workflow."
+    ],
+    "audit": "Record run_id, tenant_id, provider, operation name, authorization decision, outcome, and timing for every provider call."
+  },
+  "operational_acceptance_checks": [
+    "240 tenant tasks can be represented and tracked independently.",
+    "At no point can more than 12 provider calls be in flight globally.",
+    "At no point can more than 4 AWS, 4 Azure, or 4 GCP provider calls be in flight.",
+    "A rate-limited call receives at most one retry with bounded backoff.",
+    "A timed-out tenant produces an explicit partial status and does not stop unaffected tenants.",
+    "The final report retains tenant-level evidence and explicit incomplete statuses.",
+    "No design path invokes a provider mutation or remediation operation."
+  ]
+}

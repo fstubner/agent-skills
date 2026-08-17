@@ -1,0 +1,12 @@
+{
+  "name": "agent-skills",
+  "version": "1.0.0-alpha.22",
+  "description": "Composable, evidence-gated skills for product and software delivery.",
+  "author": {
+    "name": "Felix Stubner"
+  },
+  "repository": "https://github.com/fstubner/agent-skills",
+  "license": "MIT",
+  "displayName": "Agent Skills",
+  "skills": "./skills/"
+}

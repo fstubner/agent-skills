@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "id": "composed-workflows-luna-screen-2026-08-13",
+  "purpose": "Preliminary combined-skill workflow screen; not an estimate of any individual skill",
+  "harness": "codex",
+  "model": "gpt-5.6-luna",
+  "seed": "composed-workflows-luna-screen-2026-08-13-v1",
+  "conditions": [
+    "control",
+    "policy",
+    "skill"
+  ],
+  "trials": 3,
+  "expectedRuns": 18,
+  "hardBudgetCredits": 28,
+  "maxPerRunCredits": 5,
+  "timeoutMs": 600000,
+  "allowCompositions": true,
+  "skills": {
+    "product-build": [
+      "self-serve-project-invites"
+    ],
+    "data-modeling": [
+      "refund-ledger-rollout"
+    ]
+  },
+  "runs": [
+    {
+      "key": "self-serve-project-invites:control:1",
+      "runId": "self-serve-project-invites-codex-control-20260813185640-3856ce",
+      "costCredits": 1.57764,
+      "totalTokens": 82391,
+      "passed": 1,
+      "total": 6
+    },
+    {
+      "key": "refund-ledger-rollout:skill:2",
+      "runId": "refund-ledger-rollout-codex-skill-20260813185823-16ca1b",
+      "costCredits": 1.682575,
+      "totalTokens": 161870,
+      "passed": 4,
+      "total": 7
+    },
+    {
+      "key": "self-serve-project-invites:policy:1",
+      "runId": "self-serve-project-invites-codex-policy-20260813190011-09c089",
+      "costCredits": 1.948225,
+      "totalTokens": 143350,
+      "passed": 1,
+      "total": 6
+    },
+    {
+      "key": "self-serve-project-invites:skill:2",
+      "runId": "self-serve-project-invites-codex-skill-20260813190249-2de06b",
+      "costCredits": 2.73538,
+      "totalTokens": 307157,
+      "passed": 2,
+      "total": 6
+    },
+    {
+      "key": "refund-ledger-rollout:policy:1",
+      "runId": "refund-ledger-rollout-codex-policy-20260813190537-9f2ac7",
+      "costCredits": 1.20839,
+      "totalTokens": 84023,
+      "passed": 2,
+      "total": 7
+    },
+    {
+      "key": "refund-ledger-rollout:control:3",
+      "runId": "refund-ledger-rollout-codex-control-20260813190721-de84c4",
+      "costCredits": 1.39283,
+      "totalTokens": 90834,
+      "passed": 2,
+      "total": 7
+    },
+    {
+      "key": "refund-ledger-rollout:skill:1",
+      "runId": "refund-ledger-rollout-codex-skill-20260813190848-580af0",
+      "costCredits": 2.28015,
+      "totalTokens": 314967,
+      "passed": 4,
+      "total": 7
+    },
+    {
+      "key": "refund-ledger-rollout:skill:3",
+      "runId": "refund-ledger-rollout-codex-skill-20260813191058-be610a",
+      "costCredits": 2.037625,
+      "totalTokens": 232913,
+      "passed": 6,
+      "total": 7
+    },
+    {
+      "key": "self-serve-project-invites:skill:1",
+      "runId": "self-serve-project-invites-codex-skill-20260813191301-a13dcc",
+      "costCredits": 0.625655,
+      "totalTokens": 48383,
+      "passed": 0,
+      "total": 6
+    },
+    {
+      "key": "refund-ledger-rollout:control:1",
+      "runId": "refund-ledger-rollout-codex-control-20260813191336-98490d",
+      "costCredits": 1.313105,
+      "totalTokens": 96977,
+      "passed": 3,
+      "total": 7
+    },
+    {
+      "key": "refund-ledger-rollout:policy:3",
+      "runId": "refund-ledger-rollout-codex-policy-20260813191516-82ab35",
+      "costCredits": 1.06631,
+      "totalTokens": 77185,
+      "passed": 1,
+      "total": 7
+    },
+    {
+      "key": "refund-ledger-rollout:control:2",
+      "runId": "refund-ledger-rollout-codex-control-20260813191639-110a48",
+      "costCredits": 1.72697,
+      "totalTokens": 127770,
+      "passed": 4,
+      "total": 7
+    },
+    {
+      "key": "self-serve-project-invites:control:2",
+      "runId": "self-serve-project-invites-codex-control-20260813191827-f1c6fd",
+      "costCredits": 1.340975,
+      "totalTokens": 98240,
+      "passed": 1,
+      "total": 6
+    },
+    {
+      "key": "self-serve-project-invites:policy:2",
+      "runId": "self-serve-project-invites-codex-policy-20260813192011-c22ffc",
+      "costCredits": 1.366495,
+      "totalTokens": 101524,
+      "passed": 1,
+      "total": 6
+    },
+    {
+      "key": "self-serve-project-invites:skill:3",
+      "runId": "self-serve-project-invites-codex-skill-20260813192151-4620b4",
+      "costCredits": 2.519415,
+      "totalTokens": 293302,
+      "passed": 1,
+      "total": 6
+    }
+  ]
+}

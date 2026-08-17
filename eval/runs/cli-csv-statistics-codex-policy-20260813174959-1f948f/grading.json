@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "cli-csv-statistics",
+  "assertions": [
+    {
+      "id": "valid-output",
+      "status": "pass",
+      "evidence": "exit=0; stdout=\"{\\\"rowCount\\\":3,\\\"count\\\":4,\\\"latency\\\":20}\\n\"; expected rowCount=3,count=4,latency=20"
+    },
+    {
+      "id": "bad-input-contract",
+      "status": "pass",
+      "evidence": "exit=1; stdoutBytes=0; stderrBytes=46"
+    },
+    {
+      "id": "help-contract",
+      "status": "fail",
+      "evidence": "exit=1; output=\"Error: ENOENT: no such file or directory, open 'C:\\\\tmp\\\\agent-skills-eval-nac0cZ\\\\workspace\\\\--help'\\n\""
+    },
+    {
+      "id": "tests-run",
+      "status": "pass",
+      "evidence": "command=node --test; exit=0; output=\"\\n> csv-summary-cli@1.0.0 test\\n> node --test\\n\\n✔ summarizes numeric columns and counts data rows (2.2514ms)\\n✔ supports quoted CSV fields, CRLF, and empty numeric cells (0.3002ms)\\n✔ excludes columns containing non-numeric values (0.1984ms)\\n✔ rejects malformed or uneven CSV (0.5362ms)\\nℹ tests 4\\nℹ suites 0\\nℹ pass 4\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 109.7584\\n\""
+    }
+  ]
+}

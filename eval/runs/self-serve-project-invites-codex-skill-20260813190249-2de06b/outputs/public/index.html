@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Invite to a project</title>
+  <style>
+    :root{--ink:#17202a;--muted:#52606d;--paper:#f7f5f0;--card:#fff;--accent:#176b5a;--accent-dark:#0d4c40;--line:#d6d1c7;--danger:#a33a2b}
+    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,sans-serif} main{max-width:42rem;margin:0 auto;padding:clamp(2rem,8vw,5rem) 1.25rem}.eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem}h1{font-size:clamp(2rem,6vw,3.2rem);line-height:1.05;margin:.5rem 0 1rem}p{color:var(--muted)}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.5rem;box-shadow:0 8px 24px #17202a12}label{display:block;font-weight:650;margin:1rem 0 .35rem}input,select,button{font:inherit;min-height:46px;border-radius:7px}input,select{width:100%;padding:.65rem .75rem;border:1px solid #8d918d;background:#fff;color:var(--ink)}input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #e0a52c;outline-offset:2px}button{margin-top:1.25rem;width:100%;padding:.7rem 1rem;border:0;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}button:hover{background:var(--accent-dark)}button:disabled{opacity:.65;cursor:wait}.hint{font-size:.9rem;margin-top:.3rem}.status{margin-top:1rem;padding:.75rem;border-radius:7px}.error{color:var(--danger);background:#fff0ed}.success{color:var(--accent-dark);background:#e9f5ef}.success a{overflow-wrap:anywhere;color:var(--accent-dark);font-weight:700}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  </style>
+</head>
+<body><main><div class="eyebrow">Project access</div><h1>Invite someone to your project</h1><p>Choose their access level, then share the link with them. This version does not send email.</p>
+  <section class="card" aria-labelledby="form-title"><h2 id="form-title">Create an invitation</h2>
+    <form id="invite-form" novalidate><label for="account">Your account name</label><input id="account" name="account" autocomplete="username" required pattern="[A-Za-z0-9._-]{1,80}"><p class="hint">Used to authenticate this request in the demo.</p>
+    <label for="project">Project ID</label><input id="project" name="project" value="demo-project" required>
+    <label for="email">Invitee email</label><input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-hint"><p id="email-hint" class="hint">They will use the shareable link you receive.</p>
+    <label for="role">Access level</label><select id="role" name="role"><option value="viewer">Viewer — can view the project</option><option value="editor">Editor — can make changes</option></select>
+    <button type="submit" id="submit">Create invite link</button><div id="status" class="status" role="status" aria-live="polite" hidden></div></form>
+  </section></main>
+<script>
+const form=document.querySelector('#invite-form'), button=document.querySelector('#submit'), status=document.querySelector('#status');
+function show(message, kind){status.hidden=false;status.className='status '+kind;status.innerHTML=message}
+form.addEventListener('submit',async(event)=>{event.preventDefault();status.hidden=true;if(!form.reportValidity())return;button.disabled=true;button.textContent='Creating link…';const data=new FormData(form), key=crypto.randomUUID();try{const response=await fetch('/api/projects/'+encodeURIComponent(data.get('project'))+'/invites',{method:'POST',headers:{'Authorization':'Bearer '+data.get('account'),'Content-Type':'application/json','Idempotency-Key':key},body:JSON.stringify({email:data.get('email'),role:data.get('role')})});const result=await response.json();if(!response.ok)throw new Error(result.message||'Could not create the invite.');show('Invite link created: <a href="'+result.inviteUrl+'">'+result.inviteUrl+'</a><br><span class="hint">Copy this link and share it with '+result.email+'.</span>','success');}catch(error){show(error.message+' <button type="button" id="retry">Try again</button>','error');document.querySelector('#retry').addEventListener('click',()=>form.requestSubmit())}finally{button.disabled=false;button.textContent='Create invite link'}});
+</script></body></html>

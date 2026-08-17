@@ -1,0 +1,3 @@
+Turn the project brief into a product contract at PRODUCT.md. Keep it concrete enough that design and engineering can use it without another rewrite.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

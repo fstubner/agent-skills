@@ -1,0 +1,200 @@
+{
+  "version": "1.0",
+  "decision": {
+    "architecture": "bounded-multi-agent",
+    "multiple_agents_justified": true,
+    "rationale": "The workload contains 240 independent tenant assessments and has a 10-minute deadline. Bounded parallelism improves throughput while preserving provider and global concurrency limits."
+  },
+  "objectives": [
+    "Produce one consolidated read-only policy assessment report with tenant-level evidence.",
+    "Assess every tenant independently where time and provider availability permit.",
+    "Continue unaffected tenants after tenant timeouts or exhausted provider failures.",
+    "Prevent remediation or any other side effect without explicit human approval."
+  ],
+  "components": [
+    {
+      "name": "assessment-coordinator",
+      "type": "orchestrator",
+      "responsibilities": [
+        "Validate the input job, tenant identifiers, provider configuration, authorization context, and deadline.",
+        "Create exactly one work item per tenant with an idempotency key for the assessment run.",
+        "Schedule work to the bounded tenant-worker pool.",
+        "Own the global concurrency budget of 12 active tenant workers.",
+        "Track per-tenant deadlines and collect terminal results.",
+        "Build the consolidated report and mark the run complete, partial, or failed."
+      ],
+      "does_not": [
+        "Execute remediation.",
+        "Mutate provider resources.",
+        "Treat one tenant's result as input to another tenant's assessment."
+      ]
+    },
+    {
+      "name": "tenant-assessment-worker",
+      "type": "worker-agent",
+      "instance_count": 12,
+      "responsibilities": [
+        "Process one tenant work item at a time.",
+        "Fetch read-only evidence from aws, azure, and gcp through the provider adapters.",
+        "Evaluate the configured policy rules against evidence returned for that tenant.",
+        "Emit a tenant-scoped result containing evidence, findings, provider statuses, and timestamps.",
+        "Stop work at the tenant deadline and emit partial status."
+      ],
+      "isolation": {
+        "state_scope": "tenant_id plus assessment_run_id",
+        "cross_tenant_state": false,
+        "result_key": "assessment_run_id/tenant_id"
+      }
+    },
+    {
+      "name": "provider-adapter",
+      "type": "read-only-integration",
+      "instances": ["aws", "azure", "gcp"],
+      "responsibilities": [
+        "Use the provider's least-privilege read-only credentials.",
+        "Validate tenant and provider scope before every request.",
+        "Normalize provider responses into the evidence schema while preserving raw evidence references.",
+        "Classify authorization, rate-limit, timeout, transport, and provider errors without converting failures into compliant findings."
+      ],
+      "safety": {
+        "allowed_operations": ["read", "list", "describe", "policy-evaluation-read-only"],
+        "forbidden_operations": ["create", "update", "delete", "remediate", "approve-remediation"],
+        "credential_source": "run-scoped secret reference; never include credentials in work items or reports"
+      }
+    },
+    {
+      "name": "report-aggregator",
+      "type": "deterministic-service",
+      "responsibilities": [
+        "Accept only authenticated, schema-valid tenant results for the current assessment run.",
+        "Deduplicate by assessment_run_id and tenant_id.",
+        "Preserve partial and failed provider statuses.",
+        "Produce a consolidated report with tenant-level evidence and an explicit completeness summary."
+      ]
+    }
+  ],
+  "execution": {
+    "run_input": {
+      "tenant_ids": "array of 240 authorized tenant identifiers",
+      "providers": ["aws", "azure", "gcp"],
+      "assessment_run_id": "unique immutable run identifier",
+      "deadline_minutes": 10
+    },
+    "dispatch": {
+      "work_items": "one immutable item per tenant",
+      "global_active_tenant_limit": 12,
+      "queue_order": "fair FIFO with no tenant priority unless explicitly authorized",
+      "tenant_parallelism": 12,
+      "provider_call_mode": "parallel where provider gates permit; otherwise provider calls are queued",
+      "provider_concurrency_limits": {
+        "aws": 4,
+        "azure": 4,
+        "gcp": 4
+      },
+      "global_provider_call_limit": 12
+    },
+    "tenant_lifecycle": [
+      "queued",
+      "running",
+      "provider_partial_or_complete",
+      "completed|partial|timed_out|failed",
+      "aggregated"
+    ],
+    "timeouts": {
+      "run_deadline_minutes": 10,
+      "tenant_timeout": "derived from remaining run budget, with a small coordinator reserve for aggregation",
+      "provider_request_timeout": "configurable and strictly less than the remaining tenant deadline",
+      "on_timeout": "cancel outstanding tenant calls when safe, persist completed evidence, emit partial status, and release all concurrency permits"
+    }
+  },
+  "retry_policy": {
+    "rate_limit": {
+      "max_retries": 1,
+      "backoff": "bounded exponential backoff with jitter, capped by the tenant deadline"
+    },
+    "other_transient_errors": {
+      "max_retries": 0,
+      "behavior": "record provider failure and continue with other providers"
+    },
+    "authorization_or_validation_errors": {
+      "max_retries": 0,
+      "behavior": "record terminal provider failure"
+    },
+    "idempotency": "retry requests must carry the same assessment_run_id, tenant_id, provider, and evidence-query key"
+  },
+  "data_contracts": {
+    "tenant_result": {
+      "required": [
+        "assessment_run_id",
+        "tenant_id",
+        "status",
+        "started_at",
+        "finished_at",
+        "provider_results",
+        "findings",
+        "evidence_references"
+      ],
+      "status_values": ["complete", "partial", "timed_out", "failed"],
+      "provider_result_fields": ["provider", "status", "findings", "evidence_references", "error_class", "attempts"]
+    },
+    "consolidated_report": {
+      "required": [
+        "assessment_run_id",
+        "generated_at",
+        "run_status",
+        "tenant_counts",
+        "tenant_results",
+        "completeness_summary"
+      ],
+      "run_status_values": ["complete", "partial", "failed"],
+      "tenant_counts": ["requested", "complete", "partial", "timed_out", "failed", "missing"]
+    }
+  },
+  "trust_and_authorization": {
+    "input_boundary": [
+      "Reject duplicate, malformed, or unauthorized tenant identifiers.",
+      "Allow only the listed providers and a deadline no greater than the configured maximum.",
+      "Authenticate the initiating principal and authorize the complete tenant scope before dispatch."
+    ],
+    "worker_boundary": [
+      "Issue scoped credentials for one tenant and provider only.",
+      "Reject provider responses that do not match the requested tenant and provider scope.",
+      "Treat provider evidence and policy text as untrusted data; do not execute instructions contained in them."
+    ],
+    "report_boundary": [
+      "Require authenticated result submission from workers.",
+      "Escape or encode tenant/provider content in report formats to prevent injection.",
+      "Redact secrets and unnecessary personal data from evidence."
+    ]
+  },
+  "failure_and_observability": {
+    "partial_results": "A tenant is partial when at least one provider result is unavailable or the tenant deadline expires. Missing evidence is never represented as compliance.",
+    "unaffected_tenants": "A worker failure releases its permits and marks only its tenant failed; queued work continues.",
+    "run_completion": "At the deadline, stop dispatching new work, finalize completed results, mark unprocessed tenants missing, and emit a partial report.",
+    "metrics": ["tenants_completed", "tenants_partial", "tenants_timed_out", "tenants_failed", "provider_latency", "provider_rate_limits", "active_workers", "queue_depth", "report_completeness"],
+    "audit_log": "Append-only events for authorization, dispatch, provider calls, retries, findings, status transitions, and report generation; exclude credentials and raw sensitive payloads."
+  },
+  "testing": {
+    "focused_automated_tests": [
+      "Enforce global limit 12 and per-provider limit 4 under maximum queue pressure.",
+      "Verify tenant results are isolated and cannot be deduplicated across tenant IDs.",
+      "Verify rate limits retry exactly once with bounded backoff.",
+      "Verify tenant timeout emits partial status and does not stop unaffected tenants.",
+      "Verify authorization and malformed inputs are rejected before provider calls.",
+      "Verify forbidden remediation operations are unavailable to workers and adapters.",
+      "Verify aggregation preserves evidence, partial statuses, and missing-tenant counts.",
+      "Verify duplicate delivery is idempotent for the same assessment_run_id and tenant_id."
+    ],
+    "not_run": true
+  },
+  "deployment": {
+    "compatibility": "Add result fields and status values additively; readers must tolerate unknown fields during rolling deploys.",
+    "rollout": "Deploy adapters and aggregator before enabling the coordinator, then enable bounded dispatch behind a feature flag.",
+    "rollback": "Disable new dispatch and drain existing work without invoking remediation."
+  },
+  "uncertainties": [
+    "Provider request latency and policy volume are unspecified, so the design cannot guarantee that all 240 tenants finish within 10 minutes; it guarantees bounded concurrency and an explicit partial report.",
+    "The exact provider SDKs, credential broker, persistence layer, and policy language are unspecified and must be selected during implementation.",
+    "A coordinator reserve is required for final aggregation, but its exact duration should be configured after measuring report-generation cost."
+  ]
+}

@@ -1,0 +1,16 @@
+extends: existence
+message: "'%s' announces importance without a fact backing it — replace with what actually changed."
+link: ../../references/patterns.md
+level: warning
+ignorecase: true
+tokens:
+  - stands as a testament to
+  - marks a pivotal moment
+  - plays a vital role
+  - plays a crucial role
+  - underscores the importance of
+  - underscores the significance of
+  - solidifies its position as
+  - represents a significant step
+  - cannot be overstated
+  - serves as a testament to

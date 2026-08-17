@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "refund-ledger-rollout-codex-control-20260813191639-110a48",
+  "caseId": "refund-ledger-rollout",
+  "caseRevision": 1,
+  "caseSha256": "2e74b83557e6c0440cd7562ff5a632d397cc5f5b6613ef0de511e3ed5ca6ed17",
+  "condition": "control",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-13T19:16:39.034Z",
+  "finishedAt": "2026-08-13T19:18:27.196Z",
+  "durationMs": 108162,
+  "totalTokens": 127770,
+  "costUsd": null,
+  "costCredits": 1.72697,
+  "exitCode": 0,
+  "artifactSha256": "4e370ec2ac2ed56c869b2725bfce0d2c5e8334ed72a7e4dcf9cc7be3cb4cb5e2",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 7
+  }
+}

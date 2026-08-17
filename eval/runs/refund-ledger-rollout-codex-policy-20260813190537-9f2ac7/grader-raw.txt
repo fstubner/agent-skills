@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "caseId": "refund-ledger-rollout",
+  "assertions": [
+    {
+      "id": "additive-schema",
+      "status": "pass",
+      "evidence": "files=002_create_refunds.sql, additive=true, ledger=true, amount=true, idempotency=true, paymentReference=true"
+    },
+    {
+      "id": "server-boundary",
+      "status": "pass",
+      "evidence": "missingAuth=401, crossAccount=404, fractionalAmount=400"
+    },
+    {
+      "id": "refund-invariant",
+      "status": "fail",
+      "evidence": "first=201/pay-1-stable-refund, replay=409/undefined, excessive=409"
+    },
+    {
+      "id": "structured-errors",
+      "status": "fail",
+      "evidence": "400:{\"code\":\"invalid_amountCents\"} | 404:{\"code\":\"not_found\"} | 409:{\"code\":\"refund_exceeds_payment\"}"
+    },
+    {
+      "id": "regression-suite",
+      "status": "fail",
+      "evidence": "canonicalCommand=true, exit=0, files=test\\server.test.js, boundaryCoverage=false, output=TAP version 13\n# Subtest: creates a refund and retries the original refund\nok 1 - creates a refund and retries the original refund\n  ---\n  duration_ms: 57.4836\n  type: 'test'\n  ...\n# Subtest: enforces ownership, integer amounts, and remaining balance\nok 2 - enforces ownership, integer amounts, and r"
+    },
+    {
+      "id": "immutable-release",
+      "status": "fail",
+      "evidence": "tagTrigger=false, uploadAndDownload=false, needsBuild=false, testsBeforeArtifact=false, immutableActions=false"
+    },
+    {
+      "id": "literal-rollback",
+      "status": "fail",
+      "evidence": "release documentation missing"
+    }
+  ]
+}

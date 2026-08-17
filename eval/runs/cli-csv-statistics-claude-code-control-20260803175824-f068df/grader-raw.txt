@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "cli-csv-statistics",
+  "assertions": [
+    {
+      "id": "valid-output",
+      "status": "pass",
+      "evidence": "exit=0; stdout=\"{\\\"rowCount\\\":3,\\\"count\\\":4,\\\"latency\\\":20}\\n\"; expected rowCount=3,count=4,latency=20"
+    },
+    {
+      "id": "bad-input-contract",
+      "status": "fail",
+      "evidence": "exit=0; stdoutBytes=15; stderrBytes=0"
+    },
+    {
+      "id": "help-contract",
+      "status": "fail",
+      "evidence": "exit=1; output=\"Error: File not found: --help\\n\""
+    },
+    {
+      "id": "tests-run",
+      "status": "pass",
+      "evidence": "command=node test/test.js; exit=0; output=\"\\n> csv-stats-cli@1.0.0 test\\n> node test/test.js\\n\\n\\n=== Testing parseCSV ===\\n✓ Should parse headers correctly\\n✓ Should parse 2 rows\\n✓ Should parse first row\\n✓ Should trim header whitespace\\n✓ Should trim value whitespace\\n✓ Should skip empty lines\\n✓ Should handle single row\\n✓ Should handle empty CSV\\n\\n=== Testing isNumeric ===\\n✓ Should recognize integer\\n✓ Should recognize decimal\\n✓ Should recognize neg\""
+    }
+  ]
+}

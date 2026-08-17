@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "cli-csv-statistics",
+  "assertions": [
+    {
+      "id": "valid-output",
+      "status": "pass",
+      "evidence": "exit=0; stdout=\"{\\\"rowCount\\\":3,\\\"means\\\":{\\\"count\\\":4,\\\"latency\\\":20}}\\n\"; expected rowCount=3,count=4,latency=20"
+    },
+    {
+      "id": "bad-input-contract",
+      "status": "pass",
+      "evidence": "exit=1; stdoutBytes=0; stderrBytes=33"
+    },
+    {
+      "id": "help-contract",
+      "status": "fail",
+      "evidence": "exit=1; output=\"Error: ENOENT: no such file or directory, open 'C:\\\\tmp\\\\agent-skills-eval-tI189c\\\\workspace\\\\--help'\\n\""
+    },
+    {
+      "id": "tests-run",
+      "status": "pass",
+      "evidence": "command=node --test; exit=0; output=\"\\n> csv-means-cli@1.0.0 test\\n> node --test\\n\\n✔ summarizes numeric columns and ignores empty numeric cells (1.4873ms)\\n✔ supports quoted commas, escaped quotes, and newlines (0.1742ms)\\n✔ rejects malformed row widths and unterminated quotes (0.4332ms)\\n✔ handles a header-only CSV (0.2581ms)\\nℹ tests 4\\nℹ suites 0\\nℹ pass 4\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 98.5521\\n\""
+    }
+  ]
+}

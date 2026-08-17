@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Invite to a project</title></head>
+<body>
+<main>
+  <h1>Invite someone to a project</h1>
+  <p>Generate a shareable invitation link. This version does not send email.</p>
+  <form id="invite-form">
+    <label for="account">Your account name</label>
+    <input id="account" name="account" autocomplete="username" required>
+    <label for="project">Project ID</label>
+    <input id="project" name="project" required>
+    <label for="email">Invitee email</label>
+    <input id="email" name="email" type="email" autocomplete="email" required>
+    <fieldset><legend>Access level</legend>
+      <label><input type="radio" name="role" value="viewer" checked> Viewer</label>
+      <label><input type="radio" name="role" value="editor"> Editor</label>
+    </fieldset>
+    <button type="submit">Create invite link</button>
+  </form>
+  <p id="status" role="status" aria-live="polite"></p>
+  <section id="result" hidden aria-labelledby="result-title"><h2 id="result-title">Invite link</h2><input id="invite-url" readonly aria-label="Shareable invite link"><button id="copy" type="button">Copy link</button></section>
+</main>
+<script>
+const form = document.querySelector('#invite-form'), status = document.querySelector('#status'), result = document.querySelector('#result'), url = document.querySelector('#invite-url');
+form.addEventListener('submit', async event => {
+  event.preventDefault(); result.hidden = true; status.textContent = 'Creating invite…';
+  const data = new FormData(form), project = data.get('project');
+  try {
+    const response = await fetch('/api/projects/' + encodeURIComponent(project) + '/invites', { method:'POST', headers:{'content-type':'application/json', 'authorization':'Bearer ' + data.get('account'), 'idempotency-key': crypto.randomUUID()}, body:JSON.stringify({email:data.get('email'), role:data.get('role')}) });
+    const payload = await response.json(); if (!response.ok) throw new Error(payload.message || 'Could not create invite');
+    url.value = payload.inviteUrl; result.hidden = false; status.textContent = 'Invite created. Share the link with the invitee.'; url.focus();
+  } catch (error) { status.textContent = error.message; }
+});
+document.querySelector('#copy').addEventListener('click', async () => { await navigator.clipboard.writeText(url.value); status.textContent = 'Invite link copied.'; });
+</script>
+</body></html>

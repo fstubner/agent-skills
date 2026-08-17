@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "screenId": "priority-skills-luna-screen-2026-08-13",
+  "preliminary": true,
+  "note": "Single-harness screening evidence only; promotion still requires the complete eval/evidence.json matrix.",
+  "completedRuns": 90,
+  "spentCredits": 88.50384999999996,
+  "skills": {
+    "product-build": {
+      "conditions": {
+        "control": {
+          "outcomeRate": 0.7916666666666666,
+          "meanCredits": 0.9792275,
+          "meanTokens": 79165.5
+        },
+        "policy": {
+          "outcomeRate": 0.625,
+          "meanCredits": 1.1011749999999998,
+          "meanTokens": 100678.33333333333
+        },
+        "skill": {
+          "outcomeRate": 0.9583333333333334,
+          "meanCredits": 0.7264425,
+          "meanTokens": 59472.333333333336
+        }
+      },
+      "skillVsPolicy": {
+        "outcomeDelta": 0.3333333333333333,
+        "outcomeInterval95": {
+          "n": 2,
+          "lower": -1.7843333333333338,
+          "upper": 2.4510000000000005
+        },
+        "creditDelta": -0.2715165224243038,
+        "creditInterval95": {
+          "n": 2,
+          "lower": -3.615200559011018,
+          "upper": 3.0721675141624103
+        },
+        "tokenDelta": -0.3471971246440407,
+        "tokenInterval95": {
+          "n": 2,
+          "lower": -3.5633938722583283,
+          "upper": 2.8689996229702466
+        }
+      }
+    },
+    "testing-strategy": {
+      "conditions": {
+        "control": {
+          "outcomeRate": 0.9,
+          "meanCredits": 0.6951375,
+          "meanTokens": 59793
+        },
+        "policy": {
+          "outcomeRate": 0.9,
+          "meanCredits": 0.7142258333333333,
+          "meanTokens": 65008.833333333336
+        },
+        "skill": {
+          "outcomeRate": 0.9,
+          "meanCredits": 0.748635,
+          "meanTokens": 72541.83333333333
+        }
+      },
+      "skillVsPolicy": {
+        "outcomeDelta": 0,
+        "outcomeInterval95": {
+          "n": 2,
+          "lower": 0,
+          "upper": 0
+        },
+        "creditDelta": 0.07911549020400556,
+        "creditInterval95": {
+          "n": 2,
+          "lower": -1.4609784089193167,
+          "upper": 1.619209389327328
+        },
+        "tokenDelta": 0.13533823452426316,
+        "tokenInterval95": {
+          "n": 2,
+          "lower": -0.44197872748283884,
+          "upper": 0.7126551965313652
+        }
+      }
+    },
+    "cli-tooling": {
+      "conditions": {
+        "control": {
+          "outcomeRate": 0.6333333333333334,
+          "meanCredits": 1.0716516666666667,
+          "meanTokens": 86710.83333333333
+        },
+        "policy": {
+          "outcomeRate": 0.7083333333333334,
+          "meanCredits": 1.0199025,
+          "meanTokens": 78963.33333333333
+        },
+        "skill": {
+          "outcomeRate": 0.875,
+          "meanCredits": 1.2131125,
+          "meanTokens": 96779.16666666667
+        }
+      },
+      "skillVsPolicy": {
+        "outcomeDelta": 0.16666666666666666,
+        "outcomeInterval95": {
+          "n": 2,
+          "lower": -1.9509999999999998,
+          "upper": 2.284333333333333
+        },
+        "creditDelta": 0.22931557016338078,
+        "creditInterval95": {
+          "n": 2,
+          "lower": -0.7540161105023013,
+          "upper": 1.2126472508290629
+        },
+        "tokenDelta": 0.28062578702846713,
+        "tokenInterval95": {
+          "n": 2,
+          "lower": -2.42520767635531,
+          "upper": 2.986459250412244
+        }
+      }
+    },
+    "engineering-assessment": {
+      "conditions": {
+        "control": {
+          "outcomeRate": 0.3666666666666667,
+          "meanCredits": 1.0959241666666666,
+          "meanTokens": 110214.33333333333
+        },
+        "policy": {
+          "outcomeRate": 0.36666666666666664,
+          "meanCredits": 1.0842266666666667,
+          "meanTokens": 96447.83333333333
+        },
+        "skill": {
+          "outcomeRate": 0.7666666666666666,
+          "meanCredits": 1.3771366666666667,
+          "meanTokens": 119577.5
+        }
+      },
+      "skillVsPolicy": {
+        "outcomeDelta": 0.39999999999999997,
+        "outcomeInterval95": {
+          "n": 2,
+          "lower": -2.1412,
+          "upper": 2.9412
+        },
+        "creditDelta": 0.3236940469397994,
+        "creditInterval95": {
+          "n": 2,
+          "lower": -3.2659472375459924,
+          "upper": 3.913335331425591
+        },
+        "tokenDelta": 0.2670984494706779,
+        "tokenInterval95": {
+          "n": 2,
+          "lower": -2.393741383447603,
+          "upper": 2.9279382823889586
+        }
+      }
+    },
+    "product-acceptance": {
+      "conditions": {
+        "control": {
+          "outcomeRate": 0.3666666666666667,
+          "meanCredits": 0.7605158333333334,
+          "meanTokens": 71400
+        },
+        "policy": {
+          "outcomeRate": 0.3666666666666667,
+          "meanCredits": 0.7888541666666667,
+          "meanTokens": 76485.83333333333
+        },
+        "skill": {
+          "outcomeRate": 0.5,
+          "meanCredits": 1.3744741666666667,
+          "meanTokens": 169042.83333333334
+        }
+      },
+      "skillVsPolicy": {
+        "outcomeDelta": 0.1333333333333333,
+        "outcomeInterval95": {
+          "n": 2,
+          "lower": 0.13333333333333305,
+          "upper": 0.13333333333333355
+        },
+        "creditDelta": 0.7639700866052651,
+        "creditInterval95": {
+          "n": 2,
+          "lower": -0.3218578245339826,
+          "upper": 1.849797997744513
+        },
+        "tokenDelta": 1.226449953107967,
+        "tokenInterval95": {
+          "n": 2,
+          "lower": -2.03183860333822,
+          "upper": 4.484738509554154
+        }
+      }
+    }
+  }
+}

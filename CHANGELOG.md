@@ -1,5 +1,135 @@
 # Changelog
 
+## 1.0.0-alpha.22 — 2026-08-17
+
+Two changes from a product review, both aimed at the suite being pleasant to
+use rather than merely correct.
+
+**A verdict is readable now.** Every checker printed a forty-line JSON dump,
+including the one moment the whole suite exists for — a BLOCK. In a terminal
+they now lead with the verdict, list the failing checks and their details
+first, then say what to do. Piped or spawned they still print JSON, because
+the acceptance gate parses producer stdout and changing that default would
+have broken the gate silently — the exact failure class this suite exists to
+catch. `--format text|json` overrides either way, and an unknown value is a
+usage error (exit 2), not a stack trace.
+
+**The routing table is two tiers.** Seventeen skills in one flat list is
+seventeen things to weigh on every request, and a list that long gets
+skimmed. The top five are the ones actually reached for across twelve days
+and eight real projects — `engineering-assessment`, `ai-prose-slop`,
+`product-acceptance`, `frontend`, `release-engineering` — and the rest sit
+below, still routed, when their trigger is plainly the request. The split is
+empirical and moves when the usage does; it is not a quality ranking.
+
+## 1.0.0-alpha.21 — 2026-08-16
+
+**A full independent audit of the repository, and the six defects it
+found.** Every claim was checked by running it rather than reading it —
+tamper-testing an eval bundle, weakening each threshold in turn, installing
+to a clean directory, staging a synthetic secret against the pre-commit
+hook, and running all five checkers against two unrelated real projects.
+
+**A Claude Code worktree turned a single-part project into a false BLOCK.**
+`.claude/worktrees/<branch>/` holds a full copy of the tree, and nothing
+excluded it: on a real project the walk found six dependency manifests where
+there are three, and a minimal repro — one Express app, one worktree —
+flipped `multiPart` to true and made `check-architecture` demand an
+`ARCHITECTURE.md` for a project with one part. The failure landed
+specifically on this suite's own audience. Agent-tool directories are now
+excluded by every walk, from one exported list, with a drift test across the
+four checkers that keep their own copy and a behavioural regression that
+rebuilds the shape that broke.
+
+**The evidence threshold that decides everything had no floor.**
+Replication counts, conditions, harnesses and confidence level were all
+guarded; `outcomeDeltaRequired: 0` passed verification, which would have
+made every recorded null promotable. All three effect-size numbers are now
+floored, with a mutation test per number.
+
+**The README documented a different suite than the one that ships** —
+fifteen skills against seventeen, with `engineering-assessment` and
+`multi-agent-design` absent entirely. Both now have rows, the artifact count
+is corrected, and a test pins every registered skill to a README row.
+
+**"SHIP is unreachable from the context that built" was stronger than the
+code.** Nothing detects which context a run is in; the flags are assertions
+a builder could make falsely. Reworded to say that, since the honesty of the
+gate is the whole point of it.
+
+**Also:** `systems-architecture` now documents that `multiPart` keys on a
+server signal, so a desktop app with a native core and a web UI is never
+gated (verified against a real Tauri project); the generated contract copy
+no longer carries a relative link that only resolved from `docs/`; and a
+test walks every document for dead links and missing script targets.
+
+**Field telemetry, recorded but not promoted.** Twelve days of ordinary work
+produced 19 invocations of these skills across 8 unrelated projects, and
+none of the competing plugin. The hook cannot tell whether a human typed the
+skill's name or the model chose it, so this ranks attention, not efficacy —
+see `eval/results/field-telemetry-2026-08-16.md`. It does reorder the work:
+`engineering-assessment` is the most-reached-for skill in the suite and the
+least measured.
+
+## 1.0.0-alpha.20 — 2026-08-13
+
+**Marketplace packaging now follows each host's current contract.** Added a
+native Antigravity CLI manifest, corrected Antigravity IDE and CLI paths,
+documented Gemini's extension lifecycle, replaced Cursor's unsupported command
+with its Marketplace, team-import, and local-development flows, and narrowed
+Codex claims to the surfaces OpenAI documents.
+
+**Distribution is continuously verified.** CI now detects generated-package
+and canonical marketplace-standard drift, performs native isolated install
+smokes for Claude, Codex, Gemini, and Antigravity, and checks Cursor's
+documented local layout without pretending it has a headless loader. Tag
+releases are gated by the Windows/Ubuntu suite and runtime smokes, build one
+immutable archive, publish those exact bytes with a checksum, and verify the
+published artifact after download. Dependabot proposes reviewed updates to
+pinned GitHub Actions.
+
+## 1.0.0-alpha.19 — 2026-08-03
+
+**One repository now distributes to every supported harness.** Generated,
+self-contained plugin bundles add native Claude, Codex/ChatGPT, and Cursor
+marketplaces plus the Gemini extension and shared-skills layout consumed by
+Antigravity. A deterministic generator check prevents the packaged copies from
+drifting from `registry.json`; telemetry and response-style hooks remain
+explicit opt-ins.
+
+**Evidence reset.** Retracted unsupported behavioural efficacy claims and
+quarantined legacy results as non-evidentiary. Added isolated Claude Code and
+Codex evaluation runs, raw transcript and output capture, hash-bound manifests,
+outcome graders, control/policy/checker/skill conditions, replication and cost
+thresholds, evidence verification, and readiness reporting. Two fresh pilot
+cases exercise CLI behavior and additive PostgreSQL rollout safety; neither is
+claimed effective until the recorded thresholds are met.
+
+**Invocation telemetry is now cross-harness.** An explicit, idempotent
+installer merges user hooks for Claude, Codex, Cursor, and Antigravity into
+their native configuration files without replacing existing hooks. All four
+write a shared local JSONL, retain Claude's legacy history in reports, and
+label first-class Skill calls separately from observed `SKILL.md` reads.
+
+**Codex installs no longer duplicate the skill catalog.** Codex now targets
+the documented `~/.agents/skills` root only and safely removes marker-bearing
+copies previously installed under `~/.codex/skills`; hand-managed content is
+never removed.
+
+**Acceptance scope excludes evaluation workspaces.** App-shaped fixtures under
+`eval/` no longer make this CLI/library repository appear to contain a product
+frontend or server, and the root product contract is now explicit.
+
+## 1.0.0-alpha.18 — 2026-08-03
+
+**Adversarial review remediation.** Expanded `data-modeling` beyond SQL with
+officially sourced document, key-value, wide-column, and property-graph design
+guidance. Tightened migration constraint matching, nested ecosystem discovery,
+client-secret and cookie checks, import parsing, staged-index hooks, acceptance
+runtime and placeholder gates, installer ownership/rollback, canonical
+frontmatter validation, generated installed contracts, evaluation claims, and
+CI dependency integrity. Added discriminating regressions for the failure modes.
+
 ## 1.0.0-alpha.17 — 2026-08-03
 
 **`product-build` becomes the design gate, and the eighteenth skill is not

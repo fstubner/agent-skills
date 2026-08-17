@@ -1,0 +1,10 @@
+{
+  "name": "csv-summary-cli",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  },
+  "bin": {
+    "csv-summary": "src/cli.js"
+  }
+}

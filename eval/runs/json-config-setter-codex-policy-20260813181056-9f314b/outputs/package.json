@@ -1,0 +1,7 @@
+{
+  "name": "config-set",
+  "version": "1.0.0",
+  "private": true,
+  "bin": { "config-set": "src/cli.js" },
+  "scripts": { "test": "node --test" }
+}

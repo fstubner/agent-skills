@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "postgres-required-handle-codex-skill-20260803192006-c808c4",
+  "caseId": "postgres-required-handle",
+  "caseRevision": 1,
+  "caseSha256": "48920887c6e59b3d6f1ac317411e90a9d2b80469391ca1f4b6093d0442cf7d41",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-03T19:16:47.000Z",
+  "finishedAt": "2026-08-03T19:20:06.000Z",
+  "durationMs": 199043,
+  "totalTokens": 709440,
+  "costUsd": null,
+  "costCredits": 3.631045,
+  "exitCode": 0,
+  "artifactSha256": "89bc93f9aae4fef40020bce176a88399b33e26df548297b3d49e7b665668d72a",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 2,
+    "notEvaluated": 0,
+    "total": 4
+  }
+}

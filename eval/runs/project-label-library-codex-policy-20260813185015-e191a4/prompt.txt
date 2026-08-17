@@ -1,0 +1,15 @@
+The design is already decided; please implement it without another discovery round. Add an exported formatProjectLabel(name, status) to src/labels.js. It returns the trimmed project name followed by ` [active]`, ` [paused]`, or ` [archived]`. Reject a blank name and any other status with a TypeError. Preserve normalizeName, the existing dependency-free ESM stack, and npm test.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Apply this concise engineering policy:
+
+# Engineering policy baseline
+
+- Clarify material unknowns before committing to architecture or UX.
+- Prefer the smallest coherent implementation that satisfies the request.
+- Validate inputs and authorization at trust boundaries.
+- Use additive, backwards-compatible data changes for rolling deploys.
+- Add focused automated tests for critical behavior and failure paths.
+- Run the product, tests, and build before claiming completion.
+- Report remaining uncertainty explicitly.

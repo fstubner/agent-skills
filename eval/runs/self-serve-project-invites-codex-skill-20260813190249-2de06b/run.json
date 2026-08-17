@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "self-serve-project-invites-codex-skill-20260813190249-2de06b",
+  "caseId": "self-serve-project-invites",
+  "caseRevision": 1,
+  "caseSha256": "50569d377c18c5aa5f50a5a22448a483aee9f0cc2d83244075b393aa18ba23dc",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-13T19:02:50.007Z",
+  "finishedAt": "2026-08-13T19:05:37.256Z",
+  "durationMs": 167249,
+  "totalTokens": 307157,
+  "costUsd": null,
+  "costCredits": 2.73538,
+  "exitCode": 0,
+  "artifactSha256": "839b1d3678f8879ab6f5d63421cbb2b4265a332e7fcdfe535000bebcd5bea8d4",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 4,
+    "notEvaluated": 0,
+    "total": 6
+  }
+}

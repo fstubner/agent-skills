@@ -1,0 +1,3 @@
+- Removed generic framing and conclusion language while keeping the writer’s direct, conversational tone.
+- Replaced inflated claims about a “transformative workflow” and “engineering excellence” with a concrete description of the tool’s effect.
+- Preserved all factual details: the pager time, line count, YAML comment, Mara’s nickname, and the 11-minute versus 74-second timings.

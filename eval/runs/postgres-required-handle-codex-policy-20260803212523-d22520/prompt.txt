@@ -1,0 +1,15 @@
+Prepare PostgreSQL migrations for a rolling deployment. Existing production rows must gain a unique required account handle derived from username, and the obsolete display_name column should eventually be retired. Multiple application versions may run concurrently during deployment. Add new ordered up-migration files under migrations/; do not rewrite the existing migration.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Apply this engineering policy while completing the task:
+
+# Engineering policy baseline
+
+- Clarify material unknowns before committing to architecture or UX.
+- Prefer the smallest coherent implementation that satisfies the request.
+- Validate inputs and authorization at trust boundaries.
+- Use additive, backwards-compatible data changes for rolling deploys.
+- Add focused automated tests for critical behavior and failure paths.
+- Run the product, tests, and build before claiming completion.
+- Report remaining uncertainty explicitly.

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "learn-session-indented-comment",
+  "assertions": [
+    {
+      "id": "runtime-unchanged",
+      "status": "pass",
+      "evidence": "byteIdentical=true"
+    },
+    {
+      "id": "tests-pass",
+      "status": "pass",
+      "evidence": "exit=0; output=\"\\n> test\\n> node --test\\n\\n✔ recognizes a comment marker (2.1858ms)\\n✔ recognizes comments after leading whitespace (0.2855ms)\\nℹ tests 2\\nℹ suites 0\\nℹ pass 2\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 128.6886\\n\""
+    },
+    {
+      "id": "specific-regression",
+      "status": "pass",
+      "evidence": "testFiles=1; whitespaceCase=true"
+    },
+    {
+      "id": "mutation-killed",
+      "status": "pass",
+      "evidence": "currentExit=0; mutantExit=1"
+    },
+    {
+      "id": "durable-destination",
+      "status": "fail",
+      "evidence": "added=.agent-input/core/gitleaks-defaults.toml,.agent-input/core/gitleaks-extra.toml,.agent-input/core/lib/args.cjs,.agent-input/core/lib/classify.cjs,.agent-input/core/lib/report.cjs,.agent-input/core/lib/schema.cjs,.agent-input/core/schemas/check-report.schema.json,.agent-input/core/schemas/eval-case-v2.schema.json,.agent-input/core/schemas/eval-grading-v2.schema.json,.agent-input/core/schemas/eval-result.schema.json,.agent-input/core/schemas/eval-run-v2.schema.json,.agent-input/skill/skill.md; outsideTests=.agent-input/core/gitleaks-defaults.toml,.agent-input/core/gitleaks-extra.toml,.agent-input/core/lib/args.cjs,.agent-input/core/lib/classify.cjs,.agent-input/core/lib/report.cjs,.agent-input/core/lib/schema.cjs,.agent-input/core/schemas/check-report.schema.json,.agent-input/core/schemas/eval-case-v2.schema.json,.agent-input/core/schemas/eval-grading-v2.schema.json,.agent-input/core/schemas/eval-result.schema.json,.agent-input/core/schemas/eval-run-v2.schema.json,.agent-input/skill/skill.md"
+    }
+  ]
+}

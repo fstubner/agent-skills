@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "invoice-suspension-refactor-codex-control-20260803213712-71ca26",
+  "caseId": "invoice-suspension-refactor",
+  "caseRevision": 1,
+  "caseSha256": "d5ea598584059d90f207bd7fbef877f51595daa67d96e22a07216367c13f0ba1",
+  "condition": "control",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-03T21:33:17.000Z",
+  "finishedAt": "2026-08-03T21:37:12.000Z",
+  "durationMs": 235231,
+  "totalTokens": 791764,
+  "costUsd": null,
+  "costCredits": 3.271705,
+  "exitCode": 0,
+  "artifactSha256": "af5065bb440eb291bc5d5e1dc40fae5024c61d0e567b526fada33800150eacb4",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 3,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 4
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "job-ledger-ordering-assessment-codex-skill-20260813183908-7c04a7",
+  "caseId": "job-ledger-ordering-assessment",
+  "caseRevision": 1,
+  "caseSha256": "ef5e8a0f57d1d828b1624a868023c064b992a86b9005f7557e42acfdd3122cb8",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-13T18:39:08.994Z",
+  "finishedAt": "2026-08-13T18:40:28.438Z",
+  "durationMs": 79444,
+  "totalTokens": 128000,
+  "costUsd": null,
+  "costCredits": 1.31557,
+  "exitCode": 0,
+  "artifactSha256": "a96760ee0d3bb4733e88b90cd5fa0892741b6569c34469715f1cdee04bef82a2",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 3,
+    "failed": 2,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

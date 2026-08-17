@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "retry-delay-regression-suite-codex-policy-20260813183420-86f8a5",
+  "caseId": "retry-delay-regression-suite",
+  "caseRevision": 1,
+  "caseSha256": "1324c659451660dacb6d93a0e53e46e278f927a5da0d09322af175d4bfa12bc2",
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-13T18:34:20.528Z",
+  "finishedAt": "2026-08-13T18:35:07.410Z",
+  "durationMs": 46882,
+  "totalTokens": 60407,
+  "costUsd": null,
+  "costCredits": 0.695705,
+  "exitCode": 0,
+  "artifactSha256": "6e4803d4bc17d868ac89b42ba620d29f13214d7bff31cbcbbea36e150d35e9f5",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 5,
+    "failed": 0,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

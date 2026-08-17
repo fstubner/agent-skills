@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "zero-count-export-acceptance",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "pass",
+      "evidence": "# Release Review\n\n## Verdict: BLOCK\n\nThe primary export flow was run with `node src/cli.js <inventory.json>`.\n\n- The positive-count path works: `FULL-BIN,4` was emitted.\n- The required zero-count path fails: for `EMPTY-BIN: 0` and `FULL-BIN"
+    },
+    {
+      "id": "zero-count-defect-found",
+      "status": "fail",
+      "evidence": "citesDefect=false"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "fail",
+      "evidence": "actualExit=0; actualOutput=\"sku,count\\nFULL-BIN,4\"; commandRecorded=false; expectation=true"
+    },
+    {
+      "id": "gate-reconciled",
+      "status": "fail",
+      "evidence": "gateVerdict=missing; reconciled=true"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract hashes must match the original fixture"
+    }
+  ]
+}

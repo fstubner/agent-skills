@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "account-suspension-boundary",
+  "assertions": [
+    {
+      "id": "suspension-behavior",
+      "status": "pass",
+      "evidence": "response={\"status\":200,\"body\":{\"id\":\"a1\",\"name\":\"Ada\",\"state\":\"suspended\"}}; persisted={\"id\":\"a1\",\"name\":\"Ada\",\"state\":\"suspended\"}"
+    },
+    {
+      "id": "audit-once",
+      "status": "pass",
+      "evidence": "events=[{\"type\":\"account.suspended\",\"accountId\":\"a1\"}]"
+    },
+    {
+      "id": "read-regression",
+      "status": "pass",
+      "evidence": "changed={\"status\":200,\"body\":{\"id\":\"a1\",\"name\":\"Ada\",\"state\":\"suspended\"}}; untouched={\"status\":200,\"body\":{\"id\":\"a2\",\"name\":\"Lin\",\"state\":\"active\"}}"
+    },
+    {
+      "id": "no-import-cycle",
+      "status": "pass",
+      "evidence": "11 file(s) scanned, no circular imports"
+    },
+    {
+      "id": "capability-boundary",
+      "status": "fail",
+      "evidence": "src/accounts/index.js or src/account/index.js is missing"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "scheduled-report-design-gate",
+  "assertions": [
+    {
+      "id": "source-untouched",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "config-untouched",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "no-new-implementation",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "no-premature-design-artifacts",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    }
+  ]
+}

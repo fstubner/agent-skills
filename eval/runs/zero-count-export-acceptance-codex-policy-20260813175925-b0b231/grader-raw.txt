@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "zero-count-export-acceptance",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "fail",
+      "evidence": "# Release review\n\n## Verdict: Do not release\n\nThe primary export flow fails the product success criterion. Running:\n\n```text\nnode src/cli.js sample-zero.json\n```\n\nproduces:\n\n```text\nsku,count\nFULL-BIN,4\n```\n\nbut `sample-zero.json` also cont"
+    },
+    {
+      "id": "zero-count-defect-found",
+      "status": "fail",
+      "evidence": "citesDefect=false"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "pass",
+      "evidence": "actualExit=0; actualOutput=\"sku,count\\nFULL-BIN,4\"; commandRecorded=true; expectation=true"
+    },
+    {
+      "id": "gate-reconciled",
+      "status": "fail",
+      "evidence": "gateVerdict=missing; reconciled=true"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract hashes must match the original fixture"
+    }
+  ]
+}

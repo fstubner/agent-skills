@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "id": "learn-session-indented-comment",
+  "skill": "learn-from-session",
+  "revision": 1,
+  "prompt": "Read SESSION.md and make whatever durable repository change is warranted by what happened. The runtime fix is already present; do not alter runtime behavior.",
+  "fixture": "eval/fixtures-v2/learn-session-indented-comment",
+  "grader": "eval/graders-v2/learn-session-indented-comment.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "runtime-unchanged", "description": "Already-correct production implementation remains unchanged", "kind": "outcome" },
+    { "id": "tests-pass", "description": "Submitted automated tests pass", "kind": "outcome" },
+    { "id": "specific-regression", "description": "A test pins comments after optional leading whitespace", "kind": "outcome" },
+    { "id": "mutation-killed", "description": "The regression test fails when trimStart is removed", "kind": "outcome" },
+    { "id": "durable-destination", "description": "The durable change is made in test artifacts rather than generic notes", "kind": "quality" }
+  ]
+}

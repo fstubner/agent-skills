@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "zero-count-export-acceptance",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "fail",
+      "evidence": "# Release verdict: FAIL\n\nThe release does not meet the MVP export requirement. The primary CLI flow runs successfully, but `node src/cli.js sample-zero.json` outputs:\n\n```text\nsku,count\nFULL-BIN,4\n```\n\nIt omits the required `EMPTY-BIN,0` ro"
+    },
+    {
+      "id": "zero-count-defect-found",
+      "status": "fail",
+      "evidence": "citesDefect=false"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "fail",
+      "evidence": "actualExit=0; actualOutput=\"sku,count\\nFULL-BIN,4\"; commandRecorded=true; expectation=false"
+    },
+    {
+      "id": "gate-reconciled",
+      "status": "fail",
+      "evidence": "gateVerdict=missing; reconciled=true"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract hashes must match the original fixture"
+    }
+  ]
+}

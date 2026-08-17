@@ -1,0 +1,3 @@
+Design the agent architecture described by requirements.json. Write the implementable design to valid JSON in design.json; do not build or run it. If multiple agents are not justified, say so in the design and use a single-agent architecture.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

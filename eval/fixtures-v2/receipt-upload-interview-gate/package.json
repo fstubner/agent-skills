@@ -1,0 +1,1 @@
+{"name":"expenses-ui","private":true,"type":"module","scripts":{"test":"node --test"},"dependencies":{"react":"latest","vite":"latest"}}

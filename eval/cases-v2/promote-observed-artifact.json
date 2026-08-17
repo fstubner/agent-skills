@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 2,
+  "id": "promote-observed-artifact",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "Harden the GitHub Actions release process after the incident in INCIDENT.md. Keep GitHub Actions and the existing deployment scripts. Update the workflow and RELEASE.md; do not require a new hosted service.",
+  "fixture": "eval/fixtures-v2/promote-observed-artifact",
+  "grader": "eval/graders-v2/promote-observed-artifact.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "tests-gate-release", "description": "Tests gate artifact creation and deployments", "kind": "outcome" },
+    { "id": "single-promoted-artifact", "description": "One immutable artifact is promoted to staging and production", "kind": "outcome" },
+    { "id": "staging-gates-production", "description": "Observed staging health gates production promotion", "kind": "outcome" },
+    { "id": "production-health-action", "description": "Production health is observed with a defined failure action", "kind": "outcome" },
+    { "id": "executable-rollback", "description": "Release documentation contains a copyable rollback command", "kind": "quality" }
+  ]
+}

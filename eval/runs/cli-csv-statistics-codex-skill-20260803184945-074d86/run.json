@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "cli-csv-statistics-codex-skill-20260803184945-074d86",
+  "caseId": "cli-csv-statistics",
+  "caseRevision": 1,
+  "caseSha256": "a937c93c7cb334b1c8621d770b3bf5faafedf6c627b8657af1f2ed0ec02036cc",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-desktop 0.146.0-alpha.9.2",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-03T18:48:14.000Z",
+  "finishedAt": "2026-08-03T18:49:45.000Z",
+  "durationMs": 90589,
+  "totalTokens": 216115,
+  "costUsd": null,
+  "costCredits": 1.426365,
+  "exitCode": 0,
+  "artifactSha256": "35c186c2695dda85f5cefeef0db390f1c6ebf95cb9851bdfcfbea77528257b75",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 0,
+    "notEvaluated": 0,
+    "total": 4
+  }
+}

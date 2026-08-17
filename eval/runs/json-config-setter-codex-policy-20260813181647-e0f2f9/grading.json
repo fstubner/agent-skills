@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "json-config-setter",
+  "assertions": [
+    {
+      "id": "dry-run-contract",
+      "status": "pass",
+      "evidence": "exit=0; unchanged=true; stdout=\"{\\\"file\\\":\\\"C:\\\\\\\\Users\\\\\\\\Felix\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\config-set-eval-TqyUO1\\\\\\\\settings.json\\\",\\\"key\\\":\\\"service.retries\\\",\\\"value\\\":5,\\\"changed\\\":true,\\\"dryRun\\\":true,\\\"config\\\":{\\\"service\\\":{\\\"retries\\\":5},\\\"untouched\\\":true}}\\n\""
+    },
+    {
+      "id": "apply-idempotent",
+      "status": "fail",
+      "evidence": "first=2; second=0; value=5; stable=true"
+    },
+    {
+      "id": "stream-contract",
+      "status": "fail",
+      "evidence": "stdout=\"\"; stderr=\"Error: EPERM: operation not permitted, fsync\\n\""
+    },
+    {
+      "id": "error-contract",
+      "status": "pass",
+      "evidence": "exit=2; stdoutBytes=0; stderr=\"Error: input file does not contain valid JSON\\n\""
+    },
+    {
+      "id": "help-and-tests",
+      "status": "fail",
+      "evidence": "help=0; tests=1"
+    }
+  ]
+}

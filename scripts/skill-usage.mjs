@@ -16,20 +16,21 @@
 // Usage:
 //   node scripts/skill-usage.mjs [--log <path>]... [--json] [--root <dir>]
 //
-// Default log: ~/.claude/agent-skills-telemetry/invocations.jsonl — one
-// user-level file for all projects (rows carry {project, cwd}), matching
-// where log-skill-invocation.mjs writes. AGENT_SKILLS_TELEMETRY_DIR
-// overrides the directory, and --log overrides the file outright.
+// Default logs: the shared cross-harness log plus Claude's legacy log.
+// AGENT_SKILLS_TELEMETRY_DIR narrows this to one test/custom directory, and
+// --log overrides the defaults outright.
 
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const DEFAULT_LOG = path.join(
-  process.env.AGENT_SKILLS_TELEMETRY_DIR || path.join(os.homedir(), '.claude', 'agent-skills-telemetry'),
-  'invocations.jsonl',
-);
+const DEFAULT_LOGS = process.env.AGENT_SKILLS_TELEMETRY_DIR
+  ? [path.join(process.env.AGENT_SKILLS_TELEMETRY_DIR, 'invocations.jsonl')]
+  : [
+      path.join(os.homedir(), '.agent-skills-telemetry', 'invocations.jsonl'),
+      path.join(os.homedir(), '.claude', 'agent-skills-telemetry', 'invocations.jsonl'),
+    ];
 
 function parseArgs(argv) {
   const out = { logs: [], json: false, root: null };
@@ -58,7 +59,12 @@ function readLog(file) {
   for (const line of text.split('\n')) {
     if (!line.trim()) continue;
     try {
-      rows.push(JSON.parse(line));
+      const row = JSON.parse(line);
+      if (!row.harness && /[\\/]\.claude[\\/]agent-skills-telemetry[\\/]/i.test(file)) {
+        row.harness = 'claude';
+        row.evidence ||= 'skill-tool-call';
+      }
+      rows.push(row);
     } catch {
       // Counted, not silently dropped: a partial write (two hooks racing on
       // one file) should be visible in the output, not quietly reduce the
@@ -87,16 +93,22 @@ function tally(rows, key) {
   return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 }
 
+function canonicalSkillId(value) {
+  if (value == null) return value;
+  const skill = String(value);
+  return skill.startsWith('agent-skills:') ? skill.slice('agent-skills:'.length) : skill;
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
     console.log('Usage: node scripts/skill-usage.mjs [--log <path>]... [--json] [--root <dir>]');
-    console.log('Default log: ' + DEFAULT_LOG);
+    console.log('Default logs:\n  ' + DEFAULT_LOGS.join('\n  '));
     process.exit(0);
   }
 
   const root = args.root || path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-  const logs = args.logs.length > 0 ? args.logs : [DEFAULT_LOG];
+  const logs = args.logs.length > 0 ? args.logs : DEFAULT_LOGS;
 
   let rows = [];
   let malformed = 0;
@@ -108,16 +120,33 @@ function main() {
     malformed += res.malformed;
   }
 
+  // User and plugin hooks can both observe the same tool call, and hook
+  // handlers may run concurrently. Stable event ids make that one invocation,
+  // not two. Legacy rows without ids remain countable and are never guessed at.
+  const seenEvents = new Set();
+  let duplicateEvents = 0;
+  rows = rows.filter((row) => {
+    if (!row.event) return true;
+    if (seenEvents.has(row.event)) { duplicateEvents++; return false; }
+    seenEvents.add(row.event);
+    return true;
+  });
+
   const skillIds = registrySkillIds(root);
-  const bySkill = tally(rows, 'skill');
-  const invoked = new Set(rows.map((r) => r.skill).filter(Boolean));
+  const normalizedRows = rows.map((row) => ({ ...row, skill: canonicalSkillId(row.skill) }));
+  const bySkill = tally(normalizedRows, 'skill');
+  const invoked = new Set(normalizedRows.map((r) => r.skill).filter(Boolean));
   const neverInvoked = skillIds ? skillIds.filter((id) => !invoked.has(id)) : null;
-  const sessions = new Set(rows.map((r) => r.session).filter(Boolean));
+  const registrySet = new Set(skillIds || []);
+  const registeredRows = skillIds ? normalizedRows.filter((row) => registrySet.has(row.skill)) : [];
+  const sessions = new Set(rows.filter((r) => r.session).map((r) => `${r.harness || 'unknown'}:${r.session}`));
   const times = rows.map((r) => r.at).filter(Boolean).sort();
 
   const summary = {
     totalInvocations: rows.length,
     distinctSkills: invoked.size,
+    registeredInvocations: skillIds ? registeredRows.length : null,
+    registeredDistinctSkills: skillIds ? new Set(registeredRows.map((row) => row.skill)).size : null,
     registrySkills: skillIds ? skillIds.length : null,
     neverInvoked,
     sessions: sessions.size,
@@ -125,7 +154,12 @@ function main() {
     lastAt: times[times.length - 1] || null,
     bySkill: Object.fromEntries(bySkill),
     byProject: Object.fromEntries(tally(rows, 'project')),
+    byHarness: Object.fromEntries(tally(rows, 'harness')),
+    byEvidence: Object.fromEntries(tally(rows, 'evidence')),
+    registeredByProject: skillIds ? Object.fromEntries(tally(registeredRows, 'project')) : null,
+    registeredByHarness: skillIds ? Object.fromEntries(tally(registeredRows, 'harness')) : null,
     malformedLines: malformed,
+    duplicateEvents,
     missingLogs: missing,
   };
 
@@ -147,6 +181,7 @@ function main() {
   console.log(`Skill invocations: ${rows.length} across ${sessions.size} session(s)`);
   console.log(`Window: ${summary.firstAt} .. ${summary.lastAt}`);
   if (malformed > 0) console.log(`Malformed lines skipped: ${malformed}`);
+  if (duplicateEvents > 0) console.log(`Duplicate hook events collapsed: ${duplicateEvents}`);
   console.log('');
 
   const width = Math.max(...bySkill.map(([s]) => s.length), 5);
@@ -161,6 +196,18 @@ function main() {
     console.log('\nBY PROJECT');
     const pw = Math.max(...byProject.map(([p]) => p.length), 7);
     for (const [proj, n] of byProject) console.log(`  ${proj.padEnd(pw)}  ${String(n).padStart(4)}`);
+  }
+
+  const byHarness = tally(rows, 'harness');
+  console.log('\nBY HARNESS');
+  const hw = Math.max(...byHarness.map(([h]) => h.length), 7);
+  for (const [harness, n] of byHarness) console.log(`  ${harness.padEnd(hw)}  ${String(n).padStart(4)}`);
+
+  const byEvidence = tally(rows, 'evidence');
+  if (byEvidence.length > 1) {
+    console.log('\nBY EVIDENCE');
+    const ew = Math.max(...byEvidence.map(([e]) => e.length), 8);
+    for (const [evidence, n] of byEvidence) console.log(`  ${evidence.padEnd(ew)}  ${String(n).padStart(4)}`);
   }
 
   if (neverInvoked) {

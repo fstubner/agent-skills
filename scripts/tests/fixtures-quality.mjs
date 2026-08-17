@@ -191,6 +191,17 @@ import {
     expect('data-modeling: DM-sql-unsafe-not-null fails for a bare SET NOT NULL',
       Boolean(c) && c.status === 'fail', c ? `${c.status} (${c.detail})` : 'check missing');
   }
+
+  const wrongColumn = fs.mkdtempSync(path.join(tmpBase, 'wrong-not-null-'));
+  fs.writeFileSync(path.join(wrongColumn, '001.sql'),
+    'ALTER TABLE users ADD CONSTRAINT users_email_nn CHECK (email IS NOT NULL) NOT VALID;\n' +
+    'ALTER TABLE users VALIDATE CONSTRAINT users_email_nn;\n' +
+    'ALTER TABLE users ALTER COLUMN phone SET NOT NULL;\n');
+  const wrong = runNode(MIG, ['--root', wrongColumn, '--no-write']);
+  const wrongReport = JSON.parse(wrong.stdout);
+  expect('data-modeling: validating one column cannot suppress SET NOT NULL on another',
+    wrongReport.checks.find((x) => x.id === 'DM-sql-unsafe-not-null')?.status === 'fail',
+    JSON.stringify(wrongReport.checks));
 }
 
 // ---------- 4g. code-smells: shotgun surgery from git history ----------

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 2,
+  "id": "cli-csv-statistics",
+  "skill": "cli-tooling",
+  "revision": 1,
+  "prompt": "Build a dependency-free Node.js command-line program at src/cli.js. It accepts one CSV path and writes JSON containing rowCount and the arithmetic mean of every numeric column. The repository includes sample input, but your implementation must handle unseen CSV files. Make it usable as a real non-interactive CLI and add any tests you consider necessary.",
+  "fixture": "eval/fixtures-v2/cli-csv-statistics",
+  "grader": "eval/graders-v2/cli-csv-statistics.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "valid-output", "description": "Produces correct JSON for an unseen valid CSV", "kind": "outcome" },
+    { "id": "bad-input-contract", "description": "Invalid input exits nonzero without corrupting stdout", "kind": "outcome" },
+    { "id": "help-contract", "description": "Help is available without executing the program", "kind": "quality" },
+    { "id": "tests-run", "description": "The submitted automated test command exists and passes", "kind": "outcome" }
+  ]
+}

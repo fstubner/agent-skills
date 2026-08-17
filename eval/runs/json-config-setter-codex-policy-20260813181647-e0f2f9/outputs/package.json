@@ -1,0 +1,8 @@
+{
+  "name": "config-set",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dependency-free atomic JSON configuration setter",
+  "bin": { "config-set": "src/cli.js" },
+  "scripts": { "test": "node --test" }
+}

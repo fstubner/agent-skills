@@ -1,0 +1,15 @@
+Build the approved first version of self-serve project invitations. The decisions are final: an authenticated project admin enters an email and chooses viewer or editor; the service returns a shareable invite link, with no email delivery in this version. Authentication is a Bearer account name, all client data is untrusted, the authenticated account is the inviter, and retries with the same Idempotency-Key must return the original invite. Keep the existing Node and browser stack. Implement the API and accessible browser form, document the product contract and live trust boundary, and verify the finished workflow.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Apply this concise engineering policy:
+
+# Engineering policy baseline
+
+- Clarify material unknowns before committing to architecture or UX.
+- Prefer the smallest coherent implementation that satisfies the request.
+- Validate inputs and authorization at trust boundaries.
+- Use additive, backwards-compatible data changes for rolling deploys.
+- Add focused automated tests for critical behavior and failure paths.
+- Run the product, tests, and build before claiming completion.
+- Report remaining uncertainty explicitly.

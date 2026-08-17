@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "cli-csv-statistics",
+  "assertions": [
+    {
+      "id": "valid-output",
+      "status": "pass",
+      "evidence": "exit=0; stdout=\"{\\\"rowCount\\\":3,\\\"count\\\":4,\\\"latency\\\":20}\\n\"; expected rowCount=3,count=4,latency=20"
+    },
+    {
+      "id": "bad-input-contract",
+      "status": "pass",
+      "evidence": "exit=1; stdoutBytes=0; stderrBytes=78"
+    },
+    {
+      "id": "help-contract",
+      "status": "pass",
+      "evidence": "exit=0; output=\"Usage: csv-stats <csv-path>\\n\\nRead a CSV file and write JSON statistics to stdout.\\n\\nOptions:\\n  -h, --help       Show this help message\\n  -v, --version    Show the version\\n\\nThe output contains rowCount and the arithmetic mean of each numeric column.\\n\""
+    },
+    {
+      "id": "tests-run",
+      "status": "fail",
+      "evidence": "package.json scripts.test is missing or unreadable"
+    }
+  ]
+}

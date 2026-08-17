@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "invoice-suspension-refactor",
+  "assertions": [
+    {
+      "id": "suspended-zero",
+      "status": "pass",
+      "evidence": "results=[0,0,0]; expected all zero"
+    },
+    {
+      "id": "active-regression",
+      "status": "pass",
+      "evidence": "[{\"expected\":20,\"actual\":20},{\"expected\":25,\"actual\":25},{\"expected\":50,\"actual\":50},{\"expected\":44,\"actual\":44},{\"expected\":8,\"actual\":8}]"
+    },
+    {
+      "id": "nesting-resolved",
+      "status": "fail",
+      "evidence": "nesting depth 6 (over 5) at src/calculate-invoice.js:18"
+    },
+    {
+      "id": "tests-run",
+      "status": "pass",
+      "evidence": "command=node --test; exit=0; output=\"\\n> test\\n> node --test\\n\\n✔ active basic account (0.7733ms)\\n✔ active pro usage and coupon (0.2642ms)\\n✔ suspended account owes nothing regardless of billing inputs (0.1269ms)\\n✔ suspended account owes nothing even with unknown billing inputs (0.1304ms)\\nℹ tests 4\\nℹ suites 0\\nℹ pass 4\\nℹ fail 0\\nℹ cancelled 0\""
+    }
+  ]
+}

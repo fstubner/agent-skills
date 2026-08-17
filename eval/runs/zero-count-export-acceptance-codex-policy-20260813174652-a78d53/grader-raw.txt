@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "zero-count-export-acceptance",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "fail",
+      "evidence": "# Release review\n\n## Verdict\n\n**Reject for release.** The primary export flow does not satisfy the MVP contract because it omits items whose count is zero.\n\n## Verification\n\n- Ran `npm test`: 1 test passed, 0 failed.\n- Ran `node src/cli.js "
+    },
+    {
+      "id": "zero-count-defect-found",
+      "status": "fail",
+      "evidence": "citesDefect=false"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "pass",
+      "evidence": "actualExit=0; actualOutput=\"sku,count\\nFULL-BIN,4\"; commandRecorded=true; expectation=true"
+    },
+    {
+      "id": "gate-reconciled",
+      "status": "fail",
+      "evidence": "gateVerdict=missing; reconciled=true"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract hashes must match the original fixture"
+    }
+  ]
+}

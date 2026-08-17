@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "stale-pass-review-codex-policy-20260813172547-e4b143",
+  "caseId": "stale-pass-review",
+  "caseRevision": 1,
+  "caseSha256": "1ee1c79dc51153495235901afb482c3279ba106dcb4a98d42e4b519e68649a8d",
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-13T17:25:47.050Z",
+  "finishedAt": "2026-08-13T17:26:29.935Z",
+  "durationMs": 42885,
+  "totalTokens": 71848,
+  "costUsd": null,
+  "costCredits": 0.73009,
+  "exitCode": 0,
+  "artifactSha256": "2c11a49b940c54f703b349f6319adc2172e18eeefcde8765d893da97027929d2",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

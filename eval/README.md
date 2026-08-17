@@ -1,5 +1,53 @@
 # Eval
 
+> **EVIDENCE STATUS: UNVALIDATED.** Files under `results/` are quarantined
+> legacy observations. They do not support efficacy claims because the set
+> contains undefined cases, incomplete provenance, little replication, and no
+> complete raw transcript/output/cost bundles.
+
+The v2 system is the only evidence path going forward:
+
+```bash
+node scripts/eval-verify.mjs
+node scripts/eval-run.mjs --case cli-csv-statistics --condition control --harness claude-code --model <model>
+node scripts/eval-report.mjs
+```
+
+For Codex runs inside an independently enforced filesystem sandbox, set
+`AGENT_SKILLS_OUTER_SANDBOX=1` and pass `--codex-external-sandbox`. This mode
+copies skill/checker inputs into `.agent-input/` inside the disposable
+workspace and excludes them from graded outputs. Never use the flag from an
+unsandboxed parent process.
+
+Native projectless Codex tasks can be imported with
+`scripts/eval-import-projectless.mjs`. The importer binds the raw desktop
+rollout JSONL to the task id, copies deliverables while excluding app working
+directories, re-runs the case grader, and writes the same hash-bound run
+manifest used by the CLI harness.
+
+Each run starts from a copied fixture in a temporary workspace, captures the
+exact prompt and raw harness output, snapshots deliverables, invokes an
+outcome grader, records timing/token/cost metadata where available, and hashes
+the case and output tree. A case must compare `control`, `policy`, and `skill`;
+checker-backed cases also compare `checker`. Promotion requires at least three
+completed fresh cases per skill, three trials per condition, and every
+harness/model cohort declared in `evidence.json`. A configured case counts
+only after its complete condition matrix exists; adding an unrun JSON case is
+not evidence.
+
+Assertions form a rubric inside each run rather than independent samples.
+Trials are averaged within each case/harness/model cell, harness/model blocks
+are averaged within their case, and the case is the statistical unit. This
+keeps long rubrics and wider model matrices from receiving extra weight. The
+pre-specified primary comparison is `skill` versus `policy`; the evaluator
+reports `control` separately and never chooses the better baseline after
+seeing results. Promotion requires a two-sided 95%
+Student-t interval whose lower bound establishes at least a 10 percentage
+point outcome lift, or whose resource upper bound establishes at least a 10%
+reduction while the outcome lower bound remains inside the 2 percentage point
+non-inferiority margin. Point estimates alone cannot promote a skill. These
+thresholds live in `evidence.json`; its schema and CI reject weakening them.
+
 Two separate questions live here, tested with two different protocols —
 conflating them is the single easiest way to draw a wrong conclusion from
 this directory.
@@ -25,9 +73,12 @@ unprimed invocation runs — whether cli-tooling or product-build's
 prompt-injection stance fire on their own in these scenarios is still
 untested.
 
-**Status, efficacy (forced):** 3 of 15 skills tested, all n=1-3, Haiku,
-Task-tool subagent, every verdict independently re-verified rather than
-trusted from self-report:
+**Status, efficacy (legacy forced runs):** not established. The old records
+cover all 17 skills nominally, mostly at n=1 using Task-tool subagents, but do
+not meet the v2 evidence contract. The full-suite records are retained at
+`results/five-skill-batch-2026-08-02.md` and
+`results/full-suite-batch-2026-08-02.md` for auditability. Historical
+observations included:
 
 - `systems-architecture` (`okr-tool`'s `architecture` criterion): 3 reps
   per arm. **0/3 control vs. 3/3 forced** — re-verified by re-running
@@ -50,14 +101,10 @@ trusted from self-report:
   proceeding, and held the line categorically even when baited with "what
   if the URL were real."
 
-The other 12 skills have never been efficacy-tested. Three consistent
-positive results is not a general finding that "the skills work when
-followed" — it's three data points in favor of that hypothesis, on the
-skills most amenable to independent verification (deterministic checkers,
-or a discipline rule with an observable execute/don't-execute outcome).
-Skills that are pure judgment with no checker and no observable behavioral
-signal are harder to efficacy-test at all, and remain the least-understood
-part of this suite.
+Coverage is not replication. The clearest positives were artifact- or
+gate-backed skills; multiple judgment-heavy skills hit control ceilings, and
+`ai-prose-slop` regressed in its recorded batch. Skills with no checker or
+observable behavioral signal remain the least-understood part of the suite.
 
 Read every `notes` field before drawing conclusions — see the honesty rule
 in the root README. Do not cite a passing checker-fixture test as evidence

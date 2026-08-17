@@ -1,0 +1,7 @@
+npm notice
+npm notice New major version of npm available! 10.9.0 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+Reading additional input from stdin...
+2026-08-13T17:19:18.389528Z ERROR codex_core::tools::router: error=exec_command failed for `/bin/bash -lc 'chmod +x src/cli.js && npm test && tmp=$(mktemp -d) && printf '"'{\"server\":{\"port\":80}}\\n' > \""'$tmp/c.json" && node src/cli.js set --dry-run "$tmp/c.json" server.port 443 && test "$(cat "$tmp/c.json")" = '"'{\"server\":{\"port\":80}}' && node src/cli.js set \""'$tmp/c.json" server.port 443 && cat "$tmp/c.json" && node src/cli.js --help >/tmp/config-set-help.out 2>/tmp/config-set-help.err; test ! -s /tmp/config-set-help.out; test -s /tmp/config-set-help.err; rm -rf "$tmp"'`: CreateProcess { message: "Rejected(\"`/bin/bash -lc 'chmod +x src/cli.js && npm test && tmp=$(mktemp -d) && printf '\\\"'{\\\\\\\"server\\\\\\\":{\\\\\\\"port\\\\\\\":80}}\\\\\\\\n' > \\\\\\\"\\\"'$tmp/c.json\\\" && node src/cli.js set --dry-run \\\"$tmp/c.json\\\" server.port 443 && test \\\"$(cat \\\"$tmp/c.json\\\")\\\" = '\\\"'{\\\\\\\"server\\\\\\\":{\\\\\\\"port\\\\\\\":80}}' && node src/cli.js set \\\\\\\"\\\"'$tmp/c.json\\\" server.port 443 && cat \\\"$tmp/c.json\\\" && node src/cli.js --help >/tmp/config-set-help.out 2>/tmp/config-set-help.err; test ! -s /tmp/config-set-help.out; test -s /tmp/config-set-help.err; rm -rf \\\"$tmp\\\"'` rejected: rm -f style commands are not permitted. Use a safer approach\")" }

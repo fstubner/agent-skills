@@ -178,7 +178,25 @@ if (staged === null) {
 const checkable = staged.filter((f) => !CONTENT_EXEMPT.some((re) => re.test(f)));
 if (checkable.length === 0) process.exit(0);
 
+// Check the index snapshot, never the mutable working tree. Otherwise a file
+// can be staged clean, changed to unsafe content (or vice versa), and the hook
+// reports on content different from the commit it is deciding about.
+const stagedRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'pre-commit-index-'));
+const prefix = stagedRoot.endsWith(path.sep) ? stagedRoot : stagedRoot + path.sep;
+const checkout = spawnSync('git', ['checkout-index', '--all', '--force', `--prefix=${prefix}`], {
+  cwd: repoRoot, encoding: 'utf8',
+});
+if (checkout.error || checkout.status !== 0) {
+  fs.rmSync(stagedRoot, { recursive: true, force: true });
+  console.error(`pre-commit: could not materialize staged index: ${checkout.stderr || checkout.error?.message}`);
+  process.exit(1);
+}
+
+const fileListPath = path.join(stagedRoot, '.pre-commit-scan-set');
+fs.writeFileSync(fileListPath, checkable.join('\n'));
+
 let blocked = false;
+try {
 for (const { skill, script } of SCOPED_CHECKERS) {
   // The hook can be copied into a project that doesn't vendor the checkers.
   // Missing checker warns rather than blocks, same tradeoff as missing gitleaks.
@@ -186,7 +204,12 @@ for (const { skill, script } of SCOPED_CHECKERS) {
     console.error(`pre-commit: ${skill} checker not found at ${script} — skipped.`);
     continue;
   }
-  const r = spawnSync(process.execPath, [script, '--root', repoRoot, '--files', checkable.join(',')], { encoding: 'utf8' });
+  // The scan set goes via a file, not the command line. Passing 2,400
+  // staged paths as one comma-joined argument hit ENAMETOOLONG and every
+  // scoped checker reported "could not run — skipped": the gate stopped
+  // running on precisely the largest commits, and said so in a warning
+  // nobody reads. Observed on a real commit in this repository.
+  const r = spawnSync(process.execPath, [script, '--root', stagedRoot, '--files-from', fileListPath], { encoding: 'utf8' });
   if (r.error) {
     console.error(`pre-commit: ${skill} could not run (${r.error.message}) — skipped.`);
     continue;
@@ -204,6 +227,9 @@ for (const { skill, script } of SCOPED_CHECKERS) {
     console.error(`pre-commit: ${skill} found problem(s) in staged files:`);
     for (const c of failed) console.error(`  [${c.id}] ${c.detail}`);
   }
+}
+} finally {
+  fs.rmSync(stagedRoot, { recursive: true, force: true });
 }
 
 if (blocked) {

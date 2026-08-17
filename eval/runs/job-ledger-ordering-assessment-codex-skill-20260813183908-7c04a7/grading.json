@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "job-ledger-ordering-assessment",
+  "assertions": [
+    {
+      "id": "cross-tree-risks-cited",
+      "status": "fail",
+      "evidence": "ordering=false; migration=true; shutdown=false"
+    },
+    {
+      "id": "false-green-detected",
+      "status": "pass",
+      "evidence": "smokeNamed=true; smokeWeak=true"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "status": "fail",
+      "evidence": "severityTerms=4; remedies=true,false,false"
+    },
+    {
+      "id": "scope-and-tooling-honest",
+      "status": "pass",
+      "evidence": "actualExit=0; deep=true; testRecorded=true; gaps=true"
+    },
+    {
+      "id": "assessment-only",
+      "status": "pass",
+      "evidence": "input hashes must match the original fixture"
+    }
+  ]
+}

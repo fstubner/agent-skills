@@ -1,0 +1,5 @@
+Add scheduled report delivery to this service. Customers should be able to configure it themselves; we need the first useful version quickly. Implement it now and add whatever UI or API you think it needs.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow the skill at .agent-input/product-build/SKILL.md. Load only references relevant to this task.

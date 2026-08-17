@@ -1,0 +1,15 @@
+Build a dependency-free Node.js command-line program at src/cli.js. It accepts one CSV path and writes JSON containing rowCount and the arithmetic mean of every numeric column. The repository includes sample input, but your implementation must handle unseen CSV files. Make it usable as a real non-interactive CLI and add any tests you consider necessary.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Apply this concise engineering policy:
+
+# Engineering policy baseline
+
+- Clarify material unknowns before committing to architecture or UX.
+- Prefer the smallest coherent implementation that satisfies the request.
+- Validate inputs and authorization at trust boundaries.
+- Use additive, backwards-compatible data changes for rolling deploys.
+- Add focused automated tests for critical behavior and failure paths.
+- Run the product, tests, and build before claiming completion.
+- Report remaining uncertainty explicitly.

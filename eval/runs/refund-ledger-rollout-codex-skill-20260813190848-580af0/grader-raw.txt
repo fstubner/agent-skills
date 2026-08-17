@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "caseId": "refund-ledger-rollout",
+  "assertions": [
+    {
+      "id": "additive-schema",
+      "status": "pass",
+      "evidence": "files=002_create_refunds.sql, additive=true, ledger=true, amount=true, idempotency=true, paymentReference=true"
+    },
+    {
+      "id": "server-boundary",
+      "status": "pass",
+      "evidence": "missingAuth=401, crossAccount=404, fractionalAmount=400"
+    },
+    {
+      "id": "refund-invariant",
+      "status": "fail",
+      "evidence": "first=201/undefined, replay=201/undefined, excessive=409"
+    },
+    {
+      "id": "structured-errors",
+      "status": "pass",
+      "evidence": "400:{\"code\":\"invalid_amount\",\"message\":\"amountCents must be a positive integer\"} | 404:{\"code\":\"payment_not_found\",\"message\":\"Payment not found\"} | 409:{\"code\":\"refund_exceeds_balance\",\"message\":\"Refund exceeds the unrefunded amount\"}"
+    },
+    {
+      "id": "regression-suite",
+      "status": "fail",
+      "evidence": "canonicalCommand=true, exit=0, files=test\\server.test.js, boundaryCoverage=false, output=TAP version 13\n# Subtest: creates a refund and retries return the original refund\nok 1 - creates a refund and retries return the original refund\n  ---\n  duration_ms: 37.4801\n  type: 'test'\n  ...\n# Subtest: rejects invalid amounts and hides another account payment existence\nok 2 - rejects invalid amo"
+    },
+    {
+      "id": "immutable-release",
+      "status": "fail",
+      "evidence": "tagTrigger=false, uploadAndDownload=false, needsBuild=false, testsBeforeArtifact=false, immutableActions=false"
+    },
+    {
+      "id": "literal-rollback",
+      "status": "pass",
+      "evidence": "# Release The release pipeline runs tests, creates one immutable container image tagged by commit, and promotes that same tag through staging and production. Configuration and database credentials are injected at deploy time. The additive migrations run before enabling the endpoint; old application versions remain compatible because `001` is unchanged and `refunds` is a new table. After deployment"
+    }
+  ]
+}

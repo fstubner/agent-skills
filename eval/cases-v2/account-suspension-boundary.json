@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 2,
+  "id": "account-suspension-boundary",
+  "skill": "code-organization",
+  "revision": 1,
+  "prompt": "Add account suspension to this small HTTP service. POST /accounts/:id/suspend should persist the suspended state, append an audit event, and return the updated account. Keep existing account reads working and leave the account area ready for the next account change.",
+  "fixture": "eval/fixtures-v2/account-suspension-boundary",
+  "grader": "eval/graders-v2/account-suspension-boundary.mjs",
+  "checker": "code-organization/scripts/check-organization.js",
+  "conditions": ["control", "policy", "checker", "skill"],
+  "assertions": [
+    { "id": "suspension-behavior", "description": "Suspension persists and returns the updated account", "kind": "outcome" },
+    { "id": "audit-once", "description": "Suspension appends exactly one attributable audit event", "kind": "outcome" },
+    { "id": "read-regression", "description": "Existing reads observe the change without altering other accounts", "kind": "outcome" },
+    { "id": "no-import-cycle", "description": "The account implementation has no runtime import cycle", "kind": "quality" },
+    { "id": "capability-boundary", "description": "The account capability is exposed through a domain entry point", "kind": "quality" }
+  ]
+}

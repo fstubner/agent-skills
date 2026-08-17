@@ -1,0 +1,15 @@
+extends: existence
+message: "Symmetric 'today's X becomes tomorrow's Y' framing reads as manufactured drama — state the consequence plainly instead."
+link: ../../references/patterns.md
+level: suggestion
+ignorecase: true
+# gen-patterns-example: today's quick support becomes tomorrow's disaster
+# (Vale enforces a strict key schema per style and rejects any unrecognized
+# top-level key — an "example:" field here would break the WHOLE style
+# silently the way it did in this exact file: vale exits 2 with the parse
+# error on stderr, and check-prose.js's stdout-only error handling treated
+# that as "zero findings, verdict SHIP" until both bugs were fixed
+# together. Keep example documentation in a comment; gen-patterns.mjs
+# parses it as "# gen-patterns-example: <text>", never as a real yml key.)
+raw:
+  - "today's [^.!?\\n]*?(?:becomes?|is) tomorrow's"

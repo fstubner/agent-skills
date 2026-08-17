@@ -1,0 +1,15 @@
+{
+  "name": "csv-analyzer",
+  "version": "1.0.0",
+  "description": "Command-line tool to analyze CSV files and calculate statistics",
+  "main": "src/cli.js",
+  "bin": {
+    "csv-analyzer": "src/cli.js"
+  },
+  "scripts": {
+    "test": "node verify.js"
+  },
+  "keywords": ["csv", "analytics", "cli"],
+  "author": "",
+  "license": "MIT"
+}

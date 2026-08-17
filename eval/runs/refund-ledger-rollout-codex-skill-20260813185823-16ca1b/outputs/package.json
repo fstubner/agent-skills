@@ -1,0 +1,1 @@
+{"name":"refund-ledger","private":true,"type":"module","scripts":{"test":"node --test","build":"mkdir -p dist && cp -R src migrations package.json README.md dist/","release":"npm test && npm run build"}}
