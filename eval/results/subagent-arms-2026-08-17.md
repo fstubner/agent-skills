@@ -1,5 +1,13 @@
 # Subagent arms are not isolated, and one wandered off the fixture
 
+> **Partly superseded** by
+> [engineering-assessment-arms-2026-08-17b.md](./engineering-assessment-arms-2026-08-17b.md).
+> A retry with an explicit scope preamble kept both arms inside the fixture,
+> so "subagents cannot be isolated" is too strong: they can be held in scope
+> by prompt, but only verifiably so — by checking citations after the run,
+> which the CLI harness never has to do. The contamination described below
+> happened and the reasoning about *why* stands.
+
 Second attempt at the `engineering-assessment` comparison, after the Codex
 quota ran out. Claude haiku subagents instead of a CLI harness, on
 workspaces staged byte-identically to what `eval-run.mjs` produces —
