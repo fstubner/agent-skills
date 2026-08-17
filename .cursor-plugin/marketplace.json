@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Composable, evidence-gated skills for product and software delivery.",
-    "version": "1.0.0-alpha.21",
+    "version": "1.0.0-alpha.22",
     "pluginRoot": "plugins"
   },
   "plugins": [

@@ -4,23 +4,40 @@ These skills are installed and available to you. Use them for the requests
 below instead of working from memory — each one carries rules and produces
 artifacts that later checks depend on.
 
+## The five that carry the work
+
+Ranked by twelve days of recorded usage across eight real projects, most
+first. If you read no further, read these.
+
+| When the request is… | Use |
+|---|---|
+| a whole-codebase audit, "how bad is this", a health check | `agent-skills:engineering-assessment` |
+| any prose that will be read by a human — docs, a README, a post | `agent-skills:ai-prose-slop` |
+| "is this done", "can we ship", any readiness claim | `agent-skills:product-acceptance`, in a separate turn from the build |
+| UI work: components, styling, layout, "make it look better" | `agent-skills:frontend` |
+| CI/CD, deploys, rollback, "does this project even run" | `agent-skills:release-engineering` |
+
+## The rest, when their trigger is plainly the request
+
 | When the request is… | Use |
 |---|---|
 | creative work: a new app, a new feature, a component, a behaviour change | `agent-skills:product-build` **before writing code** — it agrees a design first, then dispatches |
-| "is this done", "can we ship", any readiness claim | `agent-skills:product-acceptance`, in a separate turn from the build |
-| UI work: components, styling, layout, "make it look better" | `agent-skills:frontend` |
 | server or API work | `agent-skills:backend-engineering` |
 | multi-part system: client+server, several deployables | `agent-skills:systems-architecture` |
 | a schema, a migration, adding a column | `agent-skills:data-modeling` |
 | "why is every change so hard here", a maintainability review | `agent-skills:code-smells` |
 | where code should live, module boundaries | `agent-skills:code-organization` |
-| CI/CD, deploys, rollback | `agent-skills:release-engineering` |
 | a CLI tool or script's flags, exit codes, output | `agent-skills:cli-tooling` |
-| a whole-codebase audit | `agent-skills:engineering-assessment` |
 | a cause that isn't obvious, "what am I missing" | `agent-skills:mental-models` |
 
 Not every request needs one. A one-line tweak in a locked codebase, a
 question about someone else's error message, a shell command — just answer.
+
+**Why two tiers.** Seventeen skills competing in one flat list is seventeen
+things to weigh on every request, and a list that long is skimmed rather
+than read. The split is empirical, not a ranking of quality: the top five
+are the ones actually reached for in real work, and a skill moves between
+tiers when the usage does.
 
 **If another plugin's brainstorming or planning skill also claims the
 request**, use `product-build`. It covers the same ground — design agreed

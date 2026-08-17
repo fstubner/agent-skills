@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.0.0-alpha.22 — 2026-08-17
+
+Two changes from a product review, both aimed at the suite being pleasant to
+use rather than merely correct.
+
+**A verdict is readable now.** Every checker printed a forty-line JSON dump,
+including the one moment the whole suite exists for — a BLOCK. In a terminal
+they now lead with the verdict, list the failing checks and their details
+first, then say what to do. Piped or spawned they still print JSON, because
+the acceptance gate parses producer stdout and changing that default would
+have broken the gate silently — the exact failure class this suite exists to
+catch. `--format text|json` overrides either way, and an unknown value is a
+usage error (exit 2), not a stack trace.
+
+**The routing table is two tiers.** Seventeen skills in one flat list is
+seventeen things to weigh on every request, and a list that long gets
+skimmed. The top five are the ones actually reached for across twelve days
+and eight real projects — `engineering-assessment`, `ai-prose-slop`,
+`product-acceptance`, `frontend`, `release-engineering` — and the rest sit
+below, still routed, when their trigger is plainly the request. The split is
+empirical and moves when the usage does; it is not a quality ranking.
+
 ## 1.0.0-alpha.21 — 2026-08-16
 
 **A full independent audit of the repository, and the six defects it

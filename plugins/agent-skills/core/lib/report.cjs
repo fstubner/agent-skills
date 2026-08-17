@@ -111,6 +111,41 @@ function writeReport(outPath, report) {
 // construction. runFn(root) must return an array of checks.
 // Exit codes: 0 SHIP/CONDITIONAL, 1 BLOCK (or CONDITIONAL with --strict),
 // 3 checker crashed. Crashes are loud, never green.
+// The verdict is the one thing a person reads, and it was only ever
+// available as a 40-line JSON dump. JSON stays the default for anything
+// that is not a terminal, because the acceptance gate spawns these
+// checkers and parses stdout — changing that default would break the gate
+// silently, which is the failure class this suite exists to prevent.
+//
+// So: a pipe gets JSON, a terminal gets prose, and --format overrides both.
+function formatText(report) {
+  const lines = [];
+  const failed = report.checks.filter((c) => c.status === 'fail');
+  const unevaluated = report.checks.filter((c) => c.status === 'not_evaluated');
+  lines.push(`${report.verdict}  ${report.skill}  (${report.root})`);
+
+  // Failures first and in full — they are the reason to read this at all.
+  for (const c of failed) lines.push(`  FAIL  ${c.id}: ${c.detail}`);
+  for (const c of unevaluated) lines.push(`  --    ${c.id}: ${c.detail}`);
+  const passed = report.checks.length - failed.length - unevaluated.length;
+  if (passed > 0) lines.push(`  ok    ${passed} check(s) passed`);
+
+  if (report.verdict === 'BLOCK') {
+    lines.push('', 'Fix the FAIL line(s) above and re-run. Nothing ships on a BLOCK.');
+  } else if (report.verdict === 'CONDITIONAL') {
+    lines.push('', 'Nothing failed, but the -- line(s) could not be evaluated —');
+    lines.push('that is missing evidence, not a pass. Resolve them or say so out loud.');
+  }
+  return lines.join('\n');
+}
+
+function chooseFormat(args) {
+  const explicit = args.format;
+  if (explicit === 'text' || explicit === 'json') return explicit;
+  if (explicit) throw new Error(`unknown --format "${explicit}" (expected: text, json)`);
+  return process.stdout.isTTY ? 'text' : 'json';
+}
+
 function runCli({ skill, reportFile, runFn, argv, parseArgs, evidenceDir }) {
   let args;
   try {
@@ -120,13 +155,23 @@ function runCli({ skill, reportFile, runFn, argv, parseArgs, evidenceDir }) {
     process.exit(3);
   }
   const root = path.resolve(args.root || '.');
+  // Resolved before the work starts: a bad --format is a usage error, and
+  // reporting it as "checker crashed" with a stack trace would be this
+  // suite failing its own cli-tooling rules in its own output.
+  let format;
+  try {
+    format = chooseFormat(args);
+  } catch (e) {
+    console.error(String(e.message || e));
+    process.exit(2);
+  }
   try {
     const checks = runFn(root, args);
     const report = makeReport(skill, root, checks);
     if (!args['no-write']) {
       writeReport(resolveReportPath(root, evidenceDir, reportFile, args.out), report);
     }
-    console.log(JSON.stringify(report, null, 2));
+    console.log(format === 'text' ? formatText(report) : JSON.stringify(report, null, 2));
     if (report.verdict === 'BLOCK') process.exit(1);
     if (report.verdict === 'CONDITIONAL' && args.strict) process.exit(1);
     process.exit(0);
@@ -136,4 +181,4 @@ function runCli({ skill, reportFile, runFn, argv, parseArgs, evidenceDir }) {
   }
 }
 
-module.exports = { readText, hasHeading, sectionHasContent, check, computeVerdict, makeReport, writeReport, resolveReportPath, runCli };
+module.exports = { readText, hasHeading, sectionHasContent, check, computeVerdict, makeReport, writeReport, resolveReportPath, runCli, formatText, chooseFormat };

@@ -155,6 +155,19 @@ starting with "this conversation did not write or edit the code being
 accepted." If you're unsure, leave the cap on; an honest CONDITIONAL is
 worth more than a SHIP that isn't real.
 
+Run in a terminal, these print a readable verdict — the failing checks
+first, then what to do about them. Piped or spawned, they print JSON, which
+is what the acceptance gate and the pre-commit hook consume. `--format
+text|json` overrides either way.
+
+```
+BLOCK  systems-architecture  (/path/to/project)
+  FAIL  P-arch-doc: multi-part project has no architecture doc (looked for: ARCHITECTURE.md, ...)
+  --    P-section-parts: no architecture doc to inspect
+
+Fix the FAIL line(s) above and re-run. Nothing ships on a BLOCK.
+```
+
 Reports land in `.agent-evidence/` (gitignore it). Verdicts: `SHIP` /
 `CONDITIONAL` / `BLOCK`; any failed check ⇒ BLOCK, any unevaluated check ⇒
 at most CONDITIONAL. Full contract: [docs/CONTRACT.md](./docs/CONTRACT.md).
