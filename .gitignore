@@ -17,6 +17,13 @@ Thumbs.db
 .context/
 .agent-evidence/
 **/.agent-evidence/
+# Except under eval/grader-fixtures-v2/, where a recorded gate report is the
+# INPUT a grader is tested against, not evidence produced by a run. Ignoring
+# it meant zero-count-export-acceptance's grader test passed only on the
+# machine that created the file and failed on every clean checkout —
+# gateVerdict=missing in CI, green locally.
+!eval/grader-fixtures-v2/**/.agent-evidence/
+!eval/grader-fixtures-v2/**/.agent-evidence/**
 # Local skill-invocation telemetry (scripts/log-skill-invocation.mjs). Per
 # project, never committed — it records what you did, not what the suite is.
 .agent-skills-telemetry/

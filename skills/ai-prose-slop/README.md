@@ -13,6 +13,7 @@ articles.
 See [`references/patterns.md`](./references/patterns.md) for the full catalog
 with rationale, examples, and false-positive caveats. Short version:
 
+<!-- vale off --><!-- the examples are the patterns; see references/patterns.md -->
 | Pattern | Checked by |
 |---|---|
 | Inflated vocabulary (*delve, leverage, robust, seamless...*) | Vale |
@@ -22,6 +23,7 @@ with rationale, examples, and false-positive caveats. Short version:
 | Summary-recap endings (*"In conclusion,"*) | Vale |
 | Em-dash overuse | Vale |
 | Binary-contrast framing, colon-reveal drama, synonym cycling, robotic rhythm | Judgment only — see `SKILL.md` |
+<!-- vale on -->
 
 ## Use
 
