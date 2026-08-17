@@ -346,9 +346,21 @@ import {
   const exemptBlock = src.match(/const CONTENT_EXEMPT = \[([^\]]*)\]/);
   expect('pre-commit: CONTENT_EXEMPT is declared', Boolean(exemptBlock), 'not found');
   if (exemptBlock) {
-    const patterns = exemptBlock[1].match(/\/\^?[^/]+\//g) || [];
-    expect('pre-commit: exemption covers fixtures/ and nothing else',
-      patterns.length === 1 && /fixtures/.test(patterns[0]), JSON.stringify(patterns));
+    // Every exempt path must be somewhere defective content is the POINT:
+    // fixtures/ and eval/fixtures-v2/ plant defects for a checker to find,
+    // eval/grader-fixtures-v2/ holds graded reference outputs, and
+    // eval/runs/ holds hash-bound captures that cannot be edited without
+    // destroying the artifact. Anything else exempted is real code going
+    // unchecked, which is why this list is enumerated rather than a prefix.
+    const ALLOWED_EXEMPTIONS = ['^fixtures/', '^eval/fixtures-v2/', '^eval/grader-fixtures-v2/', '^eval/runs/'];
+    // Regex literals, so an escaped slash inside the pattern is not a
+    // delimiter — matching on a bare / truncated every entry to "^eval\".
+    const patterns = (exemptBlock[1].match(/\/(?:\\.|[^/\\])+\//g) || [])
+      .map((p) => p.slice(1, -1).replace(/\\\//g, '/'));
+    const unexpected = patterns.filter((p) => !ALLOWED_EXEMPTIONS.includes(p));
+    expect('pre-commit: exemption covers planted-defect and captured-output paths only',
+      unexpected.length === 0 && patterns.length === ALLOWED_EXEMPTIONS.length,
+      `got ${JSON.stringify(patterns)}`);
   }
 
   // The scoped checkers must receive the FILTERED list. Passing the unfiltered

@@ -168,7 +168,14 @@ function stagedFiles() {
 // Only these checkers skip it. gitleaks above still scans fixtures/, because
 // a REAL credential committed there is a real leak no matter what the
 // directory is for.
-const CONTENT_EXEMPT = [/^fixtures\//];
+// eval/ is the same argument one directory over, and it took a real commit
+// to notice: eval/fixtures-v2/ plants a destructive migration for the
+// assessment skill to FIND, and eval/runs/ holds verbatim captures of what
+// a model then wrote about it. check-migrations blocked the commit for the
+// planted DROP — the hook forbidding the evidence that the checkers work.
+// Captures additionally cannot be edited: a run bundle's hash is what makes
+// it evidence, so "fix the finding" would destroy the artifact.
+const CONTENT_EXEMPT = [/^fixtures\//, /^eval\/fixtures-v2\//, /^eval\/grader-fixtures-v2\//, /^eval\/runs\//];
 
 const staged = stagedFiles();
 if (staged === null) {

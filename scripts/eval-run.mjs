@@ -276,13 +276,26 @@ let grading;
 try { grading = JSON.parse(gradingResult.stdout); }
 catch { grading = { schemaVersion: 2, caseId: testCase.id, assertions: testCase.assertions.map((a) => ({ id: a.id, status: 'not_evaluated', evidence: 'grader emitted invalid JSON' })) }; }
 const harnessEvidence = `${harnessRun.result.stdout || ''}\n${harnessRun.result.stderr || ''}\n${harnessRun.result.error?.message || ''}`;
-const environmentFailure = /not logged in|failed to authenticate|oauth session expired|writing is blocked by read-only sandbox|workspace is mounted read-only|spawnSync .* (?:EPERM|EACCES)/i.exec(harnessEvidence);
+// A run that never got a model turn is missing evidence, not a negative
+// result. Quota exhaustion was not in this list, so two runs that produced
+// no model output at all were graded as five model failures each — the
+// exact "absence reads as a bad result" error this system exists to
+// prevent, committed by the system itself. Observed 2026-08-17 on
+// engineering-assessment-hidden-risks.
+const environmentFailure = /not logged in|failed to authenticate|oauth session expired|writing is blocked by read-only sandbox|workspace is mounted read-only|spawnSync .* (?:EPERM|EACCES)|usage limit|rate limit|quota exceeded|insufficient credits|overloaded_error|529|service unavailable/i.exec(harnessEvidence);
+// Structural backstop, independent of any provider's wording: a non-zero
+// exit with no tokens billed means no model turn happened. Message matching
+// alone is brittle — every provider phrases exhaustion differently, and the
+// next unmatched phrase would silently become five model failures again.
+const noModelTurn = harnessRun.result.status !== 0
+  && (harnessRun.totalTokens === null || harnessRun.totalTokens === 0);
 const ambientSkillAccess = ['control', 'policy'].includes(args.condition)
   && /(?:[A-Z]:\\\\Users\\\\[^\s"']+\\\\(?:\.agents|\.codex)\\\\skills\\\\|\/(?:home|Users)\/[^\s"']+\/(?:\.agents|\.codex)\/skills\/)/i.exec(harnessEvidence);
-if (environmentFailure || ambientSkillAccess) {
-  const failure = environmentFailure
-    ? `harness environment failure: ${environmentFailure[0]}`
-    : `evaluation contamination: control/policy accessed an ambient installed skill (${ambientSkillAccess[0]})`;
+if (environmentFailure || noModelTurn || ambientSkillAccess) {
+  let failure;
+  if (environmentFailure) failure = `harness environment failure: ${environmentFailure[0]}`;
+  else if (noModelTurn) failure = `harness environment failure: harness exited ${harnessRun.result.status} with no tokens billed — no model turn ran`;
+  else failure = `evaluation contamination: control/policy accessed an ambient installed skill (${ambientSkillAccess[0]})`;
   grading = {
     schemaVersion: 2,
     caseId: testCase.id,

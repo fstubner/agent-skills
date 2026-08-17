@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "engineering-assessment-hidden-risks",
+  "assertions": [
+    {
+      "id": "planted-risks-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "false-green-detected",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "tooling-evidence",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-hidden-risks-codex-control-20260817191003-9221fe",
+  "caseId": "engineering-assessment-hidden-risks",
+  "caseRevision": 1,
+  "caseSha256": "f9ad93401f54d3841f36cffbe9b41acae89e97e79c902eb402aaf6cd447ac7cb",
+  "condition": "control",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-17T19:10:03.398Z",
+  "finishedAt": "2026-08-17T19:12:28.627Z",
+  "durationMs": 145229,
+  "totalTokens": 88684,
+  "costUsd": null,
+  "costCredits": 0.97019,
+  "exitCode": 0,
+  "artifactSha256": "e5f17075a0edee7637afc9c1664deedf7595b4d2cffa0137bd6b395a651cb6cf",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}
