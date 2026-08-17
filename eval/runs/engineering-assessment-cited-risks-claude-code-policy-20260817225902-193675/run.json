@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-cited-risks-claude-code-policy-20260817225902-193675",
+  "caseId": "engineering-assessment-cited-risks",
+  "caseRevision": 1,
+  "caseSha256": "e659759028e721205af4e24823e2cf155b255a0840fb3b9516a6f5df18068dd1",
+  "condition": "policy",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-17T22:59:02.324Z",
+  "finishedAt": "2026-08-17T22:59:58.642Z",
+  "durationMs": 56318,
+  "totalTokens": 240568,
+  "costUsd": 0.0614897,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "fae34186e16b5a3f2cc1f30e0ae4e92cc209f4a571eb562c1b330f67b73e6d0d",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 5,
+    "notEvaluated": 0,
+    "total": 7
+  }
+}

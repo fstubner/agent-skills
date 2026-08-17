@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "caseId": "engineering-assessment-cited-risks",
+  "assertions": [
+    {
+      "id": "default-credential-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: Failed to authenticate"
+    },
+    {
+      "id": "path-traversal-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: Failed to authenticate"
+    },
+    {
+      "id": "destructive-migration-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: Failed to authenticate"
+    },
+    {
+      "id": "false-green-detected",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: Failed to authenticate"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: Failed to authenticate"
+    },
+    {
+      "id": "tooling-evidence",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: Failed to authenticate"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: Failed to authenticate"
+    }
+  ]
+}
