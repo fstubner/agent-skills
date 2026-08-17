@@ -1,56 +1,62 @@
-# First controlled three-arm run: control 2/7, policy 2/7, skill 6/7
-
-The comparison every previous attempt failed to produce. One harness, one
-model, three conditions, isolation enforced by `eval-run.mjs` rather than
-requested in a prompt.
+# Three trials per condition: control 2.00, policy 2.00, skill 4.33
 
 Case `engineering-assessment-cited-risks`, harness `claude-code`, model
-`claude-haiku-4-5-20251001`, one trial per condition.
+`claude-haiku-4-5-20251001`, three trials per condition, isolation enforced
+by `eval-run.mjs`. The first comparison in this repository where every arm
+differs in exactly one variable.
 
-| Condition | Score | Duration | Tokens | Cost |
+| Condition | Trials | Scores | Mean | Mean cost |
 |---|---|---|---|---|
-| control | 2/7 | 50s | 237,174 | $0.10 |
-| policy | 2/7 | 56s | 240,568 | $0.06 |
-| **skill** | **6/7** | 61s | 325,520 | $0.08 |
+| control | 3 | 2, 2, 2 | **2.00** | $0.073 |
+| policy | 3 | 2, 2, 2 | **2.00** | $0.062 |
+| skill | 3 | 6, 4, 3 | **4.33** | $0.090 |
 
-## What separates them
+## Which assertions, and how reliably
 
-Control and policy pass the same two and fail the same five — identical
-profiles. Whatever the concise engineering policy adds on this task, it is
-not visible to this case.
+| Assertion | control | policy | skill |
+|---|---|---|---|
+| default-credential-cited | 3/3 | 3/3 | 3/3 |
+| path-traversal-cited | 3/3 | 3/3 | 2/3 |
+| destructive-migration-cited | 0/3 | 0/3 | **3/3** |
+| ranked-actionable-findings | 0/3 | 0/3 | **3/3** |
+| false-green-detected | 0/3 | 0/3 | 1/3 |
+| coverage-honesty | 0/3 | 0/3 | 1/3 |
+| tooling-evidence | 0/3 | 0/3 | 0/3 |
 
-The skill arm adds four:
+Two effects are clean. **The destructive migration and the ranked,
+remediated findings appear in every skill run and in none of the six
+control or policy runs.** Those are the skill's own rules — cite the
+`DROP TABLE`, rank by severity, split confirmed from suspected — and they
+reproduce without exception.
 
-- `destructive-migration-cited` — the `DROP TABLE` in
-  `migrations/003_remove_audit.sql`, which neither other arm reported at a
-  checkable location.
-- `false-green-detected` — recognising that a passing `tests/smoke.js` with
-  no assertions is not coverage, and saying so against the README's claim.
-- `ranked-actionable-findings` — severity ranking, specific remedies, and
-  an explicit split between confirmed and suspected.
-- `coverage-honesty` — naming production configuration as unavailable
-  rather than assuming it safe.
+Two are unreliable: naming the assertion-free smoke test as a false green,
+and admitting production configuration was unavailable, each land once in
+three. The skill asks for both; it gets them a third of the time.
 
-Those are four of the skill's own stated rules, and they are the four the
-unprompted arms skip.
+One never lands anywhere: `tooling-evidence` wants the report to record
+that `npm test` actually passed alongside the judgement that the suite is
+inadequate. Nine runs, zero. Running the command and reporting its exit
+status is the cheapest evidence in an assessment, and no arm does it.
 
-The one it still fails is `tooling-evidence`: it questioned the suite's
-adequacy but did not record that `npm test` actually passed
-(`reportRecordsPass=false`). Running the command and reporting its exit
-status is the cheapest evidence in the whole assessment, and it was the
-thing left out.
+The skill arm is also the *least* stable — 6, 4, 3 — while control and
+policy return 2 every time. More instruction produced more variance, not
+less. Worth watching rather than concluding from three points.
 
-Cost is not the story: the skill arm used 37% more tokens and cost less
-than the control, which spent its budget elsewhere.
+**The concise policy did nothing here.** Identical scores and identical
+assertion profiles to the control across three trials, at slightly lower
+cost. Whatever it buys on other tasks, this case cannot see it.
 
-## Standing under the evidence contract
+Cost is not an argument against: the skill arm averages $0.090 against the
+control's $0.073, a 23% increase, inside the contract's 25% ceiling.
+
+## Standing
 
 **Not promotable.** The bar is three fresh cases per skill, three trials per
-condition, and both harnesses. This is one case, one trial, one harness. A
-four-assertion gap at n=1 could still be a lucky draw.
+condition, *and* both harnesses. This is one case and one harness. Codex
+arms are blocked until quota resets on 2026-08-20.
 
-What it does establish is that the instrument works: the case can now
-separate conditions, the runner enforces isolation, and the arms differ in
-exactly one variable. Two more trials per condition here, plus the same on
-codex after quota resets, would be the first skill in this suite to have
-real evidence behind it.
+What is now true: this skill has one case where its effect is measured,
+reproducible on two of its assertions across three trials, against a
+baseline that never produces them. Two more cases and the codex cohort
+would make `engineering-assessment` the first skill in this suite with
+evidence behind it.
