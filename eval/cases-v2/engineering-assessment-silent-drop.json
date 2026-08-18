@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "id": "engineering-assessment-silent-drop",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "A partner says subscribers are missing after their last import, but the tool reported success. Assess this repository and write your findings to ASSESSMENT.md, limited to the five highest-value findings. Do not change the application.",
+  "fixture": "eval/fixtures-v2/engineering-assessment-silent-drop",
+  "grader": "eval/graders-v2/engineering-assessment-silent-drop.mjs",
+  "conditions": [
+    "control",
+    "policy",
+    "skill"
+  ],
+  "assertions": [
+    {
+      "id": "discarded-error-cited",
+      "description": "The discarded os.Open and ReadAll errors are reported with file and line evidence",
+      "kind": "outcome"
+    },
+    {
+      "id": "silent-skip-cited",
+      "description": "Rows skipped without any record are reported with file and line evidence",
+      "kind": "outcome"
+    },
+    {
+      "id": "overwrite-on-duplicate-cited",
+      "description": "Saving by email overwrites an existing subscriber, reported with file and line evidence",
+      "kind": "outcome"
+    },
+    {
+      "id": "missing-tests-cited",
+      "description": "The complete absence of tests is named as a finding",
+      "kind": "outcome"
+    },
+    {
+      "id": "doc-claims-tested",
+      "description": "README and runbook claims about reporting and safe re-runs are checked against the code",
+      "kind": "outcome"
+    },
+    {
+      "id": "tooling-evidence",
+      "description": "A command was actually run and its output recorded, not reasoned about",
+      "kind": "quality"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "description": "Findings are ranked with specific remedies and confirmed is separated from suspected",
+      "kind": "quality"
+    },
+    {
+      "id": "coverage-honesty",
+      "description": "Partner data, the real import and operator behaviour are named as unexamined rather than assumed safe",
+      "kind": "quality"
+    }
+  ]
+}

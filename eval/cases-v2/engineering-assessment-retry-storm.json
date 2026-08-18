@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "id": "engineering-assessment-retry-storm",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "Audit this payments worker before we scale it up. Write your assessment to ASSESSMENT.md, limited to the five highest-value findings. Do not change the application.",
+  "fixture": "eval/fixtures-v2/engineering-assessment-retry-storm",
+  "grader": "eval/graders-v2/engineering-assessment-retry-storm.mjs",
+  "conditions": [
+    "control",
+    "policy",
+    "skill"
+  ],
+  "assertions": [
+    {
+      "id": "unbounded-retry-cited",
+      "description": "The uncapped retry loop is reported with valid file and line evidence",
+      "kind": "outcome"
+    },
+    {
+      "id": "swallowed-error-cited",
+      "description": "The bare except that discards every processor failure is reported with valid file and line evidence",
+      "kind": "outcome"
+    },
+    {
+      "id": "double-charge-cited",
+      "description": "Retrying without an idempotency key across three replicas is reported as a double-charge risk, with file and line evidence",
+      "kind": "outcome"
+    },
+    {
+      "id": "doc-claims-tested",
+      "description": "README and deploy claims are treated as assertions to check, not as facts",
+      "kind": "outcome"
+    },
+    {
+      "id": "false-green-detected",
+      "description": "A suite that only imports a module is not mistaken for retry-path coverage",
+      "kind": "outcome"
+    },
+    {
+      "id": "tooling-evidence",
+      "description": "A command was actually run and its output recorded, not reasoned about",
+      "kind": "quality"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "description": "Findings are ranked with specific remedies and confirmed is separated from suspected",
+      "kind": "quality"
+    },
+    {
+      "id": "coverage-honesty",
+      "description": "The processor, database and running deployment are named as unexamined rather than assumed safe",
+      "kind": "quality"
+    }
+  ]
+}

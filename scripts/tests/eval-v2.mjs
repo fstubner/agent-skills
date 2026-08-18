@@ -22,6 +22,37 @@ try { report = JSON.parse(reportRun.stdout); } catch { /* assertion reports raw 
 expect('v2 report refuses to call an unrun pilot ready', reportRun.status === 0 && report?.skills?.['cli-tooling']?.ready === false, reportRun.stderr || reportRun.stdout);
 expect('benchmark report distinguishes harness failures from model outcomes', Array.isArray(report?.ineligibleRuns), reportRun.stderr || reportRun.stdout);
 
+// Every harness/model/condition combination the contract requires, as a flat
+// list rather than three levels of nesting at the call site.
+function cohortCells(requiredHarnesses, requiredModelsByHarness) {
+  const cells = [];
+  for (const harness of requiredHarnesses) {
+    for (const model of requiredModelsByHarness[harness]) {
+      for (const condition of ['control', 'policy', 'skill']) cells.push({ harness, model, condition });
+    }
+  }
+  return cells;
+}
+
+function writeSyntheticRun({ runsDir, id, assertions, statuses, harness, model, condition, trial }) {
+  const runId = `${id}-${harness}-${model}-${condition}-${trial}`;
+  const runDir = path.join(runsDir, runId);
+  fs.mkdirSync(runDir, { recursive: true });
+  const grading = {
+    assertions: assertions.map((assertion, index) => ({
+      id: assertion.id,
+      status: statuses[index % statuses.length] ? 'pass' : 'fail',
+    })),
+  };
+  fs.writeFileSync(path.join(runDir, 'grading.json'), JSON.stringify(grading));
+  fs.writeFileSync(path.join(runDir, 'run.json'), JSON.stringify({
+    runId, caseId: id, condition, harness, model, exitCode: 0,
+    durationMs: 1, totalTokens: 100,
+    costUsd: null, costCredits: 1,
+    grading: { notEvaluated: 0 }, files: { grading: 'grading.json' },
+  }));
+}
+
 function syntheticReport(name, { caseScores, requiredHarnesses = ['codex'], requiredModelsByHarness = { codex: ['m'] }, omit = () => false }) {
   const syntheticRoot = path.join(tmpBase, `eval-report-${name}`);
   const casesDir = path.join(syntheticRoot, 'cases-v2');
@@ -48,30 +79,13 @@ function syntheticReport(name, { caseScores, requiredHarnesses = ['codex'], requ
     const assertionCount = Math.max(...Object.values(scores).map((values) => values.length));
     const assertions = Array.from({ length: assertionCount }, (_, index) => ({ id: `a-${index + 1}`, kind: 'outcome' }));
     fs.writeFileSync(path.join(casesDir, `${id}.json`), JSON.stringify({ id, skill: 'synthetic-skill', conditions: ['control', 'policy', 'skill'], assertions }));
-    for (const harness of requiredHarnesses) {
-      for (const model of requiredModelsByHarness[harness]) {
-        for (const condition of ['control', 'policy', 'skill']) {
-          if (omit({ caseIndex, harness, model, condition })) continue;
-          for (let trial = 1; trial <= 3; trial++) {
-            const statuses = scores[condition];
-            const runId = `${id}-${harness}-${model}-${condition}-${trial}`;
-            const runDir = path.join(runsDir, runId);
-            fs.mkdirSync(runDir, { recursive: true });
-            const grading = {
-              assertions: assertions.map((assertion, index) => ({
-                id: assertion.id,
-                status: statuses[index % statuses.length] ? 'pass' : 'fail',
-              })),
-            };
-            fs.writeFileSync(path.join(runDir, 'grading.json'), JSON.stringify(grading));
-            fs.writeFileSync(path.join(runDir, 'run.json'), JSON.stringify({
-              runId, caseId: id, condition, harness, model, exitCode: 0,
-              durationMs: 1, totalTokens: 100,
-              costUsd: null, costCredits: 1,
-              grading: { notEvaluated: 0 }, files: { grading: 'grading.json' },
-            }));
-          }
-        }
+    // Four nested loops reached depth 8 and blocked a commit on this suite's
+    // own code-smells gate. The cohort is now enumerated flat and each run
+    // written by its own function, which reads better than the nest did.
+    for (const cell of cohortCells(requiredHarnesses, requiredModelsByHarness)) {
+      if (omit({ caseIndex, ...cell })) continue;
+      for (let trial = 1; trial <= 3; trial++) {
+        writeSyntheticRun({ runsDir, id, assertions, statuses: scores[cell.condition], ...cell, trial });
       }
     }
   }
@@ -212,7 +226,15 @@ for (const caseId of multiSkillCases) {
   expect(`${caseId} outcome grader accepts an independent conforming fixture`, accept.status === 0, accept.stderr || accept.stdout);
 }
 
-const freshEfficacyCases = ['job-ledger-ordering-assessment', 'zero-count-export-acceptance'];
+const freshEfficacyCases = [
+  'job-ledger-ordering-assessment',
+  'zero-count-export-acceptance',
+  // engineering-assessment's second and third cases. Promotion needs three
+  // fresh cases per skill; the first, engineering-assessment-cited-risks,
+  // has three trials per condition on claude-code as of 2026-08-18.
+  'engineering-assessment-retry-storm',
+  'engineering-assessment-silent-drop',
+];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);
   const reject = spawnSync(node, [grader, '--root', path.join(root, 'eval', 'fixtures-v2', caseId)], { cwd: root, encoding: 'utf8', timeout: 30_000 });
