@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-silent-drop-claude-code-skill-20260818121005-a46e29",
+  "caseId": "engineering-assessment-silent-drop",
+  "caseRevision": 1,
+  "caseSha256": "17942ac509684ac61b2b134c95da1cbb25added29b6f89e58d9a3b072531e76a",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-18T12:10:05.204Z",
+  "finishedAt": "2026-08-18T12:11:14.537Z",
+  "durationMs": 69333,
+  "totalTokens": 321230,
+  "costUsd": 0.0777272,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "4c5a9040ba6c7c94f07e90bdedebb12b124435f871db6f74f78584a300d68f3d",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 3,
+    "failed": 5,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}

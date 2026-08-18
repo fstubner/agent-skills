@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-retry-storm-claude-code-policy-20260818115553-e8146f",
+  "caseId": "engineering-assessment-retry-storm",
+  "caseRevision": 1,
+  "caseSha256": "99642640e83a5e7d427195b0112c617fbe9214cd8ae2fd5d7bdbe21eb5f4f071",
+  "condition": "policy",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-18T11:55:53.830Z",
+  "finishedAt": "2026-08-18T11:56:45.168Z",
+  "durationMs": 51338,
+  "totalTokens": 210031,
+  "costUsd": 0.052587800000000004,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "ea50b1b40def6eadbbff571a3707c2536304406077acfddb4555278f5b0239f9",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 7,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}

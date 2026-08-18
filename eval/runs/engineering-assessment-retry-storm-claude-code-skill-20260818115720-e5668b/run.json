@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-retry-storm-claude-code-skill-20260818115720-e5668b",
+  "caseId": "engineering-assessment-retry-storm",
+  "caseRevision": 1,
+  "caseSha256": "99642640e83a5e7d427195b0112c617fbe9214cd8ae2fd5d7bdbe21eb5f4f071",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-18T11:57:20.943Z",
+  "finishedAt": "2026-08-18T11:58:49.587Z",
+  "durationMs": 88644,
+  "totalTokens": 423066,
+  "costUsd": 0.10420409999999998,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "728cd5f07625abb5e538fa1b88891131bde5e2d2a58eba9c88c12f256aeb6ce3",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 7,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}
