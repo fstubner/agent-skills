@@ -246,6 +246,14 @@ const outputsDir = path.join(runDir, 'outputs');
 copyTree(fixture, workspace);
 const stagedInput = stageConditionInputs(testCase, args.condition, workspace);
 const prompt = buildPrompt(testCase, args.condition, stagedInput);
+// Hash of whatever was staged into .agent-input for this condition — the
+// skill text for a skill arm, the checker for a checker arm. Without it two
+// skill runs of the same case are indistinguishable in eval/runs even when
+// the skill was rewritten between them, which is exactly what an experiment
+// on the skill's own wording needs to tell apart. Absent for control and
+// policy, which stage nothing.
+const stagedInputRoot = path.join(workspace, '.agent-input');
+const stagedInputSha256 = fs.existsSync(stagedInputRoot) ? hashTree(stagedInputRoot) : null;
 if (args['prepare-only']) {
   cleanupTemp(tempRoot);
   console.log(JSON.stringify({ caseId: testCase.id, condition: args.condition, harness: args.harness, model: args.model, prompt }, null, 2));
@@ -320,6 +328,7 @@ const manifest = {
   caseId: testCase.id,
   caseRevision: testCase.revision,
   caseSha256: sha256(caseRaw),
+  stagedInputSha256,
   condition: args.condition,
   harness: args.harness,
   harnessVersion: harnessRun.harnessVersion,

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "caseId": "engineering-assessment-retry-storm",
+  "assertions": [
+    {
+      "id": "unbounded-retry-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: 529"
+    },
+    {
+      "id": "swallowed-error-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: 529"
+    },
+    {
+      "id": "double-charge-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: 529"
+    },
+    {
+      "id": "doc-claims-tested",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: 529"
+    },
+    {
+      "id": "false-green-detected",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: 529"
+    },
+    {
+      "id": "tooling-evidence",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: 529"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: 529"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: 529"
+    }
+  ]
+}

@@ -22,6 +22,25 @@ actionable. Nothing is assumed — if it was not examined, say so.
 
 ## Workflow
 
+### 0. Run the project's own commands, first
+
+**Before writing a single finding, run the build, test and lint commands the
+project declares, and paste their output into the assessment.** Not a
+description of what they would do — the command and what it printed. If a
+command cannot run here, record the command and the reason it failed; that
+is evidence too.
+
+This is step zero because it is the cheapest evidence in an assessment and
+the most consistently skipped. Measured across 27 controlled runs of this
+skill on three repositories: the command was actually run and its output
+recorded in **2 of 9** skill-condition runs. The same rule appeared as item
+6 of the discipline list below, near the end of the file, and was ignored.
+An assessment that reasons about `npm test` without running it is asserting,
+not assessing.
+
+Every assessment carries a **What I ran** section listing each command and
+its result, including the ones that failed to start.
+
 ### 1. Establish Scope
 
 Explicitly record:
@@ -214,8 +233,10 @@ These rules apply to every assessment without exception:
    ambiguous, do not present the finding as confirmed. Use the "Unconfirmed"
    section.
 
-6. **Run what you can.** If build/test/lint commands are available, run them.
-   Do not skip automated checks out of convenience.
+6. **Run what you can** — see step 0, which is where this rule now lives,
+   because stated here it was followed in 2 of 9 measured runs. Commands are
+   run before findings are written, and their output is pasted into
+   **What I ran**.
 
 7. **Stay within scope.** Do not expand the assessment beyond what was agreed
    in Step 1 without noting that you are doing so and why.

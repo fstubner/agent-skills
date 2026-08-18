@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-cited-risks-claude-code-skill-20260818123808-5de60d",
+  "caseId": "engineering-assessment-cited-risks",
+  "caseRevision": 1,
+  "caseSha256": "e659759028e721205af4e24823e2cf155b255a0840fb3b9516a6f5df18068dd1",
+  "stagedInputSha256": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-18T12:38:08.580Z",
+  "finishedAt": "2026-08-18T12:39:40.309Z",
+  "durationMs": 91729,
+  "totalTokens": 333583,
+  "costUsd": 0.0883294,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "922a18ee00231c1afdd3ab5418d2e771b508e36e7cfa2ccb3837c37015d7a704",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 6,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 7
+  }
+}

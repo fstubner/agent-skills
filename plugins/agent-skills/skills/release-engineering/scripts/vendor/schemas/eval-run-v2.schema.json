@@ -3,47 +3,176 @@
   "title": "Reproducible agent-skill evaluation run",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "runId", "caseId", "caseRevision", "caseSha256", "condition", "harness", "harnessVersion", "model", "startedAt", "finishedAt", "durationMs", "totalTokens", "costUsd", "costCredits", "exitCode", "artifactSha256", "files", "grading"],
+  "required": [
+    "schemaVersion",
+    "runId",
+    "caseId",
+    "caseRevision",
+    "caseSha256",
+    "condition",
+    "harness",
+    "harnessVersion",
+    "model",
+    "startedAt",
+    "finishedAt",
+    "durationMs",
+    "totalTokens",
+    "costUsd",
+    "costCredits",
+    "exitCode",
+    "artifactSha256",
+    "files",
+    "grading"
+  ],
   "properties": {
-    "schemaVersion": { "const": 2 },
-    "runId": { "type": "string", "minLength": 8 },
-    "caseId": { "type": "string", "minLength": 1 },
-    "caseRevision": { "type": "integer", "minimum": 1 },
-    "caseSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-    "condition": { "enum": ["control", "policy", "checker", "skill"] },
-    "harness": { "enum": ["claude-code", "codex"] },
-    "harnessVersion": { "type": "string", "minLength": 1 },
-    "model": { "type": "string", "minLength": 1 },
-    "startedAt": { "type": "string", "minLength": 20 },
-    "finishedAt": { "type": "string", "minLength": 20 },
-    "durationMs": { "type": "integer", "minimum": 0 },
-    "totalTokens": { "type": ["integer", "null"], "minimum": 0 },
-    "costUsd": { "type": ["number", "null"], "minimum": 0 },
-    "costCredits": { "type": ["number", "null"], "minimum": 0 },
-    "exitCode": { "type": "integer" },
-    "artifactSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "schemaVersion": {
+      "const": 2
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 8
+    },
+    "caseId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "caseRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "caseSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "condition": {
+      "enum": [
+        "control",
+        "policy",
+        "checker",
+        "skill"
+      ]
+    },
+    "harness": {
+      "enum": [
+        "claude-code",
+        "codex"
+      ]
+    },
+    "harnessVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "startedAt": {
+      "type": "string",
+      "minLength": 20
+    },
+    "finishedAt": {
+      "type": "string",
+      "minLength": 20
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "totalTokens": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "costUsd": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "costCredits": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "exitCode": {
+      "type": "integer"
+    },
+    "artifactSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "files": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["prompt", "transcript", "stderr", "grading", "workspace"],
+      "required": [
+        "prompt",
+        "transcript",
+        "stderr",
+        "grading",
+        "workspace"
+      ],
       "properties": {
-        "prompt": { "type": "string", "minLength": 1 },
-        "transcript": { "type": "string", "minLength": 1 },
-        "stderr": { "type": "string", "minLength": 1 },
-        "grading": { "type": "string", "minLength": 1 },
-        "workspace": { "type": "string", "minLength": 1 }
+        "prompt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transcript": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stderr": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workspace": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "grading": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["passed", "failed", "notEvaluated", "total"],
+      "required": [
+        "passed",
+        "failed",
+        "notEvaluated",
+        "total"
+      ],
       "properties": {
-        "passed": { "type": "integer", "minimum": 0 },
-        "failed": { "type": "integer", "minimum": 0 },
-        "notEvaluated": { "type": "integer", "minimum": 0 },
-        "total": { "type": "integer", "minimum": 1 }
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "notEvaluated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 1
+        }
       }
+    },
+    "stagedInputSha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "SHA-256 of the .agent-input tree staged for this condition (skill text or checker); null for control and policy, which stage nothing."
     }
   }
 }
