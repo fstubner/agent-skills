@@ -9,9 +9,19 @@ version: 2
 # stream of version-bump PRs against versions that are pinned old ON PURPOSE
 # — several are the very thing a fixture asserts a checker detects.
 #
+# eval/ is absent for the same reason, with an extra multiplier: every run
+# copies its fixture into a committed, hash-bound bundle. A single two-line
+# requirements.txt in one fixture became 56 open security alerts — the
+# fixture, the grader fixture, and one copy per run — and would have grown by
+# four with every future run. Fixture manifests therefore declare no
+# third-party dependencies; the source can import whatever the scenario needs,
+# since nothing is ever installed.
+#
 # Note this file governs update PRs only. Security ALERTS come from the
-# dependency graph and ignore it; the fixture alerts are dismissed
-# separately as not-used, which is what that dismissal reason is for.
+# dependency graph and ignore it. The 56 above were dismissed as `not_used`,
+# which is exactly what that reason is for; if a wave of alerts ever appears
+# under eval/, check it is fixture data and dismiss the same way rather than
+# bumping a pin that a fixture deliberately holds old.
 updates:
   - package-ecosystem: npm
     directory: /
