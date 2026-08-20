@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-claude-code-skill-20260818125015-f9139f",
+    "B": "engineering-assessment-silent-drop-claude-code-control-20260818120253-90b7e3"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-claude-code-skill-20260818125015-f9139f": "skill",
+    "engineering-assessment-silent-drop-claude-code-control-20260818120253-90b7e3": "control"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-claude-code-skill-20260818125015-f9139f": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-silent-drop-claude-code-control-20260818120253-90b7e3": null
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 3,
+        "prioritisation": 3,
+        "honesty": 2,
+        "readability": 3
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A makes its findings actionable by naming specific technologies (PostgreSQL, SQLite, mail.ParseAddress()) and libraries to use, explicitly sequences findings by dependency (persistence blocks error-handling, both block success verification), and transparently lists coverage gaps; Report B correctly identifies the root cause upfront but leaves recommendations vague (\"implement duplicate detection\" without saying how), lacks explicit prioritization reasoning, and omits gaps—making it harder for an engineer to act immediately."
+  }
+}

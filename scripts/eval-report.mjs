@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { assertionDiagnostics, discriminatingRate } from './lib/eval-diagnostics.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -60,7 +61,15 @@ function runEligibility(run) {
 const cells = new Map();
 for (const run of runs) {
   if (runEligibility(run)) continue;
-  const key = [run.testCase.skill, run.manifest.caseId, run.manifest.harness, run.manifest.model, run.manifest.condition].join('\0');
+  // The staged input is part of the cell identity, not incidental metadata.
+  // Editing a SKILL.md mid-experiment and re-running produced six "skill"
+  // trials of one case that were three trials of two different skills; pooled
+  // into one cell they average a version that no longer exists with the one
+  // that does. Control and policy stage nothing, so their key is unaffected.
+  const key = [
+    run.testCase.skill, run.manifest.caseId, run.manifest.harness, run.manifest.model,
+    run.manifest.condition, run.manifest.stagedInputSha256 || '',
+  ].join('\0');
   if (!cells.has(key)) cells.set(key, []);
   cells.get(key).push(run);
 }
@@ -99,15 +108,44 @@ for (const testCase of cases.values()) {
   skills[testCase.skill] ||= { configuredCaseIds: new Set(), experiments: [] };
   skills[testCase.skill].configuredCaseIds.add(testCase.id);
 }
+// An experiment is one case/harness/model block at one staged-input version
+// of the skill. Control and policy stage nothing, so the same baseline runs
+// belong to every version's experiment — a rewritten skill is compared
+// against the same baseline, not given a fresh one.
+const blocks = new Map();
 for (const [key, cellRuns] of cells) {
-  const [skill, caseId, harness, model, condition] = key.split('\0');
-  let experiment = skills[skill].experiments.find((item) => item.caseId === caseId && item.harness === harness && item.model === model);
-  if (!experiment) {
-    experiment = { caseId, harness, model, conditions: {} };
-    skills[skill].experiments.push(experiment);
-  }
-  experiment.conditions[condition] = summarizeCell(cellRuns);
+  const [skill, caseId, harness, model, condition, stagedInputSha256] = key.split('\0');
+  const blockKey = [skill, caseId, harness, model].join('\0');
+  if (!blocks.has(blockKey)) blocks.set(blockKey, { skill, caseId, harness, model, baselines: {}, skillVersions: new Map() });
+  const block = blocks.get(blockKey);
+  if (condition === 'skill') block.skillVersions.set(stagedInputSha256 || 'legacy', cellRuns);
+  else block.baselines[condition] = cellRuns;
 }
+
+for (const block of blocks.values()) {
+  const versions = block.skillVersions.size ? [...block.skillVersions] : [[null, null]];
+  for (const [version, skillRuns] of versions) {
+    const runsByCondition = { ...block.baselines };
+    if (skillRuns) runsByCondition.skill = skillRuns;
+    const experiment = { caseId: block.caseId, harness: block.harness, model: block.model, conditions: {} };
+    if (version) experiment.skillVersion = version;
+    for (const [condition, cellRuns] of Object.entries(runsByCondition)) {
+      experiment.conditions[condition] = summarizeCell(cellRuns);
+    }
+    const diagnostics = assertionDiagnostics(runsByCondition);
+    const keep = new Set(diagnostics.filter((item) => item.classification === 'discriminating').map((item) => item.id));
+    experiment.assertionDiagnostics = diagnostics;
+    experiment.discriminating = {
+      assertionCount: keep.size,
+      undiscriminating: diagnostics.filter((item) => item.classification === 'undiscriminating').map((item) => item.id),
+      unreachable: diagnostics.filter((item) => item.classification === 'unreachable').map((item) => item.id),
+      rates: Object.fromEntries(Object.entries(runsByCondition)
+        .map(([condition, cellRuns]) => [condition, discriminatingRate(cellRuns, keep)])),
+    };
+    skills[block.skill].experiments.push(experiment);
+  }
+}
+
 
 // Two-sided 95% Student-t critical values. Promotion currently fixes the
 // confidence level at 95% in eval/evidence.json and its schema.
@@ -153,6 +191,26 @@ const report = {
   skills: {},
 };
 
+// Every harness/model cohort the contract requires, flat. Nesting these
+// loops at the call site reached depth 7 and this repository's own
+// code-smells gate blocked the commit that touched the file.
+function emptyExperiment(caseId, harness, model) {
+  return { caseId, harness, model, conditions: {} };
+}
+
+function requiredCohorts(thresholds) {
+  return thresholds.requiredHarnesses.flatMap((harness) =>
+    thresholds.requiredModelsByHarness[harness].map((model) => ({ harness, model })));
+}
+
+function cohortTrialGaps(experiment, thresholds, label) {
+  return thresholds.requiredConditions.flatMap((condition) => {
+    const cell = experiment?.conditions[condition];
+    if (cell && cell.trials >= thresholds.trialsPerCondition) return [];
+    return [`${label}/${condition} needs ${thresholds.trialsPerCondition} trials; has ${cell?.trials || 0}`];
+  });
+}
+
 for (const [skill, value] of Object.entries(skills)) {
   const thresholds = evidence.minimumEvidence;
   const reasons = [];
@@ -171,17 +229,16 @@ for (const [skill, value] of Object.entries(skills)) {
         caseComplete = false;
       }
     }
-    for (const harness of thresholds.requiredHarnesses) {
-      for (const model of thresholds.requiredModelsByHarness[harness]) {
-        const experiment = experimentByKey.get([caseId, harness, model].join('\0'));
-        expectedExperiments.push(experiment || { caseId, harness, model, conditions: {} });
-        for (const condition of thresholds.requiredConditions) {
-          const cell = experiment?.conditions[condition];
-          if (!cell || cell.trials < thresholds.trialsPerCondition) {
-            reasons.push(`${caseId}/${harness}/${model}/${condition} needs ${thresholds.trialsPerCondition} trials; has ${cell?.trials || 0}`);
-            caseComplete = false;
-          }
-        }
+    for (const { harness, model } of requiredCohorts(thresholds)) {
+      const experiment = experimentByKey.get([caseId, harness, model].join('\0'));
+      // Built by a helper rather than inline: the nesting checker counts
+      // object-literal braces, so `conditions: {}` three loops deep reads as
+      // depth 6 even though the control flow is three levels.
+      expectedExperiments.push(experiment || emptyExperiment(caseId, harness, model));
+      const gaps = cohortTrialGaps(experiment, thresholds, `${caseId}/${harness}/${model}`);
+      if (gaps.length) {
+        reasons.push(...gaps);
+        caseComplete = false;
       }
     }
     if (caseComplete) completedCaseIds.push(caseId);

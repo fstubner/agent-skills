@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-cited-risks",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "engineering-assessment-cited-risks-claude-code-control-20260817233025-cdf22d",
+    "B": "engineering-assessment-cited-risks-claude-code-skill-20260818123940-91ff9c"
+  },
+  "conditions": {
+    "engineering-assessment-cited-risks-claude-code-control-20260817233025-cdf22d": "control",
+    "engineering-assessment-cited-risks-claude-code-skill-20260818123940-91ff9c": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-cited-risks-claude-code-control-20260817233025-cdf22d": null,
+    "engineering-assessment-cited-risks-claude-code-skill-20260818123940-91ff9c": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 3,
+        "prioritisation": 3,
+        "honesty": 2,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B is transparent about what was checked (static analysis only; tests skipped due to approval requirements) and explicitly lists coverage gaps; A cites an audit migration file in Finding #5 that doesn't appear in the repository, suggesting unsupported claims. B also catches additional real issues (unhandled exceptions in the request handler, missing Content-Type headers) that A misses, and provides explicit reasoning for the priority order rather than just ordering by severity level."
+  }
+}

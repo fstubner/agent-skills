@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-claude-code-skill-20260818124443-704281",
+    "B": "engineering-assessment-retry-storm-claude-code-control-20260818115416-6c2253"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260818124443-704281": "skill",
+    "engineering-assessment-retry-storm-claude-code-control-20260818115416-6c2253": "control"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260818124443-704281": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-retry-storm-claude-code-control-20260818115416-6c2253": null
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 4,
+        "prioritisation": 2,
+        "honesty": 2,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A identifies all five highest-value findings including the critical idempotency contradiction (README claims it but code sends no key), provides specific implementation values ('5-minute timeout', '30 retries', 'exponential backoff'), and explicitly documents tool runs and coverage gaps; Report B missed the idempotency finding entirely and offers vague remediation guidance ('include API key in headers')."
+  }
+}
