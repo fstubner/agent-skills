@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { assertionDiagnostics, discriminatingRate } from './lib/eval-diagnostics.mjs';
+import { applyInterimCohort } from './lib/eval-interim.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -129,6 +130,12 @@ for (const block of blocks.values()) {
     if (skillRuns) runsByCondition.skill = skillRuns;
     const experiment = { caseId: block.caseId, harness: block.harness, model: block.model, conditions: {} };
     if (version) experiment.skillVersion = version;
+    // When the newest skill version was exercised. Sorting shas would be
+    // meaningless — "legacy" sorts above a hex digest — so recency is read
+    // from the runs themselves.
+    if (skillRuns?.length) {
+      experiment.latestSkillRunAt = skillRuns.map((run) => run.manifest.startedAt).sort().pop();
+    }
     for (const [condition, cellRuns] of Object.entries(runsByCondition)) {
       experiment.conditions[condition] = summarizeCell(cellRuns);
     }
@@ -348,6 +355,11 @@ for (const [skill, value] of Object.entries(skills)) {
     experiments: value.experiments,
   };
 }
+
+// Single-harness view when a cohort is blocked; never promotable. See
+// scripts/lib/eval-interim.mjs.
+const cohortHarness = valueAfter('--cohort');
+if (cohortHarness) applyInterimCohort(report, cohortHarness, evidence.minimumEvidence, { mean, confidenceInterval });
 
 const output = args.includes('--compact')
   ? {
