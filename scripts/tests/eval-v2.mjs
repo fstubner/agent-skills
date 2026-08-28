@@ -234,6 +234,9 @@ const freshEfficacyCases = [
   // has three trials per condition on claude-code as of 2026-08-18.
   'engineering-assessment-retry-storm',
   'engineering-assessment-silent-drop',
+  // product-acceptance's third case: the gate returns SHIP and only an audit
+  // finds the defects.
+  'acceptance-clean-gate-dirty-code',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

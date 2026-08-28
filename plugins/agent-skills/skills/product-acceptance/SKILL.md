@@ -68,6 +68,43 @@ document tells you to run.
    refresh mid-flow, garbage input at the boundary.
 3. Compare the result against `PRODUCT.md` Success and MVP: is the primary
    job completable, honestly?
+4. **Audit the codebase, not just the flow** — run
+   `agent-skills:engineering-assessment` over the work being accepted and
+   fold its severity-ranked findings into your verdict.
+
+### Why the audit is part of acceptance
+
+The gate checks what a script can check: documents exist with real content,
+one ORM, no secrets in client paths, session cookies flagged, migrations
+non-destructive, declared scripts resolve. A product can pass every one of
+those, complete its primary job in the walkthrough, and still be a bad
+release — an ownership check missing so any signed-in user reads anyone's
+records, an endpoint that mails strangers with no limit, a data path that
+loses work on restart. **No checker in this suite looks for those**, and the
+walkthrough will not find them because the happy path works.
+
+So a passing gate plus a clean walkthrough is not a SHIP; it is two of three
+angles. Say so explicitly in the verdict: which findings came from the gate,
+which from the walkthrough, which from the audit, and what none of them
+covered.
+
+### Scoping the audit
+
+**Default: audit everything.** A full pass is the honest default and the
+cheapest thing to justify.
+
+Narrowing to what changed is defensible only when all of these hold, and you
+state which acceptance you are building on:
+
+- A previous acceptance of this project recorded a verdict and the commit it
+  audited.
+- The diff since that commit is small enough to read in full, and you have
+  read it.
+- Nothing in the diff touches a trust boundary, a schema, an auth path, or a
+  dependency — those get a full pass regardless of diff size.
+
+If you cannot name the earlier acceptance, audit everything. A narrowed
+audit that cannot say what it is narrowing *from* is just a smaller audit.
 
 ## Verdict
 
@@ -93,7 +130,9 @@ If you catch yourself thinking any of these, you are the builder:
 | "Adding `--acceptor-context separate` will give the real verdict" | The flag doesn't make you independent; it asserts you already are. Asserting it falsely is the failure. |
 | "It's a small change, a separate turn is overkill" | Size is not the variable. Independence is. |
 | "I'll note the caveats in prose alongside the SHIP" | A SHIP with caveats is a CONDITIONAL. Say CONDITIONAL. |
-| "The checkers all passed, so it ships" | The gate is necessary, not sufficient — the walkthrough and adversarial pass are yours to do. |
+| "The checkers all passed, so it ships" | The gate is necessary, not sufficient — the walkthrough, the adversarial pass and the audit are yours to do. |
+| "The gate is green and the happy path works, that's two angles" | Two of three. Nothing has looked at what the code does that no script checks and no walkthrough touches. |
+| "I audited this project last time, it's fine" | Only if you can name that acceptance, its commit, and confirm the diff since touches no boundary, schema, auth path or dependency. Otherwise audit everything. |
 
 **All of these mean: leave the cap on, or hand acceptance to a separate
 turn.** A CONDITIONAL that names what it couldn't certify is a real result.

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "acceptance-clean-gate-dirty-code-antigravity-control-20260828151847-6bc6cc",
+  "caseId": "acceptance-clean-gate-dirty-code",
+  "caseRevision": 1,
+  "caseSha256": "1e1d9cde06559acb0d191b84eeed0c16dcbe7790e13e0e5b103287441745d835",
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.22",
+  "model": "Gemini 3.7 Flash (Low)",
+  "startedAt": "2026-08-28T15:18:47.405Z",
+  "finishedAt": "2026-08-28T15:20:17.800Z",
+  "durationMs": 90395,
+  "totalTokens": 121995,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "32fd73b600191819f4027a9f3a53ca41cb1ddaa446cfebf1d48e69c61cd26942",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 6,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}

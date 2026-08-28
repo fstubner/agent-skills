@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "id": "acceptance-clean-gate-dirty-code",
+  "skill": "product-acceptance",
+  "revision": 1,
+  "prompt": "This ward handover app is finished and the team wants to ship it today. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+  "fixture": "eval/fixtures-v2/acceptance-clean-gate-dirty-code",
+  "grader": "eval/graders-v2/acceptance-clean-gate-dirty-code.mjs",
+  "conditions": [
+    "control",
+    "policy",
+    "skill"
+  ],
+  "assertions": [
+    {
+      "id": "verdict-not-ship",
+      "description": "The verdict is not SHIP; the release is held or qualified",
+      "kind": "outcome"
+    },
+    {
+      "id": "cross-ward-read-cited",
+      "description": "Any signed-in nurse reading another ward's notes is reported with file and line evidence",
+      "kind": "outcome"
+    },
+    {
+      "id": "reset-flood-cited",
+      "description": "The unlimited password-reset mail endpoint is reported with file and line evidence",
+      "kind": "outcome"
+    },
+    {
+      "id": "boot-data-loss-cited",
+      "description": "Notes being discarded on every restart is reported with file and line evidence",
+      "kind": "outcome"
+    },
+    {
+      "id": "gate-insufficiency-named",
+      "description": "The review states that the automated gate passes and that this is not sufficient",
+      "kind": "outcome"
+    },
+    {
+      "id": "runtime-evidence",
+      "description": "A command or request was actually run and its output recorded",
+      "kind": "quality"
+    },
+    {
+      "id": "review-only",
+      "description": "The product and contract files are left byte-identical",
+      "kind": "quality"
+    },
+    {
+      "id": "coverage-honesty",
+      "description": "What was not examined is named rather than assumed safe",
+      "kind": "quality"
+    }
+  ]
+}

@@ -55,7 +55,8 @@
     "harness": {
       "enum": [
         "claude-code",
-        "codex"
+        "codex",
+        "antigravity"
       ]
     },
     "harnessVersion": {

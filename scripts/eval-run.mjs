@@ -11,7 +11,7 @@ const EXCLUDED_OUTPUTS = new Set(['.git', 'node_modules', '.agent-evidence', '.a
 
 function usage(message) {
   if (message) console.error(message);
-  console.error('usage: node scripts/eval-run.mjs --case <id> --condition control|policy|checker|skill --harness claude-code|codex --model <model> [--max-budget-usd <n>] [--timeout-ms <n>] [--prepare-only] [--codex-external-sandbox|--codex-container]');
+  console.error('usage: node scripts/eval-run.mjs --case <id> --condition control|policy|checker|skill --harness claude-code|codex|antigravity --model <model> [--max-budget-usd <n>] [--timeout-ms <n>] [--prepare-only] [--codex-external-sandbox|--codex-container]');
   process.exit(2);
 }
 
@@ -140,6 +140,47 @@ function runHarness(harness, model, prompt, workspace, maxBudgetUsd, timeoutMs, 
       harnessVersion: commandVersion('claude', ['--version']),
       totalTokens: tokenValues.length ? tokenValues.reduce((a, b) => a + b, 0) : null,
       costUsd: costValues.length ? Math.max(...costValues) : null,
+      costCredits: null,
+    };
+  }
+  // Antigravity CLI. Added as the second cohort because codex has been over
+  // its account usage limit for ten days and a contract that cannot be
+  // satisfied measures nothing. Gemini CLI is deprecated and is not an
+  // option; agy replaced it.
+  //
+  // Notes on the invocation, learned the hard way: `-p` takes its prompt
+  // attached (`-p='...'`) or it swallows the next flag as the prompt, and
+  // there is no --cd, so the workspace is the spawn cwd.
+  // --disable-slash-commands turns off skill expansion in print mode, which
+  // is what keeps a control arm from reaching an ambient installed skill.
+  if (harness === 'antigravity') {
+    const args = [
+      '--output-format', 'json',
+      '--disable-slash-commands',
+      '--dangerously-skip-permissions',
+      '--mode', 'accept-edits',
+      '--model', model,
+      `-p=${prompt}`,
+    ];
+    const invocation = resolveInvocation('agy', args);
+    const result = spawnSync(invocation.command, invocation.args, {
+      cwd: workspace, encoding: 'utf8', timeout: timeoutMs, maxBuffer: 50 * 1024 * 1024,
+    });
+    let parsed = null;
+    try { parsed = JSON.parse(result.stdout); } catch { /* raw output remains evidence */ }
+    // agy reports a failed turn as status ERROR with exit 0. Left as-is, a
+    // quota or model error would be graded as model failures — the exact
+    // shape that produced fabricated zeros on codex, so it is surfaced as a
+    // non-zero exit for the environment-failure path to catch.
+    if (parsed && parsed.status && parsed.status !== 'SUCCESS') {
+      result.status = result.status || 1;
+      result.stderr = `${result.stderr || ''}\nagy status ${parsed.status}: ${parsed.error || ''}`;
+    }
+    return {
+      result,
+      harnessVersion: `agy ${commandVersion('agy', ['--version'])}`,
+      totalTokens: typeof parsed?.usage?.total_tokens === 'number' ? parsed.usage.total_tokens : null,
+      costUsd: null,
       costCredits: null,
     };
   }
