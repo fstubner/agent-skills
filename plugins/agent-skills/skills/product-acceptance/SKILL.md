@@ -88,6 +88,28 @@ angles. Say so explicitly in the verdict: which findings came from the gate,
 which from the walkthrough, which from the audit, and what none of them
 covered.
 
+### Where intent comes from
+
+`A-intent-anchored` reads `PRODUCT.md`'s declared provenance. If it says
+`reconstructed-from-code`, or says nothing, the check is `not_evaluated` and
+the verdict caps at CONDITIONAL.
+
+That is not a defect in the work. It is a statement about what this gate can
+see. A contract reconstructed from the implementation records what the code
+does, not what it should do, and it agrees with the code every time because
+it was read off it. Verifying the code against it proves only that the
+reader read correctly.
+
+So when intent is not anchored, say plainly what the verdict covers:
+**consistent and well built, intent unverified.** The way to lift it is a
+sentence from the person who wanted the thing, not a better-written
+document.
+
+The same reasoning applies to `ux-walkthrough.md` and any other artifact an
+agent reconstructed: a reconstructed walkthrough is not evidence for the
+steps it was derived from. Reconcile it against `PRODUCT.md`'s Success and
+MVP, and surface divergence as a question rather than normalising it.
+
 ### Scoping the audit
 
 **Default: audit everything.** A full pass is the honest default and the

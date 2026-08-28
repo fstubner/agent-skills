@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "stale-pass-review-claude-code-control-20260828175559-415d6a",
+  "caseId": "stale-pass-review",
+  "caseRevision": 1,
+  "caseSha256": "1ee1c79dc51153495235901afb482c3279ba106dcb4a98d42e4b519e68649a8d",
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-28T17:55:59.103Z",
+  "finishedAt": "2026-08-28T17:56:33.688Z",
+  "durationMs": 34585,
+  "totalTokens": 231852,
+  "costUsd": 0.047979400000000005,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "96d5956af56e38cd03e4babf94c5715209ba71ab46ee5baf54451a432f2bb9cd",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

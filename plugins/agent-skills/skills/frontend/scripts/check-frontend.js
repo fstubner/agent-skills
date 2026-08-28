@@ -182,7 +182,54 @@ function run(root) {
       'file walk hit the safety cap; icon/framework scan may not cover the whole tree'));
   }
 
+  checks.push(walkthroughStepsObservable(root));
   return checks;
+}
+
+// Every numbered step must state something you could observe. "User clicks
+// Post" is an action with no assertion in it; "the note appears at the top of
+// the list" is a step a person or a script can check.
+//
+// This exists because the walkthrough gate could otherwise be satisfied by a
+// filled-in template: the required headings match the template's own
+// sections, so existence was effectively the whole check. It is also the
+// property that makes a step automatable later — a step with no observable
+// outcome cannot become an assertion in any form.
+const OBSERVABLE = /\b(appears?|shows?|displays?|visible|hidden|lands? on|returns?|renders?|contains?|reads?|says?|is (?:enabled|disabled|cleared|preserved|empty|focused|selected)|focus(?:es|ed)? (?:moves|in|on)|preserved|cleared|refetched|redirect(?:s|ed)?|becomes?|remains?|highlight(?:s|ed)?|error|empty state|placeholder|→|->)/i;
+
+function walkthroughStepsObservable(root) {
+  // Presence and required headings are product-acceptance's job
+  // (A-ux-walkthrough). Two gates reporting the same missing file — one as a
+  // failure, one as unevaluated — muddies the verdict and made an existing
+  // fixture CONDITIONAL for a document another check already covers. This
+  // check is only about the quality of steps that exist.
+  const file = path.join(root, 'ux-walkthrough.md');
+  if (!fs.existsSync(file)) {
+    return check('F-walkthrough-observable', 'pass',
+      'no ux-walkthrough.md; its presence is gated by product-acceptance, not here');
+  }
+  const text = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
+  const stepsMatch = /^#{1,6}\s+Steps\b[^\n]*$/im.exec(text);
+  if (!stepsMatch) {
+    return check('F-walkthrough-observable', 'pass',
+      'ux-walkthrough.md has no Steps section; that heading is gated by product-acceptance');
+  }
+  const after = text.slice(stepsMatch.index + stepsMatch[0].length);
+  const next = /^#{1,6}\s+\S/m.exec(after);
+  const body = next ? after.slice(0, next.index) : after;
+  const steps = body.split('\n')
+    .map((line) => line.trim())
+    .filter((line) => /^\d+[.)]\s+\S/.test(line))
+    .map((line) => line.replace(/<!--[\s\S]*?-->/g, '').trim());
+
+  if (steps.length === 0) {
+    return check('F-walkthrough-observable', 'fail', 'ux-walkthrough.md Steps section has no numbered steps');
+  }
+  const silent = steps.filter((step) => !OBSERVABLE.test(step));
+  return silent.length === 0
+    ? check('F-walkthrough-observable', 'pass', `${steps.length} step(s), each naming an observable outcome`)
+    : check('F-walkthrough-observable', 'fail',
+        `step(s) with no observable outcome: ${silent.map((s) => `"${s.slice(0, 60)}"`).join('; ')}`);
 }
 
 module.exports = { run, parseColor, contrastRatio, tokenSetsFrom };

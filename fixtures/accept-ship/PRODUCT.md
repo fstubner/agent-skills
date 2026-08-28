@@ -1,5 +1,7 @@
 # Product
 
+> Provenance: stated-by-human
+
 ## Purpose
 Track three team OKRs in one small tool.
 

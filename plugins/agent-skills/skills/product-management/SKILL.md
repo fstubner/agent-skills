@@ -22,6 +22,20 @@ checks these as real markdown headings, not keywords. Add `Anti-goals` and
 
 ## Rules
 
+0. **Declare where this came from.** The document opens with
+   `> Provenance: stated-by-human`, `derived-from-session`, or
+   `reconstructed-from-code`. Write what is true, not what reads best.
+
+   This decides what acceptance can claim. A contract reconstructed from an
+   implementation records what the code does, not what it should do, and it
+   agrees with the code every time because it was read off it — so
+   `A-intent-anchored` reports `not_evaluated` and the verdict caps at
+   CONDITIONAL. That is not a criticism of the work; it is the gate
+   declining to certify intent it cannot see.
+
+   If you reconstructed it, the cheapest way to lift the cap is one sentence
+   from whoever wanted the thing. Ask for it.
+
 1. **One sentence of purpose beats a vision paragraph.** If you can't state
    the job to be done in one sentence, keep interviewing.
 2. **Success must be observable.** At least one line in Success has the

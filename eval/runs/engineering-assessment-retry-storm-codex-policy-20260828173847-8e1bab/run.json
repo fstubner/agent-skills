@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-retry-storm-codex-policy-20260828173847-8e1bab",
+  "caseId": "engineering-assessment-retry-storm",
+  "caseRevision": 1,
+  "caseSha256": "99642640e83a5e7d427195b0112c617fbe9214cd8ae2fd5d7bdbe21eb5f4f071",
+  "stagedInputSha256": null,
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-28T17:38:47.514Z",
+  "finishedAt": "2026-08-28T17:39:45.236Z",
+  "durationMs": 57722,
+  "totalTokens": 86672,
+  "costUsd": null,
+  "costCredits": 0.69637,
+  "exitCode": 0,
+  "artifactSha256": "b3cd36b30535db8b894470d859c528c32fae75ca0b80047f031f867d53071815",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 6,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}

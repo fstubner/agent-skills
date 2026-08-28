@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "zero-count-export-acceptance-claude-code-skill-20260828180550-09a05c",
+  "caseId": "zero-count-export-acceptance",
+  "caseRevision": 1,
+  "caseSha256": "10ab03d0730169f625666fd510b8038aacd5d157e9667080703b5b322c77f32e",
+  "stagedInputSha256": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "exit-3221225794",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-28T18:05:50.771Z",
+  "finishedAt": "2026-08-28T18:06:45.050Z",
+  "durationMs": 54279,
+  "totalTokens": 315013,
+  "costUsd": 0.0718062,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "26c8a75578e2bd2b49aa1cd54c1e54ee97c48f55fc2a0ab1454831ba97f56e18",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 0,
+    "failed": 0,
+    "notEvaluated": 5,
+    "total": 5
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "caseId": "engineering-assessment-retry-storm",
+  "assertions": [
+    {
+      "id": "unbounded-retry-cited",
+      "status": "pass",
+      "evidence": "issueNamed=true; citedAt=app/worker.py:9=true"
+    },
+    {
+      "id": "swallowed-error-cited",
+      "status": "fail",
+      "evidence": "issueNamed=true; citedAt=app/worker.py:18=false"
+    },
+    {
+      "id": "double-charge-cited",
+      "status": "fail",
+      "evidence": "issueNamed=true; citedAt=app/worker.py:7=false"
+    },
+    {
+      "id": "doc-claims-tested",
+      "status": "pass",
+      "evidence": "docReferenced+contradicted=true"
+    },
+    {
+      "id": "false-green-detected",
+      "status": "fail",
+      "evidence": "namesTests=true; namesInadequate=false"
+    },
+    {
+      "id": "tooling-evidence",
+      "status": "pass",
+      "evidence": "harnessCouldParse=true; reportShowsCommandOutput=true"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "status": "pass",
+      "evidence": "severity=true; remedyTerms=8; confirmedSplit=true"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "pass",
+      "evidence": "gaps=true; namesAbsentSystems=true; noSafetyAssumption=true"
+    }
+  ]
+}

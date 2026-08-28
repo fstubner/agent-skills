@@ -1,0 +1,7 @@
+npm notice
+npm notice New major version of npm available! 10.9.0 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+Reading additional input from stdin...
+2026-08-28T17:43:36.097773Z ERROR codex_core::tools::router: error=exec_command failed for `/bin/bash -lc "rm -f app/__pycache__/settings.cpython-312.pyc app/__pycache__/worker.cpython-312.pyc tests/__pycache__/test_worker.cpython-312.pyc; rmdir app/__pycache__ tests/__pycache__ 2>/dev/null || true; rg --files -g '"'!**/.git/**'"' | sort"`: CreateProcess { message: "Rejected(\"`/bin/bash -lc \\\"rm -f app/__pycache__/settings.cpython-312.pyc app/__pycache__/worker.cpython-312.pyc tests/__pycache__/test_worker.cpython-312.pyc; rmdir app/__pycache__ tests/__pycache__ 2>/dev/null || true; rg --files -g '\\\"'!**/.git/**'\\\"' | sort\\\"` rejected: rm -f style commands are not permitted. Use a safer approach\")" }

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181428-8cf66e",
+  "caseId": "acceptance-clean-gate-dirty-code",
+  "caseRevision": 1,
+  "caseSha256": "1e1d9cde06559acb0d191b84eeed0c16dcbe7790e13e0e5b103287441745d835",
+  "stagedInputSha256": null,
+  "condition": "policy",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-28T18:14:28.826Z",
+  "finishedAt": "2026-08-28T18:15:37.754Z",
+  "durationMs": 68928,
+  "totalTokens": 452099,
+  "costUsd": 0.09344549999999999,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "1c9b76cb790e848510d1df8ff02577793be76f9f01e80b65276da40f1f7198ca",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 6,
+    "failed": 2,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}

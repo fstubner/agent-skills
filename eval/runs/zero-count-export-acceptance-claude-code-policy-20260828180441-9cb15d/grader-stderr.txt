@@ -1,0 +1,1 @@
+[36mℹ[0m Running directly (not sandboxed): node eval/graders-v2/zero-count-export-acceptance.mjs --root eval/runs/zero-count-export-acceptance-claude-code-policy-20260828180441-9cb15d/outputs

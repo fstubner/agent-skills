@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "caseId": "engineering-assessment-silent-drop",
+  "assertions": [
+    {
+      "id": "discarded-error-cited",
+      "status": "pass",
+      "evidence": "issueNamed=true; citedNear=cmd/importer/main.go:12"
+    },
+    {
+      "id": "silent-skip-cited",
+      "status": "fail",
+      "evidence": "issueNamed=true; citedNear=cmd/importer/main.go:18"
+    },
+    {
+      "id": "overwrite-on-duplicate-cited",
+      "status": "fail",
+      "evidence": "issueNamed=true; citedNear=internal/store/store.go:18"
+    },
+    {
+      "id": "missing-tests-cited",
+      "status": "fail",
+      "evidence": "workspaceHasTests=false; reportNamesAbsence=false"
+    },
+    {
+      "id": "doc-claims-tested",
+      "status": "pass",
+      "evidence": "docReferencedAndContradicted=true"
+    },
+    {
+      "id": "tooling-evidence",
+      "status": "fail",
+      "evidence": "goAvailable=true; reportShowsCommandOutput=false"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "status": "fail",
+      "evidence": "severity=false; remedyTerms=10; confirmedSplit=false"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "pass",
+      "evidence": "gaps=true; namesAbsentInputs=true; noSafetyAssumption=true"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-silent-drop-codex-control-20260828174531-ca9e08",
+  "caseId": "engineering-assessment-silent-drop",
+  "caseRevision": 1,
+  "caseSha256": "17942ac509684ac61b2b134c95da1cbb25added29b6f89e58d9a3b072531e76a",
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-28T17:45:31.845Z",
+  "finishedAt": "2026-08-28T17:46:28.605Z",
+  "durationMs": 56760,
+  "totalTokens": 98008,
+  "costUsd": null,
+  "costCredits": 0.68405,
+  "exitCode": 0,
+  "artifactSha256": "9fb6988a4bdc545c12cca2316e00cccdf09407f8edc01fe8f6a0f155666edbe8",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 4,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}

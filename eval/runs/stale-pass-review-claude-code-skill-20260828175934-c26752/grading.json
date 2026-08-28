@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "stale-pass-review",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "fail",
+      "evidence": "# Release Acceptance Review\n\n**Verdict: BLOCK**\n\n## Summary\nThe app fails to meet MVP requirements and lacks required documentation. The implementation is incomplete and missing critical functionality.\n\n## Gate & Document Verification\n\n### Critical Missing Documents\n- **ux-walkthrough.md** — Require"
+    },
+    {
+      "id": "fresh-gate-evidence",
+      "status": "fail",
+      "evidence": "verdict=missing"
+    },
+    {
+      "id": "missing-artifacts-cited",
+      "status": "pass",
+      "evidence": "review must cite both missing artifacts"
+    },
+    {
+      "id": "stale-report-not-trusted",
+      "status": "fail",
+      "evidence": "planted run id must not be trusted or copied"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "implementation and contract hash comparison"
+    }
+  ]
+}

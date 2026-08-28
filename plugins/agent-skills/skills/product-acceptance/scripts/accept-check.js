@@ -43,7 +43,28 @@ function checkDocumentArtifact(root, artifact, checks) {
   const missing = (artifact.requiredHeadings || []).filter((h) => !sectionHasContent(text, h));
   checks.push(missing.length > 0
     ? check(`A-${artifact.id}`, 'fail', `${artifact.file} missing heading(s): ${missing.join(', ')}`)
-    : check(`A-${artifact.id}`, 'pass', artifact.file));
+    : check(`A-${artifact.id}`, 'pass', `${artifact.file}${provenanceSuffix(text)}`));
+}
+
+// A document reconstructed from the implementation cannot be evidence about
+// the implementation — it records what the code does, not what it should do,
+// and it will agree with the code every time because it was read off it.
+//
+// Declared as a line in the document: `Provenance: stated-by-human` /
+// `derived-from-session` / `reconstructed-from-code`. Undeclared is treated
+// as unknown, not as human — assuming the safer value is how a reconstructed
+// contract would pass as intent.
+const PROVENANCE_RE = /^\s*(?:>\s*)?(?:\*\*)?provenance(?:\*\*)?\s*[:—-]\s*([a-z-]+)/im;
+const HUMAN_ANCHORED = new Set(['stated-by-human', 'human', 'authored-by-human']);
+
+function provenanceOf(text) {
+  const match = PROVENANCE_RE.exec(text);
+  return match ? match[1].toLowerCase() : 'undeclared';
+}
+
+function provenanceSuffix(text) {
+  const value = provenanceOf(text);
+  return value === 'undeclared' ? ' (provenance undeclared)' : ` (provenance: ${value})`;
 }
 
 // Compares the producer skill's install-marker version against this skill's
@@ -159,6 +180,22 @@ function run(root, args) {
     ? check('A-runtime', 'pass', 'independent acceptor asserted a successful runtime/build/test walkthrough')
     : check('A-runtime', 'not_evaluated',
         'runtime behavior was not independently verified; run the product and its critical path, then add --runtime-verified'));
+
+  // Intent has to come from somewhere outside the code. If PRODUCT.md was
+  // reconstructed from the implementation — or does not say — then the chain
+  // is a mirror: acceptance can still judge whether this is consistent and
+  // well built, but not whether it is the right product. That is a
+  // not_evaluated, which caps the verdict at CONDITIONAL, rather than a
+  // failure: nothing here is wrong, it is unverifiable from inside.
+  const contract = registry.artifacts.find((a) => a.id === 'product-contract');
+  const contractPath = contract ? path.join(root, contract.file) : null;
+  if (contractPath && fs.existsSync(contractPath)) {
+    const declared = provenanceOf(readText(contractPath));
+    checks.push(HUMAN_ANCHORED.has(declared)
+      ? check('A-intent-anchored', 'pass', `${contract.file} provenance: ${declared}`)
+      : check('A-intent-anchored', 'not_evaluated',
+          `${contract.file} provenance is "${declared}" — intent is not anchored outside the implementation, so this verdict covers consistency and build quality, not whether it is the right product`));
+  }
 
   for (const artifact of registry.artifacts) {
     if (!artifact.acceptanceGated) continue;

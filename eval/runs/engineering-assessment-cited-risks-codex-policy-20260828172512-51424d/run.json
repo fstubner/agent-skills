@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-cited-risks-codex-policy-20260828172512-51424d",
+  "caseId": "engineering-assessment-cited-risks",
+  "caseRevision": 1,
+  "caseSha256": "e659759028e721205af4e24823e2cf155b255a0840fb3b9516a6f5df18068dd1",
+  "stagedInputSha256": null,
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-28T17:25:12.127Z",
+  "finishedAt": "2026-08-28T17:26:41.211Z",
+  "durationMs": 89084,
+  "totalTokens": 103128,
+  "costUsd": null,
+  "costCredits": 0.92201,
+  "exitCode": 0,
+  "artifactSha256": "bd47f3eaf76c13e7ff7b7a1ccf56603fd9f8976dcf69c8ca1ce9a25338b069eb",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 5,
+    "notEvaluated": 0,
+    "total": 7
+  }
+}

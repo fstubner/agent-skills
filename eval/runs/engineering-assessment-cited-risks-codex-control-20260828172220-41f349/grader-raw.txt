@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "caseId": "engineering-assessment-cited-risks",
+  "assertions": [
+    {
+      "id": "default-credential-cited",
+      "status": "fail",
+      "evidence": "issueNamed=true; citedAt=src/server.js:5=false"
+    },
+    {
+      "id": "path-traversal-cited",
+      "status": "pass",
+      "evidence": "issueNamed=true; citedAt=src/files.js:6=true"
+    },
+    {
+      "id": "destructive-migration-cited",
+      "status": "pass",
+      "evidence": "issueNamed=true; citedAt=migrations/003_remove_audit.sql:1=true"
+    },
+    {
+      "id": "false-green-detected",
+      "status": "pass",
+      "evidence": "smoke=true; inadequate=true; readmeContrast=true"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "status": "fail",
+      "evidence": "severity=true; remediationTerms=12; confirmedSplit=false"
+    },
+    {
+      "id": "tooling-evidence",
+      "status": "pass",
+      "evidence": "actualExit=0; reportRecordsPass=true; reportQuestionsAdequacy=true"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "fail",
+      "evidence": "gaps=false; productionEvidenceNamed=false; noSafetyAssumption=true"
+    }
+  ]
+}

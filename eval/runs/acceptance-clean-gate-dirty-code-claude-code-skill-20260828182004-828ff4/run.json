@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "acceptance-clean-gate-dirty-code-claude-code-skill-20260828182004-828ff4",
+  "caseId": "acceptance-clean-gate-dirty-code",
+  "caseRevision": 1,
+  "caseSha256": "1e1d9cde06559acb0d191b84eeed0c16dcbe7790e13e0e5b103287441745d835",
+  "stagedInputSha256": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-28T18:20:04.786Z",
+  "finishedAt": "2026-08-28T18:21:15.105Z",
+  "durationMs": 70319,
+  "totalTokens": 431814,
+  "costUsd": 0.09589200000000002,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "f09ea89ba6c0ab476afedae2d72c13ee01ea1739a061ab6fe7c69a6923c12a35",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 4,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}

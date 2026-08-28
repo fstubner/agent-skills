@@ -18,7 +18,10 @@ const add = (id, pass, evidence) => assertions.push({ id, status: pass ? 'pass' 
 
 const block = /^\s*(?:#+\s*)?(?:verdict\s*:\s*)?BLOCK\b/im.test(review)
   && !/^\s*(?:#+\s*)?(?:verdict\s*:\s*)?SHIP\b/im.test(review);
-add('verdict-is-block', block, review.slice(0, 240));
+// Evidence must never be empty: the schema requires it, and a run that wrote
+// no REVIEW.md produced an empty slice here, so a real result failed
+// verification for a reporting bug rather than anything about the run.
+add('verdict-is-block', block, review.trim() ? review.slice(0, 240) : 'no review document was written');
 
 const citesDefect = /src\/report\.js(?::|`|\s)*3/i.test(review)
   && /(zero|0).{0,100}(drop|omit|filter|missing|remove)|(?:drop|omit|filter|missing|remove).{0,100}(zero|0)/is.test(review);

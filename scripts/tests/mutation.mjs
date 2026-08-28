@@ -161,3 +161,46 @@ import {
   expect('cookie: sameSite:"none" counts as missing',
     flagged("res.cookie('sid', s, { httpOnly: true, secure: true, sameSite: 'none' })"));
 }
+
+// ---------- Walkthrough steps must state something observable ----------
+// The three required headings match frontend/assets/ux-walkthrough.md's own
+// sections, so a filled-in template satisfied the gate by construction and
+// existence was effectively the whole check. A step with no observable
+// outcome also cannot become an assertion in any form, which is what would
+// block turning a walkthrough into a replayable script later.
+{
+  const project = (walkthrough) => {
+    const dir = fs.mkdtempSync(path.join(tmpBase, 'walkthrough-'));
+    fs.cpSync(path.join(root, 'fixtures', 'accept-ship'), dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'ux-walkthrough.md'), walkthrough);
+    return dir;
+  };
+  const statusOf = (walkthrough) => {
+    const r = runNode(path.join(root, ...FRONTEND.split('/')), ['--root', project(walkthrough), '--no-write']);
+    try {
+      return JSON.parse(r.stdout).checks.find((c) => c.id === 'F-walkthrough-observable')?.status;
+    } catch { return `unparseable: ${(r.stderr || '').slice(0, 80)}`; }
+  };
+  const wrap = (steps) => `# UX walkthrough\n\n## Primary job\nA nurse posts a note.\n\n## Steps\n\n${steps}\n\n## States\n- **Empty:** nothing yet\n`;
+
+  expect('walkthrough: an action with no outcome fails',
+    statusOf(wrap('1. User signs in.\n2. User clicks Post.')) === 'fail');
+  expect('walkthrough: a step naming what appears passes',
+    statusOf(wrap('1. Sign in; the ward list appears, most recent first.')) === 'pass');
+  expect('walkthrough: an arrow-style expectation passes',
+    statusOf(wrap('1. Click New -> the form opens with focus in the title field.')) === 'pass');
+  expect('walkthrough: one silent step among good ones still fails',
+    statusOf(wrap('1. Sign in; the list appears.\n2. User clicks Post.')) === 'fail');
+  expect('walkthrough: an unfilled template has no numbered steps and fails',
+    statusOf(wrap('1.')) === 'fail');
+  // Presence and required headings belong to product-acceptance
+  // (A-ux-walkthrough). This check only judges steps that exist, so it must
+  // not double-report their absence as a second, differently-worded failure.
+  expect('walkthrough: a missing Steps section defers to acceptance rather than reporting here',
+    statusOf('# UX walkthrough\n\n## Primary job\nx\n\n## States\n- **Empty:** x\n') === 'pass');
+
+  // The shipped template must satisfy the rule it teaches once filled in.
+  const template = read(path.join(root, 'frontend', 'assets', 'ux-walkthrough.md'));
+  expect('the walkthrough template shows an observable example step',
+    /appears|opens|shows|->|→/i.test(template), 'the template would teach steps its own gate rejects');
+}

@@ -1,0 +1,17 @@
+# Payments worker assessment
+
+Five highest-value findings, ordered by payment-loss and scale risk:
+
+1. **Retries can create duplicate charges (critical).** `charge()` retries the same POST without an idempotency key or a persisted attempt state. A timeout or dropped response can mean the processor charged the card even though the worker did not observe the response; a retry then charges again. Multiple replicas also have no claim/lock mechanism, despite the README claiming it is safe to run concurrently. Add a stable per-order idempotency key supported and enforced by the processor, persist charge state, and make order claiming/acknowledgement atomic before scaling.
+
+2. **Each attempt has no network timeout and the retry loop is unbounded (high).** `requests.post()` has no `timeout`, and every exception or non-200 response enters `while True`. A hung connection can pin a worker indefinitely; an outage can generate an uncontrolled request storm and prevent shutdown or batch progress. Use connect/read timeouts, bounded exponential backoff with jitter, a retry budget/dead-letter state, and cancellation/shutdown handling. Retry only errors that are safe and classified as transient.
+
+3. **Processor responses and failures are handled as success-independent black boxes (high).** Only status `200` returns; all other statuses—including permanent declines, authentication failures, malformed responses, and rate limits—are silently retried forever. Exceptions are swallowed, so operators get no attempt, status, or order context. Classify 2xx/decline/permanent/transient responses, validate the response schema, emit structured metrics/logs with sensitive data excluded, and persist an actionable terminal state.
+
+4. **There is no trust-boundary validation or authorization around charge inputs (high).** `charge()` directly indexes `id`, `amount_cents`, and `card_token`, with no checks for type, positive/ bounded amount, token shape, ownership, or order state. If `orders` is externally sourced, malformed or unauthorized data can cause crashes or charge the wrong amount/order. Validate and authorize orders before processing, enforce server-side amount/order invariants, and never log or persist raw card material.
+
+5. **The batch has no durable progress or safe delivery semantics (high).** `run()` processes up to an in-memory list serially and returns only after every charge succeeds; a process crash loses the in-memory result and there is no visible acknowledgement, checkpoint, transaction, or recovery policy. With `BATCH_SIZE = 500` and three replicas per region, scaling increases contention without preventing reprocessing. Use a durable queue or database-backed claim/lease with idempotent completion, bounded work per poll, and focused tests for crash-after-charge, duplicate delivery, timeout, decline, and concurrent workers.
+
+## Verification and remaining uncertainty
+
+Inspected `app/worker.py`, `app/settings.py`, `tests/test_worker.py`, `README.md`, `ops/deploy.md`, and `pyproject.toml`. The repository does not declare `requests` as a dependency, and the documented rollback path is absent. I could not execute the test/build checks in this environment because neither `pytest` nor `python` is installed; no application files were changed. Processor API idempotency behavior, order-source semantics, and deployment manifests were not present, so those assumptions should be confirmed before implementation.

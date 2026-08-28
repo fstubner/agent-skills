@@ -3,25 +3,68 @@
   "title": "Reproducible agent-skill evaluation case",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "id", "skill", "revision", "prompt", "fixture", "grader", "conditions", "assertions"],
+  "required": [
+    "schemaVersion",
+    "id",
+    "skill",
+    "revision",
+    "prompt",
+    "fixture",
+    "grader",
+    "conditions",
+    "assertions"
+  ],
   "properties": {
-    "schemaVersion": { "const": 2 },
-    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
-    "skill": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "schemaVersion": {
+      "const": 2
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "skill": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
     "skills": {
       "type": "array",
       "minItems": 2,
-      "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      }
     },
-    "revision": { "type": "integer", "minimum": 1 },
-    "prompt": { "type": "string", "minLength": 20 },
-    "fixture": { "type": "string", "minLength": 1 },
-    "grader": { "type": "string", "minLength": 1 },
-    "checker": { "type": "string", "minLength": 1 },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 20
+    },
+    "fixture": {
+      "type": "string",
+      "minLength": 1
+    },
+    "grader": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checker": {
+      "type": "string",
+      "minLength": 1
+    },
     "conditions": {
       "type": "array",
       "minItems": 2,
-      "items": { "enum": ["control", "policy", "checker", "skill"] }
+      "items": {
+        "enum": [
+          "control",
+          "policy",
+          "checker",
+          "skill"
+        ]
+      }
     },
     "assertions": {
       "type": "array",
@@ -29,13 +72,41 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "description", "kind"],
+        "required": [
+          "id",
+          "description",
+          "kind"
+        ],
         "properties": {
-          "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
-          "description": { "type": "string", "minLength": 5 },
-          "kind": { "enum": ["outcome", "quality", "cost", "invocation"] }
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 5
+          },
+          "kind": {
+            "enum": [
+              "outcome",
+              "quality",
+              "cost",
+              "invocation"
+            ]
+          }
         }
       }
+    },
+    "supersededBy": {
+      "type": "string",
+      "description": "Case id that replaces this one. A superseded case is excluded from the promotion requirement; retirement is declared rather than silent, so a case cannot be dropped because its numbers were unwelcome."
+    },
+    "supersededCaseSha256": {
+      "type": "string",
+      "description": "SHA-256 of this case as its existing runs were graded, recorded when the retirement marker was added so those bundles still verify."
+    },
+    "supersededReason": {
+      "type": "string"
     }
   }
 }

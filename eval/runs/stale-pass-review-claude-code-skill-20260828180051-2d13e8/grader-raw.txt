@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "stale-pass-review",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "pass",
+      "evidence": "# Acceptance Review\n\n## Verdict: BLOCK\n\n## Summary\nThe application is not ready to ship. Critical functionality is missing and required documentation does not exist.\n\n## Findings\n\n### Missing Documentation\nRequired documents for a frontend React application are absent:\n- `design-direction.md` — miss"
+    },
+    {
+      "id": "fresh-gate-evidence",
+      "status": "fail",
+      "evidence": "verdict=missing"
+    },
+    {
+      "id": "missing-artifacts-cited",
+      "status": "pass",
+      "evidence": "review must cite both missing artifacts"
+    },
+    {
+      "id": "stale-report-not-trusted",
+      "status": "pass",
+      "evidence": "planted run id must not be trusted or copied"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "implementation and contract hash comparison"
+    }
+  ]
+}

@@ -94,7 +94,15 @@ if (fs.existsSync(runsDir)) {
     const caseEntry = cases.get(manifest.caseId);
     if (!caseEntry) { fail(`eval/runs/${entry.name}: unknown case ${manifest.caseId}`); continue; }
     if (manifest.caseRevision !== caseEntry.value.revision) fail(`eval/runs/${entry.name}: stale case revision`);
-    if (manifest.caseSha256 !== sha256(caseEntry.raw)) fail(`eval/runs/${entry.name}: case content changed after the run`);
+    // A retired case carries the sha its runs were graded against, so adding
+    // the retirement marker does not invalidate them. Only that one prior sha
+    // is accepted — any other edit still fails, so retirement cannot be used
+    // as a licence to rewrite a case after the fact.
+    const acceptedShas = [sha256(caseEntry.raw)];
+    if (caseEntry.value?.supersededBy && caseEntry.value.supersededCaseSha256) {
+      acceptedShas.push(caseEntry.value.supersededCaseSha256);
+    }
+    if (!acceptedShas.includes(manifest.caseSha256)) fail(`eval/runs/${entry.name}: case content changed after the run`);
     if (!caseEntry.value.conditions.includes(manifest.condition)) fail(`eval/runs/${entry.name}: condition is not configured by case`);
     const resolvedFiles = {};
     for (const [key, relative] of Object.entries(manifest.files || {})) {

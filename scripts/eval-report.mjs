@@ -107,6 +107,12 @@ function summarizeCell(cellRuns) {
 const skills = {};
 for (const testCase of cases.values()) {
   skills[testCase.skill] ||= { configuredCaseIds: new Set(), experiments: [] };
+  // A superseded case is excluded from the requirement. Without this, a case
+  // replaced by a better one blocks promotion forever, so writing a case
+  // could only ever add obligations. Retirement is declared in the case file
+  // with a reason, which is what stops it becoming a way to drop a case whose
+  // numbers were unwelcome.
+  if (testCase.supersededBy) continue;
   skills[testCase.skill].configuredCaseIds.add(testCase.id);
 }
 // An experiment is one case/harness/model block at one staged-input version

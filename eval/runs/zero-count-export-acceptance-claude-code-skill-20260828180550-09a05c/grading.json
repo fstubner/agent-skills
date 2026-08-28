@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "zero-count-export-acceptance",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "zero-count-defect-found",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "gate-reconciled",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "review-only",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    }
+  ]
+}
