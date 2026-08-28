@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "job-ledger-ordering-assessment-claude-code-control-20260828190637-64322b",
+  "caseId": "job-ledger-ordering-assessment",
+  "caseRevision": 1,
+  "caseSha256": "ef5e8a0f57d1d828b1624a868023c064b992a86b9005f7557e42acfdd3122cb8",
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-28T19:06:37.782Z",
+  "finishedAt": "2026-08-28T19:07:28.863Z",
+  "durationMs": 51081,
+  "totalTokens": 264507,
+  "costUsd": 0.0604255,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "5f5eaaf6386edc578efb42df3bdbeb536f35835e73c8ea917bb1d1316e9b6f67",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}
