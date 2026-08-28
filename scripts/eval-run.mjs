@@ -5,6 +5,7 @@ import os from 'os';
 import path from 'path';
 import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { harnessDiagnostics } from './lib/harness-diagnostics.mjs';
 
 const suiteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const EXCLUDED_OUTPUTS = new Set(['.git', 'node_modules', '.agent-evidence', '.agent-input', '.codex', '.claude']);
@@ -324,7 +325,7 @@ try {
 let grading;
 try { grading = JSON.parse(gradingResult.stdout); }
 catch { grading = { schemaVersion: 2, caseId: testCase.id, assertions: testCase.assertions.map((a) => ({ id: a.id, status: 'not_evaluated', evidence: 'grader emitted invalid JSON' })) }; }
-const harnessEvidence = `${harnessRun.result.stdout || ''}\n${harnessRun.result.stderr || ''}\n${harnessRun.result.error?.message || ''}`;
+const harnessEvidence = harnessDiagnostics(harnessRun.result);
 // A run that never got a model turn is missing evidence, not a negative
 // result. Quota exhaustion was not in this list, so two runs that produced
 // no model output at all were graded as five model failures each — the
@@ -338,8 +339,12 @@ const environmentFailure = /not logged in|failed to authenticate|oauth session e
 // next unmatched phrase would silently become five model failures again.
 const noModelTurn = harnessRun.result.status !== 0
   && (harnessRun.totalTokens === null || harnessRun.totalTokens === 0);
+// Contamination is the opposite case: it lives in what the model DID — its
+// tool calls and commands — so this one reads the full transcript on
+// purpose, and must not be narrowed to harness diagnostics.
+const fullTranscript = `${harnessRun.result.stdout || ''}\n${harnessRun.result.stderr || ''}`;
 const ambientSkillAccess = ['control', 'policy'].includes(args.condition)
-  && /(?:[A-Z]:\\\\Users\\\\[^\s"']+\\\\(?:\.agents|\.codex)\\\\skills\\\\|\/(?:home|Users)\/[^\s"']+\/(?:\.agents|\.codex)\/skills\/)/i.exec(harnessEvidence);
+  && /(?:[A-Z]:\\\\Users\\\\[^\s"']+\\\\(?:\.agents|\.codex)\\\\skills\\\\|\/(?:home|Users)\/[^\s"']+\/(?:\.agents|\.codex)\/skills\/)/i.exec(fullTranscript);
 if (environmentFailure || noModelTurn || ambientSkillAccess) {
   let failure;
   if (environmentFailure) failure = `harness environment failure: ${environmentFailure[0]}`;

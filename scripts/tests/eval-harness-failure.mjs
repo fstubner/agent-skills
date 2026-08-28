@@ -1,7 +1,7 @@
 import { spawnSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { root, read, expect } from './harness.mjs';
+import { root, read, expect, tmpBase } from './harness.mjs';
 
 const node = process.execPath;
 
@@ -98,4 +98,72 @@ const node = process.execPath;
     JSON.stringify(experiments.map((e) => e.skillVersion)));
   expect('promotion decision still uses the full rubric, not the discriminating subset',
     !JSON.stringify(parsed?.skills?.['engineering-assessment']?.reasons || []).includes('discriminating'));
+}
+
+// ---------- Harness diagnostics never read the model's own words ----------
+// A codex run whose assessment recommended adding "rate limiting" was
+// matched by the rate-limit pattern, discarded as an environment failure,
+// and aborted a 54-run cohort. The matcher had been fed raw stdout, which
+// for a JSON-stream harness contains the assistant's text.
+{
+  const src = read(path.join(root, 'scripts', 'eval-run.mjs'));
+  expect('eval-run derives harness evidence from a diagnostics function',
+    /const harnessEvidence = harnessDiagnostics\(/.test(src),
+    'harnessEvidence is built from raw stdout again');
+  expect('contamination detection still reads the full transcript',
+    /ambientSkillAccess[\s\S]{0,200}fullTranscript/.test(src),
+    'narrowing the contamination check would let a control arm use an ambient skill unnoticed');
+
+  // Behavioural: the function must ignore assistant text and catch real
+  // harness errors, for each stream shape the runner supports.
+  const modelTalkingAboutLimits = [
+    '{"type":"item.completed","item":{"type":"agent_message","text":"Add rate limiting and quota checks to /api/reset"}}',
+    '{"type":"turn.completed","usage":{"input_tokens":10,"output_tokens":2}}',
+  ].join('\n');
+  const codexQuota = '{"type":"error","message":"You\'ve hit your usage limit. Try again at 4:47 PM."}';
+  // A quota failure as agy reports it: status ERROR with the reason in the
+  // envelope. A non-quota ERROR (bad model name) is caught instead by the
+  // structural backstop, since the runner turns any non-SUCCESS status into a
+  // non-zero exit with no tokens billed.
+  const agyError = '{"conversation_id":"x","status":"ERROR","response":"","error":"usage limit reached for this account"}';
+  const agyBadModel = '{"conversation_id":"x","status":"ERROR","response":"","error":"invalid model selection"}';
+  const claudeError = '{"is_error":true,"result":"Failed to authenticate","total_cost_usd":0}';
+
+  const probe = (stdout, stderr = '') => {
+    const r = spawnSync(node, ['-e', `
+      const { spawnSync } = require('child_process');
+      process.stdout.write('');
+    `], { encoding: 'utf8' });
+    return { r, stdout, stderr };
+  };
+  void probe;
+
+  // Exercise the real runner: a prepared workspace is not needed because the
+  // matcher is pure text, so drive it through a tiny inline harness stub.
+  const stub = path.join(tmpBase, 'diag-stub.mjs');
+  fs.writeFileSync(stub, `
+    const source = ${JSON.stringify({ modelTalkingAboutLimits, codexQuota, agyError, agyBadModel, claudeError })};
+    ${/const harnessEvidence = harnessDiagnostics\(/.test(src) ? '' : ''}
+    ${src.slice(src.indexOf('function harnessDiagnostics'), src.indexOf('const harnessEvidence = harnessDiagnostics'))}
+    const pattern = ${src.match(/const environmentFailure = (\/.*?\/i)\.exec/s)?.[1] || '/never/'};
+    const out = {};
+    for (const [name, stdout] of Object.entries(source)) {
+      out[name] = pattern.test(harnessDiagnostics({ stdout, stderr: '' }));
+      out[name + '_surfaced'] = /ERROR|error|limit|authenticate/i.test(harnessDiagnostics({ stdout, stderr: '' }));
+    }
+    console.log(JSON.stringify(out));
+  `);
+  const run = spawnSync(node, [stub], { encoding: 'utf8' });
+  let verdicts = null;
+  try { verdicts = JSON.parse(run.stdout); } catch { /* asserted below */ }
+  expect('diagnostics probe runs', verdicts !== null, run.stderr.slice(0, 200));
+  if (verdicts) {
+    expect('a model discussing rate limiting is NOT an environment failure',
+      verdicts.modelTalkingAboutLimits === false, JSON.stringify(verdicts));
+    expect('a codex usage-limit error IS an environment failure', verdicts.codexQuota === true);
+    expect('an agy quota ERROR IS an environment failure', verdicts.agyError === true);
+    expect('any agy ERROR envelope at least reaches the matcher as diagnostics',
+      verdicts.agyBadModel_surfaced === true, JSON.stringify(verdicts));
+    expect('a claude is_error envelope IS an environment failure', verdicts.claudeError === true);
+  }
 }
