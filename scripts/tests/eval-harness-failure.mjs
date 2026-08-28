@@ -1,7 +1,7 @@
 import { spawnSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { root, read, expect, tmpBase } from './harness.mjs';
+import { root, read, expect, tmpBase, pathToFileUrl } from './harness.mjs';
 
 const node = process.execPath;
 
@@ -129,35 +129,19 @@ const node = process.execPath;
   const agyBadModel = '{"conversation_id":"x","status":"ERROR","response":"","error":"invalid model selection"}';
   const claudeError = '{"is_error":true,"result":"Failed to authenticate","total_cost_usd":0}';
 
-  const probe = (stdout, stderr = '') => {
-    const r = spawnSync(node, ['-e', `
-      const { spawnSync } = require('child_process');
-      process.stdout.write('');
-    `], { encoding: 'utf8' });
-    return { r, stdout, stderr };
-  };
-  void probe;
-
-  // Exercise the real runner: a prepared workspace is not needed because the
-  // matcher is pure text, so drive it through a tiny inline harness stub.
-  const stub = path.join(tmpBase, 'diag-stub.mjs');
-  fs.writeFileSync(stub, `
-    const source = ${JSON.stringify({ modelTalkingAboutLimits, codexQuota, agyError, agyBadModel, claudeError })};
-    ${/const harnessEvidence = harnessDiagnostics\(/.test(src) ? '' : ''}
-    ${src.slice(src.indexOf('function harnessDiagnostics'), src.indexOf('const harnessEvidence = harnessDiagnostics'))}
-    const pattern = ${src.match(/const environmentFailure = (\/.*?\/i)\.exec/s)?.[1] || '/never/'};
-    const out = {};
-    for (const [name, stdout] of Object.entries(source)) {
-      out[name] = pattern.test(harnessDiagnostics({ stdout, stderr: '' }));
-      out[name + '_surfaced'] = /ERROR|error|limit|authenticate/i.test(harnessDiagnostics({ stdout, stderr: '' }));
-    }
-    console.log(JSON.stringify(out));
-  `);
-  const run = spawnSync(node, [stub], { encoding: 'utf8' });
-  let verdicts = null;
-  try { verdicts = JSON.parse(run.stdout); } catch { /* asserted below */ }
-  expect('diagnostics probe runs', verdicts !== null, run.stderr.slice(0, 200));
-  if (verdicts) {
+  // Import the function rather than slicing it out of the runner's source:
+  // the first version of this test string-matched eval-run.mjs, and moving
+  // harnessDiagnostics into scripts/lib/ silently emptied the slice.
+  const { harnessDiagnostics } = await import(
+    pathToFileUrl(path.join(root, 'scripts', 'lib', 'harness-diagnostics.mjs')));
+  const pattern = new RegExp(src.match(/const environmentFailure = \/(.*?)\/i\.exec/s)[1], 'i');
+  const verdicts = {};
+  for (const [name, stdout] of Object.entries({ modelTalkingAboutLimits, codexQuota, agyError, agyBadModel, claudeError })) {
+    verdicts[name] = pattern.test(harnessDiagnostics({ stdout, stderr: '' }));
+    verdicts[`${name}_surfaced`] = /ERROR|error|limit|authenticate/i.test(harnessDiagnostics({ stdout, stderr: '' }));
+  }
+  expect('diagnostics probe runs', Object.keys(verdicts).length > 0);
+  {
     expect('a model discussing rate limiting is NOT an environment failure',
       verdicts.modelTalkingAboutLimits === false, JSON.stringify(verdicts));
     expect('a codex usage-limit error IS an environment failure', verdicts.codexQuota === true);
