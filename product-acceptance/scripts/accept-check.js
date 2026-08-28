@@ -167,6 +167,66 @@ function checkReportArtifact(root, artifact, checks) {
   }
 }
 
+// A-runtime is an assertion: the acceptor says they ran the thing. This is
+// the half of that claim a machine can hold. If the walkthrough carries a
+// replay block, the generated spec's run log is read as evidence — but only
+// when it demonstrably belongs to the CURRENT walkthrough.
+//
+// Freshness is the whole point. A log from before the walkthrough changed is
+// exactly the stale-JSON-on-disk this gate refuses everywhere else, so the
+// spec is regenerated here and its hash compared with the one the log
+// recorded. No match, no evidence.
+function walkthroughReplayCheck(root) {
+  const walkthrough = path.join(root, 'ux-walkthrough.md');
+  if (!fs.existsSync(walkthrough)) {
+    return check('A-runtime-replay', 'not_evaluated', 'no ux-walkthrough.md');
+  }
+  const generator = path.join(__dirname, 'gen-walkthrough-spec.mjs');
+  const generated = spawnSync(process.execPath, [generator, '--root', root, '--print-hash'], { encoding: 'utf8' });
+  // No replay block is not a deficiency: some walks are entirely judgment,
+  // and plenty of products have no browser to drive. Opting in is what
+  // creates the obligation — declare steps automatable and the gate will ask
+  // for the log. Making absence cap every verdict would turn CONDITIONAL
+  // into the permanent default, which is how a signal stops being read.
+  if (generated.status === 3) {
+    return check('A-runtime-replay', 'pass',
+      'ux-walkthrough.md declares no replay block; A-runtime carries the runtime claim');
+  }
+  if (generated.status !== 0) {
+    return check('A-runtime-replay', 'not_evaluated',
+      `could not generate the replay spec: ${(generated.stderr || '').trim().slice(0, 120)}`);
+  }
+  const expectedHash = (generated.stdout || '').trim();
+
+  const logPath = path.join(root, registry.evidenceDir, 'walkthrough-run.json');
+  if (!fs.existsSync(logPath)) {
+    return check('A-runtime-replay', 'not_evaluated',
+      'no .agent-evidence/walkthrough-run.json — generate the spec, run it, and save the report to make the walk evidence rather than an assertion');
+  }
+  let log;
+  try {
+    log = JSON.parse(fs.readFileSync(logPath, 'utf8'));
+  } catch {
+    return check('A-runtime-replay', 'fail', 'walkthrough-run.json is not readable JSON');
+  }
+  if (log.specSha256 !== expectedHash) {
+    return check('A-runtime-replay', 'not_evaluated',
+      `walkthrough-run.json was produced from a different walkthrough (log ${String(log.specSha256).slice(0, 12)}, current ${expectedHash.slice(0, 12)}) — re-run it`);
+  }
+
+  // Playwright's JSON reporter shape, kept to the two fields that matter.
+  const stats = log.stats || {};
+  const failed = Number(stats.unexpected ?? stats.failed ?? 0);
+  const passed = Number(stats.expected ?? stats.passed ?? 0);
+  if (failed > 0) {
+    return check('A-runtime-replay', 'fail', `${failed} replayed walkthrough step(s) failed against the running product`);
+  }
+  if (passed === 0) {
+    return check('A-runtime-replay', 'not_evaluated', 'the replay log records no passing steps');
+  }
+  return check('A-runtime-replay', 'pass', `${passed} walkthrough step(s) replayed against the running product`);
+}
+
 function run(root, args) {
   const cls = classify(root, { evidenceDir: registry.evidenceDir });
   const checks = [];
@@ -186,6 +246,8 @@ function run(root, args) {
     ? check('A-runtime', 'pass', 'independent acceptor asserted a successful runtime/build/test walkthrough')
     : check('A-runtime', 'not_evaluated',
         'runtime behavior was not independently verified; run the product and its critical path, then add --runtime-verified'));
+
+  checks.push(walkthroughReplayCheck(root));
 
   // Intent has to come from somewhere outside the code. If PRODUCT.md was
   // reconstructed from the implementation — or does not say — then the chain

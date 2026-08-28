@@ -159,3 +159,31 @@ If you catch yourself thinking any of these, you are the builder:
 **All of these mean: leave the cap on, or hand acceptance to a separate
 turn.** A CONDITIONAL that names what it couldn't certify is a real result.
 A SHIP you weren't positioned to give is not.
+
+## Replaying the walkthrough
+
+`A-runtime` is your word that you ran the thing. `A-runtime-replay` is the
+part of that claim a machine can hold.
+
+If `ux-walkthrough.md` carries a ```walkthrough``` block, generate the spec
+and run it:
+
+```bash
+node <this-skill>/scripts/gen-walkthrough-spec.mjs --root .
+npx playwright test walkthrough.spec.js --reporter=json > .agent-evidence/walkthrough-run.json
+```
+
+The gate regenerates the spec and compares its hash against the one the log
+records. A log produced before the walkthrough changed reads as
+`not_evaluated`, not as evidence — the same refusal this gate applies to
+every other report it finds on disk.
+
+Declaring a replay block is opting in. A walkthrough without one is not
+deficient: some walks are entirely judgment and some products have no
+browser to drive, so the check passes and `A-runtime` carries the claim
+alone. What you cannot do is declare steps automatable and then not run
+them.
+
+**This does not run your product.** The generator writes a spec; you run it.
+Driving a browser against the thing under review is executing the code being
+audited, which this suite does nowhere.

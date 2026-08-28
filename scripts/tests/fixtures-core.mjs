@@ -336,3 +336,41 @@ assertFixture('operability-block (empty runbook sections, no health route, conso
    ['O-section-alerts', 'pass']]);
 assertFixture('backend-no-server: nothing to operate, gate not required',
   'backend-no-server', OPERABILITY, [], 'SHIP', [['O-scope', 'pass']]);
+
+// A-runtime-replay: the half of "I ran it" a machine can hold. replay-ship
+// and replay-stale are byte-identical apart from the hash recorded in the
+// run log, so the difference in verdict can only come from freshness.
+assertFixture('replay-ship (walkthrough run log matches the current walkthrough)',
+  'replay-ship', ACCEPT, ['--acceptor-context', 'separate', '--runtime-verified'], 'SHIP',
+  [['A-runtime-replay', 'pass']]);
+assertFixture('replay-stale (log came from a different walkthrough)',
+  'replay-stale', ACCEPT, ['--acceptor-context', 'separate', '--runtime-verified'], 'CONDITIONAL',
+  [['A-runtime-replay', 'not_evaluated']]);
+// Opting in is what creates the obligation: a walkthrough with no replay
+// block must not be capped for declining to automate a judgment walk.
+assertFixture('accept-ship declares no replay block and still ships',
+  'accept-ship', ACCEPT, ['--acceptor-context', 'separate', '--runtime-verified'], 'SHIP',
+  [['A-runtime-replay', 'pass']]);
+
+// The generator is deterministic and refuses what it cannot honestly emit.
+{
+  const gen = path.join(root, 'product-acceptance', 'scripts', 'gen-walkthrough-spec.mjs');
+  const hashOf = (fixture) => runNode(gen, ['--root', path.join(root, 'fixtures', fixture), '--print-hash']);
+  const first = hashOf('replay-ship');
+  const second = hashOf('replay-ship');
+  expect('walkthrough spec generation is deterministic',
+    first.status === 0 && first.stdout.trim() === second.stdout.trim(), first.stdout);
+  expect('a walkthrough with no replay block exits 3 rather than emitting an empty spec',
+    hashOf('accept-ship').status === 3, `exit ${hashOf('accept-ship').status}`);
+
+  const emitted = runNode(gen, ['--root', path.join(root, 'fixtures', 'replay-ship'),
+    '--out', path.join(tmpBase, 'walkthrough.spec.js')]);
+  const spec = read(path.join(tmpBase, 'walkthrough.spec.js'));
+  expect('generated spec drives the browser from the declared steps',
+    emitted.status === 0 && spec.includes('page.goto("/")') && spec.includes('page.fill("#staffId", "nurse-a")'),
+    spec.slice(0, 200));
+  expect('generated spec asserts the declared expectations',
+    spec.includes('getByText("No notes for this shift yet")'), spec.slice(0, 300));
+  expect('generated spec records its own hash so a stale run log is detectable',
+    /specSha256: [0-9a-f]{64}/.test(spec));
+}

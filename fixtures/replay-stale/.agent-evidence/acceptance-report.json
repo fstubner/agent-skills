@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "skill": "product-acceptance",
+  "generatedAt": "2026-08-13T14:09:44.789Z",
+  "root": "H:\\projects\\private\\needs-work\\agent-skills\\fixtures\\accept-ship",
+  "verdict": "SHIP",
+  "checks": [
+    {
+      "id": "A-independent",
+      "status": "pass",
+      "detail": "acceptance ran in a separate context from the build"
+    },
+    {
+      "id": "A-runtime",
+      "status": "pass",
+      "detail": "independent acceptor asserted a successful runtime/build/test walkthrough"
+    },
+    {
+      "id": "A-product-contract",
+      "status": "pass",
+      "detail": "PRODUCT.md"
+    },
+    {
+      "id": "A-architecture-doc",
+      "status": "pass",
+      "detail": "ARCHITECTURE.md"
+    },
+    {
+      "id": "A-design-direction",
+      "status": "pass",
+      "detail": "design-direction.md"
+    },
+    {
+      "id": "A-ux-walkthrough",
+      "status": "pass",
+      "detail": "ux-walkthrough.md"
+    },
+    {
+      "id": "D-systems-architecture",
+      "status": "pass",
+      "detail": "systems-architecture verdict SHIP"
+    },
+    {
+      "id": "D-frontend",
+      "status": "pass",
+      "detail": "frontend verdict SHIP"
+    },
+    {
+      "id": "D-backend-engineering",
+      "status": "pass",
+      "detail": "backend-engineering verdict SHIP"
+    },
+    {
+      "id": "D-release-engineering",
+      "status": "pass",
+      "detail": "release-engineering verdict SHIP"
+    }
+  ]
+}

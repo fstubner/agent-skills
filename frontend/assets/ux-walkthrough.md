@@ -23,3 +23,24 @@
 - **Empty:**
 - **Error:**
 - **Success:**
+
+## Replay
+
+<!-- Optional, and an opt-in: the subset of the steps above that a machine can
+     repeat. product-acceptance generates a Playwright spec from this block,
+     and once it exists the gate asks for the run log — so declare only steps
+     you mean to keep passing. Judgment steps stay prose above; they are the
+     acceptor's, not a script's.
+
+     Generate:  node <product-acceptance>/scripts/gen-walkthrough-spec.mjs --root .
+     Run:       npx playwright test walkthrough.spec.js --reporter=json > .agent-evidence/walkthrough-run.json
+
+```walkthrough
+- goto: /
+  expect: text "Sign in"
+- fill: #email = a@example.com
+  click: #submit
+  expect: text "Check your inbox"
+```
+-->
+

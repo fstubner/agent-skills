@@ -24,6 +24,11 @@ Thumbs.db
 # gateVerdict=missing in CI, green locally.
 !eval/grader-fixtures-v2/**/.agent-evidence/
 !eval/grader-fixtures-v2/**/.agent-evidence/**
+# And under fixtures/replay-*, where a recorded walkthrough run IS the thing
+# under test — the fixture exists to prove a fresh log is read and a stale one
+# is refused, which needs both logs committed.
+!fixtures/replay-*/.agent-evidence/
+!fixtures/replay-*/.agent-evidence/**
 # Local skill-invocation telemetry (scripts/log-skill-invocation.mjs). Per
 # project, never committed — it records what you did, not what the suite is.
 .agent-skills-telemetry/
