@@ -4,7 +4,7 @@ import os from 'os';
 import path from 'path';
 import {
   root, registry, read, expect, runNode, walk, pathToFileUrl,
-  tmpBase, runFixture, assertFixture, ARCH, BACKEND, FRONTEND, ACCEPT, SMOKE,
+  tmpBase, runFixture, assertFixture, ARCH, BACKEND, FRONTEND, ACCEPT, SMOKE, OPERABILITY,
 } from './harness.mjs';
 
 
@@ -320,3 +320,19 @@ assertFixture('arch-block-template-comments (bodies contain only template commen
       c ? c.detail : 'check missing');
   }
 }
+
+// check-operability: the operate half of the lifecycle. accept-ship is the
+// exemplary project and must satisfy it; operability-block is the same shape
+// with the four things that make a service unrunnable by a stranger — empty
+// runbook sections, no health route, prose-only logging.
+assertFixture('accept-ship is operable (OPERATIONS.md, health route, structured logs)',
+  'accept-ship', OPERABILITY, [], 'SHIP',
+  [['O-operations-doc', 'pass'], ['O-health-endpoint', 'pass'], ['O-structured-logs', 'pass'],
+   ['O-section-signals', 'pass'], ['O-section-recovery', 'pass']]);
+assertFixture('operability-block (empty runbook sections, no health route, console-only logs)',
+  'operability-block', OPERABILITY, [], 'BLOCK',
+  [['O-section-signals', 'fail'], ['O-section-failure-modes', 'fail'], ['O-section-recovery', 'fail'],
+   ['O-health-endpoint', 'fail'], ['O-structured-logs', 'fail'],
+   ['O-section-alerts', 'pass']]);
+assertFixture('backend-no-server: nothing to operate, gate not required',
+  'backend-no-server', OPERABILITY, [], 'SHIP', [['O-scope', 'pass']]);

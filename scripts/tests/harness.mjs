@@ -105,3 +105,4 @@ export const BACKEND = 'backend-engineering/scripts/check-backend.js';
 export const FRONTEND = 'frontend/scripts/check-frontend.js';
 export const ACCEPT = 'product-acceptance/scripts/accept-check.js';
 export const SMOKE = 'release-engineering/scripts/check-smoke.js';
+export const OPERABILITY = 'release-engineering/scripts/check-operability.js';

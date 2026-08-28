@@ -187,7 +187,9 @@ function run(root, opts = {}) {
 module.exports = { run, localPathTokens };
 
 if (require.main === module) {
-  const artifact = registry.artifacts.find((a) => a.producer === 'release-engineering' && a.kind === 'report');
+    // Selected by id: release-engineering now produces two reports, so a
+  // by-producer lookup would pick whichever came first in the registry.
+  const artifact = registry.artifacts.find((a) => a.id === 'smoke-report');
   const argv = process.argv.slice(2);
   const wantsRun = argv.includes('--run');
   runCli({

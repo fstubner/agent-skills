@@ -100,3 +100,41 @@ not a replacement for it: scripts resolving is not the product working, and
    rollout, or page someone — one of the three, named, before the deploy
    runs. "We'll look at the dashboard" decides nothing at 3am, which is
    when the reading arrives.
+
+8. **A running service must be operable by someone who did not build it.**
+   Rule 7 says a deploy is not done until its health is observed; this is
+   what makes that observation possible at all. Write `OPERATIONS.md` and
+   verify it:
+
+   ```bash
+   node <this-skill>/scripts/check-operability.js --root . --strict
+   ```
+
+   It requires four sections, each of which fails when empty:
+
+   - **Signals** — what the service emits that tells you it is healthy, and
+     where that lands. Structured records with a correlation id, not
+     `console.log`. If a request cannot be traced end to end, an incident
+     is guesswork.
+   - **Alerts** — what pages a human, at what threshold, and what the first
+     response is. An alert nobody acts on trains people to ignore alerts;
+     "we watch the dashboard" is not an alert.
+   - **Failure modes** — the ways this specific system is known to break,
+     each with the symptom you would see first. Generic advice belongs in a
+     book, not a runbook.
+   - **Recovery** — rollback and restart procedures, and what data is at
+     risk in each. Rule 4 requires a rollback path exists; this is where it
+     is written down for the person using it at 3am.
+
+   The checker also looks for the two things a repo can actually show: a
+   health or readiness endpoint, and logging that carries structure rather
+   than bare prose. It reports what it could not determine rather than
+   assuming; a project with no server has nothing to operate and is scoped
+   out.
+
+**Why this is the half the suite was missing.** Everything above rule 7
+covers getting code into production. Nothing covered it *being* in
+production — no observability, no alerting, no incident path — so the
+lifecycle this suite reinforced ended at "shipped" rather than "running
+well". That is half a software lifecycle, and the half where the pager
+lives.

@@ -95,7 +95,13 @@ function producerVersionMismatch(producerScriptAbsPath) {
 }
 
 function checkReportArtifact(root, artifact, checks) {
-  const id = `D-${artifact.producer}`;
+  // Keyed by artifact when a producer gates more than one report.
+  // release-engineering now gates both smoke and operability, and a
+  // producer-keyed id emitted "D-release-engineering" twice — two checks
+  // with one id, where any consumer keyed on check id sees only the last.
+  const sameProducer = registry.artifacts.filter(
+    (a) => a.producer === artifact.producer && a.kind === 'report' && a.acceptanceGated);
+  const id = sameProducer.length > 1 ? `D-${artifact.id}` : `D-${artifact.producer}`;
   const script = path.join(core.suiteRoot, ...artifact.producerScript.split('/'));
   if (!fs.existsSync(script)) {
     checks.push(check(id, 'not_evaluated',

@@ -246,6 +246,20 @@
       "note": "Static only: verifies that declared npm scripts and entry points point at paths that exist and that a real test command is declared. Does NOT execute target-project code unless --run is passed, which acceptance never does. This is the deterministic floor under A-runtime, not a replacement for it."
     },
     {
+      "id": "operability-report",
+      "kind": "report",
+      "file": ".agent-evidence/operability-report.json",
+      "producer": "release-engineering",
+      "producerScript": "release-engineering/scripts/check-operability.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [
+        "product-acceptance"
+      ],
+      "acceptanceGated": true,
+      "requiredWhen": "server_present",
+      "note": "Whether a running service can be operated by someone who did not build it: OPERATIONS.md with Signals, Alerts, Failure modes and Recovery, plus the two properties a checkout can show — a health endpoint and structured logging. Whether the alerts fire or the runbook is correct needs a running system and is reported as not_evaluated rather than assumed."
+    },
+    {
       "id": "acceptance-report",
       "kind": "report",
       "file": ".agent-evidence/acceptance-report.json",

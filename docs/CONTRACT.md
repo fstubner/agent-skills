@@ -80,6 +80,7 @@ documentation of who else reads the artifact, not a gating signal).
 | `.agent-evidence/backend-report.json` | report | backend-engineering | product-acceptance | yes | server_present | `backend-engineering/scripts/check-backend.js` | `core/schemas/check-report.schema.json` |
 | `.agent-evidence/cochange-report.json` | report | code-smells | — | no | never | `code-smells/scripts/check-cochange.js` | `core/schemas/check-report.schema.json` |
 | `.agent-evidence/smoke-report.json` | report | release-engineering | product-acceptance | yes | always | `release-engineering/scripts/check-smoke.js` | `core/schemas/check-report.schema.json` |
+| `.agent-evidence/operability-report.json` | report | release-engineering | product-acceptance | yes | server_present | `release-engineering/scripts/check-operability.js` | `core/schemas/check-report.schema.json` |
 | `.agent-evidence/acceptance-report.json` | report | product-acceptance | — | no | always | `product-acceptance/scripts/accept-check.js` | `core/schemas/check-report.schema.json` |
 | — (CLI-invoked, no fixed path) | report | ai-prose-slop | — | no | never | `ai-prose-slop/scripts/check-prose.js` | `core/schemas/check-report.schema.json` |
 | — (CLI-invoked, no fixed path) | report | code-organization | — | no | never | `code-organization/scripts/check-organization.js` | `core/schemas/check-report.schema.json` |
