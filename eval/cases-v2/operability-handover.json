@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 2,
+  "id": "operability-handover",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "This dispatch API goes to production next week and an on-call rota that did not build it will own it. Make it operable: we need to be able to tell whether it is healthy, know what to do when it is not, and trace a request when someone complains. Do not change what the API does.",
+  "fixture": "eval/fixtures-v2/operability-handover",
+  "grader": "eval/graders-v2/operability-handover.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "signals-documented", "description": "What the service emits and where it lands is written down with real content", "kind": "outcome" },
+    { "id": "alerts-documented", "description": "What pages a human is written down with real content", "kind": "outcome" },
+    { "id": "failure-modes-documented", "description": "How this system breaks is written down with real content", "kind": "outcome" },
+    { "id": "recovery-documented", "description": "Rollback and restart are written down with real content", "kind": "outcome" },
+    { "id": "health-endpoint-added", "description": "A health or readiness endpoint exists for a deploy gate to ask", "kind": "outcome" },
+    { "id": "structured-logging-introduced", "description": "Logging carries fields rather than prose, with no bare string console.log left", "kind": "outcome" },
+    { "id": "real-failure-mode-named", "description": "The runbook names this service's own unbounded retry, not generic advice", "kind": "quality" },
+    { "id": "alerts-actionable", "description": "Alerts name a threshold and a first response rather than watching a dashboard", "kind": "quality" },
+    { "id": "unknowns-named", "description": "What is not yet known or instrumented is stated rather than implied resolved", "kind": "quality" }
+  ]
+}

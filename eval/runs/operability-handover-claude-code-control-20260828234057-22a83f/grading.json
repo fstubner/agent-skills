@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 2,
+  "caseId": "operability-handover",
+  "assertions": [
+    {
+      "id": "signals-documented",
+      "status": "fail",
+      "evidence": "section \"Signals\" has 0 chars of content"
+    },
+    {
+      "id": "alerts-documented",
+      "status": "fail",
+      "evidence": "section \"Alerts\" has 0 chars of content"
+    },
+    {
+      "id": "failure-modes-documented",
+      "status": "fail",
+      "evidence": "section \"Failure modes\" has 0 chars of content"
+    },
+    {
+      "id": "recovery-documented",
+      "status": "fail",
+      "evidence": "section \"Recovery\" has 0 chars of content"
+    },
+    {
+      "id": "health-endpoint-added",
+      "status": "pass",
+      "evidence": "health or readiness route present=true"
+    },
+    {
+      "id": "structured-logging-introduced",
+      "status": "fail",
+      "evidence": "structured=false; bareStringConsoleRemains=true"
+    },
+    {
+      "id": "real-failure-mode-named",
+      "status": "fail",
+      "evidence": "runbook names this service's own retry/hang failure=false"
+    },
+    {
+      "id": "alerts-actionable",
+      "status": "fail",
+      "evidence": "threshold=false; firstResponse=false"
+    },
+    {
+      "id": "unknowns-named",
+      "status": "fail",
+      "evidence": "runbook names what is not yet known=false"
+    }
+  ]
+}

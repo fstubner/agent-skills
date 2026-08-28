@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "stale-replay-evidence-claude-code-control-20260828234419-5b02e9",
+  "caseId": "stale-replay-evidence",
+  "caseRevision": 1,
+  "caseSha256": "28b8bc9b938b00f20153217f4c7022a7a4344b425a06bfa4386c8344e2fca887",
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-28T23:44:19.990Z",
+  "finishedAt": "2026-08-28T23:45:07.701Z",
+  "durationMs": 47711,
+  "totalTokens": 355599,
+  "costUsd": 0.07111590000000001,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "ec4793608d5347717dbb38e1311057ba5d4513cb0a87da99d452780dc86d8ab7",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 3,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 6
+  }
+}

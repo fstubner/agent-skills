@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "operability-handover-claude-code-skill-20260828234225-3c9e16",
+  "caseId": "operability-handover",
+  "caseRevision": 1,
+  "caseSha256": "c9d19af7363429a52a3d8549db661368318f555ce7912a6a3f751e47ea9a1a7e",
+  "stagedInputSha256": "d6f76b6721e1e058fb72d72a78f1d0ef407e848f7f149f7cdd490ba7dcd69dbd",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-28T23:42:26.102Z",
+  "finishedAt": "2026-08-28T23:44:13.486Z",
+  "durationMs": 107384,
+  "totalTokens": 825806,
+  "costUsd": 0.15586109999999997,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "34b7aad4f0d739bc2313cb8f61216be5559ae5a47ec122b25a537a672ff60586",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 8,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 9
+  }
+}

@@ -237,6 +237,10 @@ const freshEfficacyCases = [
   // product-acceptance's third case: the gate returns SHIP and only an audit
   // finds the defects.
   'acceptance-clean-gate-dirty-code',
+  // Measuring the two lifecycle additions: the operate half, and refusing a
+  // stale replay log as runtime evidence.
+  'operability-handover',
+  'stale-replay-evidence',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

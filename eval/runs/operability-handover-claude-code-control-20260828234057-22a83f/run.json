@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "operability-handover-claude-code-control-20260828234057-22a83f",
+  "caseId": "operability-handover",
+  "caseRevision": 1,
+  "caseSha256": "c9d19af7363429a52a3d8549db661368318f555ce7912a6a3f751e47ea9a1a7e",
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-28T23:40:57.491Z",
+  "finishedAt": "2026-08-28T23:42:25.661Z",
+  "durationMs": 88170,
+  "totalTokens": 491378,
+  "costUsd": 0.1473905,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "8d9f99b9628dc72f2d3adf74853a49f6ee1f99e4a27f4341ff5557ad3537500b",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 1,
+    "failed": 8,
+    "notEvaluated": 0,
+    "total": 9
+  }
+}
