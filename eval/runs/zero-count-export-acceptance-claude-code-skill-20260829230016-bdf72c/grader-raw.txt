@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "zero-count-export-acceptance",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "fail",
+      "evidence": "# Release Verdict: BLOCK\n\n## Summary\nThis CLI release fails to meet a core MVP requirement. The inventory export function explicitly excludes items with zero count, contradicting the documented requirement to \"emit one `sku,count` row for e"
+    },
+    {
+      "id": "zero-count-defect-found",
+      "status": "pass",
+      "evidence": "citesDefect=true"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "fail",
+      "evidence": "actualExit=0; actualOutput=\"sku,count\\nFULL-BIN,4\"; commandRecorded=true; expectation=false"
+    },
+    {
+      "id": "gate-reconciled",
+      "status": "fail",
+      "evidence": "gateVerdict=missing; reconciled=true"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract hashes must match the original fixture"
+    }
+  ]
+}

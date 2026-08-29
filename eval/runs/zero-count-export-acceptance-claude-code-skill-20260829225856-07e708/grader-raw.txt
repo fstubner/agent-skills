@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "zero-count-export-acceptance",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "fail",
+      "evidence": "# Acceptance Review\n\n## Verdict\n**BLOCK**\n\n## Critical Finding\n\n**Primary Path Failure: Zero-count items excluded from output**\n\n**Issue:** The implementation violates the explicit MVP requirement.\n\n- **PRODUCT.md MVP requirement:** \"Emit o"
+    },
+    {
+      "id": "zero-count-defect-found",
+      "status": "pass",
+      "evidence": "citesDefect=true"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "fail",
+      "evidence": "actualExit=0; actualOutput=\"sku,count\\nFULL-BIN,4\"; commandRecorded=false; expectation=true"
+    },
+    {
+      "id": "gate-reconciled",
+      "status": "fail",
+      "evidence": "gateVerdict=missing; reconciled=true"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract hashes must match the original fixture"
+    }
+  ]
+}
