@@ -132,6 +132,14 @@ not a replacement for it: scripts resolving is not the product working, and
    assuming; a project with no server has nothing to operate and is scoped
    out.
 
+   **Write down what you do not know yet.** A runbook that reads as complete
+   tells the on-call rota everything here is understood, and the first thing
+   they meet is the gap you left silent — a threshold you guessed rather than
+   measured, a failure mode nobody has seen under real traffic, a signal that
+   is emitted but that nothing reads. Name those in the section they belong
+   to. The checker cannot tell a confident runbook from an honest one, and
+   the difference only surfaces at 3am, to someone who is not you.
+
 **Why this is the half the suite was missing.** Everything above rule 7
 covers getting code into production. Nothing covered it *being* in
 production — no observability, no alerting, no incident path — so the

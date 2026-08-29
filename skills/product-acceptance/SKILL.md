@@ -134,6 +134,13 @@ Report SHIP / CONDITIONAL / BLOCK with the evidence (gate report plus your
 walkthrough findings). CONDITIONAL lists exactly what's open. Never soften a
 BLOCK into prose; never SHIP on "it probably works".
 
+**State what you did not check** — as part of the verdict, not as a caveat
+appended after it. The areas you never reached, the checkers that came back
+`not_evaluated` and what they would have told you, the paths the walkthrough
+does not touch, the things you took on the project's word for. A verdict
+silent about its own coverage reads as "all of this was examined", which is a
+claim you did not make and cannot support.
+
 ## Red flags — stop and re-read the cap rule
 
 Same-turn self-acceptance is the single most-observed failure of this
