@@ -218,3 +218,91 @@ import {
     expect('installer: no staging directory left behind', strays.length === 0, strays.join(', '));
   }
 }
+
+// ---------- 9d. Installer: the marker must identify the source tree, not just its version ----------
+//
+// VERSION does not move per commit. Between v1.0.0-alpha.13 and the tree that
+// followed it, nine commits all stamped `1.0.0-alpha.22`, so a marker reading
+// alpha.22 was true of both a current install and a twelve-day-stale one. Found
+// in the field on 2026-08-29: ~/.gemini/antigravity-cli/skills read alpha.22
+// while its SKILL.md predated 412da6b. The marker reported current; the install
+// was stale, and nothing in the marker could say so.
+//
+// Nobody reads this file until they are already debugging a stale install, which
+// is exactly when a wrong answer costs the most — hence a test rather than a
+// convention.
+{
+  const home = fs.mkdtempSync(path.join(tmpBase, 'installer-provenance-'));
+  const INSTALL = path.join(root, 'scripts', 'install.mjs');
+  const git = (...a) => spawnSync('git', ['-C', root, ...a], { encoding: 'utf8' });
+
+  const r = spawnSync(process.execPath, [INSTALL, '--harness', 'claude', '--skill', 'mental-models'], {
+    encoding: 'utf8', env: { ...process.env, HOME: home, USERPROFILE: home },
+  });
+  expect('installer(provenance): install from a git checkout succeeds', r.status === 0, r.stderr || r.stdout);
+
+  const marker = JSON.parse(read(path.join(home, '.claude', 'skills', 'mental-models', '.agent-skills-install.json')));
+  const headSha = git('rev-parse', 'HEAD').stdout.trim();
+  expect('installer(provenance): marker records the source commit',
+    marker.gitCommitSha === headSha, `marker=${marker.gitCommitSha} head=${headSha}`);
+  expect('installer(provenance): marker records a human-readable describe',
+    typeof marker.gitDescribe === 'string' && marker.gitDescribe.length > 0,
+    JSON.stringify(marker.gitDescribe));
+  expect('installer(provenance): describe reflects a dirty tree when the tree is dirty',
+    String(marker.gitDescribe).endsWith('-dirty') === (git('status', '--porcelain').stdout.trim().length > 0),
+    `describe=${marker.gitDescribe}`);
+
+  // A source with no git history — an extracted tarball, a vendored copy — must
+  // install cleanly and simply omit the fields. Recording nothing is honest;
+  // recording a sha from some unrelated enclosing repository is not.
+  const bare = path.join(home, 'suite-without-git');
+  fs.mkdirSync(path.join(bare, 'scripts'), { recursive: true });
+  fs.copyFileSync(INSTALL, path.join(bare, 'scripts', 'install.mjs'));
+  for (const f of ['registry.json', 'VERSION']) fs.copyFileSync(path.join(root, f), path.join(bare, f));
+  for (const d of ['core', 'mental-models']) fs.cpSync(path.join(root, d), path.join(bare, d), { recursive: true });
+
+  const home2 = fs.mkdtempSync(path.join(tmpBase, 'installer-nogit-'));
+  const r2 = spawnSync(process.execPath, [path.join(bare, 'scripts', 'install.mjs'), '--harness', 'claude', '--skill', 'mental-models'], {
+    encoding: 'utf8', env: { ...process.env, HOME: home2, USERPROFILE: home2 },
+  });
+  expect('installer(provenance): install from a non-git source still succeeds', r2.status === 0, r2.stderr || r2.stdout);
+
+  const marker2 = JSON.parse(read(path.join(home2, '.claude', 'skills', 'mental-models', '.agent-skills-install.json')));
+  expect('installer(provenance): non-git source omits gitCommitSha rather than guessing',
+    !('gitCommitSha' in marker2), JSON.stringify(marker2));
+  expect('installer(provenance): non-git source omits gitDescribe rather than guessing',
+    !('gitDescribe' in marker2), JSON.stringify(marker2));
+  expect('installer(provenance): non-git source still records suite and version',
+    marker2.suite === registry.name && typeof marker2.version === 'string', JSON.stringify(marker2));
+
+  // Vendoring the suite into someone else's repository. `git rev-parse HEAD`
+  // answers happily here — with THAT project's commit, which would be recorded
+  // as this suite's provenance and read as authoritative. The enclosing-repo
+  // case is the one the repository-root guard exists for; without it the
+  // assertions above still pass, because a temp directory has no enclosing
+  // repository to be confused by.
+  const host = fs.mkdtempSync(path.join(tmpBase, 'installer-vendored-'));
+  const hostGit = (...a) => spawnSync('git', ['-C', host, ...a], { encoding: 'utf8' });
+  hostGit('init', '-q');
+  hostGit('config', 'user.email', 'test@example.invalid');
+  hostGit('config', 'user.name', 'Test');
+  fs.writeFileSync(path.join(host, 'README.md'), 'someone else project\n');
+  hostGit('add', '-A');
+  hostGit('commit', '-qm', 'host project');
+  const hostSha = hostGit('rev-parse', 'HEAD').stdout.trim();
+  expect('installer(provenance): the vendoring fixture is a real repo', /^[0-9a-f]{40}$/.test(hostSha), hostSha);
+
+  const vendored = path.join(host, 'vendor', 'agent-skills');
+  fs.cpSync(bare, vendored, { recursive: true });
+  const home3 = fs.mkdtempSync(path.join(tmpBase, 'installer-vendored-home-'));
+  const r3 = spawnSync(process.execPath, [path.join(vendored, 'scripts', 'install.mjs'), '--harness', 'claude', '--skill', 'mental-models'], {
+    encoding: 'utf8', env: { ...process.env, HOME: home3, USERPROFILE: home3 },
+  });
+  expect('installer(provenance): install from a vendored copy succeeds', r3.status === 0, r3.stderr || r3.stdout);
+
+  const marker3 = JSON.parse(read(path.join(home3, '.claude', 'skills', 'mental-models', '.agent-skills-install.json')));
+  expect('installer(provenance): a vendored copy does not claim the host repo\'s commit',
+    marker3.gitCommitSha === undefined, `recorded ${marker3.gitCommitSha}, host is ${hostSha}`);
+  expect('installer(provenance): a vendored copy records no describe either',
+    marker3.gitDescribe === undefined, JSON.stringify(marker3.gitDescribe));
+}

@@ -289,5 +289,29 @@ the checkers that shell out to `gitleaks` or `vale` report
 
 ## Pinning
 
-Install from a git tag, not `main`. The version you installed is recorded in
-each skill's `.agent-skills-install.json`.
+Install from a git tag, not `main`. Each skill's `.agent-skills-install.json`
+records what it came from:
+
+```json
+{
+  "suite": "fstubner/agent-skills",
+  "version": "1.0.0-alpha.22",
+  "gitCommitSha": "412da6bc5cc921c9aa6a0220cfbdca3299026270",
+  "gitDescribe": "v1.0.0-alpha.13-50-g412da6b",
+  "installedAt": "2026-08-29T02:08:29.284Z"
+}
+```
+
+**`version` alone cannot tell you whether an install is current**, which is why
+the commit is there too. `VERSION` does not move with every commit — 29 commits
+on `main` stamp `1.0.0-alpha.22`, and an install from any of them reports the
+same version as an install from the newest. That is not hypothetical: a stale
+install here reported `1.0.0-alpha.22` while missing content from a commit made
+that same day, and nothing in the marker could say so.
+Compare `gitCommitSha` against the tree you meant to install; `gitDescribe`
+answers the same question in a form you can read, and ends in `-dirty` if the
+source tree had uncommitted changes.
+
+The two git fields are **absent** rather than guessed when the source has no
+history — an extracted tarball, or a copy vendored inside another repository.
+`version` and `suite` are always present.

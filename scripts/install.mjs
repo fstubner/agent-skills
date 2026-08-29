@@ -6,6 +6,9 @@
 // - Refuses skill ids with path separators; refuses src == dest.
 // - Vendors core/lib, core/schemas, and registry.json into each skill's
 //   scripts/vendor/ so every installed skill is standalone.
+// - Shells out to `git` once, read-only, to stamp the source commit into the
+//   install marker. Absent git, or a source that is not a checkout, drops the
+//   fields rather than failing.
 // - No network access, ever.
 //
 // Usage:
@@ -19,6 +22,7 @@
 // can be removed after a successful migration; foreign directories are never
 // touched.
 
+import { spawnSync } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -30,6 +34,37 @@ const version = fs.readFileSync(path.join(suiteRoot, registry.suiteVersionFile),
 const MARKER = '.agent-skills-install.json';
 
 const allIds = registry.skills.map((s) => s.id);
+
+// What tree did this install come from?
+//
+// `version` is read from VERSION, which does not move per commit — 29 commits
+// on main stamp 1.0.0-alpha.22, so the marker could not distinguish a fresh
+// install from a stale one. Recording the commit makes the marker answer the
+// question INSTALL.md's Pinning section says it answers.
+//
+// Silence beats a confident wrong answer here, so the fields are dropped in
+// three cases rather than guessed: git is missing, the source has no history,
+// or the source is not itself the repository root. That last one matters —
+// someone vendoring this suite into their own project would otherwise get their
+// project's HEAD recorded as the suite's provenance, which reads as
+// authoritative and is not.
+function gitProvenance(dir) {
+  const git = (...a) => {
+    const r = spawnSync('git', ['-C', dir, ...a], { encoding: 'utf8' });
+    return r.status === 0 ? r.stdout.trim() : null;
+  };
+  const toplevel = git('rev-parse', '--show-toplevel');
+  if (!toplevel || path.resolve(toplevel) !== path.resolve(dir)) return {};
+  const provenance = {};
+  const sha = git('rev-parse', 'HEAD');
+  const describe = git('describe', '--tags', '--always', '--dirty');
+  if (sha) provenance.gitCommitSha = sha;
+  if (describe) provenance.gitDescribe = describe;
+  return provenance;
+}
+
+// Once, not per skill: the source tree does not change mid-run.
+const sourceProvenance = gitProvenance(suiteRoot);
 
 const USAGE = `agent-skills installer v${version}
 
@@ -205,7 +240,8 @@ for (const target of targets) {
       // Marker last: its presence is what tells a later run this directory is
       // ours to replace, so it must not exist until everything else does.
       fs.writeFileSync(path.join(staging, MARKER), JSON.stringify({
-        suite: registry.name, version, installedAt: new Date().toISOString(),
+        suite: registry.name, version, ...sourceProvenance,
+        installedAt: new Date().toISOString(),
       }, null, 2) + '\n');
 
       const backup = dest + '.previous-' + process.pid;
