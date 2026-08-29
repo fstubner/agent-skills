@@ -1,0 +1,61 @@
+/* Added ad hoc. Nobody has checked these against components.css. */
+
+.muted {
+  color: #71717a;
+}
+
+.subtle {
+  color: #737373;
+}
+
+.text-sm {
+  font-size: 14px;
+}
+
+.text-small {
+  font-size: 0.875rem;
+}
+
+.stack-tight {
+  margin-bottom: 12px;
+}
+
+.stack {
+  margin-bottom: 13px;
+}
+
+.stack-loose {
+  margin-bottom: 16px;
+}
+
+.pad {
+  padding: 15px;
+}
+
+.pad-lg {
+  padding: 16px;
+}
+
+.divider {
+  border-bottom: 1px solid #eceff3;
+}
+
+.divider-strong {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.pill-ok {
+  background: #ecfdf5;
+  color: #047857;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+}
+
+.pill-late {
+  background: #fef2f2;
+  color: #dc2727;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+}

@@ -1,0 +1,22 @@
+{
+  "surface": "#ffffff",
+  "surface-sunken": "#f9fafb",
+  "border": "#e5e7eb",
+  "border-subtle": "#eceff3",
+  "text": "#111827",
+  "text-strong": "#1f2937",
+  "text-muted": "#6b7280",
+  "brand": "#2563eb",
+  "brand-hover": "#1d4ed8",
+  "danger": "#dc2626",
+  "danger-hover": "#b91c1c",
+  "danger-surface": "#fef2f2",
+  "danger-border": "#fecaca",
+  "warning": "#b45309",
+  "warning-surface": "#fffbeb",
+  "warning-border": "#fde68a",
+  "info-surface": "#eff6ff",
+  "info-border": "#bfdbfe",
+  "success": "#047857",
+  "success-surface": "#ecfdf5"
+}

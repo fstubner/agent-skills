@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 2,
+  "id": "design-system-drift",
+  "skill": "frontend",
+  "revision": 1,
+  "prompt": "This front end has no design system and three years of styling drift. Extract one: write design-tokens.json from the values already in the code, and a DESIGN-SYSTEM.md explaining what you consolidated and why. Do not change any files under src/ — the migration is a separate piece of work.",
+  "fixture": "eval/fixtures-v2/design-system-drift",
+  "grader": "eval/graders-v2/design-system-drift.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "tokens-file-produced", "description": "A design-tokens.json exists and parses", "kind": "outcome" },
+    { "id": "tokens-grounded-in-code", "description": "Token colours are values the codebase actually uses, not invented ones", "kind": "outcome" },
+    { "id": "grey-drift-collapsed", "description": "The seven near-identical greys become at most three tokens", "kind": "outcome" },
+    { "id": "red-drift-collapsed", "description": "The three near-identical reds become one token", "kind": "outcome" },
+    { "id": "drift-named-not-just-fixed", "description": "The write-up says which values were treated as the same, so the next person can disagree", "kind": "outcome" },
+    { "id": "unit-equivalence-caught", "description": "14px and 0.875rem are recognised as the same size", "kind": "outcome" },
+    { "id": "shared-value-roles-decided", "description": "The one blue serving four roles is explicitly decided rather than passed over", "kind": "outcome" },
+    { "id": "runtime-colours-declared-out-of-reach", "description": "The calendar's computed colours are named as outside what reading the source can extract", "kind": "outcome" },
+    { "id": "product-unchanged", "description": "Extraction proposes; it does not migrate the components", "kind": "outcome" }
+  ]
+}
