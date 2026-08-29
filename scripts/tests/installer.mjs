@@ -248,8 +248,12 @@ import {
   expect('installer(provenance): marker records a human-readable describe',
     typeof marker.gitDescribe === 'string' && marker.gitDescribe.length > 0,
     JSON.stringify(marker.gitDescribe));
-  expect('installer(provenance): describe reflects a dirty tree when the tree is dirty',
-    String(marker.gitDescribe).endsWith('-dirty') === (git('status', '--porcelain').stdout.trim().length > 0),
+  // --untracked-files=no on purpose: `git describe --dirty` reports only
+  // TRACKED modifications, so comparing it against a porcelain status that
+  // counts untracked files makes this test fail for anyone holding a new file
+  // — which is every author mid-change, and was this test's own first red.
+  expect('installer(provenance): describe reflects a dirty tree when tracked files are modified',
+    String(marker.gitDescribe).endsWith('-dirty') === (git('status', '--porcelain', '--untracked-files=no').stdout.trim().length > 0),
     `describe=${marker.gitDescribe}`);
 
   // A source with no git history — an extracted tarball, a vendored copy — must
