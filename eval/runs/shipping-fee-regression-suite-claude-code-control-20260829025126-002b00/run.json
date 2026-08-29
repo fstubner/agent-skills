@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "shipping-fee-regression-suite-claude-code-control-20260829025126-002b00",
+  "caseId": "shipping-fee-regression-suite",
+  "caseRevision": 1,
+  "caseSha256": "5f04bd9ede07d3086223db5e758d422736730223d2cbd8c631909fd276e64563",
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-29T02:51:26.949Z",
+  "finishedAt": "2026-08-29T02:52:08.266Z",
+  "durationMs": 41317,
+  "totalTokens": 179135,
+  "costUsd": 0.042720900000000006,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "bee153684a323cb6f282f0a12f477794e013c908283759ef2751af3d372d9c01",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

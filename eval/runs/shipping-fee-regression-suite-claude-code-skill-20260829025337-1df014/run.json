@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "shipping-fee-regression-suite-claude-code-skill-20260829025337-1df014",
+  "caseId": "shipping-fee-regression-suite",
+  "caseRevision": 1,
+  "caseSha256": "5f04bd9ede07d3086223db5e758d422736730223d2cbd8c631909fd276e64563",
+  "stagedInputSha256": "56cdbe9326a5bfea527815672a0d39b9716f82e4e4bde84f3225f6f7dcc8ad8b",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-29T02:53:37.831Z",
+  "finishedAt": "2026-08-29T02:54:40.470Z",
+  "durationMs": 62639,
+  "totalTokens": 257061,
+  "costUsd": 0.06705030000000001,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "b9a6a7900613e22a15291b6d38ecd15d5f0d593f139eca665b4b46ace0174616",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "retry-delay-regression-suite",
+  "assertions": [
+    {
+      "id": "stable-baseline",
+      "status": "fail",
+      "evidence": "exits=1,1,1,1,1,1"
+    },
+    {
+      "id": "public-behavior",
+      "status": "fail",
+      "evidence": "changed=true; exit=1"
+    },
+    {
+      "id": "kills-cap-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    },
+    {
+      "id": "kills-nonretryable-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    },
+    {
+      "id": "kills-validation-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    }
+  ]
+}

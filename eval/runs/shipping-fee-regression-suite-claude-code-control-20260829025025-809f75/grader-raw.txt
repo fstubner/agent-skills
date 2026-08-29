@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "shipping-fee-regression-suite",
+  "assertions": [
+    {
+      "id": "stable-baseline",
+      "status": "pass",
+      "evidence": "exits=0,0,0,0,0,0"
+    },
+    {
+      "id": "public-behavior",
+      "status": "fail",
+      "evidence": "changed=true; exit=1; output=\"\\n> test\\n> node --test\\n\\nfile:///C:/Users/Felix/AppData/Local/Temp/shipping-eval-Xrtjpb/private-rename/test/shipping-fee.test.js:3\\nimport { shippingFee, _normalizeCountry } from '../src/shipping-fee.js';\\n                      ^^^^^^^^^^^^^^^^^\\nSyntaxError: The requested module '../src/shipping-fee.js'\""
+    },
+    {
+      "id": "kills-threshold-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    },
+    {
+      "id": "kills-unsupported-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    },
+    {
+      "id": "kills-member-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    }
+  ]
+}

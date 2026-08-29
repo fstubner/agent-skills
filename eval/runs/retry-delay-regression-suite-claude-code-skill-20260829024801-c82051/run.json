@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "runId": "retry-delay-regression-suite-claude-code-skill-20260829024801-c82051",
+  "caseId": "retry-delay-regression-suite",
+  "caseRevision": 1,
+  "caseSha256": "1324c659451660dacb6d93a0e53e46e278f927a5da0d09322af175d4bfa12bc2",
+  "stagedInputSha256": "56cdbe9326a5bfea527815672a0d39b9716f82e4e4bde84f3225f6f7dcc8ad8b",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-29T02:48:01.749Z",
+  "finishedAt": "2026-08-29T02:49:30.749Z",
+  "durationMs": 89000,
+  "totalTokens": 489029,
+  "costUsd": 0.11250000000000002,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "e91effbe249ced9768f91a3761eb68beea1fc5bde437cee7eaf87a20becf8ecd",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}
