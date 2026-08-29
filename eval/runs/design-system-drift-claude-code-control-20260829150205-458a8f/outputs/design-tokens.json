@@ -1,0 +1,87 @@
+{
+  "colors": {
+    "primary": {
+      "base": "#2563eb",
+      "hover": "#1d4ed8",
+      "light": "#eff6ff",
+      "description": "Primary brand color used for interactive elements and focus states"
+    },
+    "text": {
+      "primary": "#111827",
+      "secondary": "#1f2937",
+      "muted": "#6b7280",
+      "description": "Text color hierarchy for headings, body, and secondary content"
+    },
+    "background": {
+      "default": "#ffffff",
+      "subtle": "#f9fafb",
+      "description": "Page and surface backgrounds"
+    },
+    "border": {
+      "default": "#e5e7eb",
+      "subtle": "#eceff3",
+      "strong": "#d1d5db",
+      "description": "Border colors for dividers and component edges"
+    },
+    "semantic": {
+      "success": "#047857",
+      "successBackground": "#ecfdf5",
+      "danger": "#dc2626",
+      "dangerBackground": "#fef2f2",
+      "warning": "#b45309",
+      "warningBackground": "#fffbeb",
+      "dangerHover": "#b91c1c",
+      "description": "Semantic colors for alerts, badges, and status indicators"
+    }
+  },
+  "spacing": {
+    "xs": "2px",
+    "sm": "4px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "13px",
+    "2xl": "15px",
+    "3xl": "16px",
+    "4xl": "24px",
+    "description": "Spacing scale for padding, margin, and gaps"
+  },
+  "radius": {
+    "sm": "6px",
+    "md": "8px",
+    "full": "999px",
+    "description": "Border radius values: sm for components, md for cards, full for pills"
+  },
+  "typography": {
+    "fontFamily": "Inter, system-ui, sans-serif",
+    "fontSize": {
+      "xs": "12px",
+      "sm": "0.875rem",
+      "base": "14px",
+      "lg": "18px",
+      "xl": "22px",
+      "2xl": "28px"
+    },
+    "fontWeight": {
+      "normal": 400,
+      "semibold": 600
+    },
+    "lineHeight": {
+      "tight": 1.2,
+      "normal": 1.25,
+      "relaxed": 1.3,
+      "loose": 1.55
+    },
+    "description": "Typography scale for headings, body text, and small text"
+  },
+  "focus": {
+    "outline": "2px solid #2563eb",
+    "outlineOffset": "2px",
+    "description": "Focus indicator for keyboard navigation"
+  },
+  "notes": {
+    "colorDrift": "Multiple grays used interchangeably (#6b7280, #6c7280, #71717a, #737373) due to component/utilities inconsistency",
+    "legacyStyles": "legacy.css contains the original stylesheet; vars.css started a 2024 rebrand but was only adopted by settings screen",
+    "inlineStyles": "Button components (LinkButton, DestructiveLink), Card (HighlightCard), Alert (InlineError, FieldHint), and Calendar contain hardcoded inline styles for one-off uses",
+    "consolidation": "Extracted unified token set from: vars.css (rebrand attempt), base.css (typography), components.css (main components), utilities.css (ad hoc utilities), legacy.css (original), and component inline styles"
+  }
+}

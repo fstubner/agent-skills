@@ -48,7 +48,19 @@ const sourceFiles = walk(path.join(root, 'src'));
 const sourceText = sourceFiles.map((f) => {
   try { return fs.readFileSync(f, 'utf8'); } catch { return ''; }
 }).join('\n');
-const sourceHex = new Set([...sourceText.matchAll(/#[0-9a-fA-F]{6}\b/g)].map((m) => m[0].toLowerCase()));
+
+// styles/legacy.css writes its colours as rgb(), and every one of them is a
+// value that also appears as hex elsewhere. Both forms normalise to the same
+// key here so that a token emitted either way counts as grounded — the trap is
+// for the extraction that never looks at legacy.css, not for one that writes
+// `rgb(107, 114, 128)` instead of `#6b7280`.
+const rgbToHex = (r, g, b) => `#${[r, g, b].map((c) => Number(c).toString(16).padStart(2, '0')).join('')}`;
+function coloursIn(text) {
+  const out = [...text.matchAll(/#[0-9a-fA-F]{6}\b/g)].map((m) => m[0].toLowerCase());
+  for (const m of text.matchAll(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/g)) out.push(rgbToHex(m[1], m[2], m[3]));
+  return out;
+}
+const sourceHex = new Set(coloursIn(sourceText));
 
 // The write-up. Named broadly because the case prompt asks for a design
 // system document without dictating a filename.
@@ -65,20 +77,21 @@ try { tokens = tokenRaw ? JSON.parse(tokenRaw) : null; } catch { tokens = null; 
 record('tokens-file-produced', tokens !== null && typeof tokens === 'object',
   tokenRaw ? `token file present; parses=${tokens !== null}` : 'no token file found');
 
-// Flatten one level of grouping, the same shape check-frontend accepts.
-function tokenValues(obj) {
-  if (!obj || typeof obj !== 'object') return [];
-  const out = [];
-  for (const v of Object.values(obj)) {
-    if (typeof v === 'string') out.push(v);
-    else if (v && typeof v === 'object' && !Array.isArray(v)) {
-      for (const inner of Object.values(v)) if (typeof inner === 'string') out.push(inner);
-    }
-  }
+// Flatten to any depth. A one-level version shipped first, copied from
+// check-frontend's tokenSetsFrom — which limits depth on purpose, because it
+// has to know which theme a colour belongs to before checking contrast. This
+// grader only asks WHICH COLOURS WERE DECLARED, so nesting is irrelevant and
+// a depth limit is a blind spot: the first control run wrote
+// `colors.text.body` three levels down and the grader read the file as having
+// no colours at all. It failed the drift assertions for the wrong reason,
+// reporting "0 of the 7 source greys survive" when all 7 did.
+function tokenValues(node, out = []) {
+  if (typeof node === 'string') out.push(node);
+  else if (node && typeof node === 'object') for (const v of Object.values(node)) tokenValues(v, out);
   return out;
 }
 const values = tokenValues(tokens);
-const colorValues = values.map((v) => v.toLowerCase().trim()).filter((v) => /^#[0-9a-f]{6}$/.test(v));
+const colorValues = values.flatMap((v) => coloursIn(v.toLowerCase().trim()));
 
 // Invented colours are the failure mode where a "design system" describes a
 // product nobody has built. A canonical value chosen from the drift is fine;
@@ -119,10 +132,28 @@ const brandDecided = low.includes(BRAND) && roleHits >= 2;
 record('shared-value-roles-decided', brandDecided,
   `write-up discusses ${BRAND} against ${roleHits} of its roles`);
 
-// src/theme.js computes calendar colours at runtime, so they are not literals
-// and cannot be extracted by reading the source. Saying so is the difference
+// styles/legacy.css writes nine colours as rgb()/hsl()/`white`, every one of
+// them a value that also appears as hex somewhere else. An extraction that
+// greps for `#` misses the file entirely and then quotes a coverage number as
+// though it had read everything.
+const altFormsSeen = /(rgb\(|rgba\(|hsl\(|legacy\.css)/i.test(writeup);
+const altFormsUnified = altFormsSeen
+  && /(same|identical|equivalent|duplicate|dupli|unif|normalis|normaliz|convert|already|also appears|both forms)/i.test(writeup);
+record('alternate-colour-forms-unified', altFormsUnified,
+  `notices non-hex colour forms=${altFormsSeen}; treats them as the same values=${altFormsUnified}`);
+
+// styles/vars.css declares --brand: #2563ea. Everywhere else the brand is
+// #2563eb. One character apart, adopted by a single screen, and the kind of
+// thing an extraction either finds or silently launders into the token file.
+const contradictionCaught = /#2563ea\b/i.test(writeup)
+  || (/vars\.css|--brand/i.test(writeup) && /(differ|discrepan|mismatch|conflict|inconsist|typo|one character|off by)/i.test(writeup));
+record('contradictory-variable-caught', contradictionCaught,
+  `write-up reconciles --brand #2563ea against #2563eb=${contradictionCaught}`);
+
+// The calendar computes its colours at runtime, so they are not literals and
+// cannot be extracted by reading the source. Saying so is the difference
 // between a coverage number and an honest one.
-const runtimeFlagged = /(theme\.js|runtime|computed|calculated|derived at run)/i.test(writeup)
+const runtimeFlagged = /(runtime|computed|calculated|derived at run|Calendar\.jsx)/i.test(writeup)
   && /(calendar|density|mix|shade|band)/i.test(writeup);
 record('runtime-colours-declared-out-of-reach', runtimeFlagged,
   `write-up says the computed calendar colours are outside the extraction=${runtimeFlagged}`);

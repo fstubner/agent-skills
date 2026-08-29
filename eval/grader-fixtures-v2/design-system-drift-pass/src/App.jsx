@@ -1,10 +1,12 @@
+import './styles/legacy.css';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/utilities.css';
+import './styles/vars.css';
 import { Alert, FieldHint, InlineError } from './components/Alert.jsx';
 import { Button, DestructiveLink, LinkButton } from './components/Button.jsx';
+import { calendarPalette, densityBand } from './components/Calendar.jsx';
 import { Card, EmptyCard, HighlightCard } from './components/Card.jsx';
-import { calendarPalette, densityBand } from './theme.js';
 
 export default function App({ appointments = [], notice }) {
   return (

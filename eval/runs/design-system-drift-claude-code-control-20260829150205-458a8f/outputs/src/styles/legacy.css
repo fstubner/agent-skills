@@ -1,0 +1,47 @@
+/* The original stylesheet. Predates components.css; still imported because a
+   few admin screens were never ported. */
+
+.legacy-panel {
+  background: white;
+  border: 1px solid rgb(229, 231, 235);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.legacy-note {
+  color: rgb(107, 114, 128);
+  font-size: 14px;
+}
+
+.legacy-warn {
+  color: rgb(220, 38, 38);
+  font-size: 14px;
+}
+
+.legacy-divider {
+  border-bottom: 1px solid hsl(220, 13%, 91%);
+}
+
+.legacy-heading {
+  color: rgb(17, 24, 39);
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.legacy-link {
+  color: rgb(37, 99, 235);
+}
+
+.legacy-table th {
+  background: rgb(249, 250, 251);
+  color: rgb(112, 118, 128);
+  padding: 12px;
+}
+
+.legacy-badge {
+  background: rgba(37, 99, 235, 0.1);
+  color: rgb(29, 78, 216);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+}

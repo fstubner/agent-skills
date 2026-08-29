@@ -1,0 +1,3 @@
+This front end has no design system and three years of styling drift. The app's primary job is letting clinic staff see and manage today's appointments. There is no new visual direction to decide and none to ask about: the direction is whatever the code already does, and changing it is a separate conversation. Extract what is there — write design-tokens.json from values already in the code, and a DESIGN-SYSTEM.md explaining what you consolidated and why. Do not change any files under src/; the migration is separate work.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

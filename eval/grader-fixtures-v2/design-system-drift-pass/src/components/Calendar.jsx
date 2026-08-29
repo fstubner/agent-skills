@@ -1,6 +1,6 @@
-// Runtime shading for the appointment calendar. Density bands are computed
-// from the base colour rather than listed, because the number of bands
-// depends on how many slots a clinic runs per hour.
+// Density shading for the appointment grid. Bands are computed from the base
+// colour rather than listed, because the number of bands depends on how many
+// slots a clinic runs per hour.
 
 const BRAND = '#2563eb';
 
@@ -25,3 +25,23 @@ export const calendarPalette = {
   gridStrong: mix('#ffffff', '#111827', 0.14),
   now: BRAND,
 };
+
+export function Calendar({ slots = [] }) {
+  return (
+    <div style={{ borderTop: `1px solid ${calendarPalette.grid}` }}>
+      {slots.map((slot) => (
+        <div
+          key={slot.id}
+          style={{
+            background: densityBand(slot.load, 4),
+            borderBottom: `1px solid ${slotBorder(slot.load)}`,
+            padding: '8px 12px',
+            fontSize: '14px',
+          }}
+        >
+          {slot.time} — {slot.label}
+        </div>
+      ))}
+    </div>
+  );
+}

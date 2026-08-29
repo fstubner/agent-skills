@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 2,
+  "caseId": "design-system-drift",
+  "assertions": [
+    {
+      "id": "tokens-file-produced",
+      "status": "pass",
+      "evidence": "token file present; parses=true"
+    },
+    {
+      "id": "tokens-grounded-in-code",
+      "status": "pass",
+      "evidence": "23/23 token colours appear in src (100%)"
+    },
+    {
+      "id": "grey-drift-collapsed",
+      "status": "fail",
+      "evidence": "4 of the 7 source greys survive as distinct tokens: #6b7280, #6c7280, #71717a, #737373"
+    },
+    {
+      "id": "red-drift-collapsed",
+      "status": "pass",
+      "evidence": "1 of the 3 source reds survive as distinct tokens: #dc2626"
+    },
+    {
+      "id": "drift-named-not-just-fixed",
+      "status": "pass",
+      "evidence": "write-up identifies the grey drift it collapsed=true"
+    },
+    {
+      "id": "unit-equivalence-caught",
+      "status": "pass",
+      "evidence": "write-up reconciles 0.875rem with 14px=true"
+    },
+    {
+      "id": "shared-value-roles-decided",
+      "status": "pass",
+      "evidence": "write-up discusses #2563eb against 5 of its roles"
+    },
+    {
+      "id": "alternate-colour-forms-unified",
+      "status": "pass",
+      "evidence": "notices non-hex colour forms=true; treats them as the same values=true"
+    },
+    {
+      "id": "contradictory-variable-caught",
+      "status": "pass",
+      "evidence": "write-up reconciles --brand #2563ea against #2563eb=true"
+    },
+    {
+      "id": "runtime-colours-declared-out-of-reach",
+      "status": "pass",
+      "evidence": "write-up says the computed calendar colours are outside the extraction=true"
+    },
+    {
+      "id": "product-unchanged",
+      "status": "pass",
+      "evidence": "src/styles/base.css must keep its drifted literals; extraction proposes, it does not migrate"
+    }
+  ]
+}

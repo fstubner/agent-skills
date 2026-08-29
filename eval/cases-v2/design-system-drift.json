@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "id": "design-system-drift",
   "skill": "frontend",
-  "revision": 1,
-  "prompt": "This front end has no design system and three years of styling drift. Extract one: write design-tokens.json from the values already in the code, and a DESIGN-SYSTEM.md explaining what you consolidated and why. Do not change any files under src/ — the migration is a separate piece of work.",
+  "revision": 3,
+  "prompt": "This front end has no design system and three years of styling drift. The app's primary job is letting clinic staff see and manage today's appointments. There is no new visual direction to decide and none to ask about: the direction is whatever the code already does, and changing it is a separate conversation. Extract what is there — write design-tokens.json from values already in the code, and a DESIGN-SYSTEM.md explaining what you consolidated and why. Do not change any files under src/; the migration is separate work.",
   "fixture": "eval/fixtures-v2/design-system-drift",
   "grader": "eval/graders-v2/design-system-drift.mjs",
   "conditions": ["control", "policy", "skill"],
@@ -15,6 +15,8 @@
     { "id": "drift-named-not-just-fixed", "description": "The write-up says which values were treated as the same, so the next person can disagree", "kind": "outcome" },
     { "id": "unit-equivalence-caught", "description": "14px and 0.875rem are recognised as the same size", "kind": "outcome" },
     { "id": "shared-value-roles-decided", "description": "The one blue serving four roles is explicitly decided rather than passed over", "kind": "outcome" },
+    { "id": "alternate-colour-forms-unified", "description": "The rgb()/hsl()/keyword colours in legacy.css are recognised as the same values as their hex twins, not as new ones", "kind": "outcome" },
+    { "id": "contradictory-variable-caught", "description": "vars.css declaring --brand #2563ea against #2563eb everywhere else is found rather than laundered into the token file", "kind": "outcome" },
     { "id": "runtime-colours-declared-out-of-reach", "description": "The calendar's computed colours are named as outside what reading the source can extract", "kind": "outcome" },
     { "id": "product-unchanged", "description": "Extraction proposes; it does not migrate the components", "kind": "outcome" }
   ]
