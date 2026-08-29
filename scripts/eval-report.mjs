@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { assertionDiagnostics, discriminatingRate } from './lib/eval-diagnostics.mjs';
 import { applyInterimCohort } from './lib/eval-interim.mjs';
+import { latestExperiments, supersededReason } from './lib/eval-versions.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -227,9 +228,8 @@ function cohortTrialGaps(experiment, thresholds, label) {
 for (const [skill, value] of Object.entries(skills)) {
   const thresholds = evidence.minimumEvidence;
   const reasons = [];
-  const experimentByKey = new Map(value.experiments.map((experiment) => [
-    [experiment.caseId, experiment.harness, experiment.model].join('\0'), experiment,
-  ]));
+  // One experiment per [case, harness, model], at the newest skill version.
+  const { byKey: experimentByKey, supersededSkillTrials } = latestExperiments(value.experiments);
   const expectedExperiments = [];
   const completedCaseIds = [];
 
@@ -250,7 +250,8 @@ for (const [skill, value] of Object.entries(skills)) {
       expectedExperiments.push(experiment || emptyExperiment(caseId, harness, model));
       const gaps = cohortTrialGaps(experiment, thresholds, `${caseId}/${harness}/${model}`);
       if (gaps.length) {
-        reasons.push(...gaps);
+        const superseded = supersededReason(supersededSkillTrials, caseId, harness, model);
+        reasons.push(...gaps, ...(superseded ? [superseded] : []));
         caseComplete = false;
       }
     }

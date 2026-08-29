@@ -241,6 +241,11 @@ const freshEfficacyCases = [
   // stale replay log as runtime evidence.
   'operability-handover',
   'stale-replay-evidence',
+  // frontend: extracting a design system from a drifted codebase. The
+  // adversarial fixture scores 1/9 untouched and 3/9 for a token file that
+  // transcribes all 31 literals — grounded at 100% and still not an
+  // extraction, which is why coverage is reported and never gated.
+  'design-system-drift',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);
@@ -288,4 +293,84 @@ for (const caseId of freshScreenCases) {
   }
   const restored = spawnSync(node, [path.join(root, 'scripts', 'eval-verify.mjs')], { cwd: root, encoding: 'utf8' });
   expect('eval-verify passes again once thresholds are restored', restored.status === 0, restored.stdout || restored.stderr);
+}
+
+// ---------- Promotion gaps must be counted per skill version ----------
+//
+// An experiment is one case/harness/model block at ONE staged-input version of
+// the skill, and the report builds one experiment per version. The promotion
+// path then keyed them by [caseId, harness, model] with no version, so a Map
+// kept whichever landed last and counted its trials — evidence for a skill
+// text that had since been rewritten could satisfy the current one, or be
+// hidden by it, depending on directory order.
+//
+// Real instance on 2026-08-29: release-engineering was edited after its only
+// skill trial, so that trial's staged tree (d6f76b67…) no longer existed, and
+// the report still counted it toward the current text. Three engineering-
+// assessment blocks already carry two versions each — the skill whose
+// no-demonstrated-win verdict was computed across both.
+//
+// eval-interim.mjs restricts to the newest version and carries a comment
+// calling the pooled average "the bug this report was just fixed for". The
+// same bug outlived that fix over here.
+{
+  const syntheticRoot = path.join(tmpBase, 'eval-report-skill-versions');
+  const casesDir = path.join(syntheticRoot, 'cases-v2');
+  const runsDir = path.join(syntheticRoot, 'runs');
+  fs.mkdirSync(casesDir, { recursive: true });
+  fs.mkdirSync(runsDir, { recursive: true });
+  fs.writeFileSync(path.join(syntheticRoot, 'evidence.json'), JSON.stringify({
+    minimumEvidence: {
+      freshCasesPerSkill: 1, trialsPerCondition: 3,
+      requiredConditions: ['control', 'policy', 'skill'],
+      requiredHarnesses: ['codex'], requiredModelsByHarness: { codex: ['m'] },
+      primaryBaselineCondition: 'policy', confidenceLevel: 0.95,
+      outcomeDeltaRequired: 0.1, efficiencyReductionRequired: 0.1,
+      outcomeNonInferiorityMargin: 0.02,
+    },
+  }));
+  const assertions = [{ id: 'a-1', kind: 'outcome' }];
+  fs.writeFileSync(path.join(casesDir, 'case-1.json'), JSON.stringify({
+    id: 'case-1', skill: 'versioned-skill', conditions: ['control', 'policy', 'skill'], assertions,
+  }));
+
+  const write = (runId, condition, pass, stagedInputSha256, startedAt) => {
+    const runDir = path.join(runsDir, runId);
+    fs.mkdirSync(runDir, { recursive: true });
+    fs.writeFileSync(path.join(runDir, 'grading.json'),
+      JSON.stringify({ assertions: [{ id: 'a-1', status: pass ? 'pass' : 'fail' }] }));
+    fs.writeFileSync(path.join(runDir, 'run.json'), JSON.stringify({
+      runId, caseId: 'case-1', condition, harness: 'codex', model: 'm', exitCode: 0,
+      stagedInputSha256, startedAt, durationMs: 1, totalTokens: 100,
+      costUsd: null, costCredits: 1,
+      grading: { notEvaluated: 0 }, files: { grading: 'grading.json' },
+    }));
+  };
+  for (let t = 1; t <= 3; t++) {
+    write(`case-1-control-${t}`, 'control', false, null, `2026-08-01T0${t}:00:00.000Z`);
+    write(`case-1-policy-${t}`, 'policy', false, null, `2026-08-01T0${t}:00:00.000Z`);
+  }
+  // The superseded version is complete; the CURRENT one has a single trial.
+  // "zz-old" sorts last on purpose, so the un-keyed Map keeps the superseded
+  // experiment and reports the block as satisfied.
+  for (let t = 1; t <= 3; t++) {
+    write(`case-1-skill-zz-old-${t}`, 'skill', true, 'oldversionsha', `2026-08-01T0${t}:00:00.000Z`);
+  }
+  write('case-1-skill-aa-new-1', 'skill', true, 'newversionsha', '2026-08-20T01:00:00.000Z');
+
+  const r = spawnSync(node, [path.join(root, 'scripts', 'eval-report.mjs'), '--eval-root', syntheticRoot],
+    { cwd: root, encoding: 'utf8' });
+  const parsed = (() => { try { return JSON.parse(r.stdout); } catch { return null; } })();
+  const skill = parsed?.skills?.['versioned-skill'];
+  const reasons = skill?.reasons ?? [];
+
+  // `ready === false` is too weak to assert here: it also holds when the case
+  // counts as COMPLETE and merely loses on the statistics, which is exactly
+  // what the bug produced.
+  expect('report: a block with two skill versions is not counted as a completed case',
+    skill?.completedCaseCount === 0,
+    JSON.stringify({ completed: skill?.completedCaseCount, reasons }));
+  expect('report: the trial gap is counted against the newest skill version',
+    reasons.some((reason) => /skill needs 3 trials; has 1\b/.test(reason)),
+    JSON.stringify(reasons));
 }
