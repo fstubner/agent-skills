@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { assertionDiagnostics, discriminatingRate } from './lib/eval-diagnostics.mjs';
 import { applyInterimCohort } from './lib/eval-interim.mjs';
-import { latestExperiments, supersededReason } from './lib/eval-versions.mjs';
+import { currentSkillDigest, latestExperiments, skillCurrencyReasons, supersededReason } from './lib/eval-versions.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -236,6 +236,13 @@ for (const [skill, value] of Object.entries(skills)) {
   for (const caseId of value.configuredCaseIds) {
     const testCase = cases.get(caseId);
     let caseComplete = true;
+    // Does any evidence describe the skill AS IT STANDS? The run-time hashes
+    // catch an input moving after a run; nothing catches the skill moving with
+    // no run since, because then there is no fresher bundle to compare — only
+    // an older one that keeps counting. Recomputed here without staging
+    // anything, from the same digest eval-run records.
+    const currentSkill = currentSkillDigest(root, testCase.skills || [testCase.skill]);
+    if (currentSkill) caseComplete = skillCurrencyReasons(caseId, currentSkill, experimentByKey, reasons) && caseComplete;
     for (const condition of thresholds.requiredConditions) {
       if (!testCase.conditions.includes(condition)) {
         reasons.push(`${caseId} is not configured for required condition ${condition}`);

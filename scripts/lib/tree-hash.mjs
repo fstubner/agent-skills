@@ -21,16 +21,40 @@ export function sha256(value) {
   return crypto.createHash('sha256').update(value).digest('hex');
 }
 
+// Shared walk. `prefix` is the path each entry is recorded under, which is
+// what lets a tree be hashed as though it sat somewhere else.
+function collect(dir, prefix, chunks) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+    const full = path.join(dir, entry.name);
+    const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) collect(full, rel, chunks);
+    else if (entry.isFile()) chunks.push(`${rel}\0${sha256(fs.readFileSync(full))}\n`);
+  }
+}
+
 export function hashTree(treeRoot) {
   const chunks = [];
-  function visit(dir) {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
-      const full = path.join(dir, entry.name);
-      const rel = path.relative(treeRoot, full).split(path.sep).join('/');
-      if (entry.isDirectory()) visit(full);
-      else if (entry.isFile()) chunks.push(`${rel}\0${sha256(fs.readFileSync(full))}\n`);
-    }
+  collect(treeRoot, '', chunks);
+  return sha256(chunks.join(''));
+}
+
+// The digest eval-run would record as stagedInputSha256 for a skill arm of
+// this case, computed WITHOUT staging anything.
+//
+// eval-run copies each skill directory into <workspace>/.agent-input/<id> and
+// hashes that tree, so the recorded digest is over paths like
+// `release-engineering/SKILL.md`. Reproducing it here is what lets the report
+// ask a question the run-time hashes cannot: not "did an input move since the
+// run" — eval-verify covers that — but "has the skill moved with no run since
+// at all", where there is no newer bundle to compare against because nobody
+// made one.
+//
+// Skill ids are sorted because hashTree visits a directory's entries in name
+// order, so a multi-skill case must contribute its trees in that same order.
+export function hashStagedSkills(suiteRoot, skillIds) {
+  const chunks = [];
+  for (const id of [...skillIds].sort((a, b) => a.localeCompare(b))) {
+    collect(path.join(suiteRoot, id), id, chunks);
   }
-  visit(treeRoot);
   return sha256(chunks.join(''));
 }

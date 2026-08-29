@@ -30,6 +30,7 @@ const MODULES = [
   'eval-assets.mjs',      // eval case + result shape validation
   'eval-v2.mjs',          // reproducible cases, graders, evidence bundles, claim quarantine
   'eval-fixture-binding.mjs', // a run is bound to the fixture it ran against
+  'eval-skill-currency.mjs',  // evidence must describe the skill text as it stands
   'eval-harness-failure.mjs', // a run that never reached a model is not a failing run
   'hooks.mjs',            // pre-commit secret scanning (skips only when gitleaks is absent)
   'hooks-scan-set.mjs',   // the pre-commit scan set travels in a file, not argv

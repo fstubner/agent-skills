@@ -96,8 +96,20 @@ export function assertFixture(name, fixture, script, extraArgs, wantVerdict, wan
   return report;
 }
 
+// Retries, then warns rather than throws. On Windows a just-exited child can
+// still hold a handle inside tmpBase, and rmSync raises EPERM — which crashed
+// the whole run AFTER every assertion had already passed, turning a green
+// suite into a non-zero exit. eval-run.mjs hit the same thing and settled on
+// the same retry window.
+//
+// Leaked temp directories under the OS temp root are a smaller problem than a
+// test run whose exit code does not mean what it says.
 export function cleanup() {
-  fs.rmSync(tmpBase, { recursive: true, force: true });
+  try {
+    fs.rmSync(tmpBase, { recursive: true, force: true, maxRetries: 8, retryDelay: 250 });
+  } catch (error) {
+    console.error(`warning: could not remove ${tmpBase}: ${error.message}`);
+  }
 }
 
 export const ARCH = 'systems-architecture/scripts/check-architecture.js';
