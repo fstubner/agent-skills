@@ -4,7 +4,8 @@ import os from 'os';
 import path from 'path';
 import {
   root, registry, read, expect, runNode, walk, pathToFileUrl,
-  tmpBase, runFixture, assertFixture, ARCH, BACKEND, FRONTEND, ACCEPT,
+  tmpBase, runFixture, assertFixture, spawnRetry, spawnFailure,
+  ARCH, BACKEND, FRONTEND, ACCEPT,
 } from './harness.mjs';
 import { validateSkillFrontmatter } from '../lib/skill-frontmatter.mjs';
 
@@ -25,8 +26,13 @@ expect('frontmatter validator rejects non-canonical names and unknown fields',
   };
   const scripts = walk(root).filter((f) => /\.(js|cjs|mjs)$/.test(f) && !inEvalRuns(f));
   for (const s of scripts) {
-    const r = spawnSync(process.execPath, ['--check', s], { encoding: 'utf8' });
-    expect(`syntax ${path.relative(root, s)}`, r.status === 0, (r.stderr || '').split('\n')[0]);
+    const r = spawnRetry(process.execPath, ['--check', s]);
+    // A spawn that never started says nothing about the file. Reporting the
+    // spawn error keeps "the machine ran out of handles" from being filed as
+    // a syntax error in a file that compiles.
+    const failure = spawnFailure(r);
+    expect(`syntax ${path.relative(root, s)}`, !failure && r.status === 0,
+      failure || (r.stderr || '').split('\n')[0]);
   }
 }
 

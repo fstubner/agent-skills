@@ -17,6 +17,7 @@
 import { failureCount, cleanup } from './tests/harness.mjs';
 
 const MODULES = [
+  'spawn-resilience.mjs', // a failed spawn is an environment failure, not a defect
   'structure.mjs',        // syntax, registry <-> filesystem, contract drift, CI location
   'readme-coverage.mjs',  // the README lists the skills that actually ship
   'agent-tool-dirs.mjs',  // every checker's tree walk skips .claude/.cursor/... worktrees

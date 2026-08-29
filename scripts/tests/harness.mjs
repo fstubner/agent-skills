@@ -50,8 +50,44 @@ export function failureCount() {
   return failures;
 }
 
+// When spawnSync cannot start a process at all it sets `error` and leaves
+// `status` null and `stderr` empty. Every call site here checks status and
+// stderr, so an exhausted machine read as a silent assertion failure: on
+// 2026-08-29 that produced 20 "syntax <file>" failures with no error text
+// against files that compile fine, plus intermittent ones in plugin-bundles
+// and a grader. The suite could not tell its own weight from a real defect.
+//
+// These codes mean "try again", not "this is broken". ENOENT and friends are
+// returned immediately — a missing binary is a real result.
+const TRANSIENT_SPAWN_CODES = new Set(['EAGAIN', 'EBUSY', 'EPERM', 'ENOMEM', 'ETXTBSY', 'UNKNOWN']);
+
+export function isTransientSpawnError(code) {
+  return TRANSIENT_SPAWN_CODES.has(code);
+}
+
+function sleepSync(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+export function spawnRetry(command, args, opts = {}, attempts = 5) {
+  let result;
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    result = spawnSync(command, args, { encoding: 'utf8', maxBuffer: 20 * 1024 * 1024, ...opts });
+    if (!result.error || !isTransientSpawnError(result.error.code)) return result;
+    sleepSync(100 * 2 ** attempt);
+  }
+  return result;
+}
+
+// A spawn that never started is an environment failure, and saying so is the
+// difference between "the machine is out of handles" and "your code is
+// broken". Returns null when the process actually ran.
+export function spawnFailure(result) {
+  return result.error ? `could not start process: ${result.error.code || result.error.message}` : null;
+}
+
 export function runNode(script, args, opts = {}) {
-  return spawnSync(process.execPath, [script, ...args], { encoding: 'utf8', maxBuffer: 20 * 1024 * 1024, ...opts });
+  return spawnRetry(process.execPath, [script, ...args], opts);
 }
 
 export function walk(dir, out = []) {
