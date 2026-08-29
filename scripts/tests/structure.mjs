@@ -13,7 +13,17 @@ expect('frontmatter validator rejects non-canonical names and unknown fields',
 
 // ---------- 1. Syntax-check every script in the suite ----------
 {
-  const scripts = walk(root).filter((f) => /\.(js|cjs|mjs)$/.test(f));
+  // eval/runs is excluded. Those are model-generated files this suite
+  // COLLECTED, not code it owns; a run that emitted a syntax error is a
+  // finding for its grader, not a broken build. It was also spawning
+  // `node --check` 891 times, growing with every bundle archived, and on
+  // 2026-08-29 produced 20 failures with empty stderr — spawn exhaustion,
+  // not syntax errors.
+  const inEvalRuns = (f) => {
+    const parts = path.relative(root, f).split(path.sep);
+    return parts[0] === 'eval' && parts[1] === 'runs';
+  };
+  const scripts = walk(root).filter((f) => /\.(js|cjs|mjs)$/.test(f) && !inEvalRuns(f));
   for (const s of scripts) {
     const r = spawnSync(process.execPath, ['--check', s], { encoding: 'utf8' });
     expect(`syntax ${path.relative(root, s)}`, r.status === 0, (r.stderr || '').split('\n')[0]);
@@ -320,99 +330,4 @@ expect('frontmatter validator rejects non-canonical names and unknown fields',
     expect(`marketplace entry "${p.name}" matches that manifest's own name`,
       m.name === p.name, `marketplace says ${p.name}, manifest says ${m.name}`);
   }
-}
-
-// ---------- Agent-tool directories are excluded by EVERY tree walk ----------
-// `.claude/worktrees/<branch>/` holds a full copy of the project. Found on a
-// real project: one worktree turned a single-part Express app into
-// multiPart, and check-architecture BLOCKed demanding an ARCHITECTURE.md.
-// Five checkers keep their own SKIP_DIRS, so the failure recurs the moment
-// one of them drifts — this pins all of them to classify's exported list.
-{
-  const { AGENT_TOOL_DIRS } = await import(pathToFileUrl(path.join(root, 'core', 'lib', 'classify.cjs')));
-  expect('classify exports AGENT_TOOL_DIRS', Array.isArray(AGENT_TOOL_DIRS) && AGENT_TOOL_DIRS.includes('.claude'));
-  const walkers = [
-    'code-smells/scripts/check-smells.js',
-    'code-organization/scripts/check-organization.js',
-    'data-modeling/scripts/check-migrations.js',
-    'release-engineering/scripts/check-smoke.js',
-  ];
-  for (const rel of walkers) {
-    const text = read(path.join(root, ...rel.split('/')));
-    const missing = AGENT_TOOL_DIRS.filter((d) => !text.includes(`'${d}'`));
-    expect(`${rel} skips every agent-tool directory`, missing.length === 0, `missing: ${missing.join(', ')}`);
-  }
-
-  // Behavioural regression, not just a text match: the exact shape that broke.
-  const proj = fs.mkdtempSync(path.join(tmpBase, 'worktree-'));
-  fs.mkdirSync(path.join(proj, 'src'), { recursive: true });
-  fs.writeFileSync(path.join(proj, 'package.json'), '{"name":"solo","dependencies":{"express":"^4.19.0"}}');
-  fs.writeFileSync(path.join(proj, 'src', 'server.js'), 'require("express")();\n');
-  const { classify } = await import(pathToFileUrl(path.join(root, 'core', 'lib', 'classify.cjs')));
-  const before = classify(proj, { evidenceDir: '.agent-evidence' });
-  expect('control: a single-part server project is not multi-part', before.multiPart === false);
-  const wt = path.join(proj, '.claude', 'worktrees', 'feature-x');
-  fs.mkdirSync(wt, { recursive: true });
-  fs.writeFileSync(path.join(wt, 'package.json'), '{"name":"solo-ui","dependencies":{"react":"^18.0.0"}}');
-  const after = classify(proj, { evidenceDir: '.agent-evidence' });
-  expect('a .claude/worktrees copy does NOT make a project multi-part',
-    after.multiPart === false && after.frontendPresent === false,
-    `multiPart=${after.multiPart} frontendPresent=${after.frontendPresent}`);
-  const archRun = runNode(path.join(root, ...ARCH.split('/')), ['--root', proj, '--no-write']);
-  expect('check-architecture does not BLOCK on a worktree-only second manifest',
-    JSON.parse(archRun.stdout).verdict === 'SHIP', archRun.stdout.slice(0, 200));
-}
-
-// ---------- The README documents the suite that actually ships ----------
-// It listed 15 skills while 17 shipped; engineering-assessment and
-// multi-agent-design appeared nowhere, and engineering-assessment is the
-// most-invoked skill in this machine's telemetry. Every other
-// registry-to-disk relationship had a cross-check; the one a human reads
-// first did not.
-{
-  const readme = read(path.join(root, 'README.md'));
-  for (const skill of registry.skills) {
-    expect(`README links the ${skill.id} skill`, readme.includes(`[\`${skill.id}\`](./${skill.id}/)`),
-      'registered skill missing from the README table');
-  }
-  // Only counts that are actually counting skills. "twelve days" in a
-  // telemetry sentence is not a stale skill count, and a test that says it
-  // is teaches people to edit the test.
-  const NUMBER_WORDS = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
-  const expected = NUMBER_WORDS[registry.skills.length - 10];
-  const counts = [
-    ...readme.matchAll(/of the (\w+)\b/gi),
-    ...readme.matchAll(/\b(\w+) skills\b/gi),
-    ...readme.matchAll(/\ball (\w+)\b(?=[^.]*skills)/gi),
-  ].map((m) => m[1].toLowerCase()).filter((w) => NUMBER_WORDS.includes(w) || /^\d+$/.test(w));
-  const stale = counts.filter((w) => w !== expected && w !== String(registry.skills.length));
-  expect('README carries no stale skill count', stale.length === 0,
-    `found: ${stale.join(', ')} — suite has ${registry.skills.length} (${expected})`);
-}
-
-// ---------- Documentation points at files that exist ----------
-// A generated file carried `](../registry.json)` into a directory one level
-// deeper than the one it was written for. Nobody edits generated files, so
-// nobody sees the dead link in them.
-{
-  const mdFiles = walk(root)
-    .filter((f) => f.endsWith('.md'))
-    // Generated bundles are excluded: they are copies placed at a different
-    // depth, so a link correct at the source is expected to break there. The
-    // source tree is what a reader browses.
-    .filter((f) => !/(^|[\\/])(node_modules|eval|fixtures|plugins|skills)[\\/]/.test(path.relative(root, f)));
-  const dead = [];
-  for (const abs of mdFiles) {
-    const text = read(abs);
-    for (const m of text.matchAll(/\]\((\.[^)#\s]+)/g)) {
-      if (!fs.existsSync(path.resolve(path.dirname(abs), m[1]))) {
-        dead.push(`${path.relative(root, abs)} -> ${m[1]}`);
-      }
-    }
-    for (const m of text.matchAll(/node\s+([\w./-]+\.(?:mjs|cjs|js))/g)) {
-      const candidates = [path.join(root, m[1]), path.resolve(path.dirname(abs), m[1])];
-      if (!candidates.some((c) => fs.existsSync(c))) dead.push(`${path.relative(root, abs)} -> node ${m[1]}`);
-    }
-  }
-  expect('no dead relative links or missing scripts in documentation', dead.length === 0, dead.join('; '));
 }

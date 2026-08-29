@@ -44,6 +44,13 @@
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
     },
+    "fixtureSha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "SHA-256 of the case fixture tree as it stood when this run executed. Optional: bundles predating the field are unbound rather than backfilled, since a backfilled hash would assert something nobody measured."
+    },
     "condition": {
       "enum": [
         "control",

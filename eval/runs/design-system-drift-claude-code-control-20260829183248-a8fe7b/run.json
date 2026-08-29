@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 2,
+  "runId": "design-system-drift-claude-code-control-20260829183248-a8fe7b",
+  "caseId": "design-system-drift",
+  "caseRevision": 3,
+  "caseSha256": "f00a0718782e65bb15469b7c54bee80dc29f22ba21596c232b4fb027d7f4c024",
+  "fixtureSha256": "b4984d8992297183e43a3cb1df277d83a1d5518933346f6ca1610116497759d6",
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-29T18:32:48.083Z",
+  "finishedAt": "2026-08-29T18:34:44.854Z",
+  "durationMs": 116771,
+  "totalTokens": 690079,
+  "costUsd": 0.18721800000000005,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "f36fb24802c0e779b7139a334328d515d34bd792263d8b088412186dd16140ce",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 10,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 11
+  }
+}

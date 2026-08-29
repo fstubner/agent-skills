@@ -6,6 +6,7 @@ import path from 'path';
 import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { harnessDiagnostics } from './lib/harness-diagnostics.mjs';
+import { hashTree, sha256 } from './lib/tree-hash.mjs';
 
 const suiteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const EXCLUDED_OUTPUTS = new Set(['.git', 'node_modules', '.agent-evidence', '.agent-input', '.codex', '.claude']);
@@ -26,10 +27,6 @@ function parseArgs(argv) {
     args[key.slice(2)] = argv[++i];
   }
   return args;
-}
-
-function sha256(value) {
-  return crypto.createHash('sha256').update(value).digest('hex');
 }
 
 function resolveInvocation(name, args) {
@@ -55,20 +52,6 @@ function copyTree(src, dest, exclude = new Set()) {
     if (entry.isDirectory()) copyTree(from, to, exclude);
     else if (entry.isFile()) fs.copyFileSync(from, to);
   }
-}
-
-function hashTree(root) {
-  const chunks = [];
-  function visit(dir) {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
-      const full = path.join(dir, entry.name);
-      const rel = path.relative(root, full).split(path.sep).join('/');
-      if (entry.isDirectory()) visit(full);
-      else if (entry.isFile()) chunks.push(`${rel}\0${sha256(fs.readFileSync(full))}\n`);
-    }
-  }
-  visit(root);
-  return sha256(chunks.join(''));
 }
 
 function cleanupTemp(tempRoot) {
@@ -374,6 +357,12 @@ const manifest = {
   caseId: testCase.id,
   caseRevision: testCase.revision,
   caseSha256: sha256(caseRaw),
+  // The prompt and the fixture are both inputs to the task, and only the
+  // prompt was bound. Editing a fixture invalidated nothing, so results kept
+  // standing as evidence for a task that no longer existed — caught while
+  // hardening design-system-drift, where an incidental case-revision bump was
+  // the only thing that retired the stale runs.
+  fixtureSha256: hashTree(fixture),
   stagedInputSha256,
   condition: args.condition,
   harness: args.harness,

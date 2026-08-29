@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
+import { hashTree, sha256 } from './lib/tree-hash.mjs';
 
 const require = createRequire(import.meta.url);
 const { validate } = require('../core/lib/schema.cjs');
@@ -16,24 +16,6 @@ const fail = (message) => failures.push(message);
 function readJson(file) {
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
   catch (error) { fail(`${path.relative(root, file)}: ${error.message}`); return null; }
-}
-
-function sha256(value) {
-  return crypto.createHash('sha256').update(value).digest('hex');
-}
-
-function hashTree(treeRoot) {
-  const chunks = [];
-  function visit(dir) {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
-      const full = path.join(dir, entry.name);
-      const rel = path.relative(treeRoot, full).split(path.sep).join('/');
-      if (entry.isDirectory()) visit(full);
-      else if (entry.isFile()) chunks.push(`${rel}\0${sha256(fs.readFileSync(full))}\n`);
-    }
-  }
-  visit(treeRoot);
-  return sha256(chunks.join(''));
 }
 
 function resolveInside(base, relative, label) {
@@ -103,6 +85,16 @@ if (fs.existsSync(runsDir)) {
       acceptedShas.push(caseEntry.value.supersededCaseSha256);
     }
     if (!acceptedShas.includes(manifest.caseSha256)) fail(`eval/runs/${entry.name}: case content changed after the run`);
+    // The fixture is as much a part of the task as the prompt. Bundles written
+    // before the field existed carry no hash and are left unbound rather than
+    // backfilled — a backfilled digest would assert that a fixture had not
+    // changed, which nobody measured.
+    if (manifest.fixtureSha256) {
+      const fixtureDir = resolveInside(root, caseEntry.value.fixture, `${manifest.caseId}.fixture`);
+      if (fixtureDir && fs.existsSync(fixtureDir) && manifest.fixtureSha256 !== hashTree(fixtureDir)) {
+        fail(`eval/runs/${entry.name}: fixture content changed after the run`);
+      }
+    }
     if (!caseEntry.value.conditions.includes(manifest.condition)) fail(`eval/runs/${entry.name}: condition is not configured by case`);
     const resolvedFiles = {};
     for (const [key, relative] of Object.entries(manifest.files || {})) {

@@ -18,6 +18,9 @@ import { failureCount, cleanup } from './tests/harness.mjs';
 
 const MODULES = [
   'structure.mjs',        // syntax, registry <-> filesystem, contract drift, CI location
+  'readme-coverage.mjs',  // the README lists the skills that actually ship
+  'agent-tool-dirs.mjs',  // every checker's tree walk skips .claude/.cursor/... worktrees
+  'doc-links.mjs',        // markdown links and `node <script>` references resolve
   'plugin-bundles.mjs',   // generated Claude/Codex/Cursor/Antigravity packages do not drift
   'marketplace-standards.mjs', // cross-marketplace names, roots, and release versions agree
   'schema.mjs',           // schema validator units, empty-checks fail-closed
@@ -26,6 +29,7 @@ const MODULES = [
   'prose.mjs',            // ai-prose-slop (skips only when vale is absent)
   'eval-assets.mjs',      // eval case + result shape validation
   'eval-v2.mjs',          // reproducible cases, graders, evidence bundles, claim quarantine
+  'eval-fixture-binding.mjs', // a run is bound to the fixture it ran against
   'eval-harness-failure.mjs', // a run that never reached a model is not a failing run
   'hooks.mjs',            // pre-commit secret scanning (skips only when gitleaks is absent)
   'hooks-scan-set.mjs',   // the pre-commit scan set travels in a file, not argv
