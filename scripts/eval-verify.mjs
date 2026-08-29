@@ -104,6 +104,14 @@ if (fs.existsSync(runsDir)) {
         fail(`eval/runs/${entry.name}: grader content changed after the run`);
       }
     }
+    // And the checker, which three graders execute while scoring. Its edit is
+    // invisible to graderSha256 because the grader file itself does not move.
+    if (manifest.checkerSha256 && caseEntry.value.checker) {
+      const checkerFile = resolveInside(root, caseEntry.value.checker, `${manifest.caseId}.checker`);
+      if (checkerFile && fs.existsSync(checkerFile) && manifest.checkerSha256 !== sha256(fs.readFileSync(checkerFile))) {
+        fail(`eval/runs/${entry.name}: checker content changed after the run`);
+      }
+    }
     if (!caseEntry.value.conditions.includes(manifest.condition)) fail(`eval/runs/${entry.name}: condition is not configured by case`);
     const resolvedFiles = {};
     for (const [key, relative] of Object.entries(manifest.files || {})) {

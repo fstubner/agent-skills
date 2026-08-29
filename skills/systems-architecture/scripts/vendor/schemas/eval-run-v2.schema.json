@@ -58,6 +58,13 @@
       ],
       "description": "SHA-256 of the grader file that scored this run. Optional: bundles predating the field are unbound rather than backfilled. Graders import Node built-ins only, so the file fully determines the scoring."
     },
+    "checkerSha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "SHA-256 of the checker the case declares, when it declares one; null otherwise. Three graders execute a checker while scoring, so a checker edit moves their verdicts with the grader file unchanged. Checkers require Node built-ins only, so the file is the whole dependency."
+    },
     "condition": {
       "enum": [
         "control",

@@ -127,3 +127,55 @@ const require = createRequire(import.meta.url);
   expect('eval-verify passes again once the grader binding is removed',
     restored.status === 0, restored.stdout || restored.stderr);
 }
+
+// ---------- A run records the checker its grader may execute ----------
+//
+// Three graders SPAWN a suite checker while scoring —
+// account-suspension-boundary runs check-organization, invoice-suspension-
+// refactor runs check-smells, postgres-required-handle runs check-migrations —
+// and in each the case declares that same script as its `checker`. So a change
+// to a checker moves those verdicts while both the grader file and the fixture
+// stay byte-identical, and graderSha256 cannot see it.
+//
+// All three are single files requiring Node built-ins only, so one hash is the
+// whole dependency. Worth stating because it is the assumption that makes a
+// file hash sufficient rather than a tree hash.
+//
+// Note the checker CONDITION has zero runs to date. The binding earns its
+// place through the graders that execute a checker, not through that arm.
+{
+  const runsDir = path.join(root, 'eval', 'runs');
+  const caseId = 'postgres-required-handle';
+  const checkerRel = 'data-modeling/scripts/check-migrations.js';
+  const bundle = fs.readdirSync(runsDir).find((name) => name.startsWith(`${caseId}-`));
+  expect('a bundle exists for a case that declares a checker', Boolean(bundle), String(bundle));
+
+  const manifestPath = path.join(runsDir, bundle, 'run.json');
+  const original = fs.readFileSync(manifestPath, 'utf8');
+  const crypto = require('crypto');
+  const correct = crypto.createHash('sha256')
+    .update(fs.readFileSync(path.join(root, ...checkerRel.split('/')))).digest('hex');
+
+  const verifyNow = () => spawnSync(node, [path.join(root, 'scripts', 'eval-verify.mjs')], { cwd: root, encoding: 'utf8' });
+  try {
+    const doc = JSON.parse(original);
+
+    doc.checkerSha256 = correct;
+    fs.writeFileSync(manifestPath, `${JSON.stringify(doc, null, 2)}\n`);
+    const matching = verifyNow();
+    expect('eval-verify accepts a run whose checkerSha256 matches the checker',
+      matching.status === 0, matching.stdout || matching.stderr);
+
+    doc.checkerSha256 = 'd'.repeat(64);
+    fs.writeFileSync(manifestPath, `${JSON.stringify(doc, null, 2)}\n`);
+    const mismatched = verifyNow();
+    expect('eval-verify rejects a run whose checker changed after it ran',
+      mismatched.status !== 0 && /checker content changed after the run/.test(mismatched.stdout + mismatched.stderr),
+      mismatched.stdout || mismatched.stderr);
+  } finally {
+    fs.writeFileSync(manifestPath, original);
+  }
+  const restored = verifyNow();
+  expect('eval-verify passes again once the checker binding is removed',
+    restored.status === 0, restored.stdout || restored.stderr);
+}

@@ -367,6 +367,11 @@ const manifest = {
   // it is quieter than a fixture edit because nothing about the workspace
   // looks different — only the verdict does.
   graderSha256: sha256(fs.readFileSync(grader)),
+  // Three graders spawn the case's checker while scoring, so editing one moves
+  // their verdicts with the grader file and the fixture both unchanged.
+  checkerSha256: testCase.checker
+    ? sha256(fs.readFileSync(path.join(suiteRoot, ...testCase.checker.split('/'))))
+    : null,
   stagedInputSha256,
   condition: args.condition,
   harness: args.harness,

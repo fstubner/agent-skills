@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "postgres-required-handle-claude-code-control-20260829202018-814f95",
+  "caseId": "postgres-required-handle",
+  "caseRevision": 1,
+  "caseSha256": "48920887c6e59b3d6f1ac317411e90a9d2b80469391ca1f4b6093d0442cf7d41",
+  "fixtureSha256": "8534f66ef433ddc676889615839a87d290642e6962f5df597ec6999eeaae0a26",
+  "graderSha256": "b47743bc5e8e7e6c891027c01ddb751930eac349b803b98d10eef986cec3f210",
+  "checkerSha256": "f570f671b5dea07ac7e748f6fb99e814d145f80ff43ccd00a2f80245fbb8a7ef",
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-29T20:20:18.395Z",
+  "finishedAt": "2026-08-29T20:20:56.677Z",
+  "durationMs": 38282,
+  "totalTokens": 157664,
+  "costUsd": 0.0451888,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "ab319b5197581deb8ac1a7d6cd9f6934268d3dbc6a22015eb9ad293928f381a8",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 0,
+    "failed": 4,
+    "notEvaluated": 0,
+    "total": 4
+  }
+}
