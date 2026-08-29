@@ -363,6 +363,10 @@ const manifest = {
   // hardening design-system-drift, where an incidental case-revision bump was
   // the only thing that retired the stale runs.
   fixtureSha256: hashTree(fixture),
+  // Editing a grader silently reinterprets every result it ever produced, and
+  // it is quieter than a fixture edit because nothing about the workspace
+  // looks different — only the verdict does.
+  graderSha256: sha256(fs.readFileSync(grader)),
   stagedInputSha256,
   condition: args.condition,
   harness: args.harness,

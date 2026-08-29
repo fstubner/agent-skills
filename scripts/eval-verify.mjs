@@ -95,6 +95,15 @@ if (fs.existsSync(runsDir)) {
         fail(`eval/runs/${entry.name}: fixture content changed after the run`);
       }
     }
+    // Same rule for the grader, which decides what the outputs MEANT. Its
+    // edit is the quieter of the two: the workspace looks identical and only
+    // the verdict moves.
+    if (manifest.graderSha256) {
+      const graderFile = resolveInside(root, caseEntry.value.grader, `${manifest.caseId}.grader`);
+      if (graderFile && fs.existsSync(graderFile) && manifest.graderSha256 !== sha256(fs.readFileSync(graderFile))) {
+        fail(`eval/runs/${entry.name}: grader content changed after the run`);
+      }
+    }
     if (!caseEntry.value.conditions.includes(manifest.condition)) fail(`eval/runs/${entry.name}: condition is not configured by case`);
     const resolvedFiles = {};
     for (const [key, relative] of Object.entries(manifest.files || {})) {

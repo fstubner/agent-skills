@@ -76,3 +76,54 @@ const require = createRequire(import.meta.url);
   expect('eval-verify passes again once the manifest is restored',
     restored.status === 0, restored.stdout || restored.stderr);
 }
+
+// ---------- A run must record the grader that scored it ----------
+//
+// The fixture and the case text are now bound; the GRADER was not. Editing a
+// grader silently reinterprets every result it ever produced, and the failure
+// is quieter than the fixture one because nothing about the workspace looks
+// different — only the verdict does.
+//
+// Found on 2026-08-29 mid-pilot: design-system-drift's tokenValues() flattened
+// one level of nesting, so a token file nested three deep read as having no
+// colours. The grader reached the right verdict from false evidence ("0 of the
+// 7 source greys survive" when all 7 did). Fixing it changed what the stored
+// runs meant, and only knowing I had just edited it stopped stale grading from
+// standing.
+//
+// Every grader imports Node built-ins only, and the four that import
+// dynamically pull from the workspace under test rather than from suite code,
+// so the grader's own bytes fully determine its behaviour. One file, one hash.
+{
+  const runsDir = path.join(root, 'eval', 'runs');
+  const caseId = 'design-system-drift';
+  const bundle = fs.readdirSync(runsDir).find((name) => name.startsWith(`${caseId}-`));
+  const manifestPath = path.join(runsDir, bundle, 'run.json');
+  const original = fs.readFileSync(manifestPath, 'utf8');
+  const crypto = require('crypto');
+  const graderPath = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);
+  const correct = crypto.createHash('sha256').update(fs.readFileSync(graderPath)).digest('hex');
+
+  const verifyNow = () => spawnSync(node, [path.join(root, 'scripts', 'eval-verify.mjs')], { cwd: root, encoding: 'utf8' });
+  try {
+    const doc = JSON.parse(original);
+
+    doc.graderSha256 = correct;
+    fs.writeFileSync(manifestPath, `${JSON.stringify(doc, null, 2)}\n`);
+    const matching = verifyNow();
+    expect('eval-verify accepts a run whose graderSha256 matches the grader',
+      matching.status === 0, matching.stdout || matching.stderr);
+
+    doc.graderSha256 = 'e'.repeat(64);
+    fs.writeFileSync(manifestPath, `${JSON.stringify(doc, null, 2)}\n`);
+    const mismatched = verifyNow();
+    expect('eval-verify rejects a run whose grader changed after it scored',
+      mismatched.status !== 0 && /grader content changed after the run/.test(mismatched.stdout + mismatched.stderr),
+      mismatched.stdout || mismatched.stderr);
+  } finally {
+    fs.writeFileSync(manifestPath, original);
+  }
+  const restored = verifyNow();
+  expect('eval-verify passes again once the grader binding is removed',
+    restored.status === 0, restored.stdout || restored.stderr);
+}

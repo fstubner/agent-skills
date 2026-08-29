@@ -51,6 +51,13 @@
       ],
       "description": "SHA-256 of the case fixture tree as it stood when this run executed. Optional: bundles predating the field are unbound rather than backfilled, since a backfilled hash would assert something nobody measured."
     },
+    "graderSha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "SHA-256 of the grader file that scored this run. Optional: bundles predating the field are unbound rather than backfilled. Graders import Node built-ins only, so the file fully determines the scoring."
+    },
     "condition": {
       "enum": [
         "control",

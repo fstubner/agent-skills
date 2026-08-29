@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 2,
+  "runId": "design-system-drift-claude-code-control-20260829201004-b54c4d",
+  "caseId": "design-system-drift",
+  "caseRevision": 3,
+  "caseSha256": "f00a0718782e65bb15469b7c54bee80dc29f22ba21596c232b4fb027d7f4c024",
+  "fixtureSha256": "b4984d8992297183e43a3cb1df277d83a1d5518933346f6ca1610116497759d6",
+  "graderSha256": "1dd59234f79e55ec3bc3c201486f4fecb222b7e6f1aa2e34f8e835a793ae803b",
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-08-29T20:10:04.843Z",
+  "finishedAt": "2026-08-29T20:11:51.837Z",
+  "durationMs": 106994,
+  "totalTokens": 503720,
+  "costUsd": 0.1696165,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "244918a347329f1e1f5a8aa990dc130613f7d123373345286ce61e0b98607844",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 9,
+    "failed": 2,
+    "notEvaluated": 0,
+    "total": 11
+  }
+}

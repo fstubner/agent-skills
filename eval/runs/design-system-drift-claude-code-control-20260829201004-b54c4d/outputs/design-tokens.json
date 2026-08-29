@@ -1,0 +1,268 @@
+{
+  "version": "1.0",
+  "extracted": "2026-08-29",
+  "note": "Extracted from existing src/ codebase. Consolidates values from vars.css, base.css, components.css, utilities.css, legacy.css, and inline styles in components.",
+  "colors": {
+    "primary": {
+      "base": "#2563eb",
+      "hover": "#1d4ed8",
+      "description": "Primary action color for buttons, links, and active states"
+    },
+    "text": {
+      "default": "#111827",
+      "secondary": "#1f2937",
+      "muted": "#6b7280",
+      "muted-alt": "#6c7280",
+      "muted-alt2": "#71717a",
+      "muted-alt3": "#737373",
+      "muted-alt4": "#6e7681",
+      "table-header": "#707680",
+      "description": "Text colors from dark to light gray. Multiple muted variants suggest ad hoc additions."
+    },
+    "background": {
+      "default": "#ffffff",
+      "secondary": "#f9fafb",
+      "table-header": "#f9fafb",
+      "description": "Background colors for page, cards, and content areas"
+    },
+    "border": {
+      "default": "#e5e7eb",
+      "subtle": "#eceff3",
+      "secondary": "#d1d5db",
+      "description": "Border and divider colors"
+    },
+    "danger": {
+      "base": "#dc2626",
+      "dark": "#b91c1c",
+      "alt": "#d92626",
+      "description": "Error and destructive action colors"
+    },
+    "alert": {
+      "error": {
+        "background": "#fef2f2",
+        "text": "#d92626",
+        "border": "#fecaca"
+      },
+      "warning": {
+        "background": "#fffbeb",
+        "text": "#b45309",
+        "border": "#fde68a"
+      },
+      "info": {
+        "background": "#eff6ff",
+        "text": "#1d4ed8",
+        "border": "#bfdbfe"
+      }
+    },
+    "success": {
+      "text": "#047857",
+      "background": "#ecfdf5",
+      "description": "Success and positive state indicators"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "default": "Inter, system-ui, sans-serif",
+      "description": "System font stack with Inter as preferred font"
+    },
+    "fontSize": {
+      "sm": "0.875rem",
+      "base": "14px",
+      "lg": "18px",
+      "xl": "22px",
+      "2xl": "28px",
+      "description": "Font size scale used across the app"
+    },
+    "lineHeight": {
+      "tight": "1.2",
+      "snug": "1.25",
+      "normal": "1.3",
+      "relaxed": "1.55"
+    },
+    "headings": {
+      "h1": {
+        "fontSize": "28px",
+        "lineHeight": "1.2",
+        "color": "#111827",
+        "marginBottom": "16px"
+      },
+      "h2": {
+        "fontSize": "22px",
+        "lineHeight": "1.25",
+        "color": "#111827",
+        "marginBottom": "12px"
+      },
+      "h3": {
+        "fontSize": "18px",
+        "lineHeight": "1.3",
+        "color": "#1f2937",
+        "marginBottom": "12px"
+      }
+    },
+    "paragraph": {
+      "fontSize": "14px",
+      "lineHeight": "1.55",
+      "color": "#6b7280",
+      "marginBottom": "13px"
+    }
+  },
+  "spacing": {
+    "scale": [
+      "2px",
+      "4px",
+      "8px",
+      "10px",
+      "12px",
+      "13px",
+      "15px",
+      "16px",
+      "24px"
+    ],
+    "gap": "12px",
+    "padding": {
+      "xs": "8px",
+      "sm": "12px",
+      "md": "15px",
+      "lg": "16px",
+      "xl": "24px"
+    },
+    "margin": {
+      "tight": "12px",
+      "default": "13px",
+      "loose": "16px"
+    },
+    "description": "Spacing values found throughout components. Note: values like 13px and 15px suggest ad hoc spacing; 12px/16px/24px are more systematic."
+  },
+  "borderRadius": {
+    "sm": "6px",
+    "md": "8px",
+    "full": "999px",
+    "description": "Border radius values for components. 6px is most common, 8px for cards, 999px for pills."
+  },
+  "components": {
+    "button": {
+      "fontSize": "14px",
+      "padding": "8px 16px",
+      "borderRadius": "6px",
+      "variants": {
+        "primary": {
+          "background": "#2563eb",
+          "color": "#ffffff"
+        },
+        "primary-hover": {
+          "background": "#1d4ed8"
+        },
+        "secondary": {
+          "background": "#ffffff",
+          "color": "#374151",
+          "borderColor": "#d1d5db"
+        },
+        "danger": {
+          "background": "#dc2626",
+          "color": "#ffffff"
+        },
+        "danger-hover": {
+          "background": "#b91c1c"
+        },
+        "link": {
+          "background": "none",
+          "border": "0",
+          "padding": "0",
+          "color": "#2563eb",
+          "fontSize": "14px"
+        },
+        "link-destructive": {
+          "background": "none",
+          "border": "0",
+          "padding": "0",
+          "color": "#d92626",
+          "fontSize": "14px"
+        }
+      }
+    },
+    "card": {
+      "background": "#ffffff",
+      "border": "1px solid #e5e7eb",
+      "borderRadius": "8px",
+      "padding": "16px",
+      "marginBottom": "12px"
+    },
+    "card-highlight": {
+      "background": "#f9fafb",
+      "border": "1px solid #e5e7eb",
+      "borderRadius": "8px",
+      "padding": "16px",
+      "marginBottom": "12px"
+    },
+    "alert": {
+      "borderRadius": "6px",
+      "padding": "12px 15px",
+      "fontSize": "14px",
+      "marginBottom": "12px"
+    },
+    "table": {
+      "fontSize": "14px",
+      "headerFontWeight": "600",
+      "headerPadding": "12px",
+      "cellPadding": "13px 12px"
+    },
+    "nav": {
+      "background": "#ffffff",
+      "borderBottom": "1px solid #e5e7eb",
+      "padding": "12px 24px"
+    },
+    "settings-panel": {
+      "border": "1px solid #2563eb",
+      "borderRadius": "6px",
+      "padding": "12px"
+    }
+  },
+  "utilities": {
+    "text-sizes": {
+      "text-sm": "14px",
+      "text-small": "0.875rem"
+    },
+    "text-colors": {
+      "muted": "#71717a",
+      "subtle": "#737373"
+    },
+    "spacing-utilities": {
+      "stack-tight": "12px",
+      "stack": "13px",
+      "stack-loose": "16px",
+      "pad": "15px",
+      "pad-lg": "16px"
+    },
+    "dividers": {
+      "divider": "1px solid #eceff3",
+      "divider-strong": "1px solid #e5e7eb"
+    },
+    "pills": {
+      "ok": {
+        "background": "#ecfdf5",
+        "color": "#047857",
+        "borderRadius": "999px",
+        "padding": "2px 10px",
+        "fontSize": "12px"
+      },
+      "late": {
+        "background": "#fef2f2",
+        "color": "#dc2727",
+        "borderRadius": "999px",
+        "padding": "2px 10px",
+        "fontSize": "12px"
+      }
+    }
+  },
+  "calendar": {
+    "description": "Calendar-specific color palette with computed density bands",
+    "brand": "#2563eb",
+    "dark": "#111827",
+    "light": "#ffffff",
+    "paletteNote": "Grid, gridStrong, and now colors are computed via mix() function for density visualization"
+  },
+  "focus": {
+    "outline": "2px solid #2563eb",
+    "outlineOffset": "2px"
+  }
+}
