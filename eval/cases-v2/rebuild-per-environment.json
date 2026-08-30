@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "id": "rebuild-per-environment",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "This service deploys from main through staging to production and we have twice seen production behave differently from staging with no code change between them. Fix the delivery pipeline in .github/workflows so that what runs in production is what staging verified. Keep GitHub Actions and the existing deploy.sh interface, and do not change the application.",
+  "fixture": "eval/fixtures-v2/rebuild-per-environment",
+  "grader": "eval/graders-v2/rebuild-per-environment.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "workflow-present", "description": "A workflow still exists after the edit", "kind": "outcome" },
+    { "id": "single-build", "description": "The image is built exactly once", "kind": "outcome" },
+    { "id": "production-does-not-rebuild", "description": "The production job deploys rather than building its own image", "kind": "outcome" },
+    { "id": "promoted-by-immutable-reference", "description": "Environments reference a digest or commit-pinned tag, not a name that can be re-pointed", "kind": "outcome" },
+    { "id": "environment-tags-removed", "description": "The per-environment floating tags are gone", "kind": "outcome" },
+    { "id": "tests-still-gate-deploys", "description": "The cheap test gate still runs before anything deploys", "kind": "outcome" },
+    { "id": "app-unchanged", "description": "A pipeline task does not edit the application", "kind": "outcome" }
+  ]
+}

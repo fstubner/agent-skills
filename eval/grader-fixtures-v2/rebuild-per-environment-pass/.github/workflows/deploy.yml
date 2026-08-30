@@ -1,0 +1,45 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.push.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image once
+        run: docker build -t registry.internal/ledger-api:${{ github.sha }} .
+      - id: push
+        name: Push and capture the digest
+        run: |
+          docker push registry.internal/ledger-api:${{ github.sha }}
+          echo "digest=$(docker inspect --format='{{index .RepoDigests 0}}' registry.internal/ledger-api:${{ github.sha }})" >> "$GITHUB_OUTPUT"
+
+  staging:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy the built artifact
+        run: ./scripts/deploy.sh staging "${{ needs.build.outputs.digest }}"
+
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Promote the artifact staging verified
+        run: ./scripts/deploy.sh production "${{ needs.build.outputs.digest }}"

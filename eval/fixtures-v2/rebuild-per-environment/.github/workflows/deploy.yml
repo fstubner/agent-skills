@@ -1,0 +1,38 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  staging:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t registry.internal/ledger-api:staging .
+      - name: Push
+        run: docker push registry.internal/ledger-api:staging
+      - name: Deploy
+        run: ./scripts/deploy.sh staging registry.internal/ledger-api:staging
+
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t registry.internal/ledger-api:prod .
+      - name: Push
+        run: docker push registry.internal/ledger-api:prod
+      - name: Deploy
+        run: ./scripts/deploy.sh production registry.internal/ledger-api:prod

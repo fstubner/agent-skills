@@ -246,6 +246,12 @@ const freshEfficacyCases = [
   // transcribes all 31 literals — grounded at 100% and still not an
   // extraction, which is why coverage is reported and never gated.
   'design-system-drift',
+  // release-engineering, batch 1 of the 15-case programme. One case per
+  // numbered rule: build once and promote (1), inject config at deploy (3),
+  // a rollback an operator can run without a lookup (4).
+  'rebuild-per-environment',
+  'secrets-baked-into-image',
+  'rollback-by-recollection',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

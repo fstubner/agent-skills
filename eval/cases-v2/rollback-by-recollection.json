@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "id": "rollback-by-recollection",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "A bad release here took 40 minutes to undo last month because the only person who knew the previous revision was asleep. Fix the release documentation so that whoever is on call can undo a bad deploy without waking anyone or looking anything up. Do not change the application.",
+  "fixture": "eval/fixtures-v2/rollback-by-recollection",
+  "grader": "eval/graders-v2/rollback-by-recollection.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "release-doc-present", "description": "RELEASE.md still exists after the edit", "kind": "outcome" },
+    { "id": "rollback-is-a-literal-command", "description": "The rollback is a runnable command, not a description of one", "kind": "outcome" },
+    { "id": "rollback-needs-no-lookup", "description": "Running it requires no prior lookup of a good revision", "kind": "outcome" },
+    { "id": "no-person-as-the-rollback-path", "description": "Recovery does not depend on naming a colleague or asking in chat", "kind": "outcome" },
+    { "id": "no-automated-rollback-claim-removed", "description": "The contradicting \"there is no automated rollback\" line is gone", "kind": "outcome" },
+    { "id": "rollback-limits-stated", "description": "What the rollback does not restore is stated rather than left to be discovered", "kind": "outcome" },
+    { "id": "deploy-path-intact", "description": "The deploy script still deploys", "kind": "outcome" },
+    { "id": "app-unchanged", "description": "A documentation task does not edit the application", "kind": "outcome" }
+  ]
+}
