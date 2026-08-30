@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-codex-skill-20260830010808-2093fb",
+    "B": "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-codex-skill-20260830010808-2093fb": "skill",
+    "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-codex-skill-20260830010808-2093fb": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1017,
+    "truncated": {
+      "zero-count-export-acceptance-codex-skill-20260830010808-2093fb": true,
+      "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 2,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B's explicit delineation of untested paths ('malformed input, missing arguments, CSV escaping') and clear reconciliation of test-vs-runtime conflicts demonstrates stronger review discipline, while Report A achieves greater actionability by pinpointing the root cause in `src/report.js` with the `item.count` filter but omits scope boundaries critical for a release verdict."
+  }
+}

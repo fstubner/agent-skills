@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "stale-pass-review-claude-code-policy-20260828175707-1fce79",
+    "B": "stale-pass-review-claude-code-skill-20260828175934-c26752"
+  },
+  "conditions": {
+    "stale-pass-review-claude-code-policy-20260828175707-1fce79": "policy",
+    "stale-pass-review-claude-code-skill-20260828175934-c26752": "skill"
+  },
+  "skillVersions": {
+    "stale-pass-review-claude-code-policy-20260828175707-1fce79": null,
+    "stale-pass-review-claude-code-skill-20260828175934-c26752": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 2837,
+    "truncated": {
+      "stale-pass-review-claude-code-skill-20260828175934-c26752": true,
+      "stale-pass-review-claude-code-policy-20260828175707-1fce79": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 3,
+        "prioritisation": 3,
+        "honesty": 2,
+        "readability": 3
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A explicitly separates verified from unverified work with a checkmark section ('✓ Workspace structure is present, ✗ App implements zero MVP features'), while Report B asserts requirements (ux-walkthrough.md, design-direction.md) without showing they're mandated; A prioritizes by severity (Critical/High/Policy) with concrete next steps, while B front-loads documentation gaps over missing core features and stops mid-sentence on recommendations."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-claude-code-policy-20260828190937-d16497",
+    "B": "job-ledger-ordering-assessment-claude-code-skill-20260828191326-442bc9"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-claude-code-policy-20260828190937-d16497": "policy",
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191326-442bc9": "skill"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-claude-code-policy-20260828190937-d16497": null,
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191326-442bc9": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5502,
+    "truncated": {
+      "job-ledger-ordering-assessment-claude-code-skill-20260828191326-442bc9": true,
+      "job-ledger-ordering-assessment-claude-code-policy-20260828190937-d16497": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 3,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "B orders findings by actual deployment/data-risk impact (entry point, then destructive migration, then error handling, then tests) while A ranks the untested smoke test above the destructive DROP TABLE migration by burying it in 'unconfirmed risks' despite it being directly confirmed in the migration file; B's 'None identified' unconfirmed-issues claim is slightly less honest than A's explicit list of assumptions (idempotency intent, error-handling contract) still requiring external context."
+  }
+}

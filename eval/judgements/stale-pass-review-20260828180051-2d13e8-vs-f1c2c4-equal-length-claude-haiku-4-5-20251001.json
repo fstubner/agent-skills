@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "stale-pass-review-claude-code-skill-20260828180051-2d13e8",
+    "B": "stale-pass-review-claude-code-policy-20260828175817-f1c2c4"
+  },
+  "conditions": {
+    "stale-pass-review-claude-code-skill-20260828180051-2d13e8": "skill",
+    "stale-pass-review-claude-code-policy-20260828175817-f1c2c4": "policy"
+  },
+  "skillVersions": {
+    "stale-pass-review-claude-code-skill-20260828180051-2d13e8": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe",
+    "stale-pass-review-claude-code-policy-20260828175817-f1c2c4": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1690,
+    "truncated": {
+      "stale-pass-review-claude-code-skill-20260828180051-2d13e8": true,
+      "stale-pass-review-claude-code-policy-20260828175817-f1c2c4": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 2,
+        "evidence": 4,
+        "prioritisation": 2,
+        "honesty": 2,
+        "readability": 3
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B provides five sequenced, actionable steps (implement → add infrastructure → test → verify) that an engineer can execute immediately, whereas A catalogs missing pieces without priority ordering or clear next steps, and ends mid-section on an incomplete action list."
+  }
+}

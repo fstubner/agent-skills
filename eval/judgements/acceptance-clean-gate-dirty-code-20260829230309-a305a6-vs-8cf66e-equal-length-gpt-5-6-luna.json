@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "acceptance-clean-gate-dirty-code",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181428-8cf66e",
+    "B": "acceptance-clean-gate-dirty-code-claude-code-skill-20260829230309-a305a6"
+  },
+  "conditions": {
+    "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181428-8cf66e": "policy",
+    "acceptance-clean-gate-dirty-code-claude-code-skill-20260829230309-a305a6": "skill"
+  },
+  "skillVersions": {
+    "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181428-8cf66e": null,
+    "acceptance-clean-gate-dirty-code-claude-code-skill-20260829230309-a305a6": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5486,
+    "truncated": {
+      "acceptance-clean-gate-dirty-code-claude-code-skill-20260829230309-a305a6": true,
+      "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181428-8cf66e": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 3,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 5,
+        "prioritisation": 3,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "A provides concrete code-level fixes and a sequenced remediation estimate, while B more clearly documents unverified areas but weakens prioritisation by labelling the unused design system a critical blocker."
+  }
+}

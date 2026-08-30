@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-codex-skill-20260830002900-db1c0b",
+    "B": "job-ledger-ordering-assessment-codex-policy-20260813173049-349a43"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-codex-skill-20260830002900-db1c0b": "skill",
+    "job-ledger-ordering-assessment-codex-policy-20260813173049-349a43": "policy"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-codex-skill-20260830002900-db1c0b": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "job-ledger-ordering-assessment-codex-policy-20260813173049-349a43": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4671,
+    "truncated": {
+      "job-ledger-ordering-assessment-codex-skill-20260830002900-db1c0b": true,
+      "job-ledger-ordering-assessment-codex-policy-20260813173049-349a43": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 5
+      }
+    },
+    "winner": "A",
+    "reasoning": "A orders the destructive migration above the lower-impact, unused retry helper and explicitly documents inspection gaps; B provides stronger runtime evidence with the launcher command, but ranks the unconsumed configuration bug above migration data loss and makes broader operational claims."
+  }
+}

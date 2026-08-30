@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-claude-code-skill-20260818124125-f91f39",
+    "B": "engineering-assessment-retry-storm-claude-code-policy-20260818115456-f099d7"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260818124125-f91f39": "skill",
+    "engineering-assessment-retry-storm-claude-code-policy-20260818115456-f099d7": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260818124125-f91f39": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-retry-storm-claude-code-policy-20260818115456-f099d7": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4976,
+    "truncated": {
+      "engineering-assessment-retry-storm-claude-code-skill-20260818124125-f91f39": true,
+      "engineering-assessment-retry-storm-claude-code-policy-20260818115456-f099d7": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 3,
+        "prioritisation": 4,
+        "honesty": 2,
+        "readability": 5
+      }
+    },
+    "winner": "A",
+    "reasoning": "A ties each finding to specific files and line ranges, explicitly records unrun tests and uncertainty; B offers useful fixes and code excerpts but asserts unsupported outcomes such as the processor rejecting all requests and three-replica duplicate processing."
+  }
+}

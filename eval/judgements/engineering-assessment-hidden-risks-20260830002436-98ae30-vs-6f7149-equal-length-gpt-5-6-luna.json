@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-hidden-risks",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "engineering-assessment-hidden-risks-codex-policy-20260813172434-6f7149",
+    "B": "engineering-assessment-hidden-risks-codex-skill-20260830002436-98ae30"
+  },
+  "conditions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813172434-6f7149": "policy",
+    "engineering-assessment-hidden-risks-codex-skill-20260830002436-98ae30": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813172434-6f7149": null,
+    "engineering-assessment-hidden-risks-codex-skill-20260830002436-98ae30": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4618,
+    "truncated": {
+      "engineering-assessment-hidden-risks-codex-skill-20260830002436-98ae30": true,
+      "engineering-assessment-hidden-risks-codex-policy-20260813172434-6f7149": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "A includes the concrete traversal weakness at src/files.js:6 and clearly distinguishes its present impact from future file-read risk, while B provides stronger command-output documentation but replaces that security finding with the endpoint contract issue."
+  }
+}

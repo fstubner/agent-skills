@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-claude-code-policy-20260828180514-d9d058",
+    "B": "zero-count-export-acceptance-claude-code-skill-20260828180934-cf3460"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-claude-code-policy-20260828180514-d9d058": "policy",
+    "zero-count-export-acceptance-claude-code-skill-20260828180934-cf3460": "skill"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-claude-code-policy-20260828180514-d9d058": null,
+    "zero-count-export-acceptance-claude-code-skill-20260828180934-cf3460": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1884,
+    "truncated": {
+      "zero-count-export-acceptance-claude-code-skill-20260828180934-cf3460": true,
+      "zero-count-export-acceptance-claude-code-policy-20260828180514-d9d058": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B excels through precision and transparency: it cites full file paths (`src/report.js` vs Report A's `report.js:3`), explicitly labels severity (BLOCK/CONDITIONAL), provides the exact code snippet causing failure, and includes a \"What Was Verified\" section that honestly documents permission limitations on runtime testing—whereas Report A identifies the same critical issues but with less specificity and less clarity about what gaps remain."
+  }
+}

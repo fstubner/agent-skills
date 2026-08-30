@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-codex-skill-20260828175116-1a3c93",
+    "B": "engineering-assessment-silent-drop-codex-policy-20260828174801-cee775"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-codex-skill-20260828175116-1a3c93": "skill",
+    "engineering-assessment-silent-drop-codex-policy-20260828174801-cee775": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-codex-skill-20260828175116-1a3c93": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-silent-drop-codex-policy-20260828174801-cee775": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4039,
+    "truncated": {
+      "engineering-assessment-silent-drop-codex-skill-20260828175116-1a3c93": true,
+      "engineering-assessment-silent-drop-codex-policy-20260828174801-cee775": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 3,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B orders findings by business impact (data loss → inflated reporting → error handling), directly explaining the partner's symptom, and includes a dedicated verification section distinguishing certain from assumed findings; Report A orders by severity and omits analysis of what was checked versus assumed, making it less trustworthy for investigating the reported problem."
+  }
+}

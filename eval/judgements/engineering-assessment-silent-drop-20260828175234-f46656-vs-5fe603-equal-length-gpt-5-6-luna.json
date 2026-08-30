@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-codex-policy-20260828174826-5fe603",
+    "B": "engineering-assessment-silent-drop-codex-skill-20260828175234-f46656"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828174826-5fe603": "policy",
+    "engineering-assessment-silent-drop-codex-skill-20260828175234-f46656": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828174826-5fe603": null,
+    "engineering-assessment-silent-drop-codex-skill-20260828175234-f46656": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4061,
+    "truncated": {
+      "engineering-assessment-silent-drop-codex-skill-20260828175234-f46656": true,
+      "engineering-assessment-silent-drop-codex-policy-20260828174826-5fe603": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B wins narrowly because it ties each finding to more precise evidence and explicit command output, while A offers stronger causal explanation, such as calling non-durable storage the “strongest explanation.”"
+  }
+}

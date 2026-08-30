@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-claude-code-skill-20260829230016-bdf72c",
+    "B": "zero-count-export-acceptance-claude-code-policy-20260828180642-4d4172"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-claude-code-skill-20260829230016-bdf72c": "skill",
+    "zero-count-export-acceptance-claude-code-policy-20260828180642-4d4172": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-claude-code-skill-20260829230016-bdf72c": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "zero-count-export-acceptance-claude-code-policy-20260828180642-4d4172": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 2384,
+    "truncated": {
+      "zero-count-export-acceptance-claude-code-skill-20260829230016-bdf72c": true,
+      "zero-count-export-acceptance-claude-code-policy-20260828180642-4d4172": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 3
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Both correctly identify the same zero-count filter bug with the same file/line citation, but B lays out an explicit 'What Was Verified' checklist distinguishing checked vs. failed items and offers concrete remediation options, whereas A spends more of its limited space on gate-framework scaffolding (A/B/C/D verdict basis) that adds ceremony without adding verified information."
+  }
+}

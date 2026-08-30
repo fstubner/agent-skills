@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-hidden-risks",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72",
+    "B": "engineering-assessment-hidden-risks-codex-policy-20260813174545-33bb76"
+  },
+  "conditions": {
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "skill",
+    "engineering-assessment-hidden-risks-codex-policy-20260813174545-33bb76": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-hidden-risks-codex-policy-20260813174545-33bb76": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4870,
+    "truncated": {
+      "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": true,
+      "engineering-assessment-hidden-risks-codex-policy-20260813174545-33bb76": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4.5,
+        "prioritisation": 3.5,
+        "honesty": 4.5,
+        "readability": 4.5
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4.5,
+        "readability": 3.5
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A presents its methodology more systematically (clear 'What I ran' table with command results) and organizes findings in a scannable table format, making severity levels immediately visible; Report B found an additional issue (process crash on missing `name` parameter) and more accurately prioritizes path traversal as critical rather than medium, but its narrative format is less scannable and buries verification details at the end rather than front-loading methodology."
+  }
+}

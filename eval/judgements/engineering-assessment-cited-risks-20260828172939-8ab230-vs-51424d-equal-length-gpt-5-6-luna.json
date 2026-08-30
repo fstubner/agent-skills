@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-cited-risks",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "engineering-assessment-cited-risks-codex-policy-20260828172512-51424d",
+    "B": "engineering-assessment-cited-risks-codex-skill-20260828172939-8ab230"
+  },
+  "conditions": {
+    "engineering-assessment-cited-risks-codex-policy-20260828172512-51424d": "policy",
+    "engineering-assessment-cited-risks-codex-skill-20260828172939-8ab230": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-cited-risks-codex-policy-20260828172512-51424d": null,
+    "engineering-assessment-cited-risks-codex-skill-20260828172939-8ab230": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5279,
+    "truncated": {
+      "engineering-assessment-cited-risks-codex-skill-20260828172939-8ab230": false,
+      "engineering-assessment-cited-risks-codex-policy-20260828172512-51424d": true
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 4,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "B provides broader reproducible evidence, including exact command output and explicit coverage gaps, while A offers especially clear remediation and reports an end-to-end authorized traversal probe returning HTTP 200."
+  }
+}

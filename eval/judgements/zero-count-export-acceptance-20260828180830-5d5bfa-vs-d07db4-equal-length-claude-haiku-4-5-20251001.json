@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-claude-code-policy-20260828180506-d07db4",
+    "B": "zero-count-export-acceptance-claude-code-skill-20260828180830-5d5bfa"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-claude-code-policy-20260828180506-d07db4": "policy",
+    "zero-count-export-acceptance-claude-code-skill-20260828180830-5d5bfa": "skill"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-claude-code-policy-20260828180506-d07db4": null,
+    "zero-count-export-acceptance-claude-code-skill-20260828180830-5d5bfa": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3328,
+    "truncated": {
+      "zero-count-export-acceptance-claude-code-skill-20260828180830-5d5bfa": false,
+      "zero-count-export-acceptance-claude-code-policy-20260828180506-d07db4": true
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3.5,
+        "evidence": 5,
+        "prioritisation": 4.5,
+        "honesty": 4.5,
+        "readability": 4.5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4.5,
+        "honesty": 4,
+        "readability": 4.5
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B provides an actionable before/after code fix that an engineer can apply immediately (actionability 5 vs 3.5), while both identify the same bug with equally strong evidence; Report A's explicit verification methodology and closing \"What Was Verified\" section (honesty 4.5 vs 4) is outweighed by Report B's practical utility for unblocking the release."
+  }
+}

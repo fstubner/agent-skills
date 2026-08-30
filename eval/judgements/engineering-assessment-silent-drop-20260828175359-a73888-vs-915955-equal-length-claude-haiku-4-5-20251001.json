@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-codex-skill-20260828175359-a73888",
+    "B": "engineering-assessment-silent-drop-codex-policy-20260828174953-915955"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-codex-skill-20260828175359-a73888": "skill",
+    "engineering-assessment-silent-drop-codex-policy-20260828174953-915955": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-codex-skill-20260828175359-a73888": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-silent-drop-codex-policy-20260828174953-915955": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3366,
+    "truncated": {
+      "engineering-assessment-silent-drop-codex-skill-20260828175359-a73888": true,
+      "engineering-assessment-silent-drop-codex-policy-20260828174953-915955": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 3,
+        "honesty": 3,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B identifies the root cause of missing subscribers (in-memory storage with no persistence) as finding #1 and orders by customer impact, directly answering the problem statement; Report A places this as #3, behind reporting issues, and treats the in-memory design as obviously a defect without acknowledging it might be intentional for a local CLI tool. B is also more honest about what couldn't be verified and what assumptions were made."
+  }
+}

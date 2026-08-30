@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-hidden-risks",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72",
+    "B": "engineering-assessment-hidden-risks-codex-policy-20260813174545-33bb76"
+  },
+  "conditions": {
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "skill",
+    "engineering-assessment-hidden-risks-codex-policy-20260813174545-33bb76": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-hidden-risks-codex-policy-20260813174545-33bb76": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4870,
+    "truncated": {
+      "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": true,
+      "engineering-assessment-hidden-risks-codex-policy-20260813174545-33bb76": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B demonstrates the omitted-name crash with a runtime probe and ranks it alongside the known-token and traversal risks, while A provides strong file-and-command evidence but treats the test gap and missing build tooling as comparatively prominent."
+  }
+}

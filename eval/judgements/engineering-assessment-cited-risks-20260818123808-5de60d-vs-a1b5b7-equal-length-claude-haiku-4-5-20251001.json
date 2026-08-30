@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-cited-risks",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-cited-risks-claude-code-skill-20260818123808-5de60d",
+    "B": "engineering-assessment-cited-risks-claude-code-policy-20260817232745-a1b5b7"
+  },
+  "conditions": {
+    "engineering-assessment-cited-risks-claude-code-skill-20260818123808-5de60d": "skill",
+    "engineering-assessment-cited-risks-claude-code-policy-20260817232745-a1b5b7": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-cited-risks-claude-code-skill-20260818123808-5de60d": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-cited-risks-claude-code-policy-20260817232745-a1b5b7": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5938,
+    "truncated": {
+      "engineering-assessment-cited-risks-claude-code-skill-20260818123808-5de60d": true,
+      "engineering-assessment-cited-risks-claude-code-policy-20260817232745-a1b5b7": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 3,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B identifies the critical functional defect (missing file I/O — the service returns paths instead of file contents, with no `fs` module imported) that Report A completely misses, while both catch the path traversal and test issues; Report B also explicitly lists what was verified vs. not verified with checkmarks, showing more rigorous honesty about assessment gaps."
+  }
+}

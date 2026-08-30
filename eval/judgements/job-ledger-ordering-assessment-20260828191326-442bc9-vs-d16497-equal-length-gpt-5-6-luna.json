@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-claude-code-policy-20260828190937-d16497",
+    "B": "job-ledger-ordering-assessment-claude-code-skill-20260828191326-442bc9"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-claude-code-policy-20260828190937-d16497": "policy",
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191326-442bc9": "skill"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-claude-code-policy-20260828190937-d16497": null,
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191326-442bc9": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5502,
+    "truncated": {
+      "job-ledger-ordering-assessment-claude-code-skill-20260828191326-442bc9": true,
+      "job-ledger-ordering-assessment-claude-code-policy-20260828190937-d16497": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 3,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B gives directly actionable recommendations tied to precise evidence, including the unconditional DROP TABLE at migrations/007_reset_job_keys.sql:1; A also identifies the missing src/main.js at ops/start-worker.js:3, but presents more speculative impacts such as worker crashes and treats absent input validation as a confirmed defect."
+  }
+}

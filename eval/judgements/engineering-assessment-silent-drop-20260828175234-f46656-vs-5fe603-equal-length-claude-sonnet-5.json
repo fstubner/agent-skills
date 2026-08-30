@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-codex-policy-20260828174826-5fe603",
+    "B": "engineering-assessment-silent-drop-codex-skill-20260828175234-f46656"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828174826-5fe603": "policy",
+    "engineering-assessment-silent-drop-codex-skill-20260828175234-f46656": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828174826-5fe603": null,
+    "engineering-assessment-silent-drop-codex-skill-20260828175234-f46656": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4061,
+    "truncated": {
+      "engineering-assessment-silent-drop-codex-skill-20260828175234-f46656": true,
+      "engineering-assessment-silent-drop-codex-policy-20260828174826-5fe603": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "tie",
+    "reasoning": "Both reports independently converge on the same five root causes (no persistence, ignored file/CSV errors, misleading counts from overwrite-on-duplicate, weak validation) with matching file:line citations and identical honest disclosure that go/gofmt were unavailable, differing mainly in presentation (A's narrative prose with bolded recommendations vs. B's table plus a 'Strengths' section) rather than in substance or rigor."
+  }
+}

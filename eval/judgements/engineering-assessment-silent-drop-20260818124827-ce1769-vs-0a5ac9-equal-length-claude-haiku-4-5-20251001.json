@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-claude-code-policy-20260818120502-0a5ac9",
+    "B": "engineering-assessment-silent-drop-claude-code-skill-20260818124827-ce1769"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-claude-code-policy-20260818120502-0a5ac9": "policy",
+    "engineering-assessment-silent-drop-claude-code-skill-20260818124827-ce1769": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-claude-code-policy-20260818120502-0a5ac9": null,
+    "engineering-assessment-silent-drop-claude-code-skill-20260818124827-ce1769": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4118,
+    "truncated": {
+      "engineering-assessment-silent-drop-claude-code-skill-20260818124827-ce1769": true,
+      "engineering-assessment-silent-drop-claude-code-policy-20260818120502-0a5ac9": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 4,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A orders findings by logical consequence—no persistence causes false success reports, which blocks retrieval/verification, and misleads the runbook—and embeds code examples for every claim; Report B excels at actionability with specific remediation steps and honest scope documentation, but Finding 4 (missing arg validation) and Finding 5 (stricter input checks) address general robustness rather than the stated problem of missing subscribers."
+  }
+}

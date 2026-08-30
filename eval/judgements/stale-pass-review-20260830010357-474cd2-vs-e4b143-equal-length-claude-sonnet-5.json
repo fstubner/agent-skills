@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "stale-pass-review-codex-policy-20260813172547-e4b143",
+    "B": "stale-pass-review-codex-skill-20260830010357-474cd2"
+  },
+  "conditions": {
+    "stale-pass-review-codex-policy-20260813172547-e4b143": "policy",
+    "stale-pass-review-codex-skill-20260830010357-474cd2": "skill"
+  },
+  "skillVersions": {
+    "stale-pass-review-codex-policy-20260813172547-e4b143": null,
+    "stale-pass-review-codex-skill-20260830010357-474cd2": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1249,
+    "truncated": {
+      "stale-pass-review-codex-skill-20260830010357-474cd2": true,
+      "stale-pass-review-codex-policy-20260813172547-e4b143": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 3,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Both correctly block on the same core finding (stub App.jsx, vacuous test), but B additionally reports that it attempted the prescribed acceptance checker and documents exactly why it couldn't get a result (ESM/require incompatibility, missing core install), which is evidence A never surfaces about its own tooling limits."
+  }
+}

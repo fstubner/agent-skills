@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-codex-skill-20260830002727-438e08",
+    "B": "job-ledger-ordering-assessment-codex-policy-20260813172630-b3be40"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-codex-skill-20260830002727-438e08": "skill",
+    "job-ledger-ordering-assessment-codex-policy-20260813172630-b3be40": "policy"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-codex-skill-20260830002727-438e08": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "job-ledger-ordering-assessment-codex-policy-20260813172630-b3be40": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4381,
+    "truncated": {
+      "job-ledger-ordering-assessment-codex-skill-20260830002727-438e08": true,
+      "job-ledger-ordering-assessment-codex-policy-20260813172630-b3be40": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 2,
+        "honesty": 3,
+        "readability": 3
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B correctly marks the launcher failure as 'critical' and the migration as 'high', recognizing that a MODULE_NOT_FOUND error prevents any execution and deserves top priority, while Report A marks all four findings as identical 'High' severity with no differentiation. Additionally, Report B's dedicated 'Unconfirmed risks' section explicitly acknowledges missing queue/ledger implementations and product context, whereas Report A provides less clarity on what assumptions were made; both show strong evidence, but B's superior prioritization and transparency about gaps makes it more actionable for an engineer deciding where to start."
+  }
+}

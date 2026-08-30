@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "acceptance-clean-gate-dirty-code",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181328-c42ab9",
+    "B": "acceptance-clean-gate-dirty-code-claude-code-skill-20260828182004-828ff4"
+  },
+  "conditions": {
+    "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181328-c42ab9": "policy",
+    "acceptance-clean-gate-dirty-code-claude-code-skill-20260828182004-828ff4": "skill"
+  },
+  "skillVersions": {
+    "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181328-c42ab9": null,
+    "acceptance-clean-gate-dirty-code-claude-code-skill-20260828182004-828ff4": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3450,
+    "truncated": {
+      "acceptance-clean-gate-dirty-code-claude-code-skill-20260828182004-828ff4": true,
+      "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181328-c42ab9": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 3,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "B backs its top finding with a verbatim self-incriminating code comment ('The ward on the session is never compared...') and adds an explicit 'What Was Verified' checklist, while A gives equally concrete file/line evidence but never states what it checked versus assumed, and buries its data-loss and cookie-security findings (both deployment-blocking) below the security bypass without justifying that order."
+  }
+}

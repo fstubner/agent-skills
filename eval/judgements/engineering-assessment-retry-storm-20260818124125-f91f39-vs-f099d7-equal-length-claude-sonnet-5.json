@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-claude-code-skill-20260818124125-f91f39",
+    "B": "engineering-assessment-retry-storm-claude-code-policy-20260818115456-f099d7"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260818124125-f91f39": "skill",
+    "engineering-assessment-retry-storm-claude-code-policy-20260818115456-f099d7": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260818124125-f91f39": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-retry-storm-claude-code-policy-20260818115456-f099d7": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4976,
+    "truncated": {
+      "engineering-assessment-retry-storm-claude-code-skill-20260818124125-f91f39": true,
+      "engineering-assessment-retry-storm-claude-code-policy-20260818115456-f099d7": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 3,
+        "readability": 5,
+        "honesty": 3
+      }
+    },
+    "winner": "B",
+    "reasoning": "B finds the same critical issues as A but adds a fifth, higher-severity root cause (PROCESSOR_KEY never sent as an auth header, meaning zero charges succeed at all) with a code snippet proving it, while A lists PROCESSOR_KEY only as vague 'unused configuration' without drawing that conclusion; A is more honest about uncertainty (its explicit 'Unconfirmed Issues' section) but B's concrete verification checklist and clearer per-finding fix snippets make it more immediately actionable, though B's ranking of missing auth above the duplicate-charge risk is arguably questionable prioritisation since a non-functional integration is a functional bug, not a scaling risk."
+  }
+}

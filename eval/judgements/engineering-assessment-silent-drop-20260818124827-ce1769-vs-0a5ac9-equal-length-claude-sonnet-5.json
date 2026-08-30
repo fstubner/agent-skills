@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-claude-code-policy-20260818120502-0a5ac9",
+    "B": "engineering-assessment-silent-drop-claude-code-skill-20260818124827-ce1769"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-claude-code-policy-20260818120502-0a5ac9": "policy",
+    "engineering-assessment-silent-drop-claude-code-skill-20260818124827-ce1769": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-claude-code-policy-20260818120502-0a5ac9": null,
+    "engineering-assessment-silent-drop-claude-code-skill-20260818124827-ce1769": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4118,
+    "truncated": {
+      "engineering-assessment-silent-drop-claude-code-skill-20260818124827-ce1769": true,
+      "engineering-assessment-silent-drop-claude-code-policy-20260818120502-0a5ac9": false
+    }
+  },
+  "verdict": null,
+  "rawText": "{\"scores\":{\"A\":{\"actionability\":4,\"evidence\":5,\"prioritisation\":5,\"honesty\":4,\"readability\":5},\"B\":{\"actionability\":4,\"evidence\":4,\"prioritisation\":3,\"honesty\":4,\"readability\":3}},\"winner\":\"A\",\"reasoning\":\"A leads with the root cause (no persistence at store.go:12) and explicitly ties it to the partner's symptom of a false success report, while B's #1 finding covers the same root cause but then ranks a missing-argument panic and unvalidated email format as equally 'High' severity alongside it, diluting the priority signal the partner actually needs.\""
+}

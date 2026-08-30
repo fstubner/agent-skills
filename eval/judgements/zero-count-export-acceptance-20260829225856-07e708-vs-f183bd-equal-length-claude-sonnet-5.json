@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-claude-code-skill-20260829225856-07e708",
+    "B": "zero-count-export-acceptance-claude-code-policy-20260828180554-f183bd"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-claude-code-skill-20260829225856-07e708": "skill",
+    "zero-count-export-acceptance-claude-code-policy-20260828180554-f183bd": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-claude-code-skill-20260829225856-07e708": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "zero-count-export-acceptance-claude-code-policy-20260828180554-f183bd": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1954,
+    "truncated": {
+      "zero-count-export-acceptance-claude-code-skill-20260829225856-07e708": true,
+      "zero-count-export-acceptance-claude-code-policy-20260828180554-f183bd": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 3,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A explicitly separates 'verified via static analysis' from 'not verified (requires execution)', naming the acceptance gate and runtime CLI invocation as unverified, while Report B claims CLI entry point and module exports as '✓ Verified' without citing any executed command or output, which is a stronger honesty gap given the task explicitly asked to verify the runtime flow and reconcile with the acceptance gate."
+  }
+}

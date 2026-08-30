@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-claude-code-policy-20260828180514-d9d058",
+    "B": "zero-count-export-acceptance-claude-code-skill-20260828180934-cf3460"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-claude-code-policy-20260828180514-d9d058": "policy",
+    "zero-count-export-acceptance-claude-code-skill-20260828180934-cf3460": "skill"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-claude-code-policy-20260828180514-d9d058": null,
+    "zero-count-export-acceptance-claude-code-skill-20260828180934-cf3460": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1884,
+    "truncated": {
+      "zero-count-export-acceptance-claude-code-skill-20260828180934-cf3460": true,
+      "zero-count-export-acceptance-claude-code-policy-20260828180514-d9d058": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 2,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "B explicitly flags what it could not do (\"Acceptance Gate: Not executed\", \"Runtime Verification: Could not perform\") rather than presenting static analysis as verified runtime behavior, while A's \"Runtime Behavior\" section asserts a concrete input/output trace without ever stating whether the CLI was actually executed, implying verification that didn't happen."
+  }
+}

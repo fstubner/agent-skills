@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-codex-policy-20260828173847-8e1bab",
+    "B": "engineering-assessment-retry-storm-codex-skill-20260828174137-6b3c22"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173847-8e1bab": "policy",
+    "engineering-assessment-retry-storm-codex-skill-20260828174137-6b3c22": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173847-8e1bab": null,
+    "engineering-assessment-retry-storm-codex-skill-20260828174137-6b3c22": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3448,
+    "truncated": {
+      "engineering-assessment-retry-storm-codex-skill-20260828174137-6b3c22": true,
+      "engineering-assessment-retry-storm-codex-policy-20260828173847-8e1bab": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 3
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B pins every claim to exact line numbers (e.g. app/worker.py:9, 11, 16-20) and cross-references README.md:5 against ops/deploy.md:3 to substantiate the concurrency risk, while A makes the same substantive points but cites only filenames without lines and states scope/tooling gaps in a less structured closing note than B's upfront scope-and-what-I-ran tables."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-cited-risks",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-cited-risks-codex-policy-20260828172818-9f7a34",
+    "B": "engineering-assessment-cited-risks-codex-skill-20260828173132-a12328"
+  },
+  "conditions": {
+    "engineering-assessment-cited-risks-codex-policy-20260828172818-9f7a34": "policy",
+    "engineering-assessment-cited-risks-codex-skill-20260828173132-a12328": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-cited-risks-codex-policy-20260828172818-9f7a34": null,
+    "engineering-assessment-cited-risks-codex-skill-20260828173132-a12328": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 6163,
+    "truncated": {
+      "engineering-assessment-cited-risks-codex-skill-20260828173132-a12328": true,
+      "engineering-assessment-cited-risks-codex-policy-20260828172818-9f7a34": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "Both cite the same five findings with matching file/line evidence and live verification, but B is more honest about severity nuance (explicitly noting finding 2 is 'not demonstrated as content exfiltration in the present code' rather than asserting the worst case) and adds a distinct fifth finding (uncaught exception on missing 'name') plus a clearer command-output table and explicit unconfirmed/coverage-gap sections."
+  }
+}

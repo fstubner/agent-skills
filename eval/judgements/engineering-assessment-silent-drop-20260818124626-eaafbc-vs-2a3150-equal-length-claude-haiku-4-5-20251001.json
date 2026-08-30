@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-claude-code-skill-20260818124626-eaafbc",
+    "B": "engineering-assessment-silent-drop-claude-code-policy-20260818120358-2a3150"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-claude-code-skill-20260818124626-eaafbc": "skill",
+    "engineering-assessment-silent-drop-claude-code-policy-20260818120358-2a3150": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-claude-code-skill-20260818124626-eaafbc": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-silent-drop-claude-code-policy-20260818120358-2a3150": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3772,
+    "truncated": {
+      "engineering-assessment-silent-drop-claude-code-skill-20260818124626-eaafbc": true,
+      "engineering-assessment-silent-drop-claude-code-policy-20260818120358-2a3150": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4.5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4.5
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 4,
+        "prioritisation": 4.5,
+        "honesty": 3,
+        "readability": 3.5
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A excels in transparency and actionability—it explicitly documents scope and methodology (what was run, what wasn't, and why), then provides concrete code fixes an engineer can implement immediately (e.g., 'Replace `file, _ := os.Open(...)` with error handling: log and exit on failure'). Report B achieves better prioritisation by including all 5 requested findings with clear severity labels, but lacks the upfront methodological transparency and offers only implied next steps without showing specific code changes."
+  }
+}

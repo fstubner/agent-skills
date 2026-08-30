@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-codex-policy-20260828173806-ba393b",
+    "B": "engineering-assessment-retry-storm-codex-skill-20260828174047-05bbe4"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173806-ba393b": "policy",
+    "engineering-assessment-retry-storm-codex-skill-20260828174047-05bbe4": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173806-ba393b": null,
+    "engineering-assessment-retry-storm-codex-skill-20260828174047-05bbe4": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4178,
+    "truncated": {
+      "engineering-assessment-retry-storm-codex-skill-20260828174047-05bbe4": true,
+      "engineering-assessment-retry-storm-codex-policy-20260828173806-ba393b": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B backs every finding with exact line numbers and actual command output (e.g. the ModuleNotFoundError from importing app.worker, ops/deploy.md:3 for replica count), while Report A's finding 3 about the unused PROCESSOR_KEY is asserted without a line citation for where it's supposedly ignored; B also surfaces a distinct, verifiable release-breaking bug (missing `requests` dependency in pyproject.toml) that A never checks for, showing a more thorough verification pass."
+  }
+}

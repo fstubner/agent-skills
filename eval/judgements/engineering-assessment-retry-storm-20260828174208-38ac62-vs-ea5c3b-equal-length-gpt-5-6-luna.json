@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b",
+    "B": "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b": "policy",
+    "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b": null,
+    "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3233,
+    "truncated": {
+      "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62": true,
+      "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 4,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B wins on reproducible evidence, including exact line ranges and command outputs such as `python3 ... compileall_exit=0`, while A offers stronger breadth and prioritisation, led by the concrete duplicate-charge risk from retrying POSTs without an idempotency key."
+  }
+}

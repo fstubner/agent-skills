@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "stale-pass-review-claude-code-policy-20260828175707-1fce79",
+    "B": "stale-pass-review-claude-code-skill-20260828175934-c26752"
+  },
+  "conditions": {
+    "stale-pass-review-claude-code-policy-20260828175707-1fce79": "policy",
+    "stale-pass-review-claude-code-skill-20260828175934-c26752": "skill"
+  },
+  "skillVersions": {
+    "stale-pass-review-claude-code-policy-20260828175707-1fce79": null,
+    "stale-pass-review-claude-code-skill-20260828175934-c26752": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 2837,
+    "truncated": {
+      "stale-pass-review-claude-code-skill-20260828175934-c26752": true,
+      "stale-pass-review-claude-code-policy-20260828175707-1fce79": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3,
+        "evidence": 3,
+        "prioritisation": 3,
+        "honesty": 3,
+        "readability": 3
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Both correctly verdict BLOCK/NOT READY and cite the same stub App.jsx and dummy test, but B backs claims with actual code excerpts and file names (missing index.html, vite.config.js, ux-walkthrough.md) and catches the planted-pass frontend-report.json ('runId: stale-planted-pass'), a concrete red flag A never mentions, while A's findings stay at the level of generic bullet assertions without quoting the offending code or artifacts."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b",
+    "B": "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b": "policy",
+    "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b": null,
+    "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3233,
+    "truncated": {
+      "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62": true,
+      "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3.5,
+        "evidence": 2,
+        "prioritisation": 3.5,
+        "honesty": 3.5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4.5,
+        "prioritisation": 3.5,
+        "honesty": 4.5,
+        "readability": 4.5
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B provides specific line citations (`app/settings.py:4`, `app/worker.py:9-20`) with exact code quoted, while A asserts findings without evidence; B also explicitly documents all attempted checks with actual command outputs and exit codes, mapping what was verified versus assumed, whereas A simply states it inspected files without showing the verification work."
+  }
+}

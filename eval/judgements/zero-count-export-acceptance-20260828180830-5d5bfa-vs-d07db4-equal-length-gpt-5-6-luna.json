@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "zero-count-export-acceptance-claude-code-policy-20260828180506-d07db4",
+    "B": "zero-count-export-acceptance-claude-code-skill-20260828180830-5d5bfa"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-claude-code-policy-20260828180506-d07db4": "policy",
+    "zero-count-export-acceptance-claude-code-skill-20260828180830-5d5bfa": "skill"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-claude-code-policy-20260828180506-d07db4": null,
+    "zero-count-export-acceptance-claude-code-skill-20260828180830-5d5bfa": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3328,
+    "truncated": {
+      "zero-count-export-acceptance-claude-code-skill-20260828180830-5d5bfa": false,
+      "zero-count-export-acceptance-claude-code-policy-20260828180506-d07db4": true
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 3,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B explicitly records that the acceptance gate was not executed and gives a precise correction at src/report.js:3, while A correctly identifies the same line but admits only code and test inspection rather than runtime verification and includes assumptions such as file I/O being validated."
+  }
+}

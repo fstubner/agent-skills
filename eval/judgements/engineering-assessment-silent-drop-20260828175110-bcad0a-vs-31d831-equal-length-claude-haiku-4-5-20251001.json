@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-codex-policy-20260828174720-31d831",
+    "B": "engineering-assessment-silent-drop-codex-skill-20260828175110-bcad0a"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828174720-31d831": "policy",
+    "engineering-assessment-silent-drop-codex-skill-20260828175110-bcad0a": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828174720-31d831": null,
+    "engineering-assessment-silent-drop-codex-skill-20260828175110-bcad0a": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3164,
+    "truncated": {
+      "engineering-assessment-silent-drop-codex-skill-20260828175110-bcad0a": true,
+      "engineering-assessment-silent-drop-codex-policy-20260828174720-31d831": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 3,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B's structured table format with severity, evidence, and recommendation columns makes findings immediately actionable and scannable; its explicit file inventory (README.md, go.mod, docs/runbook.md, cmd/importer/main.go, internal/store/store.go) and actual command output (go: command not found) are more transparent about scope than Report A's single-line verification section; and it identifies the missing-argument panic (cmd/importer/main.go:12) as a separate High-severity issue that Report A misses entirely, though Report A compensates by covering the race condition on Count/Save and weaker validation issues."
+  }
+}

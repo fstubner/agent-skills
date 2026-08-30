@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "acceptance-clean-gate-dirty-code",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181428-8cf66e",
+    "B": "acceptance-clean-gate-dirty-code-claude-code-skill-20260829230309-a305a6"
+  },
+  "conditions": {
+    "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181428-8cf66e": "policy",
+    "acceptance-clean-gate-dirty-code-claude-code-skill-20260829230309-a305a6": "skill"
+  },
+  "skillVersions": {
+    "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181428-8cf66e": null,
+    "acceptance-clean-gate-dirty-code-claude-code-skill-20260829230309-a305a6": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5486,
+    "truncated": {
+      "acceptance-clean-gate-dirty-code-claude-code-skill-20260829230309-a305a6": true,
+      "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181428-8cf66e": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 5,
+        "prioritisation": 2,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A provides concrete fixes engineers can implement immediately (e.g., the authorization check at src/server.js, the file-exists guard at src/store.js), whereas Report B identifies problems without solutions. Report A also prioritizes by risk (security, then correctness, then completeness), while Report B lists the design system as a BLOCK at equal weight to data loss, obscuring actual severity. Both are evidence-strong, but B's honesty about verification gaps doesn't overcome A's superior actionability and prioritisation for a release decision."
+  }
+}

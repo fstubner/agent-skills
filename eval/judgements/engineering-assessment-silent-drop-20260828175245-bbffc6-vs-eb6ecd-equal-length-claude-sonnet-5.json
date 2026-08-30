@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-codex-policy-20260828174907-eb6ecd",
+    "B": "engineering-assessment-silent-drop-codex-skill-20260828175244-bbffc6"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828174907-eb6ecd": "policy",
+    "engineering-assessment-silent-drop-codex-skill-20260828175244-bbffc6": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828174907-eb6ecd": null,
+    "engineering-assessment-silent-drop-codex-skill-20260828175244-bbffc6": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3028,
+    "truncated": {
+      "engineering-assessment-silent-drop-codex-skill-20260828175244-bbffc6": true,
+      "engineering-assessment-silent-drop-codex-policy-20260828174907-eb6ecd": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "A correctly ranks the in-memory store (store.go:10-19, everything lost on process exit) as the critical root cause directly explaining 'success but missing subscribers', while B never surfaces this finding at all within its cut five, opening instead with the duplicate-overwrite issue as merely 'High' with no true Critical above it."
+  }
+}

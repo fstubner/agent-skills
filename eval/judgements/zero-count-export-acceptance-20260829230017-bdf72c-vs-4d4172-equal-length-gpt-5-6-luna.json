@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "zero-count-export-acceptance-claude-code-skill-20260829230016-bdf72c",
+    "B": "zero-count-export-acceptance-claude-code-policy-20260828180642-4d4172"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-claude-code-skill-20260829230016-bdf72c": "skill",
+    "zero-count-export-acceptance-claude-code-policy-20260828180642-4d4172": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-claude-code-skill-20260829230016-bdf72c": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "zero-count-export-acceptance-claude-code-policy-20260828180642-4d4172": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 2384,
+    "truncated": {
+      "zero-count-export-acceptance-claude-code-skill-20260829230016-bdf72c": true,
+      "zero-count-export-acceptance-claude-code-policy-20260828180642-4d4172": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 3,
+        "prioritisation": 5,
+        "honesty": 2,
+        "readability": 5
+      }
+    },
+    "winner": "A",
+    "reasoning": "A explicitly states runtime execution and acceptance reconciliation were not completed and ties its BLOCK verdict to `src/report.js` line 3; B gives concrete defect evidence but claims several runtime/code checks were verified without command output and even suggests changing PRODUCT.md."
+  }
+}

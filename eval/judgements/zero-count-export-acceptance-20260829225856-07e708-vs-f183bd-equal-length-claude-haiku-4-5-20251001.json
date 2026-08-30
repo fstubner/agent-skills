@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-claude-code-skill-20260829225856-07e708",
+    "B": "zero-count-export-acceptance-claude-code-policy-20260828180554-f183bd"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-claude-code-skill-20260829225856-07e708": "skill",
+    "zero-count-export-acceptance-claude-code-policy-20260828180554-f183bd": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-claude-code-skill-20260829225856-07e708": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "zero-count-export-acceptance-claude-code-policy-20260828180554-f183bd": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1954,
+    "truncated": {
+      "zero-count-export-acceptance-claude-code-skill-20260829225856-07e708": true,
+      "zero-count-export-acceptance-claude-code-policy-20260828180554-f183bd": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 3,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "Both identify the same critical defect correctly (src/report.js:3 filter excludes zero-count items), but Report A explicitly separates verified findings ('static code analysis') from unverified gaps ('requires code execution'), making its scope and limitations transparent, while Report B conflates them and muddies prioritisation with three 'Engineering Policy Observations' of unequal importance that don't address the core verdict."
+  }
+}

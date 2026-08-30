@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-codex-skill-20260828175359-a73888",
+    "B": "engineering-assessment-silent-drop-codex-policy-20260828174953-915955"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-codex-skill-20260828175359-a73888": "skill",
+    "engineering-assessment-silent-drop-codex-policy-20260828174953-915955": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-codex-skill-20260828175359-a73888": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-silent-drop-codex-policy-20260828174953-915955": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3366,
+    "truncated": {
+      "engineering-assessment-silent-drop-codex-skill-20260828175359-a73888": true,
+      "engineering-assessment-silent-drop-codex-policy-20260828174953-915955": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B leads with the process-global in-memory map as the direct cause of loss and covers five actionable findings, while A provides stronger command-level evidence but omits duplicate and schema risks and places durability third."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d",
+    "B": "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d": "skill",
+    "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe",
+    "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1452,
+    "truncated": {
+      "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d": true,
+      "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 3,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B delivers complete, actionable guidance with a specific fix (remove the filter on line 3), detailed evidence from code/spec/tests, and clear prioritization; Report A explicitly acknowledges permission constraints preventing the acceptance check from running, but compensates by being less complete and less specific about remediation than B."
+  }
+}

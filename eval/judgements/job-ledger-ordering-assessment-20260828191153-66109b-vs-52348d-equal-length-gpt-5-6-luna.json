@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-claude-code-skill-20260828191153-66109b",
+    "B": "job-ledger-ordering-assessment-claude-code-policy-20260828190834-52348d"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191153-66109b": "skill",
+    "job-ledger-ordering-assessment-claude-code-policy-20260828190834-52348d": "policy"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191153-66109b": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "job-ledger-ordering-assessment-claude-code-policy-20260828190834-52348d": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5591,
+    "truncated": {
+      "job-ledger-ordering-assessment-claude-code-skill-20260828191153-66109b": true,
+      "job-ledger-ordering-assessment-claude-code-policy-20260828190834-52348d": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 2,
+        "readability": 5
+      }
+    },
+    "winner": "A",
+    "reasoning": "A identifies the destructive migration and weak test coverage as confirmed findings with file-specific evidence and separates uncertainties; B includes a false claim that a failed execute can still lead to acknowledgment and elevates lower-value input validation over the migration risk."
+  }
+}

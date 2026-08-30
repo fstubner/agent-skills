@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-codex-skill-20260830010808-2093fb",
+    "B": "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-codex-skill-20260830010808-2093fb": "skill",
+    "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-codex-skill-20260830010808-2093fb": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1017,
+    "truncated": {
+      "zero-count-export-acceptance-codex-skill-20260830010808-2093fb": true,
+      "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Both correctly identify the missing EMPTY-BIN,0 row as the blocking defect and reconcile it against a misleadingly-green test, but B is more precise about the acceptance reconciliation (explicit npm test pass/fail count, explicit note that no build script exists) and explicitly scopes its remaining uncertainty (malformed input, CSV escaping) rather than A's vaguer account of a failed acceptance-checker rerun that 'could not locate the checker core.'"
+  }
+}

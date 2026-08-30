@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-hidden-risks",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-hidden-risks-codex-skill-20260830002315-32901f",
+    "B": "engineering-assessment-hidden-risks-codex-policy-20260803213504-5be3eb"
+  },
+  "conditions": {
+    "engineering-assessment-hidden-risks-codex-skill-20260830002315-32901f": "skill",
+    "engineering-assessment-hidden-risks-codex-policy-20260803213504-5be3eb": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-hidden-risks-codex-skill-20260830002315-32901f": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-hidden-risks-codex-policy-20260803213504-5be3eb": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4733,
+    "truncated": {
+      "engineering-assessment-hidden-risks-codex-skill-20260830002315-32901f": true,
+      "engineering-assessment-hidden-risks-codex-policy-20260803213504-5be3eb": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4.5,
+        "prioritisation": 3.5,
+        "honesty": 3.5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4.5,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4.5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "B is more actionable (finding 5's dual-write/deprecation-window approach vs A's generic 'establish retention requirement'), and distinctly more honest with a dedicated 'Verification and remaining uncertainty' section explicitly stating that npm/Node was unavailable and runtime behavior remains unverified; A shows command failures but doesn't synthesize what assessment confidence they imply. A has stronger evidence through execution reproduction (traversal PoC), but B's clear separation of what was checked from gaps is more valuable for a deep assessment where knowing the blind spots matters as much as the findings themselves."
+  }
+}

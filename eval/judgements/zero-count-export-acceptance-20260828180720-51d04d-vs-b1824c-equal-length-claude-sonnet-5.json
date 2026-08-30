@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d",
+    "B": "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d": "skill",
+    "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe",
+    "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1452,
+    "truncated": {
+      "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d": true,
+      "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 3,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "A is more transparent about the gap in its own process (explicitly stating the acceptance check wasn't executed and why), while B never mentions whether it ran or attempted the automated acceptance check at all despite the task requiring reconciliation with it; but B is more actionable and better organized, closing with a concrete one-line fix instruction ('The filter on line 3 of src/report.js must be removed') and adding a genuinely useful test-coverage-gap finding A doesn't surface."
+  }
+}

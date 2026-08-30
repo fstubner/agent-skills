@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "zero-count-export-acceptance-codex-skill-20260830010808-2093fb",
+    "B": "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-codex-skill-20260830010808-2093fb": "skill",
+    "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-codex-skill-20260830010808-2093fb": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1017,
+    "truncated": {
+      "zero-count-export-acceptance-codex-skill-20260830010808-2093fb": true,
+      "zero-count-export-acceptance-codex-policy-20260813175350-6b95d0": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 4,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B provides the same concrete failing command and output as A, while additionally records `npm test: PASS (1 test passed)`, the absent build script, and explicitly scoped untested paths; A instead asserts checker-tooling failure without command output or file-specific evidence."
+  }
+}

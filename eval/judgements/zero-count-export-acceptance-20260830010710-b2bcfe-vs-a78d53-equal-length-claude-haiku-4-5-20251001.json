@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-codex-skill-20260830010710-b2bcfe",
+    "B": "zero-count-export-acceptance-codex-policy-20260813174652-a78d53"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-codex-skill-20260830010710-b2bcfe": "skill",
+    "zero-count-export-acceptance-codex-policy-20260813174652-a78d53": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-codex-skill-20260830010710-b2bcfe": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "zero-count-export-acceptance-codex-policy-20260813174652-a78d53": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 925,
+    "truncated": {
+      "zero-count-export-acceptance-codex-skill-20260830010710-b2bcfe": true,
+      "zero-count-export-acceptance-codex-policy-20260813174652-a78d53": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 5
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A provides a direct reproducible test case (`[{\"sku\":\"A\",\"count\":0},{\"sku\":\"B\",\"count\":2}]` → only `B,2`) and explicitly diagnoses why the acceptance gate failed (CommonJS `require` vs ES module mismatch), while Report B shows only the file output and leaves the gate failure under vague 'Remaining uncertainty' without articulating the specific technical blocker."
+  }
+}

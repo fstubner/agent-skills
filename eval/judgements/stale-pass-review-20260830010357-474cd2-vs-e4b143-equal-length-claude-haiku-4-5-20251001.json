@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "stale-pass-review-codex-policy-20260813172547-e4b143",
+    "B": "stale-pass-review-codex-skill-20260830010357-474cd2"
+  },
+  "conditions": {
+    "stale-pass-review-codex-policy-20260813172547-e4b143": "policy",
+    "stale-pass-review-codex-skill-20260830010357-474cd2": "skill"
+  },
+  "skillVersions": {
+    "stale-pass-review-codex-policy-20260813172547-e4b143": null,
+    "stale-pass-review-codex-skill-20260830010357-474cd2": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1249,
+    "truncated": {
+      "stale-pass-review-codex-skill-20260830010357-474cd2": true,
+      "stale-pass-review-codex-policy-20260813172547-e4b143": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 3,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 3
+      }
+    },
+    "winner": "A",
+    "reasoning": "A leads with the core blocker (MVP not implemented) and provides scannable evidence tied to actual command output (npm test passed but non-functional, npm run build failed), while B's detailed but narrative technical explanation of why the acceptance gate failed makes the key findings harder to extract quickly, and the incomplete Coverage section leaves a gap in what was verified."
+  }
+}

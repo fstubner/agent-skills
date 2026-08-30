@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-claude-code-skill-20260828191153-66109b",
+    "B": "job-ledger-ordering-assessment-claude-code-policy-20260828190834-52348d"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191153-66109b": "skill",
+    "job-ledger-ordering-assessment-claude-code-policy-20260828190834-52348d": "policy"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191153-66109b": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "job-ledger-ordering-assessment-claude-code-policy-20260828190834-52348d": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5591,
+    "truncated": {
+      "job-ledger-ordering-assessment-claude-code-skill-20260828191153-66109b": true,
+      "job-ledger-ordering-assessment-claude-code-policy-20260828190834-52348d": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B wins on prioritisation through explicit severity labeling and on honesty through its Verification Statement that documents *how* each finding was confirmed; both found startup and error-handling issues, but Report B's decisive recommendation (execute → record → ack) more strongly guides action than Report A's multiple migration-drop remediation options, though Report A uniquely caught the destructive migration that Report B missed."
+  }
+}

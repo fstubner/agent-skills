@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-hidden-risks",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-hidden-risks-codex-policy-20260813172434-6f7149",
+    "B": "engineering-assessment-hidden-risks-codex-skill-20260830002436-98ae30"
+  },
+  "conditions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813172434-6f7149": "policy",
+    "engineering-assessment-hidden-risks-codex-skill-20260830002436-98ae30": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813172434-6f7149": null,
+    "engineering-assessment-hidden-risks-codex-skill-20260830002436-98ae30": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4618,
+    "truncated": {
+      "engineering-assessment-hidden-risks-codex-skill-20260830002436-98ae30": true,
+      "engineering-assessment-hidden-risks-codex-policy-20260813172434-6f7149": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 3
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B provides stronger evidence by documenting actual command execution in a structured table showing exact output, and demonstrates better risk prioritisation by correctly identifying both authentication bypass and destructive data-loss migration as Critical (whereas A misclassifies migration as High), though Report A leads more directly to findings without preamble."
+  }
+}

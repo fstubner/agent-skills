@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-cited-risks",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "engineering-assessment-cited-risks-codex-skill-20260828173022-abc432",
+    "B": "engineering-assessment-cited-risks-codex-policy-20260828172641-f09644"
+  },
+  "conditions": {
+    "engineering-assessment-cited-risks-codex-skill-20260828173022-abc432": "skill",
+    "engineering-assessment-cited-risks-codex-policy-20260828172641-f09644": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-cited-risks-codex-skill-20260828173022-abc432": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-cited-risks-codex-policy-20260828172641-f09644": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5669,
+    "truncated": {
+      "engineering-assessment-cited-risks-codex-skill-20260828173022-abc432": true,
+      "engineering-assessment-cited-risks-codex-policy-20260828172641-f09644": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "A",
+    "reasoning": "A provides broader verification, including live crash behavior and explicit coverage gaps, while B’s strongest additional finding is the concrete observation that tests only print `all tests passed` without assertions."
+  }
+}

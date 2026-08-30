@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-cited-risks",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-cited-risks-codex-policy-20260828172512-51424d",
+    "B": "engineering-assessment-cited-risks-codex-skill-20260828172939-8ab230"
+  },
+  "conditions": {
+    "engineering-assessment-cited-risks-codex-policy-20260828172512-51424d": "policy",
+    "engineering-assessment-cited-risks-codex-skill-20260828172939-8ab230": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-cited-risks-codex-policy-20260828172512-51424d": null,
+    "engineering-assessment-cited-risks-codex-skill-20260828172939-8ab230": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5279,
+    "truncated": {
+      "engineering-assessment-cited-risks-codex-skill-20260828172939-8ab230": false,
+      "engineering-assessment-cited-risks-codex-policy-20260828172512-51424d": true
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 3,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B provides concrete evidence via actual command output and runtime probes (showing the TypeError exception with line number, npm command failures) where Report A only narrates; Report B also has explicit 'Coverage gaps' and 'Unconfirmed/requires investigation' sections documenting limitations, while Report A omits these systematic honesty checks."
+  }
+}

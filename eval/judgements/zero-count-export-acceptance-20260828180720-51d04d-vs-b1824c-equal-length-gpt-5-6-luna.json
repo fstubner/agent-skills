@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d",
+    "B": "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d": "skill",
+    "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe",
+    "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1452,
+    "truncated": {
+      "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d": true,
+      "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 2,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B gives a clearer actionable release verdict and identifies the missing zero-count test in `test/report.test.js`, while A explicitly admits it did not run `accept-check.js` or the CLI and stops before presenting runtime output."
+  }
+}

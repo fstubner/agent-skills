@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "stale-pass-review-codex-skill-20260830010456-e2466f",
+    "B": "stale-pass-review-codex-policy-20260813173000-bab091"
+  },
+  "conditions": {
+    "stale-pass-review-codex-skill-20260830010456-e2466f": "skill",
+    "stale-pass-review-codex-policy-20260813173000-bab091": "policy"
+  },
+  "skillVersions": {
+    "stale-pass-review-codex-skill-20260830010456-e2466f": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "stale-pass-review-codex-policy-20260813173000-bab091": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 1083,
+    "truncated": {
+      "stale-pass-review-codex-skill-20260830010456-e2466f": true,
+      "stale-pass-review-codex-policy-20260813173000-bab091": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3,
+        "evidence": 2,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B documents actual verification steps (cites `npm test` output and `npm run build` failure with specific reason) and explicitly separates what was checked from what was assumed with a Remaining Uncertainty section, whereas Report A asserts findings without showing verification evidence and treats the inability to run the app as a gap rather than addressing whether that gap matters to the verdict."
+  }
+}

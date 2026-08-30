@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b",
+    "B": "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b": "policy",
+    "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b": null,
+    "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3233,
+    "truncated": {
+      "engineering-assessment-retry-storm-codex-skill-20260828174208-38ac62": true,
+      "engineering-assessment-retry-storm-codex-policy-20260828173905-ea5c3b": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "tie",
+    "reasoning": "Report A covers all five findings with clear, ready-to-act recommendations (e.g. idempotency keys, bounded retries) but its verification note is generic ('inspected all files'), while Report B backs every claim with exact command output (pytest exit 127, ModuleNotFoundError for requests) and file:line citations but is cut off after only two of five findings due to length."
+  }
+}

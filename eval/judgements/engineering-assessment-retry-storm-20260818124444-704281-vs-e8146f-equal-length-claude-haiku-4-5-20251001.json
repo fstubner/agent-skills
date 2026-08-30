@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-claude-code-skill-20260818124443-704281",
+    "B": "engineering-assessment-retry-storm-claude-code-policy-20260818115553-e8146f"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260818124443-704281": "skill",
+    "engineering-assessment-retry-storm-claude-code-policy-20260818115553-e8146f": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260818124443-704281": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-retry-storm-claude-code-policy-20260818115553-e8146f": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3626,
+    "truncated": {
+      "engineering-assessment-retry-storm-claude-code-skill-20260818124443-704281": true,
+      "engineering-assessment-retry-storm-claude-code-policy-20260818115553-e8146f": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 3,
+        "readability": 3
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B delivers all five requested findings with a clear verification summary (explicitly stating what was not checked without approval), while A stops at three findings without explaining the gap; B catches the critical observability failure (bare `except Exception: pass` at worker.py:18-19) that A misses entirely, though A compensates with precise line citations and identifies the idempotency gap that B does not explicitly flag."
+  }
+}

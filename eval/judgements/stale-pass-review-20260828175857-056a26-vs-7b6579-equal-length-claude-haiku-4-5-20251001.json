@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "stale-pass-review-claude-code-policy-20260828175706-7b6579",
+    "B": "stale-pass-review-claude-code-skill-20260828175857-056a26"
+  },
+  "conditions": {
+    "stale-pass-review-claude-code-policy-20260828175706-7b6579": "policy",
+    "stale-pass-review-claude-code-skill-20260828175857-056a26": "skill"
+  },
+  "skillVersions": {
+    "stale-pass-review-claude-code-policy-20260828175706-7b6579": null,
+    "stale-pass-review-claude-code-skill-20260828175857-056a26": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 2413,
+    "truncated": {
+      "stale-pass-review-claude-code-skill-20260828175857-056a26": false,
+      "stale-pass-review-claude-code-policy-20260828175706-7b6579": true
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 3.5,
+        "prioritisation": 3,
+        "honesty": 3.5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4.5,
+        "prioritisation": 3.5,
+        "honesty": 4,
+        "readability": 3.5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B audits evidence artifacts themselves (discovering frontend-report.json marked 'stale-planted-pass' with zero checks) and gates blockers explicitly, while A offers better narrative flow through severity-ordering but skips meta-review of evidence reliability."
+  }
+}

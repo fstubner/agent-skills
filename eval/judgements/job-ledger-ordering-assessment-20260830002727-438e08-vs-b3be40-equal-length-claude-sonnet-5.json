@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-codex-skill-20260830002727-438e08",
+    "B": "job-ledger-ordering-assessment-codex-policy-20260813172630-b3be40"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-codex-skill-20260830002727-438e08": "skill",
+    "job-ledger-ordering-assessment-codex-policy-20260813172630-b3be40": "policy"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-codex-skill-20260830002727-438e08": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "job-ledger-ordering-assessment-codex-policy-20260813172630-b3be40": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4381,
+    "truncated": {
+      "job-ledger-ordering-assessment-codex-skill-20260830002727-438e08": true,
+      "job-ledger-ordering-assessment-codex-policy-20260813172630-b3be40": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "Both cite the same four findings with equally concrete file/line evidence, but B separates confirmed findings from an explicit 'Unconfirmed risks' section (e.g. noting the retry flag has no observable effect since it's unused) and orders by severity (launcher failure first as 'critical') where A gives all four findings the same 'High' severity, undermining its prioritisation claim."
+  }
+}

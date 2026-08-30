@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-codex-skill-20260828174016-90fc1b",
+    "B": "engineering-assessment-retry-storm-codex-policy-20260828173741-8f5b77"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-codex-skill-20260828174016-90fc1b": "skill",
+    "engineering-assessment-retry-storm-codex-policy-20260828173741-8f5b77": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-codex-skill-20260828174016-90fc1b": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-retry-storm-codex-policy-20260828173741-8f5b77": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4471,
+    "truncated": {
+      "engineering-assessment-retry-storm-codex-skill-20260828174016-90fc1b": true,
+      "engineering-assessment-retry-storm-codex-policy-20260828173741-8f5b77": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 5,
+        "honesty": 4,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B wins because it gives especially actionable remediation for durable batch processing and trust-boundary validation, while A provides stronger verification discipline with exact failed commands and a successful compile check."
+  }
+}

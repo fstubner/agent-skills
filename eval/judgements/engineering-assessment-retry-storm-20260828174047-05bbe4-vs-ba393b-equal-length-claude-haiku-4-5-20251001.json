@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-codex-policy-20260828173806-ba393b",
+    "B": "engineering-assessment-retry-storm-codex-skill-20260828174047-05bbe4"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173806-ba393b": "policy",
+    "engineering-assessment-retry-storm-codex-skill-20260828174047-05bbe4": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-codex-policy-20260828173806-ba393b": null,
+    "engineering-assessment-retry-storm-codex-skill-20260828174047-05bbe4": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4178,
+    "truncated": {
+      "engineering-assessment-retry-storm-codex-skill-20260828174047-05bbe4": true,
+      "engineering-assessment-retry-storm-codex-policy-20260828173806-ba393b": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 3,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B cites specific file:line evidence for every finding (app/worker.py:9-20, app/settings.py:4, pyproject.toml:10-11) while A requires readers to locate issues by description; B's table format with evidence and recommendation columns is immediately scannable, whereas A's prioritization reasoning (duplicates before credential exposure) is slightly more explicit but undermined by B's superior evidential rigor."
+  }
+}

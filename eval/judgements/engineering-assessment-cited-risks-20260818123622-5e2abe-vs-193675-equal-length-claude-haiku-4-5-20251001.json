@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-cited-risks",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-cited-risks-claude-code-skill-20260818123622-5e2abe",
+    "B": "engineering-assessment-cited-risks-claude-code-policy-20260817225902-193675"
+  },
+  "conditions": {
+    "engineering-assessment-cited-risks-claude-code-skill-20260818123622-5e2abe": "skill",
+    "engineering-assessment-cited-risks-claude-code-policy-20260817225902-193675": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-cited-risks-claude-code-skill-20260818123622-5e2abe": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-cited-risks-claude-code-policy-20260817225902-193675": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5427,
+    "truncated": {
+      "engineering-assessment-cited-risks-claude-code-skill-20260818123622-5e2abe": true,
+      "engineering-assessment-cited-risks-claude-code-policy-20260817225902-193675": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3,
+        "evidence": 4,
+        "prioritisation": 2,
+        "honesty": 3,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 3,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report A identified the critical 'file contents not served' bug but buried it in 'Unconfirmed Issues' and ranked missing tests and migration safety higher; Report B correctly prioritized this as Finding #2 (CRITICAL) because it's a core functionality failure, not a design ambiguity. Report B's mitigations are also more specific and actionable (e.g., 'Use fs.readFile() or fs.createReadStream()' vs. A's vague 'replace test suite'). The judgment error in Report A's prioritization—elevating rollback procedures and test placeholders above 'the application does not serve files'—is decisive."
+  }
+}

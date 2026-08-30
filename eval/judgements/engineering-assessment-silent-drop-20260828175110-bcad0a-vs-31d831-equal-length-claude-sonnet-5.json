@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-codex-policy-20260828174720-31d831",
+    "B": "engineering-assessment-silent-drop-codex-skill-20260828175110-bcad0a"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828174720-31d831": "policy",
+    "engineering-assessment-silent-drop-codex-skill-20260828175110-bcad0a": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828174720-31d831": null,
+    "engineering-assessment-silent-drop-codex-skill-20260828175110-bcad0a": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3164,
+    "truncated": {
+      "engineering-assessment-silent-drop-codex-skill-20260828175110-bcad0a": true,
+      "engineering-assessment-silent-drop-codex-policy-20260828174720-31d831": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "tie",
+    "reasoning": "Both cite the same core defect (process-global map in internal/store/store.go:10-13/18, exit before durable write) with precise line references and the same failed-toolchain caveat, and B adds one genuinely distinct high-value finding (unchecked os.Args[1] panic at main.go:12) while A adds a distinct concurrency-race finding (unlocked Count at store.go:21), so neither report's extra finding is clearly more valuable than the other's."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "stale-pass-review-claude-code-policy-20260828175707-1fce79",
+    "B": "stale-pass-review-claude-code-skill-20260828175934-c26752"
+  },
+  "conditions": {
+    "stale-pass-review-claude-code-policy-20260828175707-1fce79": "policy",
+    "stale-pass-review-claude-code-skill-20260828175934-c26752": "skill"
+  },
+  "skillVersions": {
+    "stale-pass-review-claude-code-policy-20260828175707-1fce79": null,
+    "stale-pass-review-claude-code-skill-20260828175934-c26752": "67f4bb61064d3f17cd4921756a342441ab8e6d63092a6a88c69d8c3ca9d270fe"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 2837,
+    "truncated": {
+      "stale-pass-review-claude-code-skill-20260828175934-c26752": true,
+      "stale-pass-review-claude-code-policy-20260828175707-1fce79": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 3,
+        "prioritisation": 5,
+        "honesty": 4,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 3,
+        "honesty": 3,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "A prioritises the unimplemented MVP and gives a concrete seven-step remediation path while explicitly separating verified from unverified checks; B provides stronger code-level evidence through App.jsx and test/app.test.js snippets but elevates possibly conditional documentation requirements and an asserted stale report ahead of the core product failure."
+  }
+}

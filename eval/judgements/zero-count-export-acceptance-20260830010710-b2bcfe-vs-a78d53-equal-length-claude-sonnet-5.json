@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "blinding": {
+    "A": "zero-count-export-acceptance-codex-skill-20260830010710-b2bcfe",
+    "B": "zero-count-export-acceptance-codex-policy-20260813174652-a78d53"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-codex-skill-20260830010710-b2bcfe": "skill",
+    "zero-count-export-acceptance-codex-policy-20260813174652-a78d53": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-codex-skill-20260830010710-b2bcfe": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "zero-count-export-acceptance-codex-policy-20260813174652-a78d53": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 925,
+    "truncated": {
+      "zero-count-export-acceptance-codex-skill-20260830010710-b2bcfe": true,
+      "zero-count-export-acceptance-codex-policy-20260813174652-a78d53": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 3
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "A digs deeper by also testing a synthetic zero-count fixture and diagnosing the acceptance-gate's ESM/CommonJS load failure with a specific cause, while B is better organized with clear headers and explicitly flags what wasn't run (no build script) and that the product was untouched, giving it a slight edge on honesty and readability."
+  }
+}
