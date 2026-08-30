@@ -252,6 +252,12 @@ const freshEfficacyCases = [
   'rebuild-per-environment',
   'secrets-baked-into-image',
   'rollback-by-recollection',
+  // Batch 2, continuing one case per numbered rule: cheap checks gate before
+  // expensive ones (2), the flag decision is recorded rather than assumed (5),
+  // and a deploy is not done until its health is observed (7).
+  'gate-order-inverted',
+  'flag-decision-unrecorded',
+  'deploy-declared-done-at-exit-zero',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

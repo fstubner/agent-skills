@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "id": "flag-decision-unrecorded",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "Four of the five flags in src/flags.js have been on for over a year and nobody is willing to delete one, because nobody can say what turning it off would do. We also have no record of which changes shipped behind a flag and which deliberately did not. Fix both, without changing what the application does today.",
+  "fixture": "eval/fixtures-v2/flag-decision-unrecorded",
+  "grader": "eval/graders-v2/flag-decision-unrecorded.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "flags-module-present", "description": "src/flags.js still exports its isEnabled API", "kind": "outcome" },
+    { "id": "all-flags-retained", "description": "No flag was deleted, which would be a behaviour change", "kind": "outcome" },
+    { "id": "flag-values-unchanged", "description": "No flag was flipped", "kind": "outcome" },
+    { "id": "every-flag-has-a-removal-condition", "description": "Each flag records the condition under which it goes away", "kind": "outcome" },
+    { "id": "every-flag-has-an-owner", "description": "Each flag records an owning team", "kind": "outcome" },
+    { "id": "removal-conditions-are-not-placeholders", "description": "No removal condition is TBD, none, or unknown", "kind": "outcome" },
+    { "id": "pr-template-present", "description": "A pull request template exists", "kind": "outcome" },
+    { "id": "pr-template-records-the-flag-decision", "description": "The template prompts for flagged yes or no, not only when a flag was used", "kind": "outcome" },
+    { "id": "pr-template-asks-for-the-reason", "description": "The template asks why, not only whether", "kind": "outcome" },
+    { "id": "app-unchanged", "description": "The application itself is left alone", "kind": "outcome" }
+  ]
+}

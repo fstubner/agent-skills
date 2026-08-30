@@ -1,0 +1,44 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  production:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t registry.internal/ledger-api:${{ github.sha }} .
+      - name: Deploy
+        run: ./scripts/deploy.sh production registry.internal/ledger-api:${{ github.sha }}
+
+      # Ten minutes of readings, not one probe the instant the deploy command
+      # returns. A bad build that answers its first request and then falls over
+      # under real traffic passes a single instantaneous check.
+      - name: Watch health for ten minutes
+        id: watch
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            curl --fail --silent --show-error --max-time 5 https://ledger.internal/health
+            sleep 30
+          done
+
+      # A reading nobody acts on is theatre. The action is named here, before
+      # the deploy runs, rather than decided at 3am.
+      - name: Roll back on a bad reading
+        if: failure() && steps.watch.outcome == 'failure'
+        run: |
+          kubectl --context production rollout undo deployment/ledger-api
+          echo "rolled back; paging the on-call rota"

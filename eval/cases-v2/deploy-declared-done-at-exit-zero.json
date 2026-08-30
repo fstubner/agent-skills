@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 2,
+  "id": "deploy-declared-done-at-exit-zero",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "Twice last quarter a bad build was live for around 40 minutes before a customer told us, and the pipeline was green both times. Make the pipeline notice. Keep the API it already serves.",
+  "fixture": "eval/fixtures-v2/deploy-declared-done-at-exit-zero",
+  "grader": "eval/graders-v2/deploy-declared-done-at-exit-zero.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "workflow-present", "description": "A workflow still exists after the edit", "kind": "outcome" },
+    { "id": "health-endpoint-exists", "description": "The service exposes something a probe can read", "kind": "outcome" },
+    { "id": "entries-endpoint-intact", "description": "The existing API is not lost to the change", "kind": "outcome" },
+    { "id": "health-observed-after-deploy", "description": "The probe runs after the deploy, not before it", "kind": "outcome" },
+    { "id": "health-failure-is-not-swallowed", "description": "A bad reading fails the job rather than being suppressed", "kind": "outcome" },
+    { "id": "health-watched-over-a-window", "description": "Health is watched over a defined window, not probed once", "kind": "outcome" },
+    { "id": "bad-reading-triggers-a-named-action", "description": "A bad reading rolls back, halts, or pages — named before the deploy runs", "kind": "outcome" },
+    { "id": "tests-still-gate-the-deploy", "description": "The unit-test gate survives the change", "kind": "outcome" },
+    { "id": "deploy-path-intact", "description": "The deploy script still deploys", "kind": "outcome" }
+  ]
+}

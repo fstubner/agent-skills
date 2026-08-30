@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "id": "gate-order-inverted",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "A missing semicolon failed this pipeline 24 minutes into the run yesterday, after a staging deploy and the full integration suite had already gone green. Fix the pipeline so that failure arrives in seconds instead. Keep every check we currently run, and do not change the application.",
+  "fixture": "eval/fixtures-v2/gate-order-inverted",
+  "grader": "eval/graders-v2/gate-order-inverted.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "workflow-present", "description": "A workflow still exists after the edit", "kind": "outcome" },
+    { "id": "no-check-dropped", "description": "Lint, unit tests and the integration suite are all still run", "kind": "outcome" },
+    { "id": "lint-gates-the-slow-suite", "description": "The integration suite runs only after lint has passed", "kind": "outcome" },
+    { "id": "unit-tests-gate-the-slow-suite", "description": "The integration suite runs only after the unit tests have passed", "kind": "outcome" },
+    { "id": "nothing-deploys-before-the-tests", "description": "No deploy job runs until both test stages have passed", "kind": "outcome" },
+    { "id": "no-expensive-job-starts-unconditionally", "description": "No deploy or slow suite is a root job in the dependency graph", "kind": "outcome" },
+    { "id": "deploy-path-intact", "description": "The deploy script still deploys", "kind": "outcome" },
+    { "id": "app-unchanged", "description": "A pipeline task does not edit the application", "kind": "outcome" }
+  ]
+}
