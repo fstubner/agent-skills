@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "engineering-assessment-cited-risks-claude-code-skill-20260818123622-5e2abe",
+  "caseId": "engineering-assessment-cited-risks",
+  "condition": "skill",
+  "harness": "claude-code",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "deliverableBytes": 6661,
+  "extraction": {
+    "findingsTotal": 5,
+    "findingsWithFilePath": 5,
+    "findingsWithLineOrOutput": 5,
+    "statesScopeLimits": true,
+    "scopeLimitsNamed": 14,
+    "verdictStated": true,
+    "longestFindingSupported": true
+  }
+}

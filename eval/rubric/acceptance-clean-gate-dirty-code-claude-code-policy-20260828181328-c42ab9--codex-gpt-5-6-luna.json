@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "acceptance-clean-gate-dirty-code-claude-code-policy-20260828181328-c42ab9",
+  "caseId": "acceptance-clean-gate-dirty-code",
+  "condition": "policy",
+  "harness": "claude-code",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "deliverableBytes": 3450,
+  "extraction": {
+    "findingsTotal": 7,
+    "findingsWithFilePath": 6,
+    "findingsWithLineOrOutput": 4,
+    "statesScopeLimits": false,
+    "scopeLimitsNamed": 0,
+    "verdictStated": true,
+    "longestFindingSupported": true
+  }
+}

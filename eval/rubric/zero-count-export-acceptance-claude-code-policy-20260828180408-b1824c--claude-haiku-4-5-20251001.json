@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "zero-count-export-acceptance-claude-code-policy-20260828180408-b1824c",
+  "caseId": "zero-count-export-acceptance",
+  "condition": "policy",
+  "harness": "claude-code",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "deliverableBytes": 1452,
+  "extraction": {
+    "findingsTotal": 2,
+    "findingsWithFilePath": 2,
+    "findingsWithLineOrOutput": 1,
+    "statesScopeLimits": false,
+    "scopeLimitsNamed": 0,
+    "verdictStated": true,
+    "longestFindingSupported": true
+  }
+}

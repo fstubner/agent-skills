@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "zero-count-export-acceptance-claude-code-skill-20260828180720-51d04d",
+  "caseId": "zero-count-export-acceptance",
+  "condition": "skill",
+  "harness": "claude-code",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "deliverableBytes": 3710,
+  "extraction": {
+    "findingsTotal": 3,
+    "findingsWithFilePath": 2,
+    "findingsWithLineOrOutput": 1,
+    "statesScopeLimits": true,
+    "scopeLimitsNamed": 1,
+    "verdictStated": true,
+    "longestFindingSupported": true
+  }
+}

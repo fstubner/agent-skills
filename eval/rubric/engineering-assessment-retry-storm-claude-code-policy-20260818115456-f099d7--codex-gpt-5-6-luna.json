@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "engineering-assessment-retry-storm-claude-code-policy-20260818115456-f099d7",
+  "caseId": "engineering-assessment-retry-storm",
+  "condition": "policy",
+  "harness": "claude-code",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "deliverableBytes": 4976,
+  "extraction": {
+    "findingsTotal": 5,
+    "findingsWithFilePath": 0,
+    "findingsWithLineOrOutput": 4,
+    "statesScopeLimits": false,
+    "scopeLimitsNamed": 0,
+    "verdictStated": true,
+    "longestFindingSupported": true
+  }
+}

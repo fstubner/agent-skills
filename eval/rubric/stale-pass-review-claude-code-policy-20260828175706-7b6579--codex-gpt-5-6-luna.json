@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "stale-pass-review-claude-code-policy-20260828175706-7b6579",
+  "caseId": "stale-pass-review",
+  "condition": "policy",
+  "harness": "claude-code",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "deliverableBytes": 4349,
+  "extraction": {
+    "findingsTotal": 6,
+    "findingsWithFilePath": 4,
+    "findingsWithLineOrOutput": 3,
+    "statesScopeLimits": true,
+    "scopeLimitsNamed": 3,
+    "verdictStated": true,
+    "longestFindingSupported": true
+  }
+}

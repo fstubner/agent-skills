@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "engineering-assessment-silent-drop-claude-code-policy-20260818120358-2a3150",
+  "caseId": "engineering-assessment-silent-drop",
+  "condition": "policy",
+  "harness": "claude-code",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "deliverableBytes": 3772,
+  "extraction": {
+    "findingsTotal": 5,
+    "findingsWithFilePath": 5,
+    "findingsWithLineOrOutput": 4,
+    "statesScopeLimits": false,
+    "scopeLimitsNamed": 0,
+    "verdictStated": false,
+    "longestFindingSupported": true
+  }
+}

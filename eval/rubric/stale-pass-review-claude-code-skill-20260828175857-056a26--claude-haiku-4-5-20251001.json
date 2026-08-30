@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "stale-pass-review-claude-code-skill-20260828175857-056a26",
+  "caseId": "stale-pass-review",
+  "condition": "skill",
+  "harness": "claude-code",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "deliverableBytes": 2413,
+  "extraction": {
+    "findingsTotal": 5,
+    "findingsWithFilePath": 5,
+    "findingsWithLineOrOutput": 1,
+    "statesScopeLimits": false,
+    "scopeLimitsNamed": 0,
+    "verdictStated": true,
+    "longestFindingSupported": true
+  }
+}

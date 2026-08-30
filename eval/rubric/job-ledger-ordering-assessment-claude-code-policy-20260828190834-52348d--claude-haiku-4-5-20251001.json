@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "job-ledger-ordering-assessment-claude-code-policy-20260828190834-52348d",
+  "caseId": "job-ledger-ordering-assessment",
+  "condition": "policy",
+  "harness": "claude-code",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "deliverableBytes": 5591,
+  "extraction": {
+    "findingsTotal": 4,
+    "findingsWithFilePath": 4,
+    "findingsWithLineOrOutput": 4,
+    "statesScopeLimits": true,
+    "scopeLimitsNamed": 3,
+    "verdictStated": true,
+    "longestFindingSupported": true
+  }
+}

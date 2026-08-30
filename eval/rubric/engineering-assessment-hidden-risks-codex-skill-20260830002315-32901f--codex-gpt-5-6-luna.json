@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "engineering-assessment-hidden-risks-codex-skill-20260830002315-32901f",
+  "caseId": "engineering-assessment-hidden-risks",
+  "condition": "skill",
+  "harness": "codex",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "deliverableBytes": 6590,
+  "extraction": {
+    "findingsTotal": 5,
+    "findingsWithFilePath": 5,
+    "findingsWithLineOrOutput": 5,
+    "statesScopeLimits": true,
+    "scopeLimitsNamed": 9,
+    "verdictStated": true,
+    "longestFindingSupported": true
+  }
+}

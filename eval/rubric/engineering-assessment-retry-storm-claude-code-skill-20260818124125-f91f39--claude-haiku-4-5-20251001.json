@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "engineering-assessment-retry-storm-claude-code-skill-20260818124125-f91f39",
+  "caseId": "engineering-assessment-retry-storm",
+  "condition": "skill",
+  "harness": "claude-code",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "judgeHarness": "claude-code",
+  "deliverableBytes": 5862,
+  "extraction": {
+    "findingsTotal": 5,
+    "findingsWithFilePath": 5,
+    "findingsWithLineOrOutput": 5,
+    "statesScopeLimits": true,
+    "scopeLimitsNamed": 11,
+    "verdictStated": true,
+    "longestFindingSupported": true
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Structured extraction by an LLM. Not evidence under eval/evidence.json; never feeds promotion. Report agreement across judges before reporting any comparison.",
+  "runId": "job-ledger-ordering-assessment-claude-code-skill-20260828191153-66109b",
+  "caseId": "job-ledger-ordering-assessment",
+  "condition": "skill",
+  "harness": "claude-code",
+  "judgeModel": "claude-sonnet-5",
+  "judgeHarness": "claude-code",
+  "deliverableBytes": 8950,
+  "extraction": {
+    "findingsTotal": 7,
+    "findingsWithFilePath": 5,
+    "findingsWithLineOrOutput": 7,
+    "statesScopeLimits": true,
+    "scopeLimitsNamed": 10,
+    "verdictStated": true,
+    "longestFindingSupported": true
+  }
+}
