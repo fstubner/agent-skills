@@ -10,7 +10,8 @@
     "legacyResultsAreEvidence",
     "minimumEvidence",
     "costRates",
-    "notes"
+    "notes",
+    "measuredSkills"
   ],
   "properties": {
     "schemaVersion": {
@@ -129,6 +130,16 @@
     "notes": {
       "type": "string",
       "minLength": 20
+    },
+    "measuredSkills": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Skills inside the efficacy programme. Only these carry a case obligation; every other registered skill reports not-measured and is documented as unvalidated. Narrowing the programme is how a case count of 15 stays affordable without lowering it."
     }
   }
 }

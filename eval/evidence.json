@@ -3,6 +3,11 @@
   "status": "unvalidated",
   "supportedClaims": [],
   "legacyResultsAreEvidence": false,
+  "measuredSkills": [
+    "product-acceptance",
+    "engineering-assessment",
+    "release-engineering"
+  ],
   "minimumEvidence": {
     "freshCasesPerSkill": 15,
     "trialsPerCondition": 3,

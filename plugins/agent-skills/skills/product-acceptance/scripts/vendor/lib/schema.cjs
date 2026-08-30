@@ -19,7 +19,7 @@ const ANNOTATIONS = new Set([
 const IMPLEMENTED = new Set([
   'type', 'properties', 'required', 'additionalProperties', 'items',
   'enum', 'const', 'minLength', 'maxLength', 'minimum', 'maximum',
-  'pattern', 'minItems',
+  'pattern', 'minItems', 'uniqueItems',
 ]);
 
 function checkKeywordsStatic(schema, path = '$') {
@@ -93,6 +93,12 @@ function validate(schema, data, path = '$', errors = [], isRoot = true) {
   if (t === 'array') {
     if (schema.minItems !== undefined && data.length < schema.minItems) {
       errors.push(`${path}: array shorter than minItems ${schema.minItems}`);
+    }
+    // Compared by JSON form, so objects and arrays are handled rather than
+    // every non-primitive silently counting as distinct.
+    if (schema.uniqueItems === true) {
+      const seen = new Set(data.map((item) => JSON.stringify(item)));
+      if (seen.size !== data.length) errors.push(`${path}: array items are not unique`);
     }
     if (schema.items !== undefined) {
       data.forEach((item, i) => validate(schema.items, item, `${path}[${i}]`, errors, false));

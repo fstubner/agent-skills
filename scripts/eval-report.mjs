@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { assertionDiagnostics, discriminatingRate } from './lib/eval-diagnostics.mjs';
 import { applyInterimCohort } from './lib/eval-interim.mjs';
+import { inProgramme } from './lib/eval-programme.mjs';
 import { currentSkillDigest, latestExperiments, skillCurrencyReasons, supersededReason } from './lib/eval-versions.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -330,8 +331,11 @@ for (const [skill, value] of Object.entries(skills)) {
   const resourceIncrease = resourceMetric === 'cost' ? costIncrease : tokenIncrease;
   const resourceInterval = resourceMetric === 'cost' ? costInterval : tokenInterval;
 
-  let decision = 'insufficient-evidence';
-  const matrixComplete = completedCaseIds.length >= thresholds.freshCasesPerSkill
+  const measured = inProgramme(evidence, skill);
+  let decision = measured ? 'insufficient-evidence' : 'not-measured';
+  if (!measured) reasons.length = 0;
+  const matrixComplete = measured
+    && completedCaseIds.length >= thresholds.freshCasesPerSkill
     && completedCaseIds.length === value.configuredCaseIds.size;
   if (matrixComplete) {
     const qualityWin = outcomeInterval.lower !== null

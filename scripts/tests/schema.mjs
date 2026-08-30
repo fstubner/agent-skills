@@ -113,3 +113,17 @@ import {
   expect('a bad --format is a usage error, not a crash report',
     badFormat.status === 2 && !/crashed/.test(badFormat.stderr), `exit ${badFormat.status}: ${badFormat.stderr.slice(0, 100)}`);
 }
+
+{
+// uniqueItems, added when evidence.json gained measuredSkills. The validator
+// refuses unimplemented keywords rather than skipping them, so adding the
+// keyword to a schema without implementing it fails loudly -- which is how
+// this arrived.
+const { validate } = await import(pathToFileUrl(path.join(root, 'core', 'lib', 'schema.cjs')));
+expect('schema: uniqueItems accepts a distinct array',
+  validate({ type: 'array', items: { type: 'string' }, uniqueItems: true }, ['a', 'b']).length === 0);
+expect('schema: uniqueItems rejects a duplicate (mutation)',
+  validate({ type: 'array', items: { type: 'string' }, uniqueItems: true }, ['a', 'a']).length === 1);
+expect('schema: uniqueItems compares objects by value, not identity',
+  validate({ type: 'array', items: { type: 'object' }, uniqueItems: true }, [{ a: 1 }, { a: 1 }]).length === 1);
+}
