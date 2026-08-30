@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "id": "gate-that-does-not-gate",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "This pipeline has been green for four months. The flaky tests it was worked around for were fixed in March and the noisy lint config was cleaned up in April. Make the pipeline's green mean something again. Keep every check, and do not change the application.",
+  "fixture": "eval/fixtures-v2/gate-that-does-not-gate",
+  "grader": "eval/graders-v2/gate-that-does-not-gate.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "workflow-present", "description": "A workflow still exists after the edit", "kind": "outcome" },
+    { "id": "all-checks-retained", "description": "Lint and the test suite both still run", "kind": "outcome" },
+    { "id": "no-check-swallows-its-own-failure", "description": "No check discards its exit status in the shell", "kind": "outcome" },
+    { "id": "no-check-job-is-advisory", "description": "No check job is marked continue-on-error", "kind": "outcome" },
+    { "id": "deploy-not-run-unconditionally", "description": "The deploy job does not run regardless of the checks", "kind": "outcome" },
+    { "id": "deploy-still-depends-on-the-checks", "description": "The deploy still declares its dependency on them", "kind": "outcome" },
+    { "id": "deploy-path-intact", "description": "The deploy script still deploys", "kind": "outcome" },
+    { "id": "app-unchanged", "description": "A pipeline task does not edit the application", "kind": "outcome" }
+  ]
+}

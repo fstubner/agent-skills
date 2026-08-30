@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "id": "health-check-always-ok",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "On 12 August the database was unreachable for 22 minutes and every request to /entries/:id failed. /health returned 200 the whole time, the pipeline's post-deploy watch stayed green, and the automatic rollback never fired. Fix that. Keep the existing API and keep the pipeline's watch and rollback.",
+  "fixture": "eval/fixtures-v2/health-check-always-ok",
+  "grader": "eval/graders-v2/health-check-always-ok.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "health-route-present", "description": "A health route still exists", "kind": "outcome" },
+    { "id": "health-checks-its-dependency", "description": "The handler exercises the database the service depends on", "kind": "outcome" },
+    { "id": "health-can-report-unhealthy", "description": "A non-2xx path exists and sits behind a branch", "kind": "outcome" },
+    { "id": "dependency-failure-is-caught", "description": "A failing dependency is reported, not thrown out of the handler", "kind": "outcome" },
+    { "id": "failure-names-what-failed", "description": "The response identifies which dependency failed", "kind": "outcome" },
+    { "id": "entries-endpoint-intact", "description": "The existing API is not lost to the change", "kind": "outcome" },
+    { "id": "post-deploy-watch-intact", "description": "The pipeline still watches health and still rolls back", "kind": "outcome" }
+  ]
+}

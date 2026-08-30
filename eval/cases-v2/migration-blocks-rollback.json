@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 2,
+  "id": "migration-blocks-rollback",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "This release switches the API over to the amount_minor column. RELEASE.md says a bad deploy is undone in thirty seconds with rollout undo. Make sure that is still true after this release goes out, and that whoever reads RELEASE.md next can tell why. Keep the API reading amount_minor.",
+  "fixture": "eval/fixtures-v2/migration-blocks-rollback",
+  "grader": "eval/graders-v2/migration-blocks-rollback.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "migrations-present", "description": "The migration set survives the change", "kind": "outcome" },
+    { "id": "no-contraction-ships-with-this-deploy", "description": "No destructive schema change ships alongside the code deploy", "kind": "outcome" },
+    { "id": "additive-change-retained", "description": "The additive work the code depends on is still applied", "kind": "outcome" },
+    { "id": "migration-not-coupled-to-the-code-deploy", "description": "Migrating and deploying are not the same job", "kind": "outcome" },
+    { "id": "migrations-still-applied", "description": "The pipeline still applies migrations at all", "kind": "outcome" },
+    { "id": "release-doc-present", "description": "RELEASE.md still exists", "kind": "outcome" },
+    { "id": "rollback-safety-explained", "description": "The doc says why a code rollback is safe against this schema", "kind": "outcome" },
+    { "id": "deferred-contraction-recorded", "description": "The deferred drop and its precondition are written down, not forgotten", "kind": "outcome" },
+    { "id": "app-unchanged", "description": "The API still reads amount_minor", "kind": "outcome" }
+  ]
+}

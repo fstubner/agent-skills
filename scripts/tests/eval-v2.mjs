@@ -258,6 +258,13 @@ const freshEfficacyCases = [
   'gate-order-inverted',
   'flag-decision-unrecorded',
   'deploy-declared-done-at-exit-zero',
+  // Batch 3. Rule 6 (a contraction that quietly makes the documented rollback
+  // unusable), and two cases sitting under rules 2 and 7 respectively: a gate
+  // that cannot fail the pipeline, and a health check that cannot report bad
+  // news for the gate above it to act on.
+  'migration-blocks-rollback',
+  'gate-that-does-not-gate',
+  'health-check-always-ok',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);
