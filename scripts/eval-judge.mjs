@@ -17,7 +17,8 @@
 // random — a rerun that flipped the labels would look like a changed verdict.
 //
 // Usage:
-//   node scripts/eval-judge.mjs --a <runId> --b <runId> [--model <name>] [--equal-length] [--dry-run]
+//   node scripts/eval-judge.mjs --a <runId> --b <runId> [--model <name>]
+//     [--judge-harness claude-code|codex] [--equal-length] [--dry-run]
 
 import crypto from 'crypto';
 import fs from 'fs';
@@ -143,19 +144,70 @@ if (has('dry-run')) {
   process.exit(0);
 }
 
-const result = spawnSync('claude', ['-p', '--output-format', 'json', '--model', judgeModel, prompt], {
-  cwd: suiteRoot, encoding: 'utf8', timeout: 300_000, maxBuffer: 20 * 1024 * 1024,
-});
-if (result.error || result.status !== 0) {
-  console.error(`judge did not run: ${result.error?.message || result.stderr || `exit ${result.status}`}`);
+// Judging reads two documents and emits JSON. It writes nothing, so the
+// read-only sandbox that forces eval-run to drive codex through a container on
+// Windows is not in the way here — the native CLI is enough.
+//
+// A judge from a different vendor is the point: on 2026-08-30 claude-haiku and
+// claude-sonnet, both length-controlled, agreed on only 5 of 12 pairs. Two
+// models from one family disagreeing that much is a reason to ask a third from
+// outside it, not a reason to average them.
+const judgeHarness = flag('judge-harness') || 'claude-code';
+if (!['claude-code', 'codex'].includes(judgeHarness)) usage(`unknown --judge-harness ${judgeHarness}`);
+
+function runJudge() {
+  if (judgeHarness === 'codex') {
+    const codexArgs = [
+      'exec', '--ephemeral', '--ignore-rules',
+      '--disable', 'plugins', '--disable', 'remote_plugin', '--disable', 'skill_search',
+      '--skip-git-repo-check', '--sandbox', 'read-only',
+      '--model', judgeModel, '-c', 'model_reasoning_effort="low"', '--json', prompt,
+    ];
+    const invocation = resolveCodex(codexArgs);
+    const out = spawnSync(invocation.command, invocation.args, {
+      cwd: suiteRoot, encoding: 'utf8', timeout: 300_000, maxBuffer: 20 * 1024 * 1024,
+    });
+    if (out.error || out.status !== 0) return { failed: out, text: '' };
+    // Codex streams JSONL; the answer is the last completed agent_message.
+    const events = (out.stdout || '').split(String.fromCharCode(10)).filter(Boolean).flatMap((line) => {
+      try { return [JSON.parse(line)]; } catch { return []; }
+    });
+    const message = [...events].reverse()
+      .find((event) => event.type === 'item.completed' && event.item?.type === 'agent_message');
+    return { failed: null, text: message?.item?.text || '' };
+  }
+  const out = spawnSync('claude', ['-p', '--output-format', 'json', '--model', judgeModel, prompt], {
+    cwd: suiteRoot, encoding: 'utf8', timeout: 300_000, maxBuffer: 20 * 1024 * 1024,
+  });
+  if (out.error || out.status !== 0) return { failed: out, text: '' };
+  try { return { failed: null, text: JSON.parse(out.stdout).result || '' }; }
+  catch { return { failed: null, text: '' }; }
+}
+
+// Windows ships codex as a .cmd shim that spawnSync cannot exec directly; the
+// same resolution eval-run uses.
+function resolveCodex(codexArgs) {
+  if (process.platform !== 'win32') return { command: 'codex', args: codexArgs };
+  const found = spawnSync('where.exe', ['codex'], { encoding: 'utf8', timeout: 10_000 });
+  const candidates = (found.stdout || '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const shim = candidates.find((candidate) => candidate.toLowerCase().endsWith('.cmd'));
+  if (shim) {
+    const script = path.join(path.dirname(shim), 'node_modules', '@openai', 'codex', 'bin', 'codex.js');
+    if (fs.existsSync(script)) return { command: process.execPath, args: [script, ...codexArgs] };
+  }
+  return { command: candidates.find((c) => c.toLowerCase().endsWith('.exe')) || 'codex', args: codexArgs };
+}
+
+const judged = runJudge();
+if (judged.failed) {
+  const f = judged.failed;
+  console.error(`judge did not run: ${f.error?.message || f.stderr || `exit ${f.status}`}`);
   process.exit(1);
 }
 
 let verdict = null;
-let rawText = '';
+const rawText = judged.text;
 try {
-  const envelope = JSON.parse(result.stdout);
-  rawText = envelope.result || '';
   const match = rawText.match(/\{[\s\S]*\}/);
   verdict = match ? JSON.parse(match[0]) : null;
 } catch { /* recorded as unparsed below */ }
@@ -179,6 +231,7 @@ fs.writeFileSync(outPath, `${JSON.stringify({
   note: 'Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.',
   caseId: left.manifest.caseId,
   judgeModel,
+  judgeHarness,
   blinding: { A: asA.runId, B: asB.runId },
   conditions: { [asA.runId]: asA.manifest.condition, [asB.runId]: asB.manifest.condition },
   skillVersions: { [asA.runId]: asA.manifest.stagedInputSha256 || null, [asB.runId]: asB.manifest.stagedInputSha256 || null },

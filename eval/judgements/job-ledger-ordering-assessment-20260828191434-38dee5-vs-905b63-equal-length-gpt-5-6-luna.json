@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-claude-code-policy-20260828191047-905b63",
+    "B": "job-ledger-ordering-assessment-claude-code-skill-20260828191434-38dee5"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-claude-code-policy-20260828191047-905b63": "policy",
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191434-38dee5": "skill"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-claude-code-policy-20260828191047-905b63": null,
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191434-38dee5": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 5230,
+    "truncated": {
+      "job-ledger-ordering-assessment-claude-code-skill-20260828191434-38dee5": true,
+      "job-ledger-ordering-assessment-claude-code-policy-20260828191047-905b63": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 3,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "B identifies four higher-impact confirmed issues with precise evidence, including the destructive DROP TABLE migration and SIGKILL shutdown; A is clear and well-structured but spends a confirmed finding on weak smoke-test coverage and overstates some verification limits."
+  }
+}

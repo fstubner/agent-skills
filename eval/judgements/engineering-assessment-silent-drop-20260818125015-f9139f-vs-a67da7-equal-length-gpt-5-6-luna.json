@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-claude-code-policy-20260818120557-a67da7",
+    "B": "engineering-assessment-silent-drop-claude-code-skill-20260818125015-f9139f"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-claude-code-policy-20260818120557-a67da7": "policy",
+    "engineering-assessment-silent-drop-claude-code-skill-20260818125015-f9139f": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-claude-code-policy-20260818120557-a67da7": null,
+    "engineering-assessment-silent-drop-claude-code-skill-20260818125015-f9139f": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3392,
+    "truncated": {
+      "engineering-assessment-silent-drop-claude-code-skill-20260818125015-f9139f": true,
+      "engineering-assessment-silent-drop-claude-code-policy-20260818120557-a67da7": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3,
+        "evidence": 3,
+        "prioritisation": 3,
+        "honesty": 2,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "B ties its findings to exact code locations and explicitly states that build and tests were not run, while A asserts repository-wide verification and that every import reports success without showing command evidence."
+  }
+}

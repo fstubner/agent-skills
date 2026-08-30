@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-hidden-risks",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f",
+    "B": "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72"
+  },
+  "conditions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f": "policy",
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f": null,
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4693,
+    "truncated": {
+      "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": true,
+      "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B anchors findings to precise file lines and command results, while A asserts a live probe and rates traversal as critical even though its own report says the endpoint does not read files."
+  }
+}

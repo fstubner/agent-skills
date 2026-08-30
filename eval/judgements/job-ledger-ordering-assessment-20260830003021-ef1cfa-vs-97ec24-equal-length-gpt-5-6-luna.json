@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "gpt-5.6-luna",
+  "judgeHarness": "codex",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24",
+    "B": "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24": "policy",
+    "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa": "skill"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24": null,
+    "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4495,
+    "truncated": {
+      "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa": true,
+      "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "B provides more precise file/line evidence and records the launcher’s misleading exit code of 0, while A offers clearer narrative recommendations but less exact location detail and gives the destructive migration only High severity."
+  }
+}
