@@ -147,7 +147,26 @@ expect('frontmatter validator rejects non-canonical names and unknown fields',
   expect('ai-prose-slop/references/patterns.md matches rules/AIProseTells/*.yml', r.status === 0, (r.stderr || '').trim());
 }
 
-// ---------- 11. CI must live where GitHub will actually read it ----------
+// ---------- 11. Every test module is in the runner's list ----------
+// run-tests.mjs imports an explicit list rather than globbing the directory,
+// deliberately: the run order is visible and editable in one place. The cost
+// is that a module can exist, pass on its own, and never run in the suite.
+// That happened — eval-case-graders.mjs was split out of eval-v2.mjs and not
+// added to the list, and the suite reported "All tests passed" with 51 fewer
+// checks than the run before it. Nothing said so; a green suite that quietly
+// stopped checking something is the failure this file exists to catch.
+{
+  const testsDir = path.join(root, 'scripts', 'tests');
+  const modules = fs.readdirSync(testsDir)
+    .filter((name) => name.endsWith('.mjs') && name !== 'harness.mjs');
+  const runner = read(path.join(root, 'scripts', 'run-tests.mjs'));
+  const unlisted = modules.filter((name) => !runner.includes(`'${name}'`));
+  expect('every module in scripts/tests/ is imported by run-tests.mjs',
+    unlisted.length === 0,
+    `not in the MODULES list: ${unlisted.join(', ')}`);
+}
+
+// ---------- 12. CI must live where GitHub will actually read it ----------
 // GitHub Actions only reads workflows from <repo root>/.github/workflows. This
 // suite's workflow previously sat at v2/.github/workflows/ci.yml — a path
 // Actions never looks at — so it had never run once, and every CI change made

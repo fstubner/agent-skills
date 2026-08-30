@@ -30,6 +30,7 @@ const MODULES = [
   'prose.mjs',            // ai-prose-slop (skips only when vale is absent)
   'eval-assets.mjs',      // eval case + result shape validation
   'eval-v2.mjs',          // reproducible cases, graders, evidence bundles, claim quarantine
+  'eval-case-graders.mjs', // every case grader rejects its adversarial fixture and accepts a conforming one
   'eval-fixture-binding.mjs', // a run is bound to the fixture it ran against
   'eval-skill-currency.mjs',  // evidence must describe the skill text as it stands
   'eval-harness-failure.mjs', // a run that never reached a model is not a failing run

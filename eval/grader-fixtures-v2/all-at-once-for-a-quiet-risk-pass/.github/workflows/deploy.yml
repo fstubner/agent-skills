@@ -1,0 +1,58 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t registry.internal/ledger-api:${{ github.sha }} .
+      - run: docker push registry.internal/ledger-api:${{ github.sha }}
+
+  # 5% of traffic, because a wrong fee is not an unhealthy service. There is
+  # nothing for a health check to notice, so the thing that has to be observed
+  # is the numbers themselves.
+  canary:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Route 5% of traffic to the new image
+        run: ./scripts/deploy.sh production-canary registry.internal/ledger-api:${{ github.sha }}
+      - name: Hold at 5% and compare fees against the processor
+        id: compare
+        run: |
+          set -euo pipefail
+          for window in $(seq 1 6); do
+            sleep 300
+            ./scripts/compare-fees.sh --canary-only --max-disagreement-bps 1
+          done
+      - name: Withdraw the canary on a disagreement
+        if: failure() && steps.compare.outcome == 'failure'
+        run: |
+          kubectl --context production-canary rollout undo deployment/ledger-api
+          echo "canary withdrawn; paging the on-call rota"
+
+  production:
+    needs: canary
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Roll out to the remaining pods
+        run: ./scripts/deploy.sh production registry.internal/ledger-api:${{ github.sha }}
+      - name: Wait for the rollout to finish
+        run: kubectl --context production rollout status deployment/ledger-api --timeout=5m

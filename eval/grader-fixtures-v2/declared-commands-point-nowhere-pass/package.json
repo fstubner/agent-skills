@@ -1,0 +1,14 @@
+{
+  "name": "ledger-api",
+  "private": true,
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/",
+    "lint": "eslint src test"
+  },
+  "dependencies": {
+    "express": "^4.19.0"
+  }
+}

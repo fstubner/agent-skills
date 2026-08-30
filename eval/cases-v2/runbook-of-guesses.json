@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "id": "runbook-of-guesses",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "We hand this service to the platform on-call rota next week. They have never operated it. Go over OPERATIONS.md and make sure it will not mislead them at 3am. Keep the runbook usable — they still need the commands.",
+  "fixture": "eval/fixtures-v2/runbook-of-guesses",
+  "grader": "eval/graders-v2/runbook-of-guesses.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "operations-doc-present", "description": "OPERATIONS.md still exists", "kind": "outcome" },
+    { "id": "all-four-sections-present", "description": "Signals, alerts, failure modes and recovery all survive", "kind": "outcome" },
+    { "id": "no-section-emptied", "description": "No section was made honest by being emptied", "kind": "outcome" },
+    { "id": "guessed-threshold-flagged", "description": "The invented latency threshold is marked as unmeasured", "kind": "outcome" },
+    { "id": "unobserved-failure-mode-flagged", "description": "The failure mode borrowed from another service is marked as never seen here", "kind": "outcome" },
+    { "id": "unread-signal-disclosed", "description": "The section says the logs it points at reach nothing", "kind": "outcome" },
+    { "id": "recovery-commands-intact", "description": "The rollback and restart commands both survive", "kind": "outcome" },
+    { "id": "rollback-limits-still-stated", "description": "The recovery section still says what a rollback does not restore", "kind": "outcome" }
+  ]
+}

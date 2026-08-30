@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "id": "declared-commands-point-nowhere",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "This repository was generated from a template last week and nobody has run any of the commands the README documents. Make the project's declared commands actually work. The service in src/server.js already works and should keep working.",
+  "fixture": "eval/fixtures-v2/declared-commands-point-nowhere",
+  "grader": "eval/graders-v2/declared-commands-point-nowhere.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "manifest-parses", "description": "package.json is still valid JSON", "kind": "outcome" },
+    { "id": "main-resolves", "description": "The declared main entry point exists", "kind": "outcome" },
+    { "id": "every-bin-resolves", "description": "Every declared bin entry exists", "kind": "outcome" },
+    { "id": "every-script-target-resolves", "description": "Every local path a script names exists", "kind": "outcome" },
+    { "id": "start-and-test-still-declared", "description": "The two commands the README documents were not simply deleted", "kind": "outcome" },
+    { "id": "at-least-one-test-file-exists", "description": "The test command has something to run", "kind": "outcome" },
+    { "id": "workflow-scripts-exist", "description": "Scripts the pipeline shells out to are in the repository", "kind": "outcome" },
+    { "id": "service-preserved", "description": "The one part that already worked still works", "kind": "outcome" }
+  ]
+}

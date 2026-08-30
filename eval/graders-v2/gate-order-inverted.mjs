@@ -48,6 +48,10 @@ function jobBlocks(text) {
   const found = [];
   for (let n = start + 1; n < lines.length; n += 1) {
     if (/^\S/.test(lines[n])) break;
+    // A comment at two spaces of indent introduces the job below it, not the
+    // one above. Attaching it upwards lets a comment describing one job be
+    // read as evidence about a different one.
+    if (/^\s\s#/.test(lines[n])) continue;
     const header = /^\s\s([A-Za-z0-9_-]+)\s*:\s*$/.exec(lines[n]);
     if (header) found.push({ name: header[1], lines: [] });
     else if (found.length > 0) found[found.length - 1].lines.push(lines[n]);
