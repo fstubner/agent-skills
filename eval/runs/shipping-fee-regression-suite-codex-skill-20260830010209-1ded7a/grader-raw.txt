@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "shipping-fee-regression-suite",
+  "assertions": [
+    {
+      "id": "stable-baseline",
+      "status": "pass",
+      "evidence": "exits=0,0,0,0,0,0"
+    },
+    {
+      "id": "public-behavior",
+      "status": "pass",
+      "evidence": "changed=true; exit=0; output=\"\\n> test\\n> node --test\\n\\n✔ ordinary Irish shipping (0.734ms)\\n✔ normalizes country names before pricing (0.1076ms)\\n✔ charges half price to Irish members (0.1013ms)\\n✔ charges the ordinary Great Britain rate (0.8824ms)\\n✔ charges half price to Great Britain members (0.1199ms)\\n✔ waives shipping at the free\""
+    },
+    {
+      "id": "kills-threshold-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    },
+    {
+      "id": "kills-unsupported-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    },
+    {
+      "id": "kills-member-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    }
+  ]
+}

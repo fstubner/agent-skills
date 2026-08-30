@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "caseId": "refund-ledger-rollout",
+  "assertions": [
+    {
+      "id": "additive-schema",
+      "status": "pass",
+      "evidence": "files=002_create_refunds.sql, additive=true, ledger=true, amount=true, idempotency=true, paymentReference=true"
+    },
+    {
+      "id": "server-boundary",
+      "status": "pass",
+      "evidence": "missingAuth=401, crossAccount=404, fractionalAmount=400"
+    },
+    {
+      "id": "refund-invariant",
+      "status": "pass",
+      "evidence": "first=201/cf2e581e-1bbf-4614-bf4b-37d2aaf73975, replay=200/cf2e581e-1bbf-4614-bf4b-37d2aaf73975, excessive=409"
+    },
+    {
+      "id": "structured-errors",
+      "status": "pass",
+      "evidence": "400:{\"code\":\"invalid_amount\",\"message\":\"amountCents must be a positive integer\"} | 404:{\"code\":\"not_found\",\"message\":\"Payment not found\"} | 409:{\"code\":\"refund_exceeds_balance\",\"message\":\"Refund exceeds the unrefunded amount\"}"
+    },
+    {
+      "id": "regression-suite",
+      "status": "fail",
+      "evidence": "canonicalCommand=true, exit=0, files=test\\server.test.js, boundaryCoverage=false, output=TAP version 13\n# Subtest: refunds authenticate ownership, enforce balance, and retry idempotently\nok 1 - refunds authenticate ownership, enforce balance, and retry idempotently\n  ---\n  duration_ms: 35.7488\n  type: 'test'\n  ...\n# Subtest: hides existence from another account and rejects invalid/exces"
+    },
+    {
+      "id": "immutable-release",
+      "status": "fail",
+      "evidence": "tagTrigger=false, uploadAndDownload=false, needsBuild=false, testsBeforeArtifact=true, immutableActions=false"
+    },
+    {
+      "id": "literal-rollback",
+      "status": "pass",
+      "evidence": "# Release `npm test` runs before `npm run build`. The build creates one tarball identified by the git tag; that immutable artifact is promoted unchanged through staging and production. Configuration and database credentials are injected at deploy time. Migration `002_create_refunds.sql` runs before enabling refund traffic; old and new application versions are compatible. Rollback (literal command,"
+    }
+  ]
+}

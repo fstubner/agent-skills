@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "caseId": "self-serve-project-invites",
+  "assertions": [
+    {
+      "id": "product-contract",
+      "status": "pass",
+      "evidence": "> Provenance: stated-by-human # Purpose Let an authenticated project admin create a shareable invitation link for a person with viewer or editor access. # Users - Project admins who invite collaborators. - Invitees who receive a link (email delivery is outside this version). # Success - A project admin can enter an email, choose viewer or editor, and receive a shareable invite link. - Repeating a request with the same Idempotency-Key returns the original invite. # MVP - Bearer account-name authe"
+    },
+    {
+      "id": "trust-boundary",
+      "status": "pass",
+      "evidence": "# Parts - Node HTTP service — Node runtime; owns project admin membership and invite records for this version. - Browser client — served HTML/CSS/JavaScript; owns only transient form state. # Boundaries - Browser → Node HTTP: request headers and JSON email/role cross the edge; Node returns structured JSON and an invite URL. - Browser → Node static assets: HTML, CSS, and JavaScript cross the edge; no secrets cross it. # Trust The browser and all client data are untrusted. At `POST /api/projects/:"
+    },
+    {
+      "id": "accessible-interface",
+      "status": "fail",
+      "evidence": "status=200, labelledEmail=true, labelledRole=false, announced=true"
+    },
+    {
+      "id": "server-authority",
+      "status": "fail",
+      "evidence": "missingAuth=404, create=404, inviter=undefined"
+    },
+    {
+      "id": "boundary-validation",
+      "status": "pass",
+      "evidence": "status=404, body={\"code\":\"not_found\",\"message\":\"Resource not found.\"}"
+    },
+    {
+      "id": "retry-and-isolation",
+      "status": "fail",
+      "evidence": "first=404/undefined, replay=404/undefined, other=404/undefined"
+    }
+  ]
+}

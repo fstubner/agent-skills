@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "shipping-fee-regression-suite",
+  "assertions": [
+    {
+      "id": "stable-baseline",
+      "status": "pass",
+      "evidence": "exits=0,0,0,0,0,0"
+    },
+    {
+      "id": "public-behavior",
+      "status": "pass",
+      "evidence": "changed=true; exit=0; output=\"\\n> test\\n> node --test\\n\\n✔ charges the standard Irish fee (0.8286ms)\\n✔ charges the standard Great Britain fee (0.1095ms)\\n✔ halves the Irish fee for members (0.8376ms)\\n✔ halves the Great Britain fee for members (0.1414ms)\\n✔ normalizes country casing and surrounding whitespace (0.1469ms)\\n✔ offers free s\""
+    },
+    {
+      "id": "kills-threshold-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    },
+    {
+      "id": "kills-unsupported-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    },
+    {
+      "id": "kills-member-mutant",
+      "status": "pass",
+      "evidence": "changed=true; exit=1"
+    }
+  ]
+}

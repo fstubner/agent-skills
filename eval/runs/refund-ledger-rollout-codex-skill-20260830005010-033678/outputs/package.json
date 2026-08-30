@@ -1,0 +1,1 @@
+{"name":"refund-ledger","private":true,"type":"module","main":"src/server.js","scripts":{"test":"node --test","build":"tar --exclude=.git --exclude=node_modules --exclude='*.tgz' -czf /tmp/refund-ledger.tgz . && cp /tmp/refund-ledger.tgz refund-ledger.tgz"}}

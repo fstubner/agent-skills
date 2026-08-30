@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "caseId": "self-serve-project-invites",
+  "assertions": [
+    {
+      "id": "product-contract",
+      "status": "pass",
+      "evidence": "# Product > Provenance: stated-by-human ## Purpose Let an authenticated project admin create a shareable invitation for a person with viewer or editor access. ## Users - **Primary:** Authenticated project admins. - **Context:** They enter an invitee email and choose a role; the service returns a link to share manually. ## Success - A project admin can submit an email and role and receive a shareable invite link. - Retrying with the same Idempotency-Key returns the original invite. ## MVP - Beare"
+    },
+    {
+      "id": "trust-boundary",
+      "status": "fail",
+      "evidence": "# Architecture ## Parts - Node invitation service: Node HTTP process; owns invite records for its process lifetime. - Browser client: static HTML/CSS/JavaScript; owns only transient form state. ## Boundaries - Browser → Node service over HTTP request/response; JSON email, role, project path, Bearer account name, and Idempotency-Key cross the edge. - Node service → Browser over HTTP response; structured JSON invite result or error crosses the edge. ## Trust - Browser is untrusted. The Node servic"
+    },
+    {
+      "id": "accessible-interface",
+      "status": "fail",
+      "evidence": "status=200, labelledEmail=true, labelledRole=false, announced=true"
+    },
+    {
+      "id": "server-authority",
+      "status": "fail",
+      "evidence": "missingAuth=404, create=404, inviter=undefined"
+    },
+    {
+      "id": "boundary-validation",
+      "status": "pass",
+      "evidence": "status=404, body={\"code\":\"not_found\",\"message\":\"Route not found\"}"
+    },
+    {
+      "id": "retry-and-isolation",
+      "status": "fail",
+      "evidence": "first=404/undefined, replay=404/undefined, other=404/undefined"
+    }
+  ]
+}

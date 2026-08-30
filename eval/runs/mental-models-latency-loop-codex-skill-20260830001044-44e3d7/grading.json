@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "mental-models-latency-loop",
+  "assertions": [
+    {
+      "id": "interacting-causes",
+      "status": "pass",
+      "evidence": "causeGroups=true,true,true,true"
+    },
+    {
+      "id": "distinguishing-evidence",
+      "status": "pass",
+      "evidence": "timestamps=09:28,09:45,09:47,09:49,09:52,10:04,10:10; metrics=310,900,340,60%"
+    },
+    {
+      "id": "deploy-decoy-ruled-out",
+      "status": "pass",
+      "evidence": "deployMention=true; evidenceBasedRejection=true"
+    },
+    {
+      "id": "safe-first-action",
+      "status": "pass",
+      "evidence": "reversible loop mitigation=true"
+    },
+    {
+      "id": "auditable-reasoning",
+      "status": "pass",
+      "evidence": "fields=true,true,true,true,true,true; falsifier=true"
+    }
+  ]
+}

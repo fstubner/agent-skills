@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "mental-models-latency-loop",
+  "assertions": [
+    {
+      "id": "interacting-causes",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "distinguishing-evidence",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "deploy-decoy-ruled-out",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "safe-first-action",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    },
+    {
+      "id": "auditable-reasoning",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: writing is blocked by read-only sandbox"
+    }
+  ]
+}

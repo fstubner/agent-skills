@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "learn-session-indented-comment",
+  "assertions": [
+    {
+      "id": "runtime-unchanged",
+      "status": "pass",
+      "evidence": "byteIdentical=true"
+    },
+    {
+      "id": "tests-pass",
+      "status": "pass",
+      "evidence": "exit=0; output=\"\\n> test\\n> node --test\\n\\n✔ recognizes a comment marker (0.6874ms)\\nℹ tests 1\\nℹ suites 0\\nℹ pass 1\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 122.5931\\n\\u001b[33m⚠\\u001b[0m A runtime dir is ahead of nvx's shim dir on PATH; some commands may bypass nvx. Run: nvx doctor\\n\""
+    },
+    {
+      "id": "specific-regression",
+      "status": "pass",
+      "evidence": "testFiles=1; whitespaceCase=true"
+    },
+    {
+      "id": "mutation-killed",
+      "status": "pass",
+      "evidence": "currentExit=0; mutantExit=1"
+    },
+    {
+      "id": "durable-destination",
+      "status": "fail",
+      "evidence": "added=.agent-input/learn-from-session/skill.md; outsideTests=.agent-input/learn-from-session/skill.md"
+    }
+  ]
+}

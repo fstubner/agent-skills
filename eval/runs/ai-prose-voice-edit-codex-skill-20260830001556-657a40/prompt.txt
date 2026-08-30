@@ -1,0 +1,7 @@
+Edit draft.md to remove AI-sounding prose without flattening the writer's voice or changing factual content. Write the revision to revised.md and briefly record the edits in changes.md.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/ai-prose-slop/SKILL.md
+Load only references relevant to this task.

@@ -1,0 +1,7 @@
+Prepare PostgreSQL migrations for a rolling deployment. Existing production rows must gain a unique required account handle derived from username, and the obsolete display_name column should eventually be retired. Multiple application versions may run concurrently during deployment. Add new ordered up-migration files under migrations/; do not rewrite the existing migration.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/data-modeling/SKILL.md
+Load only references relevant to this task.

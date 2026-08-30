@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "caseId": "cli-csv-statistics",
+  "assertions": [
+    {
+      "id": "valid-output",
+      "status": "pass",
+      "evidence": "exit=0; stdout=\"{\\\"rowCount\\\":3,\\\"means\\\":{\\\"count\\\":4,\\\"latency\\\":20}}\\n\"; expected rowCount=3,count=4,latency=20"
+    },
+    {
+      "id": "bad-input-contract",
+      "status": "pass",
+      "evidence": "exit=1; stdoutBytes=0; stderrBytes=33"
+    },
+    {
+      "id": "help-contract",
+      "status": "pass",
+      "evidence": "exit=0; output=\"Usage: node src/cli.js <file.csv>\\n\\nRead a CSV file and write JSON containing its row count and means for numeric columns.\\n\\nOptions:\\n  -h, --help       Show this help text\\n  -v, --version    Show the version\\n\\nUse -- before the path if it starts with a dash.\\n\""
+    },
+    {
+      "id": "tests-run",
+      "status": "fail",
+      "evidence": "package.json scripts.test is missing or unreadable"
+    }
+  ]
+}

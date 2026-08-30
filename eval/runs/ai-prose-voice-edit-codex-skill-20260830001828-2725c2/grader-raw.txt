@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "ai-prose-voice-edit",
+  "assertions": [
+    {
+      "id": "patterns-removed",
+      "status": "pass",
+      "evidence": "revisionBytes=422; remaining=none"
+    },
+    {
+      "id": "voice-preserved",
+      "status": "pass",
+      "evidence": "missing byte-identical lines=0"
+    },
+    {
+      "id": "facts-preserved",
+      "status": "pass",
+      "evidence": "numbers=[\"02:13\",\"43\",\"11\",\"74\"]; expected=[\"02:13\",\"43\",\"11\",\"74\"]"
+    },
+    {
+      "id": "judgment-pattern-fixed",
+      "status": "pass",
+      "evidence": "binaryGone=true; speedClaimPresent=true"
+    },
+    {
+      "id": "evidence-not-verdict",
+      "status": "pass",
+      "evidence": "namedCategories=throat,inflated,importance,binary; authorshipVerdict=false"
+    }
+  ]
+}

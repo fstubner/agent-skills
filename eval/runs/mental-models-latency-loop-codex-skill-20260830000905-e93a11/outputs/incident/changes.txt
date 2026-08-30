@@ -1,0 +1,3 @@
+v184: rename checkout response field; compatibility alias retained
+recommendations_checkout: each enabled checkout adds one database query
+retry policy: retry twice when checkout exceeds 800 ms

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "account-suspension-boundary-codex-skill-20260830001445-b72784",
+  "caseId": "account-suspension-boundary",
+  "caseRevision": 1,
+  "caseSha256": "4deeddaa06518dc89356bd49eaba70c21ca83298ee4ea63e98ac093747c70efb",
+  "fixtureSha256": "f6321c0a672a4c0938b4fa3825deccbf24d3917d187e5632af3cbbc01aa9740b",
+  "graderSha256": "d38133947b2c16a9fdae996d65e6bfb9c419d72a172842a65346dfc49e1b931e",
+  "checkerSha256": "28cfb1aa7cb7aba0079873beb8b7de5e1e84d6fa2e3b8de1f3211f0d6410cc20",
+  "stagedInputSha256": "8293c1643138a83beb1aacbdf83988694f47ede1e934d3d7a154068997352fa8",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-30T00:14:45.366Z",
+  "finishedAt": "2026-08-30T00:15:55.968Z",
+  "durationMs": 70602,
+  "totalTokens": 81321,
+  "costUsd": null,
+  "costCredits": 0.68316,
+  "exitCode": 0,
+  "artifactSha256": "eec2a6500916f425322b888bad3fd03a3667cfc8092b01368404f358f35f8182",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

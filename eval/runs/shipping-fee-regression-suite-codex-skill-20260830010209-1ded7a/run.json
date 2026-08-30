@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "shipping-fee-regression-suite-codex-skill-20260830010209-1ded7a",
+  "caseId": "shipping-fee-regression-suite",
+  "caseRevision": 1,
+  "caseSha256": "5f04bd9ede07d3086223db5e758d422736730223d2cbd8c631909fd276e64563",
+  "fixtureSha256": "c8a2510f20058237dfd4c3825677d6d29b73411127638393c8100062b2c553a3",
+  "graderSha256": "213934e412b712864808688f7a29d5300ad339ae3c29a46141598ab59b08df0f",
+  "checkerSha256": null,
+  "stagedInputSha256": "56cdbe9326a5bfea527815672a0d39b9716f82e4e4bde84f3225f6f7dcc8ad8b",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-30T01:02:09.305Z",
+  "finishedAt": "2026-08-30T01:03:03.540Z",
+  "durationMs": 54235,
+  "totalTokens": 80050,
+  "costUsd": null,
+  "costCredits": 0.613675,
+  "exitCode": 0,
+  "artifactSha256": "73950964fc78953acc320ada079f0d6b75dd22636d3e1f55a6da6a1de01c3985",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 5,
+    "failed": 0,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

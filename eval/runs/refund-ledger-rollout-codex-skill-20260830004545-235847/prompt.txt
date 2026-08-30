@@ -1,0 +1,11 @@
+Ship the refund-ledger change as a rolling PostgreSQL deployment. Multiple application versions may run concurrently. Preserve createServer(options), whose payments option contains {id, owner, amountCents}; implement POST /payments/:id/refunds using Bearer account authentication, an integer amountCents, and Idempotency-Key. A refund cannot exceed the payment's unrefunded amount, another account must not learn whether a payment exists, and a retry must return the original refund. Add ordered up-migrations without rewriting 001, add regression tests, and make the tag release build one immutable artifact after tests with a documented literal rollback command.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/data-modeling/SKILL.md
+- .agent-input/backend-engineering/SKILL.md
+- .agent-input/testing-strategy/SKILL.md
+- .agent-input/release-engineering/SKILL.md
+- .agent-input/product-acceptance/SKILL.md
+Load only references relevant to this task.

@@ -1,0 +1,5 @@
+{
+  "name": "line-parser",
+  "type": "module",
+  "scripts": { "test": "node --test" }
+}

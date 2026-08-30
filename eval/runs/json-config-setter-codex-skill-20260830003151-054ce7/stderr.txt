@@ -1,0 +1,35 @@
+npm notice
+npm notice New major version of npm available! 10.9.0 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+Reading additional input from stdin...
+2026-08-30T00:32:52.184437Z ERROR codex_core::tools::router: error=exec_command failed for `/bin/bash -lc "set -eu
+rm -f /tmp/config-set-check.json
+printf '{\"service\":{\"retries\":2}}\\n' > /tmp/config-set-check.json
+node src/cli.js --help
+node src/cli.js config-set set /tmp/config-set-check.json service.retries 3
+node src/cli.js config-set set /tmp/config-set-check.json service.retries 3 --dry-run
+node src/cli.js config-set set /tmp/config-set-check.json service.retries 3
+printf '%s\\n' '--- file ---'
+sed -n '1,40p' /tmp/config-set-check.json
+printf '%s\\n' '--- invalid ---'
+if node src/cli.js config-set set /tmp/config-set-check.json service.retries nope >/tmp/cli-out 2>/tmp/cli-err; then exit 1; fi
+[ "'! -s /tmp/cli-out ]
+sed -n '"'1,3p' /tmp/cli-err
+npm test"`: CreateProcess { message: "Rejected(\"`/bin/bash -lc \\\"set -eu\\nrm -f /tmp/config-set-check.json\\nprintf '{\\\\\\\"service\\\\\\\":{\\\\\\\"retries\\\\\\\":2}}\\\\\\\\n' > /tmp/config-set-check.json\\nnode src/cli.js --help\\nnode src/cli.js config-set set /tmp/config-set-check.json service.retries 3\\nnode src/cli.js config-set set /tmp/config-set-check.json service.retries 3 --dry-run\\nnode src/cli.js config-set set /tmp/config-set-check.json service.retries 3\\nprintf '%s\\\\\\\\n' '--- file ---'\\nsed -n '1,40p' /tmp/config-set-check.json\\nprintf '%s\\\\\\\\n' '--- invalid ---'\\nif node src/cli.js config-set set /tmp/config-set-check.json service.retries nope >/tmp/cli-out 2>/tmp/cli-err; then exit 1; fi\\n[ \\\"'! -s /tmp/cli-out ]\\nsed -n '\\\"'1,3p' /tmp/cli-err\\nnpm test\\\"` rejected: rm -f style commands are not permitted. Use a safer approach\")" }
+2026-08-30T00:32:58.450723Z ERROR codex_core::tools::router: error=exec_command failed for `/bin/bash -lc 'set -eu
+check_file=$(mktemp)
+trap '"'rm -f \""'$check_file" /tmp/cli-out /tmp/cli-err'"' EXIT
+printf '{\"service\":{\"retries\":2}}\\n' > \""'$check_file"
+node src/cli.js --help
+node src/cli.js config-set set "$check_file" service.retries 3
+node src/cli.js config-set set "$check_file" service.retries 3 --dry-run
+node src/cli.js config-set set "$check_file" service.retries 3
+printf '"'%s\\n' '--- file ---'
+sed -n '1,40p' \""'$check_file"
+printf '"'%s\\n' '--- invalid ---'
+if node src/cli.js config-set set \""'$check_file" service.retries nope >/tmp/cli-out 2>/tmp/cli-err; then exit 1; fi
+[ ! -s /tmp/cli-out ]
+sed -n '"'1,3p' /tmp/cli-err
+npm test"`: CreateProcess { message: "Rejected(\"`/bin/bash -lc 'set -eu\\ncheck_file=$(mktemp)\\ntrap '\\\"'rm -f \\\\\\\"\\\"'$check_file\\\" /tmp/cli-out /tmp/cli-err'\\\"' EXIT\\nprintf '{\\\\\\\"service\\\\\\\":{\\\\\\\"retries\\\\\\\":2}}\\\\\\\\n' > \\\\\\\"\\\"'$check_file\\\"\\nnode src/cli.js --help\\nnode src/cli.js config-set set \\\"$check_file\\\" service.retries 3\\nnode src/cli.js config-set set \\\"$check_file\\\" service.retries 3 --dry-run\\nnode src/cli.js config-set set \\\"$check_file\\\" service.retries 3\\nprintf '\\\"'%s\\\\\\\\n' '--- file ---'\\nsed -n '1,40p' \\\\\\\"\\\"'$check_file\\\"\\nprintf '\\\"'%s\\\\\\\\n' '--- invalid ---'\\nif node src/cli.js config-set set \\\\\\\"\\\"'$check_file\\\" service.retries nope >/tmp/cli-out 2>/tmp/cli-err; then exit 1; fi\\n[ ! -s /tmp/cli-out ]\\nsed -n '\\\"'1,3p' /tmp/cli-err\\nnpm test\\\"` rejected: rm -f style commands are not permitted. Use a safer approach\")" }

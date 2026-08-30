@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-hidden-risks-codex-skill-20260830002436-98ae30",
+  "caseId": "engineering-assessment-hidden-risks",
+  "caseRevision": 1,
+  "caseSha256": "e116eba1fb48a805acf0e7d145700d574f009652160ad79b381ee161d7805c5d",
+  "fixtureSha256": "04d2fc520b8180e50db7b5a36ddc5251d2ab65ce9001d4114155e9177d92bf78",
+  "graderSha256": "bd93a8cacccafa88551ed999e1bd2d753085e475375137f63274c99fdd33cddc",
+  "checkerSha256": null,
+  "stagedInputSha256": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-30T00:24:36.871Z",
+  "finishedAt": "2026-08-30T00:26:09.558Z",
+  "durationMs": 92687,
+  "totalTokens": 132665,
+  "costUsd": null,
+  "costCredits": 1.221725,
+  "exitCode": 0,
+  "artifactSha256": "977237cb2c117a4a2db8e84ade26ef7e4702986df4ebd5b2ceed6a9d1784a198",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 5,
+    "failed": 0,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

@@ -1,0 +1,7 @@
+Diagnose the latency incident using the files in incident/. Identify the cause or causes, recommend the safest first action, and write diagnosis.md. Make the reasoning auditable enough that another engineer can challenge it.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/mental-models/SKILL.md
+Load only references relevant to this task.

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "caseId": "refund-ledger-rollout",
+  "assertions": [
+    {
+      "id": "additive-schema",
+      "status": "pass",
+      "evidence": "files=002_create_refunds.sql,003_refund_balance_guard.sql, additive=true, ledger=true, amount=true, idempotency=true, paymentReference=true"
+    },
+    {
+      "id": "server-boundary",
+      "status": "pass",
+      "evidence": "missingAuth=401, crossAccount=404, fractionalAmount=400"
+    },
+    {
+      "id": "refund-invariant",
+      "status": "fail",
+      "evidence": "first=201/undefined, replay=201/undefined, excessive=409"
+    },
+    {
+      "id": "structured-errors",
+      "status": "pass",
+      "evidence": "400:{\"code\":\"invalid_amount\",\"message\":\"amountCents must be a positive integer\"} | 404:{\"code\":\"not_found\",\"message\":\"Payment not found\"} | 409:{\"code\":\"refund_exceeds_balance\",\"message\":\"Refund exceeds the unrefunded amount\"}"
+    },
+    {
+      "id": "regression-suite",
+      "status": "fail",
+      "evidence": "canonicalCommand=true, exit=0, files=test\\server.test.js, boundaryCoverage=false, output=TAP version 13\n# Subtest: refunds are owned, bounded, and idempotent\nok 1 - refunds are owned, bounded, and idempotent\n  ---\n  duration_ms: 37.9425\n  type: 'test'\n  ...\n# Subtest: refund boundary rejects malformed requests\nok 2 - refund boundary rejects malformed requests\n  ---\n  duration_ms: 13.023"
+    },
+    {
+      "id": "immutable-release",
+      "status": "fail",
+      "evidence": "tagTrigger=false, uploadAndDownload=false, needsBuild=false, testsBeforeArtifact=true, immutableActions=false"
+    },
+    {
+      "id": "literal-rollback",
+      "status": "pass",
+      "evidence": "# Release The release workflow runs tests, then builds one tarball and promotes that exact artifact. Configuration, including `DATABASE_URL`, is injected at deployment. Migrations run before the application rollout; 002 and 003 are additive and are safe while old versions still run. Refund behavior is enabled by the new route in the application artifact (no feature flag: the route is backward-comp"
+    }
+  ]
+}

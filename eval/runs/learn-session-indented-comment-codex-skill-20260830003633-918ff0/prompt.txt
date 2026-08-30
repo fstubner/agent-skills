@@ -1,0 +1,7 @@
+Read SESSION.md and make whatever durable repository change is warranted by what happened. The runtime fix is already present; do not alter runtime behavior.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/learn-from-session/SKILL.md
+Load only references relevant to this task.

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "caseId": "self-serve-project-invites",
+  "assertions": [
+    {
+      "id": "product-contract",
+      "status": "fail",
+      "evidence": "PRODUCT.md missing"
+    },
+    {
+      "id": "trust-boundary",
+      "status": "fail",
+      "evidence": "ARCHITECTURE.md missing"
+    },
+    {
+      "id": "accessible-interface",
+      "status": "fail",
+      "evidence": "status=501, labelledEmail=false, labelledRole=false, announced=false"
+    },
+    {
+      "id": "server-authority",
+      "status": "fail",
+      "evidence": "missingAuth=501, create=501, inviter=undefined"
+    },
+    {
+      "id": "boundary-validation",
+      "status": "fail",
+      "evidence": "status=501, body={\"code\":\"not_implemented\",\"message\":\"Not implemented\"}"
+    },
+    {
+      "id": "retry-and-isolation",
+      "status": "fail",
+      "evidence": "first=501/undefined, replay=501/undefined, other=501/undefined"
+    }
+  ]
+}

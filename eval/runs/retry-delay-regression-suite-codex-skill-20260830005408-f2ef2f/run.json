@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "retry-delay-regression-suite-codex-skill-20260830005408-f2ef2f",
+  "caseId": "retry-delay-regression-suite",
+  "caseRevision": 1,
+  "caseSha256": "1324c659451660dacb6d93a0e53e46e278f927a5da0d09322af175d4bfa12bc2",
+  "fixtureSha256": "261edb642139c46a957d73044493157d7daadc1ac7bd1220c1896f4eb20e6edb",
+  "graderSha256": "313d76eecbcad611061dc895382993bd909f84d04b387fdd17ceca6260261698",
+  "checkerSha256": null,
+  "stagedInputSha256": "56cdbe9326a5bfea527815672a0d39b9716f82e4e4bde84f3225f6f7dcc8ad8b",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-30T00:54:08.951Z",
+  "finishedAt": "2026-08-30T00:54:53.876Z",
+  "durationMs": 44925,
+  "totalTokens": 66114,
+  "costUsd": null,
+  "costCredits": 0.551785,
+  "exitCode": 0,
+  "artifactSha256": "2936471c2dded62d6bedfa7fd33e89540a2afcf55ea1f3e189b7ea44fbfe903a",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 5,
+    "failed": 0,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

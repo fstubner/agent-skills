@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "job-ledger-ordering-assessment-codex-skill-20260830002900-db1c0b",
+  "caseId": "job-ledger-ordering-assessment",
+  "caseRevision": 1,
+  "caseSha256": "ef5e8a0f57d1d828b1624a868023c064b992a86b9005f7557e42acfdd3122cb8",
+  "fixtureSha256": "323f3926d5098e6a1fec6b91152e7fbef12cdd0e765289b87ee2fb3791ead0fc",
+  "graderSha256": "e3c599c92b1ce09610bea502350ed671480cf102fd4a216c140cc66de7ee491d",
+  "checkerSha256": null,
+  "stagedInputSha256": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-30T00:29:00.106Z",
+  "finishedAt": "2026-08-30T00:30:21.072Z",
+  "durationMs": 80966,
+  "totalTokens": 128911,
+  "costUsd": null,
+  "costCredits": 1.101205,
+  "exitCode": 0,
+  "artifactSha256": "58f5731dc4c9a4a61c5e15281cd82a58534800f1160ecaaae2f04e595a3f0860",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

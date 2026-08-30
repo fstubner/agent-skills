@@ -1,0 +1,7 @@
+Add account suspension to this small HTTP service. POST /accounts/:id/suspend should persist the suspended state, append an audit event, and return the updated account. Keep existing account reads working and leave the account area ready for the next account change.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/code-organization/SKILL.md
+Load only references relevant to this task.

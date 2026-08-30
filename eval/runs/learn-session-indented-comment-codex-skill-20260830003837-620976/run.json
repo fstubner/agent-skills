@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "learn-session-indented-comment-codex-skill-20260830003837-620976",
+  "caseId": "learn-session-indented-comment",
+  "caseRevision": 1,
+  "caseSha256": "6526acef4253c554f8ccf60940fee753ed8ece9b436b931e6b2d33579cecea9e",
+  "fixtureSha256": "b3ad3ea56b5896ddb1f7f5d9f788109e1134d605cdcd4dbcc7e5c650a1d11264",
+  "graderSha256": "49b19d636c7877b76f22e8160e5fad1fe7e989c0775ccc69b7a8ad021fd3a80d",
+  "checkerSha256": null,
+  "stagedInputSha256": "7c836c7eea4d991035f016c0cda273a583cfc6abeae4a24456469a496a5deb45",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-08-30T00:38:37.702Z",
+  "finishedAt": "2026-08-30T00:39:24.142Z",
+  "durationMs": 46440,
+  "totalTokens": 76155,
+  "costUsd": null,
+  "costCredits": 0.52392,
+  "exitCode": 0,
+  "artifactSha256": "22d055e749bc12dac670c19fdc58ce1db2d57f1d2832886bfbe6fa6046afc3bb",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 5
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "json-config-setter",
+  "assertions": [
+    {
+      "id": "dry-run-contract",
+      "status": "fail",
+      "evidence": "exit=1; unchanged=true; stdout=\"\""
+    },
+    {
+      "id": "apply-idempotent",
+      "status": "fail",
+      "evidence": "first=1; second=1; value=2; stable=true"
+    },
+    {
+      "id": "stream-contract",
+      "status": "fail",
+      "evidence": "stdout=\"\"; stderr=\"Error: expected: config-set set <json-file> <dotted-key> <json-value> [--dry-run] (use --help for usage)\\n\""
+    },
+    {
+      "id": "error-contract",
+      "status": "pass",
+      "evidence": "exit=1; stdoutBytes=0; stderr=\"Error: expected: config-set set <json-file> <dotted-key> <json-value> [--dry-run] (use --help for usage)\\n\""
+    },
+    {
+      "id": "help-and-tests",
+      "status": "pass",
+      "evidence": "help=0; tests=0"
+    }
+  ]
+}
