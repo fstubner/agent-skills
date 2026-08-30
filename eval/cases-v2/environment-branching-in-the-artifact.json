@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 2,
+  "id": "environment-branching-in-the-artifact",
+  "skill": "release-engineering",
+  "revision": 1,
+  "prompt": "Staging has never disagreed with production on a fee, and we have just found out why. Make staging actually exercise what production runs. Keep the ability to suppress receipt emails outside production and to run the staging accounts without hardware keys — those are real needs.",
+  "fixture": "eval/fixtures-v2/environment-branching-in-the-artifact",
+  "grader": "eval/graders-v2/environment-branching-in-the-artifact.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "sources-present", "description": "The source tree survives the change", "kind": "outcome" },
+    { "id": "fee-arithmetic-same-in-every-environment", "description": "Fee rounding no longer depends on the environment's name", "kind": "outcome" },
+    { "id": "second-factor-not-skipped-by-environment", "description": "The second-factor check no longer depends on the environment's name", "kind": "outcome" },
+    { "id": "receipt-delivery-not-branched-by-environment", "description": "Receipt delivery no longer depends on the environment's name", "kind": "outcome" },
+    { "id": "behaviour-differences-are-configured", "description": "The two legitimate differences survive as settings rather than being deleted", "kind": "outcome" },
+    { "id": "one-fee-rounding-path", "description": "One rounding implementation remains, and it is production's", "kind": "outcome" },
+    { "id": "security-setting-defaults-to-strict", "description": "A variable missing from a deploy leaves the second factor required, not skipped", "kind": "outcome" },
+    { "id": "app-unchanged", "description": "The service keeps createApp and its /invoices route", "kind": "outcome" },
+    { "id": "single-build-retained", "description": "The pipeline still builds one image", "kind": "outcome" }
+  ]
+}

@@ -72,6 +72,10 @@ const freshEfficacyCases = [
   'runbook-of-guesses',
   'declared-commands-point-nowhere',
   'all-at-once-for-a-quiet-risk',
+  // release-engineering's fifteenth and last. Rule 1 is already satisfied —
+  // one image, promoted by digest — and the artifact is still three different
+  // programs, because the code inside it branches on the environment's name.
+  'environment-branching-in-the-artifact',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);
