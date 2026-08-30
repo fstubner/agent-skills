@@ -279,6 +279,9 @@ for (const caseId of freshScreenCases) {
     ['efficiencyReductionRequired', 0],
     ['outcomeNonInferiorityMargin', 0.5],
     ['trialsPerCondition', 1],
+    // Added when the case count rose to 15: without this the floor could be
+    // walked back to the old 3 and every other guard would still pass.
+    ['freshCasesPerSkill', 3],
   ];
   try {
     for (const [key, value] of weakenings) {

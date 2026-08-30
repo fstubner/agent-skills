@@ -3,38 +3,132 @@
   "title": "Agent-skill efficacy promotion contract",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "status", "supportedClaims", "legacyResultsAreEvidence", "minimumEvidence", "costRates", "notes"],
+  "required": [
+    "schemaVersion",
+    "status",
+    "supportedClaims",
+    "legacyResultsAreEvidence",
+    "minimumEvidence",
+    "costRates",
+    "notes"
+  ],
   "properties": {
-    "schemaVersion": { "const": 1 },
-    "status": { "enum": ["unvalidated", "validated"] },
-    "supportedClaims": { "type": "array", "items": { "type": "string", "minLength": 1 } },
-    "legacyResultsAreEvidence": { "const": false },
+    "schemaVersion": {
+      "const": 1
+    },
+    "status": {
+      "enum": [
+        "unvalidated",
+        "validated"
+      ]
+    },
+    "supportedClaims": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "legacyResultsAreEvidence": {
+      "const": false
+    },
     "minimumEvidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["freshCasesPerSkill", "trialsPerCondition", "requiredConditions", "requiredHarnesses", "requiredModelsByHarness", "primaryBaselineCondition", "confidenceLevel", "outcomeDeltaRequired", "efficiencyReductionRequired", "outcomeNonInferiorityMargin"],
+      "required": [
+        "freshCasesPerSkill",
+        "trialsPerCondition",
+        "requiredConditions",
+        "requiredHarnesses",
+        "requiredModelsByHarness",
+        "primaryBaselineCondition",
+        "confidenceLevel",
+        "outcomeDeltaRequired",
+        "efficiencyReductionRequired",
+        "outcomeNonInferiorityMargin"
+      ],
       "properties": {
-        "freshCasesPerSkill": { "type": "integer", "minimum": 3 },
-        "trialsPerCondition": { "type": "integer", "minimum": 3 },
-        "requiredConditions": { "type": "array", "minItems": 3, "items": { "enum": ["control", "policy", "skill"] } },
-        "requiredHarnesses": { "type": "array", "minItems": 2, "items": { "enum": ["claude-code", "codex"] } },
+        "freshCasesPerSkill": {
+          "type": "integer",
+          "minimum": 15
+        },
+        "trialsPerCondition": {
+          "type": "integer",
+          "minimum": 3
+        },
+        "requiredConditions": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "enum": [
+              "control",
+              "policy",
+              "skill"
+            ]
+          }
+        },
+        "requiredHarnesses": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "enum": [
+              "claude-code",
+              "codex"
+            ]
+          }
+        },
         "requiredModelsByHarness": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["claude-code", "codex"],
+          "required": [
+            "claude-code",
+            "codex"
+          ],
           "properties": {
-            "claude-code": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
-            "codex": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+            "claude-code": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "codex": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
           }
         },
-        "primaryBaselineCondition": { "const": "policy" },
-        "confidenceLevel": { "const": 0.95 },
-        "outcomeDeltaRequired": { "type": "number", "minimum": 0.1 },
-        "efficiencyReductionRequired": { "type": "number", "minimum": 0.1 },
-        "outcomeNonInferiorityMargin": { "type": "number", "maximum": 0.02 }
+        "primaryBaselineCondition": {
+          "const": "policy"
+        },
+        "confidenceLevel": {
+          "const": 0.95
+        },
+        "outcomeDeltaRequired": {
+          "type": "number",
+          "minimum": 0.1
+        },
+        "efficiencyReductionRequired": {
+          "type": "number",
+          "minimum": 0.1
+        },
+        "outcomeNonInferiorityMargin": {
+          "type": "number",
+          "maximum": 0.02
+        }
       }
     },
-    "costRates": { "type": "object" },
-    "notes": { "type": "string", "minLength": 20 }
+    "costRates": {
+      "type": "object"
+    },
+    "notes": {
+      "type": "string",
+      "minLength": 20
+    }
   }
 }

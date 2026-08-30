@@ -146,7 +146,14 @@ if (evidence) {
   for (const error of validate(evidenceSchema, evidence)) fail(`eval/evidence.json ${error}`);
   if (evidence.status === 'unvalidated' && evidence.supportedClaims.length !== 0) fail('eval/evidence.json: unvalidated evidence cannot support claims');
   if (evidence.legacyResultsAreEvidence !== false) fail('eval/evidence.json: legacy results must remain quarantined');
-  if (evidence.minimumEvidence.freshCasesPerSkill < 3 || evidence.minimumEvidence.trialsPerCondition < 3) fail('eval/evidence.json: minimum replication was weakened');
+  // 15 cases, not 3, since 2026-08-30. The old pair of numbers — three cases
+  // and a 95% interval clearing 0.1 — required a mean delta above 0.43 before
+  // any interval could clear, which no skill was ever told. 15 is what
+  // scripts/eval-power.mjs derives for detecting twice the threshold at 80%
+  // power, at the case-level variance observed. Lowering it again is a real
+  // decision that should come with a fresh derivation, so it fails here and in
+  // the schema rather than passing quietly.
+  if (evidence.minimumEvidence.freshCasesPerSkill < 15 || evidence.minimumEvidence.trialsPerCondition < 3) fail('eval/evidence.json: minimum replication was weakened');
   for (const condition of ['control', 'policy', 'skill']) {
     if (!evidence.minimumEvidence.requiredConditions.includes(condition)) fail(`eval/evidence.json: required condition ${condition} was removed`);
   }

@@ -4,13 +4,24 @@
   "supportedClaims": [],
   "legacyResultsAreEvidence": false,
   "minimumEvidence": {
-    "freshCasesPerSkill": 3,
+    "freshCasesPerSkill": 15,
     "trialsPerCondition": 3,
-    "requiredConditions": ["control", "policy", "skill"],
-    "requiredHarnesses": ["claude-code", "codex"],
+    "requiredConditions": [
+      "control",
+      "policy",
+      "skill"
+    ],
+    "requiredHarnesses": [
+      "claude-code",
+      "codex"
+    ],
     "requiredModelsByHarness": {
-      "claude-code": ["claude-haiku-4-5-20251001"],
-      "codex": ["gpt-5.6-luna"]
+      "claude-code": [
+        "claude-haiku-4-5-20251001"
+      ],
+      "codex": [
+        "gpt-5.6-luna"
+      ]
     },
     "primaryBaselineCondition": "policy",
     "confidenceLevel": 0.95,
