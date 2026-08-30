@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "claude-sonnet-5",
+  "blinding": {
+    "A": "stale-pass-review-claude-code-policy-20260828175841-3aea0d",
+    "B": "stale-pass-review-claude-code-skill-20260829225742-a73fdf"
+  },
+  "conditions": {
+    "stale-pass-review-claude-code-policy-20260828175841-3aea0d": "policy",
+    "stale-pass-review-claude-code-skill-20260829225742-a73fdf": "skill"
+  },
+  "skillVersions": {
+    "stale-pass-review-claude-code-policy-20260828175841-3aea0d": null,
+    "stale-pass-review-claude-code-skill-20260829225742-a73fdf": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3333,
+    "truncated": {
+      "stale-pass-review-claude-code-skill-20260829225742-a73fdf": true,
+      "stale-pass-review-claude-code-policy-20260828175841-3aea0d": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 3,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Both correctly block on the same core evidence (App.jsx is a one-liner, test is a placebo assertion), but B explicitly separates what it verified from what it couldn't (gate script, walkthrough, runtime) under a dedicated 'What was NOT checked' section, while A's report claims '✓ Checked' items without similarly flagging its own inability to run the build or dev server it says will fail."
+  }
+}

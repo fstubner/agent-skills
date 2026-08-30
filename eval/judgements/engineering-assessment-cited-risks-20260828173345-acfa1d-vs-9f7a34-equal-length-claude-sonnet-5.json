@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-cited-risks",
+  "judgeModel": "claude-sonnet-5",
+  "blinding": {
+    "A": "engineering-assessment-cited-risks-codex-skill-20260828173345-acfa1d",
+    "B": "engineering-assessment-cited-risks-codex-policy-20260828172818-9f7a34"
+  },
+  "conditions": {
+    "engineering-assessment-cited-risks-codex-skill-20260828173345-acfa1d": "skill",
+    "engineering-assessment-cited-risks-codex-policy-20260828172818-9f7a34": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-cited-risks-codex-skill-20260828173345-acfa1d": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-cited-risks-codex-policy-20260828172818-9f7a34": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 6163,
+    "truncated": {
+      "engineering-assessment-cited-risks-codex-skill-20260828173345-acfa1d": true,
+      "engineering-assessment-cited-risks-codex-policy-20260828172818-9f7a34": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "tie",
+    "reasoning": "Both reports converge on the same five findings with equivalent file/line citations and live-verification evidence (A's probe table showing requestedFile('../../etc/passwd') => /etc/passwd vs B's live HTTP request returning 200 and /etc/passwd), and both flag the smoke test's lack of real assertions and the unenforced ADMIN_TOKEN fallback as the top risk, so neither report demonstrates a decisive edge over the other."
+  }
+}

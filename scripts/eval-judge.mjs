@@ -163,7 +163,14 @@ try {
 const stamp = left.manifest.startedAt.replace(/[-:.TZ]/g, '').slice(0, 14);
 // The suffix keeps a length-controlled judgement from overwriting the
 // unmodified one for the same pair; comparing the two IS the experiment.
-const suffix = equalLength ? '-equal-length' : '';
+//
+// The judge model is part of the filename too, for the same reason and it was
+// missing: a second judge on the same pair wrote to the same path and silently
+// replaced the first one's verdict. Comparing judges is exactly what the model
+// flag is for, so the two have to coexist. The default model keeps the bare
+// name so existing judgements are not orphaned.
+const modelTag = flag('model') ? `-${flag('model').replace(/[^a-z0-9]+/gi, '-').replace(/-+$/, '')}` : '';
+const suffix = `${equalLength ? '-equal-length' : ''}${modelTag}`;
 const outPath = path.join(suiteRoot, 'eval', 'judgements', `${left.manifest.caseId}-${stamp}-${runIdA.slice(-6)}-vs-${runIdB.slice(-6)}${suffix}.json`);
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, `${JSON.stringify({

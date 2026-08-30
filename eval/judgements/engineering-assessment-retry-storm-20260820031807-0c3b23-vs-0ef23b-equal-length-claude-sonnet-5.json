@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-sonnet-5",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-claude-code-skill-20260820031807-0c3b23",
+    "B": "engineering-assessment-retry-storm-claude-code-policy-20260818115645-0ef23b"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260820031807-0c3b23": "skill",
+    "engineering-assessment-retry-storm-claude-code-policy-20260818115645-0ef23b": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260820031807-0c3b23": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-retry-storm-claude-code-policy-20260818115645-0ef23b": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4272,
+    "truncated": {
+      "engineering-assessment-retry-storm-claude-code-skill-20260820031807-0c3b23": true,
+      "engineering-assessment-retry-storm-claude-code-policy-20260818115645-0ef23b": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 3
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "A cites the sharpest single piece of evidence (pyproject.toml:12 declaring dependencies = [] against an unused requests import, meaning the worker won't even boot) but buries prioritisation in a truncated summary that never finishes ranking; B surfaces a concrete, actionable new finding A misses entirely (settings.py:4's unused PROCESSOR_KEY meaning charges go out unauthenticated) and states its priority order and verification scope up front."
+  }
+}

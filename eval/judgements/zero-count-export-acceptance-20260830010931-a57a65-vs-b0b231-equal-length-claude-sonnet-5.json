@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-sonnet-5",
+  "blinding": {
+    "A": "zero-count-export-acceptance-codex-skill-20260830010931-a57a65",
+    "B": "zero-count-export-acceptance-codex-policy-20260813175925-b0b231"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-codex-skill-20260830010931-a57a65": "skill",
+    "zero-count-export-acceptance-codex-policy-20260813175925-b0b231": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-codex-skill-20260830010931-a57a65": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "zero-count-export-acceptance-codex-policy-20260813175925-b0b231": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 666,
+    "truncated": {
+      "zero-count-export-acceptance-codex-skill-20260830010931-a57a65": true,
+      "zero-count-export-acceptance-codex-policy-20260813175925-b0b231": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 2,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "A claims automated acceptance was 'not_evaluated' due to a specific ESM error but gives no command output to back that diagnosis, while B is explicit that no acceptance artifact existed to reconcile against and separately notes the existing test suite passes but doesn't cover the failing case, which is a more honest and verifiable account of what was and wasn't checked."
+  }
+}

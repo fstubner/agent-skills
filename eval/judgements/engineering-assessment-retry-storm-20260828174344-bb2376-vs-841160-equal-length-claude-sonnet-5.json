@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-sonnet-5",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-codex-skill-20260828174344-bb2376",
+    "B": "engineering-assessment-retry-storm-codex-policy-20260828173945-841160"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-codex-skill-20260828174344-bb2376": "skill",
+    "engineering-assessment-retry-storm-codex-policy-20260828173945-841160": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-codex-skill-20260828174344-bb2376": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-retry-storm-codex-policy-20260828173945-841160": null
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3290,
+    "truncated": {
+      "engineering-assessment-retry-storm-codex-skill-20260828174344-bb2376": true,
+      "engineering-assessment-retry-storm-codex-policy-20260828173945-841160": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 4,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B surfaces two extra high-value, distinct findings within the same five-finding budget (unused PROCESSOR_KEY with an insecure default, and no durable claim protocol across the three deploy.md replicas) while A's third finding is a narrower restatement of the same retry-loop risk already covered by finding 2; both cite exact file:line evidence and disclose the same tooling failures, but A edges honesty slightly with its explicit scope/tools table up front."
+  }
+}

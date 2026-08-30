@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-sonnet-5",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-codex-policy-20260828175008-5657f6",
+    "B": "engineering-assessment-silent-drop-codex-skill-20260828175407-98b9cb"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828175008-5657f6": "policy",
+    "engineering-assessment-silent-drop-codex-skill-20260828175407-98b9cb": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-codex-policy-20260828175008-5657f6": null,
+    "engineering-assessment-silent-drop-codex-skill-20260828175407-98b9cb": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3170,
+    "truncated": {
+      "engineering-assessment-silent-drop-codex-skill-20260828175407-98b9cb": true,
+      "engineering-assessment-silent-drop-codex-policy-20260828175008-5657f6": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "tie",
+    "reasoning": "Both cite the same core files/lines (store.go in-memory map, main.go's discarded errors, duplicate-key overwrite) with equivalent precision and both explicitly log failed go tool invocations rather than hiding the gap, but A gets a fifth ranked finding in (the unsynchronized Count read) while B's table cuts off after three, leaving its account incomplete for reasons the length-cut caveat covers rather than any difference in rigor."
+  }
+}

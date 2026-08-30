@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-hidden-risks",
+  "judgeModel": "claude-sonnet-5",
+  "blinding": {
+    "A": "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f",
+    "B": "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72"
+  },
+  "conditions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f": "policy",
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f": null,
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4693,
+    "truncated": {
+      "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": true,
+      "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "B backs every finding with a command-output table (npm audit ENOLOCK, missing build/lint scripts, node --check results) and precise file:line citations, giving a verifiable audit trail that A's narrative prose only partially matches, though A's ordering by production impact (auth default before traversal disclosure) is slightly more defensible than B's security/security/correctness/security split."
+  }
+}

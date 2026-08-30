@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "claude-sonnet-5",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24",
+    "B": "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24": "policy",
+    "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa": "skill"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24": null,
+    "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4495,
+    "truncated": {
+      "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa": true,
+      "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Both find the same four issues with reproduced evidence, but B pins exact line numbers (e.g. worker.js:1-5, start-worker.js:3) and also caught that the launcher exits 0 despite the startup failure, a concrete detail A's version of finding 1 omits; both rank the startup crash and migration/ack ordering somewhat arbitrarily relative to each other rather than justifying severity ordering explicitly."
+  }
+}
