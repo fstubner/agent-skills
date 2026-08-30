@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24",
+    "B": "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24": "policy",
+    "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa": "skill"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24": null,
+    "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4495,
+    "truncated": {
+      "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa": true,
+      "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 3,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "Both find the same four issues with solid evidence, but A correctly marks the broken launcher (which prevents the service starting at all) as Critical rather than High, and uses a narrative format that makes severity and priority immediately clear, whereas B reverses the severity ranking and obscures it in a table."
+  }
+}

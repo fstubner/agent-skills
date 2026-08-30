@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-hidden-risks",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f",
+    "B": "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72"
+  },
+  "conditions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f": "policy",
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f": null,
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 4693,
+    "truncated": {
+      "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": true,
+      "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3,
+        "evidence": 3,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 3
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 3,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B cites line numbers (`src/server.js:5-6`, `src/files.js:5-6`) for every finding and documents executed commands in a table, making each issue immediately locatable; Report A describes the same findings in prose without line references. B also recommends specific mitigations like 'constant-time token comparison' and 'secret-management mechanism' whereas A gives broader guidance ('fail fast,' 'implement the smallest matching behavior'). A's explicit 'Verification and remaining uncertainty' section is stronger on honesty, but B's concrete evidence and actionability outweigh this advantage."
+  }
+}

@@ -17,7 +17,7 @@
 // random — a rerun that flipped the labels would look like a changed verdict.
 //
 // Usage:
-//   node scripts/eval-judge.mjs --a <runId> --b <runId> [--model <name>] [--dry-run]
+//   node scripts/eval-judge.mjs --a <runId> --b <runId> [--model <name>] [--equal-length] [--dry-run]
 
 import crypto from 'crypto';
 import fs from 'fs';
@@ -35,7 +35,7 @@ const has = (name) => args.includes(`--${name}`);
 
 function usage(message) {
   if (message) console.error(message);
-  console.error('usage: node scripts/eval-judge.mjs --a <runId> --b <runId> [--model <name>] [--dry-run]');
+  console.error('usage: node scripts/eval-judge.mjs --a <runId> --b <runId> [--model <name>] [--equal-length] [--dry-run]');
   process.exit(2);
 }
 
@@ -69,6 +69,47 @@ const asB = flip ? left : right;
 
 const testCase = JSON.parse(fs.readFileSync(path.join(suiteRoot, 'eval', 'cases-v2', `${left.manifest.caseId}.json`), 'utf8'));
 
+// --equal-length: cut both deliverables to the shorter one's size, at a line
+// boundary, so the judge cannot see which agent wrote more.
+//
+// Measured on 2026-08-30, the unmodified judge agreed with the byte count
+// twelve times out of twelve across twelve pairs — the skill arm won exactly
+// when its report was longer. That pass could not distinguish better from
+// bigger, and the skill arm reliably writes more.
+//
+// This trades one bias for a smaller one rather than removing bias. Only the
+// LONGER report is actually cut, so it ends mid-thought; a report that saves
+// its conclusions for the end is penalised, and a front-loaded one is
+// flattered. The prompt says a report was truncated and that an abrupt ending
+// is not a defect, because without that the cut becomes a bias against the
+// document it cut — the exact mirror of the problem being fixed.
+const equalLength = has('equal-length');
+function cutToBytes(text, limit) {
+  if (Buffer.byteLength(text, 'utf8') <= limit) return { text, truncated: false };
+  let out = '';
+  for (const line of text.split('\n')) {
+    if (Buffer.byteLength(`${out}${line}\n`, 'utf8') > limit) break;
+    out += `${line}\n`;
+  }
+  return { text: out, truncated: true };
+}
+let lengthControl = null;
+if (equalLength) {
+  const limit = Math.min(
+    Buffer.byteLength(left.deliverable, 'utf8'),
+    Buffer.byteLength(right.deliverable, 'utf8'),
+  );
+  const cutLeft = cutToBytes(left.deliverable, limit);
+  const cutRight = cutToBytes(right.deliverable, limit);
+  left.deliverable = cutLeft.text;
+  right.deliverable = cutRight.text;
+  lengthControl = {
+    mode: 'equal-length',
+    limitBytes: limit,
+    truncated: { [left.runId]: cutLeft.truncated, [right.runId]: cutRight.truncated },
+  };
+}
+
 const prompt = `You are comparing two engineering reports written for the same task by two different agents. You do not know which agent produced which, and that is deliberate — judge only what is on the page.
 
 The task they were both given:
@@ -83,7 +124,9 @@ Score each report 1-5 on each dimension, where 3 is competent and unremarkable:
 - honesty: does it distinguish what was checked from what was assumed, and admit gaps?
 - readability: is it organised so the important thing is found first?
 
-Then name a winner ("A", "B", or "tie") and give one sentence of reasoning citing something concrete from each report.
+Then name a winner ("A", "B", or "tie") and give one sentence of reasoning citing something concrete from each report.${equalLength ? `
+
+Both reports below have been cut to the same length so that neither is longer than the other. One of them therefore stops abruptly, possibly mid-section. That is an artefact of the cut, not a fault of the report: do not treat an unfinished ending, a missing summary, or absent closing sections as a defect, and do not reward or penalise either report for its length.` : ''}
 
 Respond with ONLY a JSON object, no prose around it:
 {"scores":{"A":{"actionability":n,"evidence":n,"prioritisation":n,"honesty":n,"readability":n},"B":{...}},"winner":"A|B|tie","reasoning":"..."}
@@ -118,7 +161,10 @@ try {
 } catch { /* recorded as unparsed below */ }
 
 const stamp = left.manifest.startedAt.replace(/[-:.TZ]/g, '').slice(0, 14);
-const outPath = path.join(suiteRoot, 'eval', 'judgements', `${left.manifest.caseId}-${stamp}-${runIdA.slice(-6)}-vs-${runIdB.slice(-6)}.json`);
+// The suffix keeps a length-controlled judgement from overwriting the
+// unmodified one for the same pair; comparing the two IS the experiment.
+const suffix = equalLength ? '-equal-length' : '';
+const outPath = path.join(suiteRoot, 'eval', 'judgements', `${left.manifest.caseId}-${stamp}-${runIdA.slice(-6)}-vs-${runIdB.slice(-6)}${suffix}.json`);
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, `${JSON.stringify({
   schemaVersion: 1,
@@ -129,6 +175,7 @@ fs.writeFileSync(outPath, `${JSON.stringify({
   blinding: { A: asA.runId, B: asB.runId },
   conditions: { [asA.runId]: asA.manifest.condition, [asB.runId]: asB.manifest.condition },
   skillVersions: { [asA.runId]: asA.manifest.stagedInputSha256 || null, [asB.runId]: asB.manifest.stagedInputSha256 || null },
+  lengthControl,
   verdict,
   rawText: verdict ? undefined : rawText.slice(0, 4000),
 }, null, 2)}\n`);

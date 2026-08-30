@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "stale-pass-review-claude-code-policy-20260828175841-3aea0d",
+    "B": "stale-pass-review-claude-code-skill-20260829225742-a73fdf"
+  },
+  "conditions": {
+    "stale-pass-review-claude-code-policy-20260828175841-3aea0d": "policy",
+    "stale-pass-review-claude-code-skill-20260829225742-a73fdf": "skill"
+  },
+  "skillVersions": {
+    "stale-pass-review-claude-code-policy-20260828175841-3aea0d": null,
+    "stale-pass-review-claude-code-skill-20260829225742-a73fdf": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312"
+  },
+  "lengthControl": {
+    "mode": "equal-length",
+    "limitBytes": 3333,
+    "truncated": {
+      "stale-pass-review-claude-code-skill-20260829225742-a73fdf": true,
+      "stale-pass-review-claude-code-policy-20260828175841-3aea0d": false
+    }
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 3,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 2,
+        "evidence": 4,
+        "prioritisation": 2,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A prioritizes blockers by severity (MVP functionality first) with a 'What Would Be Required' section that tells an engineer what to do next, while Report B's explicit honesty about scope ('Could not run due to permission restrictions') is valuable but organizing by verification process rather than risk impact obscures that all findings point to the same MVP gap."
+  }
+}
