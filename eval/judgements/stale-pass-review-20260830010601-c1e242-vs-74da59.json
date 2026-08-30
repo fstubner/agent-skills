@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "stale-pass-review-codex-skill-20260830010601-c1e242",
+    "B": "stale-pass-review-codex-policy-20260813182639-74da59"
+  },
+  "conditions": {
+    "stale-pass-review-codex-skill-20260830010601-c1e242": "skill",
+    "stale-pass-review-codex-policy-20260813182639-74da59": "policy"
+  },
+  "skillVersions": {
+    "stale-pass-review-codex-skill-20260830010601-c1e242": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "stale-pass-review-codex-policy-20260813182639-74da59": null
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 3,
+        "prioritisation": 3,
+        "honesty": 2,
+        "readability": 3
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A explicitly investigates the acceptance checker, documents why it cannot run (agent-skills core absent, prior evidence marked stale-planted-pass), and creates a dedicated Coverage/Limitations section naming exactly what couldn't be checked, while Report B omits the checker entirely and makes unsupported claims like 'dependencies are not installed' without file evidence; A cites specific files, flags (--root . --strict), and configuration issues, while B's verification claims (npm test passed, npm run build failed) lack backing and B conflates assumptions with findings."
+  }
+}

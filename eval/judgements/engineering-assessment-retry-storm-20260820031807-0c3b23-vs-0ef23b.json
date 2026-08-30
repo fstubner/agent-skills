@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-claude-code-skill-20260820031807-0c3b23",
+    "B": "engineering-assessment-retry-storm-claude-code-policy-20260818115645-0ef23b"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260820031807-0c3b23": "skill",
+    "engineering-assessment-retry-storm-claude-code-policy-20260818115645-0ef23b": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-claude-code-skill-20260820031807-0c3b23": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-retry-storm-claude-code-policy-20260818115645-0ef23b": null
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 3,
+        "readability": 5
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A identified the blocking runtime dependency (requests import missing from pyproject.toml) that would prevent any execution, whereas Report B completely missed this critical issue and substituted a less blocking configuration oversight; Report A also provides explicit coverage gaps and verification transparency, making its assessment more trustworthy for go/no-go scaling decisions."
+  }
+}

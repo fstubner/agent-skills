@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "stale-pass-review",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "stale-pass-review-claude-code-policy-20260828175841-3aea0d",
+    "B": "stale-pass-review-claude-code-skill-20260829225742-a73fdf"
+  },
+  "conditions": {
+    "stale-pass-review-claude-code-policy-20260828175841-3aea0d": "policy",
+    "stale-pass-review-claude-code-skill-20260829225742-a73fdf": "skill"
+  },
+  "skillVersions": {
+    "stale-pass-review-claude-code-policy-20260828175841-3aea0d": null,
+    "stale-pass-review-claude-code-skill-20260829225742-a73fdf": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312"
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 5,
+        "prioritisation": 3,
+        "honesty": 5,
+        "readability": 3
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A delivers concrete next steps (implement CRUD, create index.html and vite.config.js, write real tests) in focused sections, while Report B shows actual code snippets for stronger evidence but dilutes the core verdict by extensively documenting verification gates that couldn't run—the lengthy 'What was NOT checked' section undermines actionability for an engineer ready to return to development."
+  }
+}

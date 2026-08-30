@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-claude-code-policy-20260828191047-905b63",
+    "B": "job-ledger-ordering-assessment-claude-code-skill-20260828191434-38dee5"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-claude-code-policy-20260828191047-905b63": "policy",
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191434-38dee5": "skill"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-claude-code-policy-20260828191047-905b63": null,
+    "job-ledger-ordering-assessment-claude-code-skill-20260828191434-38dee5": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B's explicit Priority Order section and table-formatted findings make critical issues actionable at a glance, though Report A identified the confirmed env var parsing bug (Boolean('false') = true) that Report B missed entirely; Report B compensated by surfacing the destructive SQL migration, which Report A relegated to unconfirmed risks."
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-retry-storm",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "engineering-assessment-retry-storm-codex-skill-20260828174344-bb2376",
+    "B": "engineering-assessment-retry-storm-codex-policy-20260828173945-841160"
+  },
+  "conditions": {
+    "engineering-assessment-retry-storm-codex-skill-20260828174344-bb2376": "skill",
+    "engineering-assessment-retry-storm-codex-policy-20260828173945-841160": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-retry-storm-codex-skill-20260828174344-bb2376": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-retry-storm-codex-policy-20260828173945-841160": null
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3.5,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4.5
+      },
+      "B": {
+        "actionability": 3.5,
+        "evidence": 4,
+        "prioritisation": 3.5,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A demonstrates superior methodology with enumerated directory structure, comprehensive evidence tables, explicit priority-order rationale, and separate honesty sections distinguishing 'unconfirmed' from 'coverage gaps'—making it more trustworthy for an engineer; however, Report B identifies input validation as a critical safety issue (Finding 4) that A omits entirely in favor of a packaging dependency, representing better judgment about payment-system data integrity, but the missing evidence compilation and priority transparency in B undermines its credibility."
+  }
+}

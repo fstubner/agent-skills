@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "zero-count-export-acceptance",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "zero-count-export-acceptance-codex-skill-20260830010931-a57a65",
+    "B": "zero-count-export-acceptance-codex-policy-20260813175925-b0b231"
+  },
+  "conditions": {
+    "zero-count-export-acceptance-codex-skill-20260830010931-a57a65": "skill",
+    "zero-count-export-acceptance-codex-policy-20260813175925-b0b231": "policy"
+  },
+  "skillVersions": {
+    "zero-count-export-acceptance-codex-skill-20260830010931-a57a65": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+    "zero-count-export-acceptance-codex-policy-20260813175925-b0b231": null
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 3,
+        "evidence": 4,
+        "prioritisation": 3,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A names the root cause (`src/report.js` filtering with `item.count`) and includes a detailed 'Coverage limits' section distinguishing checked from unchecked; Report B identifies the symptom but omits the file/line causing it, requiring an engineer to debug further before fixing."
+  }
+}

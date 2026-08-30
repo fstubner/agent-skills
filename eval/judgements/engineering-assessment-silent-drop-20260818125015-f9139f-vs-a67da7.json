@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-silent-drop",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "engineering-assessment-silent-drop-claude-code-policy-20260818120557-a67da7",
+    "B": "engineering-assessment-silent-drop-claude-code-skill-20260818125015-f9139f"
+  },
+  "conditions": {
+    "engineering-assessment-silent-drop-claude-code-policy-20260818120557-a67da7": "policy",
+    "engineering-assessment-silent-drop-claude-code-skill-20260818125015-f9139f": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-silent-drop-claude-code-policy-20260818120557-a67da7": null,
+    "engineering-assessment-silent-drop-claude-code-skill-20260818125015-f9139f": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 3,
+        "evidence": 3,
+        "prioritisation": 3,
+        "honesty": 2,
+        "readability": 3
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 4
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B explicitly declares scope, coverage gaps, and what wasn't examined (e.g., 'Integration environment: Not examined'), while Report A provides confident claims without acknowledging limitations; B also gives actionable specifics like 'use `mail.ParseAddress()` from `net/mail`' and shows dependency chains ('Finding #3 depends on #1 and #2'), whereas A lists severities without connecting them."
+  }
+}

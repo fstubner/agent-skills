@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-cited-risks",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "engineering-assessment-cited-risks-claude-code-skill-20260818123940-91ff9c",
+    "B": "engineering-assessment-cited-risks-claude-code-policy-20260817233118-351cd8"
+  },
+  "conditions": {
+    "engineering-assessment-cited-risks-claude-code-skill-20260818123940-91ff9c": "skill",
+    "engineering-assessment-cited-risks-claude-code-policy-20260817233118-351cd8": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-cited-risks-claude-code-skill-20260818123940-91ff9c": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-cited-risks-claude-code-policy-20260817233118-351cd8": null
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 3,
+        "honesty": 2,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A explicitly states what couldn't be run and lists eight coverage gaps, whereas Report B claims to have reviewed `migrations/` without acknowledging what testing couldn't be performed in this environment; A's honesty about boundaries (5 vs 2) outweighs B's marginally superior code examples (5 vs 4), and A's table format makes prioritisation and severity clearer than B's flat structure."
+  }
+}

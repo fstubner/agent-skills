@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-cited-risks",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "engineering-assessment-cited-risks-codex-skill-20260828173345-acfa1d",
+    "B": "engineering-assessment-cited-risks-codex-policy-20260828172818-9f7a34"
+  },
+  "conditions": {
+    "engineering-assessment-cited-risks-codex-skill-20260828173345-acfa1d": "skill",
+    "engineering-assessment-cited-risks-codex-policy-20260828172818-9f7a34": "policy"
+  },
+  "skillVersions": {
+    "engineering-assessment-cited-risks-codex-skill-20260828173345-acfa1d": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+    "engineering-assessment-cited-risks-codex-policy-20260828172818-9f7a34": null
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 4,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      }
+    },
+    "winner": "A",
+    "reasoning": "Report A systematically documents execution with a command-result table ('npm audit: Could not run: ENOLOCK') and explicit probe outputs ('The executed probe showed requestedFile('../../etc/passwd') => /etc/passwd'), while Report B describes verification narratively without structured detail; A's explicit 'Priority Order' section and nine-item 'Coverage Gaps' list also demonstrate stronger honesty about assessment scope and constraints."
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "job-ledger-ordering-assessment",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24",
+    "B": "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa"
+  },
+  "conditions": {
+    "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24": "policy",
+    "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa": "skill"
+  },
+  "skillVersions": {
+    "job-ledger-ordering-assessment-codex-policy-20260813181207-97ec24": null,
+    "job-ledger-ordering-assessment-codex-skill-20260830003021-ef1cfa": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 4
+      },
+      "B": {
+        "actionability": 5,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "B's table format makes all findings immediately scannable, its explicit 'Priority order' section transparently explains why the launcher fix comes before the migration despite lower severity, and recommendations are more specific ('idempotent ledger operation with defined recovery strategy' vs A's vaguer 'define the durability contract'); additionally B's 'Coverage gaps' section is more thorough about environment constraints that prevented assessment."
+  }
+}

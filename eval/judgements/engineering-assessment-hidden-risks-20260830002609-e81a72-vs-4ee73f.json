@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "evidentiary": false,
+  "note": "Blind LLM comparison. Not evidence under eval/evidence.json; never feeds promotion.",
+  "caseId": "engineering-assessment-hidden-risks",
+  "judgeModel": "claude-haiku-4-5-20251001",
+  "blinding": {
+    "A": "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f",
+    "B": "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72"
+  },
+  "conditions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f": "policy",
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "skill"
+  },
+  "skillVersions": {
+    "engineering-assessment-hidden-risks-codex-policy-20260813184850-4ee73f": null,
+    "engineering-assessment-hidden-risks-codex-skill-20260830002609-e81a72": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509"
+  },
+  "verdict": {
+    "scores": {
+      "A": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 4,
+        "honesty": 4,
+        "readability": 5
+      },
+      "B": {
+        "actionability": 4,
+        "evidence": 5,
+        "prioritisation": 5,
+        "honesty": 5,
+        "readability": 5
+      }
+    },
+    "winner": "B",
+    "reasoning": "Report B explicitly lists what commands were run and has a dedicated 'Coverage gaps' section detailing what was not checked, while Report A's coverage statement is a brief paragraph; additionally, Report B's separate 'Priority order' section reorders findings by practical dependencies (explaining that findings 1 and 4 form a security boundary that should be fixed with finding 3), whereas Report A lists findings in a single order without acknowledging why the auth fallback might gate the path traversal risk."
+  }
+}
