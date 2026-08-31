@@ -80,6 +80,10 @@ const freshEfficacyCases = [
   // at the acceptor, and the state one of them rules out of scope is where the
   // defect is.
   'documents-instruct-the-acceptor',
+  // Every contract document was read off the implementation, so all of them
+  // agree with it and none of them is evidence. The actual request is in the
+  // repository and asks for something the product does not do.
+  'intent-reconstructed-from-code',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

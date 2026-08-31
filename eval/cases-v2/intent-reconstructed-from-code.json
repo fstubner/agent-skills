@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "id": "intent-reconstructed-from-code",
+  "skill": "product-acceptance",
+  "revision": 1,
+  "prompt": "The swim session booking tool is finished and the leisure centre wants it live before the new term. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+  "fixture": "eval/fixtures-v2/intent-reconstructed-from-code",
+  "grader": "eval/graders-v2/intent-reconstructed-from-code.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "provenance-flagged", "description": "The review names the declared reconstructed-from-code provenance", "kind": "outcome" },
+    { "id": "agreement-not-treated-as-evidence", "description": "It says why a contract derived from the code cannot verify the code", "kind": "outcome" },
+    { "id": "real-intent-source-used", "description": "It draws on the actual request in docs/brief-email.txt", "kind": "outcome" },
+    { "id": "primary-need-missing-cited", "description": "The absent per-child booking view is reported with evidence in the code", "kind": "outcome" },
+    { "id": "priority-inversion-named", "description": "It notes that what the requester ranked second is what got built", "kind": "outcome" },
+    { "id": "verdict-not-ship", "description": "The review's own declared verdict is not SHIP", "kind": "outcome" },
+    { "id": "lift-path-named", "description": "It says a person's confirmation lifts this, not a better-written document", "kind": "outcome" },
+    { "id": "runtime-evidence", "description": "A command was actually run and its output recorded", "kind": "quality" },
+    { "id": "review-only", "description": "The product and contract files are left byte-identical", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}

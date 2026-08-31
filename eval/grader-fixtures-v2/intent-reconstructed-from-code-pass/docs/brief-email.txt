@@ -1,0 +1,24 @@
+From: Dana Whitlock <dana.whitlock@lakesideleisure.example>
+To: build team
+Date: 21 July 2026
+Subject: the booking thing
+
+Thanks for picking this up. To be clear about what I'm actually trying to
+fix, because I don't think I explained it well on the call.
+
+The booking itself isn't really the problem. Parents can already phone
+reception and it takes two minutes. What's killing us is that nobody can see
+what a child is already on. I keep it in a notebook. Last term I
+double-booked two children into overlapping sessions and one of them turned
+up to a lesson that was full, which meant a refund and a very reasonable
+complaint.
+
+So the main thing I need is: pick a child, see every session that child is
+booked onto, in date order, on one screen. If I have that I can stop keeping
+the notebook.
+
+Being able to book from the same screen would be lovely but honestly it's
+second. Reception can keep taking bookings on the phone for now if it comes
+to it.
+
+Dana
