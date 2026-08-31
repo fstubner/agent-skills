@@ -100,6 +100,10 @@ const freshEfficacyCases = [
   // code it uses for findings — and a clean report from before it broke is
   // sitting on disk. The rule it declares is being broken in public/.
   'checker-crash-read-as-pass',
+  // Two authored documents describe two different products, a fortnight
+  // apart, and the code follows the later one. The failure measured is
+  // normalising the divergence rather than surfacing it.
+  'walkthrough-diverges-from-success',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

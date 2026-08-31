@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "id": "walkthrough-diverges-from-success",
+  "skill": "product-acceptance",
+  "revision": 1,
+  "prompt": "The volunteer shifts tool is finished and the food bank wants it in use from next week. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+  "fixture": "eval/fixtures-v2/walkthrough-diverges-from-success",
+  "grader": "eval/graders-v2/walkthrough-diverges-from-success.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "divergence-identified", "description": "Both documents are named and reported as disagreeing", "kind": "outcome" },
+    { "id": "divergence-characterised", "description": "The review states what each document asks for", "kind": "outcome" },
+    { "id": "code-follows-the-walkthrough-cited", "description": "The coordinator-only gate is reported with file and line evidence", "kind": "outcome" },
+    { "id": "volunteer-cannot-even-read-noted", "description": "The review notes volunteers cannot see the open shifts either", "kind": "outcome" },
+    { "id": "divergence-not-normalised", "description": "The divergence is surfaced for a person to decide, not settled by the reviewer", "kind": "outcome" },
+    { "id": "mvp-scope-checked", "description": "The MVP list is checked, not only the Success sentence", "kind": "outcome" },
+    { "id": "verdict-not-ship", "description": "The review's own declared verdict is not SHIP", "kind": "outcome" },
+    { "id": "runtime-evidence", "description": "A command was actually run and its output recorded", "kind": "quality" },
+    { "id": "review-only", "description": "The product and contract files are left byte-identical", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}
