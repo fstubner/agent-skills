@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "id": "multi-part-without-architecture",
+  "skill": "product-acceptance",
+  "revision": 1,
+  "prompt": "The stock count tool is finished and the warehouse wants it on the handhelds for the next cycle. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+  "fixture": "eval/fixtures-v2/multi-part-without-architecture",
+  "grader": "eval/graders-v2/multi-part-without-architecture.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "missing-architecture-reported", "description": "The project is established as multi-part and the absent ARCHITECTURE.md reported", "kind": "outcome" },
+    { "id": "missing-document-connected-to-the-defect", "description": "The missing document is tied to the boundary confusion, not filed as paperwork", "kind": "outcome" },
+    { "id": "client-side-permission-cited", "description": "The client treating a hidden button as access control is reported with evidence", "kind": "outcome" },
+    { "id": "server-missing-check-cited", "description": "The unguarded delete endpoint is reported with file and line evidence", "kind": "outcome" },
+    { "id": "manager-list-gates-nothing-noted", "description": "The review notes the server's manager list only informs the client", "kind": "outcome" },
+    { "id": "severity-stated", "description": "The irrecoverable destruction of a cycle is ranked or characterised", "kind": "outcome" },
+    { "id": "contract-checked-on-permissions", "description": "PRODUCT.md is checked on who may clear counts", "kind": "outcome" },
+    { "id": "verdict-not-ship", "description": "The review's own declared verdict is not SHIP", "kind": "outcome" },
+    { "id": "runtime-evidence", "description": "A command was actually run and its output recorded", "kind": "quality" },
+    { "id": "review-only", "description": "Product files are byte-identical and the acceptor did not write the missing document", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}

@@ -43,11 +43,23 @@ volunteer cannot sign up for a shift, and cannot see which shifts need cover
 either — both halves of the Success statement, not just the sign-up half:
 
 ```
-$ node -e "import('./src/server.js').then(async m=>{
-  const s=m.createApp().listen(0); const {port}=s.address();
-  const r=await fetch(\`http://127.0.0.1:\${port}/api/shifts\`);
-  console.log(r.status, await r.text()); s.close();})"
-403 {"error":"coordinators only"}
+$ grep -n requireCoordinator src/server.js
+15:  const requireCoordinator = (req, res, next) => (
+25:  app.get('/api/shifts', requireCoordinator, (req, res) => res.json({
+29:  app.post('/api/shifts/:id/assign', requireCoordinator, (req, res) => {
+34:  app.post('/api/shifts/:id/unassign', requireCoordinator, (req, res) => {
+```
+
+Three routes, three gates, and no fourth route for anyone else. I could not
+start the server — `express` is not installed in this tree — so this is read
+from the routing table rather than observed as a 403. The store beneath it
+works and its two tests pass:
+
+```
+$ npm test
+✔ shifts needing cover are listed soonest first
+✔ a volunteer cannot be assigned to two shifts at the same time
+ℹ pass 2  ℹ fail 0
 ```
 
 `ARCHITECTURE.md` states the same decision in its own words — "Assignment is
@@ -75,10 +87,10 @@ CONDITIONAL because the gap is the primary job, not a rough edge on it.
 
 ## What I did not check
 
-- **The coordinator flow end to end.** I started the server only for the 403
-  above. I did not sign in as the coordinator, assign anyone, or drive the
-  walkthrough's five steps, so the flow that *is* built is unverified by me
-  beyond reading it and its two tests passing.
+- **The coordinator flow end to end.** I could not start the server at all —
+  express is not installed here. I did not sign in as the coordinator, assign
+  anyone, or drive the walkthrough's five steps, so the flow that *is* built
+  is unverified by me beyond reading it and its two tests passing.
 - **The clash rule.** `assign()` refuses a volunteer already on a shift at
   the same `startsAt`, which is a string comparison, so it catches exact
   duplicates and nothing about overlapping shifts of different lengths. There

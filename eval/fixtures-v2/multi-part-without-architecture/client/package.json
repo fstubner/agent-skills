@@ -1,0 +1,6 @@
+{
+  "name": "stock-count-client",
+  "type": "module",
+  "main": "src/app.js",
+  "scripts": { "build": "node src/build.js" }
+}

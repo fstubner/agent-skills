@@ -1,0 +1,7 @@
+{
+  "name": "stock-count-server",
+  "type": "module",
+  "main": "src/routes.js",
+  "scripts": { "start": "node src/routes.js", "test": "node --test test/counts.test.js" },
+  "dependencies": { "express": "^4.19.0", "express-session": "^1.18.0" }
+}

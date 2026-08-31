@@ -109,6 +109,10 @@ const freshEfficacyCases = [
   // boundary. The error state the walkthrough claims genuinely works, which
   // is the trap.
   'refresh-mid-flow-loses-work',
+  // A workspaces project with no ARCHITECTURE.md, where the missing document
+  // is exactly where the trust boundary would have been written down: the
+  // client hides a button and the server checks nothing.
+  'multi-part-without-architecture',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);
