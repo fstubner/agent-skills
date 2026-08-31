@@ -34,6 +34,7 @@ const MODULES = [
   'eval-fixture-binding.mjs', // a run is bound to the fixture it ran against
   'eval-skill-currency.mjs',  // evidence must describe the skill text as it stands
   'eval-harness-failure.mjs', // a run that never reached a model is not a failing run
+  'eval-invocation.mjs',  // selection harness: extractor, shuffle determinism, reply parsing, prompt-set integrity
   'hooks.mjs',            // pre-commit secret scanning (skips only when gitleaks is absent)
   'hooks-scan-set.mjs',   // the pre-commit scan set travels in a file, not argv
   'installer.mjs',        // harnessPaths, installed-skill smoke test, clobber refusal

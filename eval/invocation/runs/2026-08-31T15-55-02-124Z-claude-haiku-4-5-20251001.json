@@ -1,0 +1,4286 @@
+{
+ "schemaVersion": 1,
+ "protocol": "selection-declared",
+ "model": "claude-haiku-4-5-20251001",
+ "trialsPerPrompt": 3,
+ "startedAt": "2026-08-31T15:55:02.118Z",
+ "promptsSha256": "ee07698ca91b059e4e54fb2e352e7dd6b670613d913d36cfefbee9a622764f0e",
+ "descriptionsSha256": "1599febd905834935874ab8aa13a343b9b3d034979199bd720f9ce00c27697d7",
+ "descriptionsVariant": "current",
+ "aggregate": {
+  "skillTrials": 159,
+  "top1": 137,
+  "altHit": 13,
+  "distractorTrials": 24,
+  "nullCorrect": 24,
+  "parseErrors": 0,
+  "perSkill": {
+   "product-acceptance": {
+    "trials": 45,
+    "top1": 45
+   },
+   "code-organization": {
+    "trials": 3,
+    "top1": 0
+   },
+   "ai-prose-slop": {
+    "trials": 3,
+    "top1": 3
+   },
+   "release-engineering": {
+    "trials": 48,
+    "top1": 39
+   },
+   "cli-tooling": {
+    "trials": 6,
+    "top1": 5
+   },
+   "frontend": {
+    "trials": 9,
+    "top1": 8
+   },
+   "engineering-assessment": {
+    "trials": 15,
+    "top1": 15
+   },
+   "code-smells": {
+    "trials": 3,
+    "top1": 3
+   },
+   "learn-from-session": {
+    "trials": 3,
+    "top1": 3
+   },
+   "mental-models": {
+    "trials": 3,
+    "top1": 0
+   },
+   "multi-agent-design": {
+    "trials": 3,
+    "top1": 3
+   },
+   "data-modeling": {
+    "trials": 6,
+    "top1": 6
+   },
+   "product-build": {
+    "trials": 9,
+    "top1": 4
+   },
+   "backend-engineering": {
+    "trials": 9,
+    "top1": 9
+   },
+   "testing-strategy": {
+    "trials": 9,
+    "top1": 9
+   },
+   "product-management": {
+    "trials": 6,
+    "top1": 6
+   },
+   "systems-architecture": {
+    "trials": 6,
+    "top1": 6
+   }
+  },
+  "confusion": {
+   "code-organization -> backend-engineering": 2,
+   "code-organization -> data-modeling": 1,
+   "release-engineering -> cli-tooling": 1,
+   "release-engineering -> code-smells": 1,
+   "release-engineering -> testing-strategy": 1,
+   "release-engineering -> backend-engineering": 1,
+   "mental-models -> engineering-assessment": 3,
+   "frontend -> product-build": 1,
+   "product-build -> product-management": 2
+  }
+ },
+ "records": [
+  {
+   "promptId": "case-acceptance-clean-gate-dirty-code",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 10
+   },
+   "costUsd": 0.0187914,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-acceptance-clean-gate-dirty-code",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 9
+   },
+   "costUsd": 0.019238400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-acceptance-clean-gate-dirty-code",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 4
+   },
+   "costUsd": 0.0180814,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-account-suspension-boundary",
+   "trial": 0,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "backend-engineering",
+    "alternatives": [
+     "data-modeling",
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 3
+   },
+   "costUsd": 0.0210834,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"backend-engineering\", \"alternatives\": [\"data-modeling\", \"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-account-suspension-boundary",
+   "trial": 1,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "backend-engineering",
+    "alternatives": [
+     "data-modeling",
+     "code-organization"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0266454,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"backend-engineering\", \"alternatives\": [\"data-modeling\", \"code-organization\"]}\n```"
+  },
+  {
+   "promptId": "case-account-suspension-boundary",
+   "trial": 2,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "data-modeling",
+    "alternatives": [
+     "backend-engineering",
+     "code-organization"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": 13
+   },
+   "costUsd": 0.0275304,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"data-modeling\", \"alternatives\": [\"backend-engineering\", \"code-organization\"]}\n```"
+  },
+  {
+   "promptId": "case-ai-prose-voice-edit",
+   "trial": 0,
+   "expected": [
+    "ai-prose-slop"
+   ],
+   "reply": {
+    "skill": "ai-prose-slop",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 3
+   },
+   "costUsd": 0.0182064,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"ai-prose-slop\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-ai-prose-voice-edit",
+   "trial": 1,
+   "expected": [
+    "ai-prose-slop"
+   ],
+   "reply": {
+    "skill": "ai-prose-slop",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.0179624,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"ai-prose-slop\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-ai-prose-voice-edit",
+   "trial": 2,
+   "expected": [
+    "ai-prose-slop"
+   ],
+   "reply": {
+    "skill": "ai-prose-slop",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 10
+   },
+   "costUsd": 0.0182264,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"ai-prose-slop\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-all-at-once-for-a-quiet-risk",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "testing-strategy",
+     "mental-models",
+     "product-acceptance"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 13
+   },
+   "costUsd": 0.0194034,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"testing-strategy\", \"mental-models\", \"product-acceptance\"]}\n```"
+  },
+  {
+   "promptId": "case-all-at-once-for-a-quiet-risk",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "testing-strategy",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 16
+   },
+   "costUsd": 0.0186974,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"testing-strategy\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-all-at-once-for-a-quiet-risk",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "testing-strategy",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 2
+   },
+   "costUsd": 0.019697399999999997,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"testing-strategy\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-builder-self-assessment-in-the-repo",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.0182364,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-builder-self-assessment-in-the-repo",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 13
+   },
+   "costUsd": 0.0184584,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-builder-self-assessment-in-the-repo",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 12
+   },
+   "costUsd": 0.020391399999999997,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-checker-crash-read-as-pass",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 3
+   },
+   "costUsd": 0.018793400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-checker-crash-read-as-pass",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 1
+   },
+   "costUsd": 0.0182774,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-checker-crash-read-as-pass",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 11
+   },
+   "costUsd": 0.0174724,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-clean-build-with-open-items",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "code-smells"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 16
+   },
+   "costUsd": 0.0211264,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"code-smells\"]}\n```"
+  },
+  {
+   "promptId": "case-clean-build-with-open-items",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 10
+   },
+   "costUsd": 0.018141400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-clean-build-with-open-items",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 5
+   },
+   "costUsd": 0.018180400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-cli-csv-statistics",
+   "trial": 0,
+   "expected": [
+    "cli-tooling"
+   ],
+   "reply": {
+    "skill": "cli-tooling",
+    "alternatives": [
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 11
+   },
+   "costUsd": 0.0411314,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"cli-tooling\", \"alternatives\": [\"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-cli-csv-statistics",
+   "trial": 1,
+   "expected": [
+    "cli-tooling"
+   ],
+   "reply": {
+    "skill": "cli-tooling",
+    "alternatives": [
+     "product-build",
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0189604,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"cli-tooling\", \"alternatives\": [\"product-build\", \"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-cli-csv-statistics",
+   "trial": 2,
+   "expected": [
+    "cli-tooling"
+   ],
+   "reply": {
+    "skill": null,
+    "alternatives": [
+     "cli-tooling"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": null
+   },
+   "costUsd": 0.030006400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": [\"cli-tooling\"]}\n```\n\nThe request is sufficiently specified: input contract (one CSV path), output format (JSON with rowCount and column means), behavior (handle unseen files, real non-interactive CLI), and deliverable scope (including tests). The user is asking to implement, not to design the CLI surface. A skill like cli-tooling would be triggered if flags/exit codes were ambiguous or if the user needed guidance on CLI conventions, but standard Unix behavior (positional argument, stdout output, exit codes) is implied and covers the needs here."
+  },
+  {
+   "promptId": "case-declared-commands-point-nowhere",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": null,
+    "alternatives": [
+     "cli-tooling"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.026751399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": [\"cli-tooling\"]}\n```"
+  },
+  {
+   "promptId": "case-declared-commands-point-nowhere",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "cli-tooling",
+    "alternatives": [
+     "backend-engineering",
+     "code-organization"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.020585399999999997,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"cli-tooling\", \"alternatives\": [\"backend-engineering\", \"code-organization\"]}\n```"
+  },
+  {
+   "promptId": "case-declared-commands-point-nowhere",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": null,
+    "alternatives": [
+     "cli-tooling",
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.029666400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": [\"cli-tooling\", \"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-deploy-declared-done-at-exit-zero",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "testing-strategy",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 16
+   },
+   "costUsd": 0.0228564,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"testing-strategy\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-deploy-declared-done-at-exit-zero",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.020945399999999996,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-deploy-declared-done-at-exit-zero",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "testing-strategy",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 16
+   },
+   "costUsd": 0.0205404,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"testing-strategy\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-design-system-drift",
+   "trial": 0,
+   "expected": [
+    "frontend"
+   ],
+   "reply": {
+    "skill": "frontend",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 13
+   },
+   "costUsd": 0.022023400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"frontend\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-design-system-drift",
+   "trial": 1,
+   "expected": [
+    "frontend"
+   ],
+   "reply": {
+    "skill": "frontend",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 5
+   },
+   "costUsd": 0.0271434,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"frontend\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-design-system-drift",
+   "trial": 2,
+   "expected": [
+    "frontend"
+   ],
+   "reply": {
+    "skill": "frontend",
+    "alternatives": [
+     "code-organization"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.0245814,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"frontend\", \"alternatives\": [\"code-organization\"]}\n```"
+  },
+  {
+   "promptId": "case-documents-instruct-the-acceptor",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 15
+   },
+   "costUsd": 0.0187994,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-documents-instruct-the-acceptor",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 3
+   },
+   "costUsd": 0.0183884,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-documents-instruct-the-acceptor",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.0186524,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-cited-risks",
+   "trial": 0,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [
+     "code-smells",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 16
+   },
+   "costUsd": 0.0195534,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": [\"code-smells\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-cited-risks",
+   "trial": 1,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 9
+   },
+   "costUsd": 0.0187434,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-cited-risks",
+   "trial": 2,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 17
+   },
+   "costUsd": 0.0181224,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-hidden-risks",
+   "trial": 0,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 3
+   },
+   "costUsd": 0.0191974,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-hidden-risks",
+   "trial": 1,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [
+     "code-smells"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 5
+   },
+   "costUsd": 0.0183964,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": [\"code-smells\"]}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-hidden-risks",
+   "trial": 2,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.0179374,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-retry-storm",
+   "trial": 0,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [
+     "code-smells"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 10
+   },
+   "costUsd": 0.0183754,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": [\"code-smells\"]}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-retry-storm",
+   "trial": 1,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [
+     "code-smells",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.019137400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": [\"code-smells\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-retry-storm",
+   "trial": 2,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 17
+   },
+   "costUsd": 0.0185774,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-silent-drop",
+   "trial": 0,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [
+     "mental-models",
+     "data-modeling"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 17
+   },
+   "costUsd": 0.026151399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": [\"mental-models\", \"data-modeling\"]}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-silent-drop",
+   "trial": 1,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [
+     "backend-engineering",
+     "data-modeling"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 5
+   },
+   "costUsd": 0.0194384,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": [\"backend-engineering\", \"data-modeling\"]}\n```"
+  },
+  {
+   "promptId": "case-engineering-assessment-silent-drop",
+   "trial": 2,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [
+     "code-smells",
+     "backend-engineering",
+     "data-modeling"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 10
+   },
+   "costUsd": 0.019462399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": [\"code-smells\", \"backend-engineering\", \"data-modeling\"]}\n```"
+  },
+  {
+   "promptId": "case-environment-branching-in-the-artifact",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering",
+     "systems-architecture",
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 5
+   },
+   "costUsd": 0.0211444,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\", \"systems-architecture\", \"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-environment-branching-in-the-artifact",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering",
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0219584,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\", \"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-environment-branching-in-the-artifact",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "testing-strategy",
+     "systems-architecture",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.021183399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"testing-strategy\", \"systems-architecture\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-flag-decision-unrecorded",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "engineering-assessment",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 2
+   },
+   "costUsd": 0.021391399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"engineering-assessment\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-flag-decision-unrecorded",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "code-smells",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.030390399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-smells\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-flag-decision-unrecorded",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "engineering-assessment",
+     "code-organization"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 1
+   },
+   "costUsd": 0.0213134,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"engineering-assessment\", \"code-organization\"]}\n```"
+  },
+  {
+   "promptId": "case-gate-order-inverted",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.0190084,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-gate-order-inverted",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.019772399999999996,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-gate-order-inverted",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "testing-strategy",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 2
+   },
+   "costUsd": 0.019088400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"testing-strategy\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-gate-that-does-not-gate",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "engineering-assessment",
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 13
+   },
+   "costUsd": 0.0211864,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"engineering-assessment\", \"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-gate-that-does-not-gate",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "engineering-assessment",
+     "mental-models"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 4
+   },
+   "costUsd": 0.025865399999999997,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"engineering-assessment\", \"mental-models\"]}\n```"
+  },
+  {
+   "promptId": "case-gate-that-does-not-gate",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "testing-strategy",
+    "alternatives": [
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": 11
+   },
+   "costUsd": 0.0250074,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"testing-strategy\", \"alternatives\": [\"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-health-check-always-ok",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.0203314,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-health-check-always-ok",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "backend-engineering",
+    "alternatives": [
+     "systems-architecture",
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.0238484,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"backend-engineering\", \"alternatives\": [\"systems-architecture\", \"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-health-check-always-ok",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.019946400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-intent-reconstructed-from-code",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 17
+   },
+   "costUsd": 0.0183274,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-intent-reconstructed-from-code",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "release-engineering",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.0192484,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"release-engineering\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-intent-reconstructed-from-code",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.018141400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-invoice-suspension-refactor",
+   "trial": 0,
+   "expected": [
+    "code-smells"
+   ],
+   "reply": {
+    "skill": "code-smells",
+    "alternatives": [
+     "backend-engineering",
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0322914,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-smells\", \"alternatives\": [\"backend-engineering\", \"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-invoice-suspension-refactor",
+   "trial": 1,
+   "expected": [
+    "code-smells"
+   ],
+   "reply": {
+    "skill": "code-smells",
+    "alternatives": [
+     "product-build",
+     "backend-engineering",
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.0267374,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-smells\", \"alternatives\": [\"product-build\", \"backend-engineering\", \"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-invoice-suspension-refactor",
+   "trial": 2,
+   "expected": [
+    "code-smells"
+   ],
+   "reply": {
+    "skill": "code-smells",
+    "alternatives": [
+     "testing-strategy",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.021670400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-smells\", \"alternatives\": [\"testing-strategy\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-job-ledger-ordering-assessment",
+   "trial": 0,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.019175400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-job-ledger-ordering-assessment",
+   "trial": 1,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.0189574,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-job-ledger-ordering-assessment",
+   "trial": 2,
+   "expected": [
+    "engineering-assessment"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 17
+   },
+   "costUsd": 0.0185454,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-json-config-setter",
+   "trial": 0,
+   "expected": [
+    "cli-tooling"
+   ],
+   "reply": {
+    "skill": "cli-tooling",
+    "alternatives": [
+     "product-build"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 15
+   },
+   "costUsd": 0.0214464,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"cli-tooling\", \"alternatives\": [\"product-build\"]}\n```"
+  },
+  {
+   "promptId": "case-json-config-setter",
+   "trial": 1,
+   "expected": [
+    "cli-tooling"
+   ],
+   "reply": {
+    "skill": "cli-tooling",
+    "alternatives": [
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 5
+   },
+   "costUsd": 0.0205974,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"cli-tooling\", \"alternatives\": [\"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-json-config-setter",
+   "trial": 2,
+   "expected": [
+    "cli-tooling"
+   ],
+   "reply": {
+    "skill": "cli-tooling",
+    "alternatives": [
+     "testing-strategy",
+     "product-build"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 15
+   },
+   "costUsd": 0.0192204,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"cli-tooling\", \"alternatives\": [\"testing-strategy\", \"product-build\"]}\n```"
+  },
+  {
+   "promptId": "case-learn-session-indented-comment",
+   "trial": 0,
+   "expected": [
+    "learn-from-session"
+   ],
+   "reply": {
+    "skill": "learn-from-session",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 15
+   },
+   "costUsd": 0.0184194,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"learn-from-session\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-learn-session-indented-comment",
+   "trial": 1,
+   "expected": [
+    "learn-from-session"
+   ],
+   "reply": {
+    "skill": "learn-from-session",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0187234,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"learn-from-session\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-learn-session-indented-comment",
+   "trial": 2,
+   "expected": [
+    "learn-from-session"
+   ],
+   "reply": {
+    "skill": "learn-from-session",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 15
+   },
+   "costUsd": 0.019039399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"learn-from-session\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-mental-models-latency-loop",
+   "trial": 0,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [
+     "mental-models",
+     "backend-engineering",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.0219174,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": [\"mental-models\", \"backend-engineering\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-mental-models-latency-loop",
+   "trial": 1,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [
+     "mental-models"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": 10
+   },
+   "costUsd": 0.0225344,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": [\"mental-models\"]}\n```"
+  },
+  {
+   "promptId": "case-mental-models-latency-loop",
+   "trial": 2,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "engineering-assessment",
+    "alternatives": [
+     "mental-models"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.0212024,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"engineering-assessment\", \"alternatives\": [\"mental-models\"]}\n```"
+  },
+  {
+   "promptId": "case-migration-blocks-rollback",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "data-modeling",
+     "product-acceptance"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 12
+   },
+   "costUsd": 0.0194564,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"data-modeling\", \"product-acceptance\"]}\n```"
+  },
+  {
+   "promptId": "case-migration-blocks-rollback",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "data-modeling",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 12
+   },
+   "costUsd": 0.0201434,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"data-modeling\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-migration-blocks-rollback",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 2
+   },
+   "costUsd": 0.018294400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-multi-agent-bounded-assessment",
+   "trial": 0,
+   "expected": [
+    "multi-agent-design"
+   ],
+   "reply": {
+    "skill": "multi-agent-design",
+    "alternatives": [
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.0188124,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"multi-agent-design\", \"alternatives\": [\"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-multi-agent-bounded-assessment",
+   "trial": 1,
+   "expected": [
+    "multi-agent-design"
+   ],
+   "reply": {
+    "skill": "multi-agent-design",
+    "alternatives": [
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.0184784,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"multi-agent-design\", \"alternatives\": [\"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-multi-agent-bounded-assessment",
+   "trial": 2,
+   "expected": [
+    "multi-agent-design"
+   ],
+   "reply": {
+    "skill": "multi-agent-design",
+    "alternatives": [
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0178604,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"multi-agent-design\", \"alternatives\": [\"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-multi-part-without-architecture",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 12
+   },
+   "costUsd": 0.018565400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-multi-part-without-architecture",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 1
+   },
+   "costUsd": 0.0189144,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-multi-part-without-architecture",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 3
+   },
+   "costUsd": 0.0180624,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-narrowed-audit-across-a-trust-boundary",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "release-engineering",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 15
+   },
+   "costUsd": 0.0182884,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"release-engineering\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-narrowed-audit-across-a-trust-boundary",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 12
+   },
+   "costUsd": 0.018609399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-narrowed-audit-across-a-trust-boundary",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "release-engineering",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.0192064,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"release-engineering\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-operability-handover",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 17
+   },
+   "costUsd": 0.0223044,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-operability-handover",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 4
+   },
+   "costUsd": 0.029120399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-operability-handover",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 15
+   },
+   "costUsd": 0.0233944,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-postgres-required-handle",
+   "trial": 0,
+   "expected": [
+    "data-modeling"
+   ],
+   "reply": {
+    "skill": "data-modeling",
+    "alternatives": [
+     "release-engineering",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0197364,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"data-modeling\", \"alternatives\": [\"release-engineering\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-postgres-required-handle",
+   "trial": 1,
+   "expected": [
+    "data-modeling"
+   ],
+   "reply": {
+    "skill": "data-modeling",
+    "alternatives": [
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 2
+   },
+   "costUsd": 0.0212734,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"data-modeling\", \"alternatives\": [\"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-postgres-required-handle",
+   "trial": 2,
+   "expected": [
+    "data-modeling"
+   ],
+   "reply": {
+    "skill": "data-modeling",
+    "alternatives": [
+     "release-engineering",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.021252399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"data-modeling\", \"alternatives\": [\"release-engineering\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-project-label-library",
+   "trial": 0,
+   "expected": [
+    "product-build"
+   ],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0189374,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-project-label-library",
+   "trial": 1,
+   "expected": [
+    "product-build"
+   ],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.019343400000000004,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-project-label-library",
+   "trial": 2,
+   "expected": [
+    "product-build"
+   ],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.022350400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-promote-observed-artifact",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "engineering-assessment",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.0189674,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"engineering-assessment\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-promote-observed-artifact",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "systems-architecture",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 16
+   },
+   "costUsd": 0.0182564,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"systems-architecture\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-promote-observed-artifact",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 16
+   },
+   "costUsd": 0.0196114,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-rebuild-per-environment",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 13
+   },
+   "costUsd": 0.019029400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-rebuild-per-environment",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "engineering-assessment",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 12
+   },
+   "costUsd": 0.0189484,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"engineering-assessment\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-rebuild-per-environment",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 10
+   },
+   "costUsd": 0.0192294,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-receipt-upload-interview-gate",
+   "trial": 0,
+   "expected": [
+    "frontend"
+   ],
+   "reply": {
+    "skill": "frontend",
+    "alternatives": [
+     "product-build",
+     "product-management"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.0245274,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"frontend\", \"alternatives\": [\"product-build\", \"product-management\"]}\n```"
+  },
+  {
+   "promptId": "case-receipt-upload-interview-gate",
+   "trial": 1,
+   "expected": [
+    "frontend"
+   ],
+   "reply": {
+    "skill": "product-build",
+    "alternatives": [
+     "frontend",
+     "product-management"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.020799400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-build\", \"alternatives\": [\"frontend\", \"product-management\"]}\n```"
+  },
+  {
+   "promptId": "case-receipt-upload-interview-gate",
+   "trial": 2,
+   "expected": [
+    "frontend"
+   ],
+   "reply": {
+    "skill": "frontend",
+    "alternatives": [
+     "product-build",
+     "product-management"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.0252924,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"frontend\", \"alternatives\": [\"product-build\", \"product-management\"]}\n```"
+  },
+  {
+   "promptId": "case-refresh-mid-flow-loses-work",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 2
+   },
+   "costUsd": 0.0179074,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-refresh-mid-flow-loses-work",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.019517399999999997,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-refresh-mid-flow-loses-work",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0192114,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-refund-ledger-rollout",
+   "trial": 0,
+   "expected": [
+    "data-modeling",
+    "backend-engineering",
+    "testing-strategy",
+    "release-engineering",
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering",
+     "systems-architecture",
+     "data-modeling"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 4
+   },
+   "costUsd": 0.0206434,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\", \"systems-architecture\", \"data-modeling\"]}\n```"
+  },
+  {
+   "promptId": "case-refund-ledger-rollout",
+   "trial": 1,
+   "expected": [
+    "data-modeling",
+    "backend-engineering",
+    "testing-strategy",
+    "release-engineering",
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "systems-architecture",
+     "data-modeling",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.0353524,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"systems-architecture\", \"data-modeling\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-refund-ledger-rollout",
+   "trial": 2,
+   "expected": [
+    "data-modeling",
+    "backend-engineering",
+    "testing-strategy",
+    "release-engineering",
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "data-modeling",
+     "backend-engineering",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 1
+   },
+   "costUsd": 0.022285399999999997,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"data-modeling\", \"backend-engineering\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-retry-delay-regression-suite",
+   "trial": 0,
+   "expected": [
+    "testing-strategy"
+   ],
+   "reply": {
+    "skill": "testing-strategy",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0186474,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"testing-strategy\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-retry-delay-regression-suite",
+   "trial": 1,
+   "expected": [
+    "testing-strategy"
+   ],
+   "reply": {
+    "skill": "testing-strategy",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 9
+   },
+   "costUsd": 0.0196414,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"testing-strategy\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-retry-delay-regression-suite",
+   "trial": 2,
+   "expected": [
+    "testing-strategy"
+   ],
+   "reply": {
+    "skill": "testing-strategy",
+    "alternatives": [
+     "backend-engineering",
+     "code-smells"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 2
+   },
+   "costUsd": 0.0203494,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"testing-strategy\", \"alternatives\": [\"backend-engineering\", \"code-smells\"]}\n```"
+  },
+  {
+   "promptId": "case-retrying-orders-api",
+   "trial": 0,
+   "expected": [
+    "backend-engineering"
+   ],
+   "reply": {
+    "skill": "backend-engineering",
+    "alternatives": [
+     "product-build",
+     "data-modeling"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 11
+   },
+   "costUsd": 0.025814399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"backend-engineering\", \"alternatives\": [\"product-build\", \"data-modeling\"]}\n```"
+  },
+  {
+   "promptId": "case-retrying-orders-api",
+   "trial": 1,
+   "expected": [
+    "backend-engineering"
+   ],
+   "reply": {
+    "skill": "backend-engineering",
+    "alternatives": [
+     "product-build",
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 4
+   },
+   "costUsd": 0.027650399999999995,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"backend-engineering\", \"alternatives\": [\"product-build\", \"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-retrying-orders-api",
+   "trial": 2,
+   "expected": [
+    "backend-engineering"
+   ],
+   "reply": {
+    "skill": "backend-engineering",
+    "alternatives": [
+     "product-build"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.019933399999999997,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"backend-engineering\", \"alternatives\": [\"product-build\"]}\n```"
+  },
+  {
+   "promptId": "case-rollback-by-recollection",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "cli-tooling",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 2
+   },
+   "costUsd": 0.0189784,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"cli-tooling\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-rollback-by-recollection",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "cli-tooling",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 4
+   },
+   "costUsd": 0.019907400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"cli-tooling\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-rollback-by-recollection",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "cli-tooling"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 14
+   },
+   "costUsd": 0.0198124,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"cli-tooling\"]}\n```"
+  },
+  {
+   "promptId": "case-runbook-of-guesses",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": null,
+    "alternatives": [
+     "cli-tooling",
+     "mental-models"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0225904,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": [\"cli-tooling\", \"mental-models\"]}\n```"
+  },
+  {
+   "promptId": "case-runbook-of-guesses",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": null,
+    "alternatives": [
+     "release-engineering",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": null
+   },
+   "costUsd": 0.022360400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": [\"release-engineering\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-runbook-of-guesses",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": null,
+    "alternatives": [
+     "release-engineering",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": null
+   },
+   "costUsd": 0.029596400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": [\"release-engineering\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-scheduled-report-design-gate",
+   "trial": 0,
+   "expected": [
+    "product-build"
+   ],
+   "reply": {
+    "skill": "product-management",
+    "alternatives": [
+     "product-build",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": 12
+   },
+   "costUsd": 0.0376214,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-management\", \"alternatives\": [\"product-build\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-scheduled-report-design-gate",
+   "trial": 1,
+   "expected": [
+    "product-build"
+   ],
+   "reply": {
+    "skill": "product-build",
+    "alternatives": [
+     "product-management",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0200094,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-build\", \"alternatives\": [\"product-management\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-scheduled-report-design-gate",
+   "trial": 2,
+   "expected": [
+    "product-build"
+   ],
+   "reply": {
+    "skill": "product-management",
+    "alternatives": [
+     "product-build",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.026127400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-management\", \"alternatives\": [\"product-build\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-secrets-baked-into-image",
+   "trial": 0,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 15
+   },
+   "costUsd": 0.0250084,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-secrets-baked-into-image",
+   "trial": 1,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "systems-architecture",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.020191399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"systems-architecture\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-secrets-baked-into-image",
+   "trial": 2,
+   "expected": [
+    "release-engineering"
+   ],
+   "reply": {
+    "skill": "release-engineering",
+    "alternatives": [
+     "backend-engineering",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0195974,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"release-engineering\", \"alternatives\": [\"backend-engineering\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-self-serve-project-invites",
+   "trial": 0,
+   "expected": [
+    "product-build",
+    "product-management",
+    "systems-architecture",
+    "frontend",
+    "backend-engineering",
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "backend-engineering",
+    "alternatives": [
+     "systems-architecture",
+     "frontend",
+     "product-management"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 7
+   },
+   "costUsd": 0.0439904,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"backend-engineering\", \"alternatives\": [\"systems-architecture\", \"frontend\", \"product-management\"]}\n```"
+  },
+  {
+   "promptId": "case-self-serve-project-invites",
+   "trial": 1,
+   "expected": [
+    "product-build",
+    "product-management",
+    "systems-architecture",
+    "frontend",
+    "backend-engineering",
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "systems-architecture",
+    "alternatives": [
+     "backend-engineering",
+     "frontend"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 1
+   },
+   "costUsd": 0.025184400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"systems-architecture\", \"alternatives\": [\"backend-engineering\", \"frontend\"]}\n```"
+  },
+  {
+   "promptId": "case-self-serve-project-invites",
+   "trial": 2,
+   "expected": [
+    "product-build",
+    "product-management",
+    "systems-architecture",
+    "frontend",
+    "backend-engineering",
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "systems-architecture",
+    "alternatives": [
+     "backend-engineering",
+     "frontend",
+     "product-management"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.0331824,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"systems-architecture\", \"alternatives\": [\"backend-engineering\", \"frontend\", \"product-management\"]}\n```"
+  },
+  {
+   "promptId": "case-shipping-fee-regression-suite",
+   "trial": 0,
+   "expected": [
+    "testing-strategy"
+   ],
+   "reply": {
+    "skill": "testing-strategy",
+    "alternatives": [
+     "engineering-assessment",
+     "learn-from-session"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 11
+   },
+   "costUsd": 0.020024399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"testing-strategy\", \"alternatives\": [\"engineering-assessment\", \"learn-from-session\"]}\n```"
+  },
+  {
+   "promptId": "case-shipping-fee-regression-suite",
+   "trial": 1,
+   "expected": [
+    "testing-strategy"
+   ],
+   "reply": {
+    "skill": "testing-strategy",
+    "alternatives": [
+     "code-organization"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.0189874,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"testing-strategy\", \"alternatives\": [\"code-organization\"]}\n```"
+  },
+  {
+   "promptId": "case-shipping-fee-regression-suite",
+   "trial": 2,
+   "expected": [
+    "testing-strategy"
+   ],
+   "reply": {
+    "skill": "testing-strategy",
+    "alternatives": [
+     "code-smells",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 9
+   },
+   "costUsd": 0.019420399999999997,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"testing-strategy\", \"alternatives\": [\"code-smells\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-stale-pass-review",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 12
+   },
+   "costUsd": 0.017873399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-stale-pass-review",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 5
+   },
+   "costUsd": 0.017546399999999997,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-stale-pass-review",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 17
+   },
+   "costUsd": 0.0187964,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-stale-replay-evidence",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 16
+   },
+   "costUsd": 0.0187954,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-stale-replay-evidence",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 1
+   },
+   "costUsd": 0.0193994,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-stale-replay-evidence",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 13
+   },
+   "costUsd": 0.018062400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-ticket-attachment-boundaries",
+   "trial": 0,
+   "expected": [
+    "systems-architecture"
+   ],
+   "reply": {
+    "skill": "systems-architecture",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.0187214,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"systems-architecture\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-ticket-attachment-boundaries",
+   "trial": 1,
+   "expected": [
+    "systems-architecture"
+   ],
+   "reply": {
+    "skill": "systems-architecture",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 9
+   },
+   "costUsd": 0.019376400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"systems-architecture\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-ticket-attachment-boundaries",
+   "trial": 2,
+   "expected": [
+    "systems-architecture"
+   ],
+   "reply": {
+    "skill": "systems-architecture",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.0183534,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"systems-architecture\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-tool-library-contract",
+   "trial": 0,
+   "expected": [
+    "product-management"
+   ],
+   "reply": {
+    "skill": "product-management",
+    "alternatives": [
+     "product-build"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 5
+   },
+   "costUsd": 0.018322400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-management\", \"alternatives\": [\"product-build\"]}\n```"
+  },
+  {
+   "promptId": "case-tool-library-contract",
+   "trial": 1,
+   "expected": [
+    "product-management"
+   ],
+   "reply": {
+    "skill": "product-management",
+    "alternatives": [
+     "product-build",
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 4
+   },
+   "costUsd": 0.019402400000000004,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-management\", \"alternatives\": [\"product-build\", \"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "case-tool-library-contract",
+   "trial": 2,
+   "expected": [
+    "product-management"
+   ],
+   "reply": {
+    "skill": "product-management",
+    "alternatives": [
+     "product-build"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.0187164,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-management\", \"alternatives\": [\"product-build\"]}\n```"
+  },
+  {
+   "promptId": "case-walkthrough-diverges-from-success",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 12
+   },
+   "costUsd": 0.0181284,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "case-walkthrough-diverges-from-success",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 2
+   },
+   "costUsd": 0.019952400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "case-walkthrough-diverges-from-success",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "testing-strategy"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 2
+   },
+   "costUsd": 0.0186094,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"testing-strategy\"]}\n```"
+  },
+  {
+   "promptId": "case-zero-count-export-acceptance",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 4
+   },
+   "costUsd": 0.0188334,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-zero-count-export-acceptance",
+   "trial": 1,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 12
+   },
+   "costUsd": 0.0190094,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-zero-count-export-acceptance",
+   "trial": 2,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment",
+     "cli-tooling"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 15
+   },
+   "costUsd": 0.0182434,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\", \"cli-tooling\"]}\n```"
+  },
+  {
+   "promptId": "distractor-let-const",
+   "trial": 0,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0186364,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-let-const",
+   "trial": 1,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0184894,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-let-const",
+   "trial": 2,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0182194,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-rename",
+   "trial": 0,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0189694,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-rename",
+   "trial": 1,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.022476399999999997,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-rename",
+   "trial": 2,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0219624,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-json-yaml",
+   "trial": 0,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0189734,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-json-yaml",
+   "trial": 1,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0189824,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```\n\nThis is a straightforward file format conversion, not a design, architecture, or governance decision that would trigger any of the installed skills."
+  },
+  {
+   "promptId": "distractor-json-yaml",
+   "trial": 2,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0184864,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-eaddrinuse",
+   "trial": 0,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0188464,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-eaddrinuse",
+   "trial": 1,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.021548400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-eaddrinuse",
+   "trial": 2,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.018481400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```\n\nThis is a straightforward debugging question about a port-conflict error. None of the installed skills cover general troubleshooting—this doesn't involve designing, building, testing, or assessing a codebase. I can help you diagnose the EADDRINUSE error directly."
+  },
+  {
+   "promptId": "distractor-regex",
+   "trial": 0,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0187814,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-regex",
+   "trial": 1,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.018571400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-regex",
+   "trial": 2,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0199444,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-http-304",
+   "trial": 0,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0181744,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-http-304",
+   "trial": 1,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0186004,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-http-304",
+   "trial": 2,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0186784,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-copyright",
+   "trial": 0,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0187914,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-copyright",
+   "trial": 1,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0182444,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-copyright",
+   "trial": 2,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.019673399999999997,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-explain",
+   "trial": 0,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0189144,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```\n\nI don't need a skill for this—just ask me for the function and I can explain the reduce call directly. What's the code?"
+  },
+  {
+   "promptId": "distractor-explain",
+   "trial": 1,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.019813400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```\n\nThis is a straightforward code explanation request that doesn't require a specialized skill. Just provide the function and I'll explain what the reduce call does."
+  },
+  {
+   "promptId": "distractor-explain",
+   "trial": 2,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0181494,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  }
+ ]
+}

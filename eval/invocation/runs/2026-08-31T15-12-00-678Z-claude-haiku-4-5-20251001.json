@@ -1,0 +1,80 @@
+{
+ "schemaVersion": 1,
+ "protocol": "selection-declared",
+ "model": "claude-haiku-4-5-20251001",
+ "trialsPerPrompt": 1,
+ "startedAt": "2026-08-31T15:12:00.676Z",
+ "promptsSha256": "ee07698ca91b059e4e54fb2e352e7dd6b670613d913d36cfefbee9a622764f0e",
+ "descriptionsSha256": "1599febd905834935874ab8aa13a343b9b3d034979199bd720f9ce00c27697d7",
+ "descriptionsVariant": "current",
+ "aggregate": {
+  "skillTrials": 2,
+  "top1": 1,
+  "altHit": 1,
+  "distractorTrials": 0,
+  "nullCorrect": 0,
+  "parseErrors": 0,
+  "perSkill": {
+   "product-acceptance": {
+    "trials": 1,
+    "top1": 1
+   },
+   "code-organization": {
+    "trials": 1,
+    "top1": 0
+   }
+  },
+  "confusion": {
+   "code-organization -> backend-engineering": 1
+  }
+ },
+ "records": [
+  {
+   "promptId": "case-acceptance-clean-gate-dirty-code",
+   "trial": 0,
+   "expected": [
+    "product-acceptance"
+   ],
+   "reply": {
+    "skill": "product-acceptance",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 10
+   },
+   "costUsd": 0.058207,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"product-acceptance\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "case-account-suspension-boundary",
+   "trial": 0,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "backend-engineering",
+    "alternatives": [
+     "data-modeling",
+     "code-organization"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": true,
+    "chosenPosition": 3
+   },
+   "costUsd": 0.039573399999999995,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"backend-engineering\", \"alternatives\": [\"data-modeling\", \"code-organization\"]}\n```"
+  }
+ ]
+}

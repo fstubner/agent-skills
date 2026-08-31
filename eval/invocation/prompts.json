@@ -1,0 +1,488 @@
+{
+ "schemaVersion": 1,
+ "descriptionsVariant": "current",
+ "notes": "Case prompts reuse eval/cases-v2 prompts verbatim: they describe scenarios, were written without quoting skill descriptions, and carry known target skills. Distractors must map to null. Selection-declared protocol only; see scripts/eval-invocation.mjs header.",
+ "prompts": [
+  {
+   "id": "case-acceptance-clean-gate-dirty-code",
+   "prompt": "This ward handover app is finished and the team wants to ship it today. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/acceptance-clean-gate-dirty-code.json"
+  },
+  {
+   "id": "case-account-suspension-boundary",
+   "prompt": "Add account suspension to this small HTTP service. POST /accounts/:id/suspend should persist the suspended state, append an audit event, and return the updated account. Keep existing account reads working and leave the account area ready for the next account change.",
+   "expected": [
+    "code-organization"
+   ],
+   "origin": "eval/cases-v2/account-suspension-boundary.json"
+  },
+  {
+   "id": "case-ai-prose-voice-edit",
+   "prompt": "Edit draft.md to remove AI-sounding prose without flattening the writer's voice or changing factual content. Write the revision to revised.md and briefly record the edits in changes.md.",
+   "expected": [
+    "ai-prose-slop"
+   ],
+   "origin": "eval/cases-v2/ai-prose-voice-edit.json"
+  },
+  {
+   "id": "case-all-at-once-for-a-quiet-risk",
+   "prompt": "This release changes how fees are rounded. If it is wrong it will not crash anything — invoices are produced, customers are charged, and reconciliation disagrees with the payment processor the next morning. Plan how this goes out and write the decision down. Keep the new fee calculation and the existing rollback.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/all-at-once-for-a-quiet-risk.json"
+  },
+  {
+   "id": "case-builder-self-assessment-in-the-repo",
+   "prompt": "The expenses claims tool is finished and finance want it replacing the spreadsheet on Monday. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/builder-self-assessment-in-the-repo.json"
+  },
+  {
+   "id": "case-checker-crash-read-as-pass",
+   "prompt": "The invoice list is finished and billing want it live this week. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/checker-crash-read-as-pass.json"
+  },
+  {
+   "id": "case-clean-build-with-open-items",
+   "prompt": "The room booking tool is finished and the office manager wants it replacing the paper sheets on Monday. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/clean-build-with-open-items.json"
+  },
+  {
+   "id": "case-cli-csv-statistics",
+   "prompt": "Build a dependency-free Node.js command-line program at src/cli.js. It accepts one CSV path and writes JSON containing rowCount and the arithmetic mean of every numeric column. The repository includes sample input, but your implementation must handle unseen CSV files. Make it usable as a real non-interactive CLI and add any tests you consider necessary.",
+   "expected": [
+    "cli-tooling"
+   ],
+   "origin": "eval/cases-v2/cli-csv-statistics.json"
+  },
+  {
+   "id": "case-declared-commands-point-nowhere",
+   "prompt": "This repository was generated from a template last week and nobody has run any of the commands the README documents. Make the project's declared commands actually work. The service in src/server.js already works and should keep working.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/declared-commands-point-nowhere.json"
+  },
+  {
+   "id": "case-deploy-declared-done-at-exit-zero",
+   "prompt": "Twice last quarter a bad build was live for around 40 minutes before a customer told us, and the pipeline was green both times. Make the pipeline notice. Keep the API it already serves.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/deploy-declared-done-at-exit-zero.json"
+  },
+  {
+   "id": "case-design-system-drift",
+   "prompt": "This front end has no design system and three years of styling drift. The app's primary job is letting clinic staff see and manage today's appointments. There is no new visual direction to decide and none to ask about: the direction is whatever the code already does, and changing it is a separate conversation. Extract what is there — write design-tokens.json from values already in the code, and a DESIGN-SYSTEM.md explaining what you consolidated and why. Do not change any files under src/; the migration is separate work.",
+   "expected": [
+    "frontend"
+   ],
+   "origin": "eval/cases-v2/design-system-drift.json"
+  },
+  {
+   "id": "case-documents-instruct-the-acceptor",
+   "prompt": "The shift swap board is finished and the shift lead wants it on the floor terminal tomorrow. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/documents-instruct-the-acceptor.json"
+  },
+  {
+   "id": "case-engineering-assessment-cited-risks",
+   "prompt": "Perform a deep engineering assessment of this repository. Put the result in ASSESSMENT.md, limited to the five highest-value findings. Do not change the application.",
+   "expected": [
+    "engineering-assessment"
+   ],
+   "origin": "eval/cases-v2/engineering-assessment-cited-risks.json"
+  },
+  {
+   "id": "case-engineering-assessment-hidden-risks",
+   "prompt": "Perform a deep engineering assessment of this repository. Put the result in ASSESSMENT.md, limited to the five highest-value findings. Do not change the application.",
+   "expected": [
+    "engineering-assessment"
+   ],
+   "origin": "eval/cases-v2/engineering-assessment-hidden-risks.json"
+  },
+  {
+   "id": "case-engineering-assessment-retry-storm",
+   "prompt": "Audit this payments worker before we scale it up. Write your assessment to ASSESSMENT.md, limited to the five highest-value findings. Do not change the application.",
+   "expected": [
+    "engineering-assessment"
+   ],
+   "origin": "eval/cases-v2/engineering-assessment-retry-storm.json"
+  },
+  {
+   "id": "case-engineering-assessment-silent-drop",
+   "prompt": "A partner says subscribers are missing after their last import, but the tool reported success. Assess this repository and write your findings to ASSESSMENT.md, limited to the five highest-value findings. Do not change the application.",
+   "expected": [
+    "engineering-assessment"
+   ],
+   "origin": "eval/cases-v2/engineering-assessment-silent-drop.json"
+  },
+  {
+   "id": "case-environment-branching-in-the-artifact",
+   "prompt": "Staging has never disagreed with production on a fee, and we have just found out why. Make staging actually exercise what production runs. Keep the ability to suppress receipt emails outside production and to run the staging accounts without hardware keys — those are real needs.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/environment-branching-in-the-artifact.json"
+  },
+  {
+   "id": "case-flag-decision-unrecorded",
+   "prompt": "Four of the five flags in src/flags.js have been on for over a year and nobody is willing to delete one, because nobody can say what turning it off would do. We also have no record of which changes shipped behind a flag and which deliberately did not. Fix both, without changing what the application does today.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/flag-decision-unrecorded.json"
+  },
+  {
+   "id": "case-gate-order-inverted",
+   "prompt": "A missing semicolon failed this pipeline 24 minutes into the run yesterday, after a staging deploy and the full integration suite had already gone green. Fix the pipeline so that failure arrives in seconds instead. Keep every check we currently run, and do not change the application.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/gate-order-inverted.json"
+  },
+  {
+   "id": "case-gate-that-does-not-gate",
+   "prompt": "This pipeline has been green for four months. The flaky tests it was worked around for were fixed in March and the noisy lint config was cleaned up in April. Make the pipeline's green mean something again. Keep every check, and do not change the application.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/gate-that-does-not-gate.json"
+  },
+  {
+   "id": "case-health-check-always-ok",
+   "prompt": "On 12 August the database was unreachable for 22 minutes and every request to /entries/:id failed. /health returned 200 the whole time, the pipeline's post-deploy watch stayed green, and the automatic rollback never fired. Fix that. Keep the existing API and keep the pipeline's watch and rollback.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/health-check-always-ok.json"
+  },
+  {
+   "id": "case-intent-reconstructed-from-code",
+   "prompt": "The swim session booking tool is finished and the leisure centre wants it live before the new term. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/intent-reconstructed-from-code.json"
+  },
+  {
+   "id": "case-invoice-suspension-refactor",
+   "prompt": "Implement suspended-account billing in src/calculate-invoice.js: when account.status is suspended, the account owes zero regardless of plan, usage, currency, or coupon. Preserve current behavior for active accounts. Refactor the billing code as needed so another billing-rule change is safe to make, and add or update tests.",
+   "expected": [
+    "code-smells"
+   ],
+   "origin": "eval/cases-v2/invoice-suspension-refactor.json"
+  },
+  {
+   "id": "case-job-ledger-ordering-assessment",
+   "prompt": "Perform a deep engineering assessment of this repository and write ASSESSMENT.md. Limit the report to the four highest-value confirmed findings, do not change the application, and keep unconfirmed risks separate.",
+   "expected": [
+    "engineering-assessment"
+   ],
+   "origin": "eval/cases-v2/job-ledger-ordering-assessment.json"
+  },
+  {
+   "id": "case-json-config-setter",
+   "prompt": "Build a dependency-free Node.js CLI at src/cli.js with this interface: config-set set <json-file> <dotted-key> <json-value>. It must update a nested JSON value atomically, support --dry-run without writing, and be safe to repeat. JSON results belong on stdout; diagnostics belong on stderr. Provide accurate --help and an npm test entry point.",
+   "expected": [
+    "cli-tooling"
+   ],
+   "origin": "eval/cases-v2/json-config-setter.json"
+  },
+  {
+   "id": "case-learn-session-indented-comment",
+   "prompt": "Read SESSION.md and make whatever durable repository change is warranted by what happened. The runtime fix is already present; do not alter runtime behavior.",
+   "expected": [
+    "learn-from-session"
+   ],
+   "origin": "eval/cases-v2/learn-session-indented-comment.json"
+  },
+  {
+   "id": "case-mental-models-latency-loop",
+   "prompt": "Diagnose the latency incident using the files in incident/. Identify the cause or causes, recommend the safest first action, and write diagnosis.md. Make the reasoning auditable enough that another engineer can challenge it.",
+   "expected": [
+    "mental-models"
+   ],
+   "origin": "eval/cases-v2/mental-models-latency-loop.json"
+  },
+  {
+   "id": "case-migration-blocks-rollback",
+   "prompt": "This release switches the API over to the amount_minor column. RELEASE.md says a bad deploy is undone in thirty seconds with rollout undo. Make sure that is still true after this release goes out, and that whoever reads RELEASE.md next can tell why. Keep the API reading amount_minor.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/migration-blocks-rollback.json"
+  },
+  {
+   "id": "case-multi-agent-bounded-assessment",
+   "prompt": "Design the agent architecture described by requirements.json. Write the implementable design to valid JSON in design.json; do not build or run it. If multiple agents are not justified, say so in the design and use a single-agent architecture.",
+   "expected": [
+    "multi-agent-design"
+   ],
+   "origin": "eval/cases-v2/multi-agent-bounded-assessment.json"
+  },
+  {
+   "id": "case-multi-part-without-architecture",
+   "prompt": "The stock count tool is finished and the warehouse wants it on the handhelds for the next cycle. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/multi-part-without-architecture.json"
+  },
+  {
+   "id": "case-narrowed-audit-across-a-trust-boundary",
+   "prompt": "The shift rota has a small release ready — three files since the last acceptance in early August. The depot wants it live this week. Review it and write the release verdict to REVIEW.md. Do not modify the product.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/narrowed-audit-across-a-trust-boundary.json"
+  },
+  {
+   "id": "case-operability-handover",
+   "prompt": "This dispatch API goes to production next week and an on-call rota that did not build it will own it. Make it operable: we need to be able to tell whether it is healthy, know what to do when it is not, and trace a request when someone complains. Do not change what the API does.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/operability-handover.json"
+  },
+  {
+   "id": "case-postgres-required-handle",
+   "prompt": "Prepare PostgreSQL migrations for a rolling deployment. Existing production rows must gain a unique required account handle derived from username, and the obsolete display_name column should eventually be retired. Multiple application versions may run concurrently during deployment. Add new ordered up-migration files under migrations/; do not rewrite the existing migration.",
+   "expected": [
+    "data-modeling"
+   ],
+   "origin": "eval/cases-v2/postgres-required-handle.json"
+  },
+  {
+   "id": "case-project-label-library",
+   "prompt": "The design is already decided; please implement it without another discovery round. Add an exported formatProjectLabel(name, status) to src/labels.js. It returns the trimmed project name followed by ` [active]`, ` [paused]`, or ` [archived]`. Reject a blank name and any other status with a TypeError. Preserve normalizeName, the existing dependency-free ESM stack, and npm test.",
+   "expected": [
+    "product-build"
+   ],
+   "origin": "eval/cases-v2/project-label-library.json"
+  },
+  {
+   "id": "case-promote-observed-artifact",
+   "prompt": "Harden the GitHub Actions release process after the incident in INCIDENT.md. Keep GitHub Actions and the existing deployment scripts. Update the workflow and RELEASE.md; do not require a new hosted service.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/promote-observed-artifact.json"
+  },
+  {
+   "id": "case-rebuild-per-environment",
+   "prompt": "This service deploys from main through staging to production and we have twice seen production behave differently from staging with no code change between them. Fix the delivery pipeline in .github/workflows so that what runs in production is what staging verified. Keep GitHub Actions and the existing deploy.sh interface, and do not change the application.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/rebuild-per-environment.json"
+  },
+  {
+   "id": "case-receipt-upload-interview-gate",
+   "prompt": "Add a polished receipt-upload screen to the existing app. It should feel right for our customers and make the upload flow clear. Please implement the page now.",
+   "expected": [
+    "frontend"
+   ],
+   "origin": "eval/cases-v2/receipt-upload-interview-gate.json"
+  },
+  {
+   "id": "case-refresh-mid-flow-loses-work",
+   "prompt": "The fault reporting tool is finished and housing want it live for tenants next week. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/refresh-mid-flow-loses-work.json"
+  },
+  {
+   "id": "case-refund-ledger-rollout",
+   "prompt": "Ship the refund-ledger change as a rolling PostgreSQL deployment. Multiple application versions may run concurrently. Preserve createServer(options), whose payments option contains {id, owner, amountCents}; implement POST /payments/:id/refunds using Bearer account authentication, an integer amountCents, and Idempotency-Key. A refund cannot exceed the payment's unrefunded amount, another account must not learn whether a payment exists, and a retry must return the original refund. Add ordered up-migrations without rewriting 001, add regression tests, and make the tag release build one immutable artifact after tests with a documented literal rollback command.",
+   "expected": [
+    "data-modeling",
+    "backend-engineering",
+    "testing-strategy",
+    "release-engineering",
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/refund-ledger-rollout.json"
+  },
+  {
+   "id": "case-retry-delay-regression-suite",
+   "prompt": "Retry timing regressions have reached production. Strengthen the automated tests for src/retry-delay.js. Do not change production behavior or add dependencies; make npm test the test entry point.",
+   "expected": [
+    "testing-strategy"
+   ],
+   "origin": "eval/cases-v2/retry-delay-regression-suite.json"
+  },
+  {
+   "id": "case-retrying-orders-api",
+   "prompt": "Finish the order endpoints in the existing service. Mobile clients create orders and fetch an order later; they automatically retry requests that time out. Login is exposed publicly. Preserve the small dependency-free setup and make the included tests pass.",
+   "expected": [
+    "backend-engineering"
+   ],
+   "origin": "eval/cases-v2/retrying-orders-api.json"
+  },
+  {
+   "id": "case-rollback-by-recollection",
+   "prompt": "A bad release here took 40 minutes to undo last month because the only person who knew the previous revision was asleep. Fix the release documentation so that whoever is on call can undo a bad deploy without waking anyone or looking anything up. Do not change the application.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/rollback-by-recollection.json"
+  },
+  {
+   "id": "case-runbook-of-guesses",
+   "prompt": "We hand this service to the platform on-call rota next week. They have never operated it. Go over OPERATIONS.md and make sure it will not mislead them at 3am. Keep the runbook usable — they still need the commands.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/runbook-of-guesses.json"
+  },
+  {
+   "id": "case-scheduled-report-design-gate",
+   "prompt": "Add scheduled report delivery to this service. Customers should be able to configure it themselves; we need the first useful version quickly. Implement it now and add whatever UI or API you think it needs.",
+   "expected": [
+    "product-build"
+   ],
+   "origin": "eval/cases-v2/scheduled-report-design-gate.json"
+  },
+  {
+   "id": "case-secrets-baked-into-image",
+   "prompt": "Staging for this service is talking to the production database and nobody can work out how to point it somewhere else. Make the same built image runnable in any environment. Keep the service working and do not change what the API returns.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "eval/cases-v2/secrets-baked-into-image.json"
+  },
+  {
+   "id": "case-self-serve-project-invites",
+   "prompt": "Build the approved first version of self-serve project invitations. The decisions are final: an authenticated project admin enters an email and chooses viewer or editor; the service returns a shareable invite link, with no email delivery in this version. Authentication is a Bearer account name, all client data is untrusted, the authenticated account is the inviter, and retries with the same Idempotency-Key must return the original invite. Keep the existing Node and browser stack. Implement the API and accessible browser form, document the product contract and live trust boundary, and verify the finished workflow.",
+   "expected": [
+    "product-build",
+    "product-management",
+    "systems-architecture",
+    "frontend",
+    "backend-engineering",
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/self-serve-project-invites.json"
+  },
+  {
+   "id": "case-shipping-fee-regression-suite",
+   "prompt": "Several shipping-fee regressions reached production. Strengthen the automated tests for src/shipping-fee.js. Do not change production behavior or add dependencies; make npm test the test entry point.",
+   "expected": [
+    "testing-strategy"
+   ],
+   "origin": "eval/cases-v2/shipping-fee-regression-suite.json"
+  },
+  {
+   "id": "case-stale-pass-review",
+   "prompt": "Review this finished app and leave the release verdict in REVIEW.md. Tell me whether it is ready to ship; do not fix the implementation.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/stale-pass-review.json"
+  },
+  {
+   "id": "case-stale-replay-evidence",
+   "prompt": "This ward notes app is finished and there is a walkthrough run report in .agent-evidence showing the walk passing. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/stale-replay-evidence.json"
+  },
+  {
+   "id": "case-ticket-attachment-boundaries",
+   "prompt": "Document the current system architecture in ARCHITECTURE.md so it can go through a security review. The repository also contains ideas for a later scaling phase; this document should describe what we are actually operating now.",
+   "expected": [
+    "systems-architecture"
+   ],
+   "origin": "eval/cases-v2/ticket-attachment-boundaries.json"
+  },
+  {
+   "id": "case-tool-library-contract",
+   "prompt": "Turn the project brief into a product contract at PRODUCT.md. Keep it concrete enough that design and engineering can use it without another rewrite.",
+   "expected": [
+    "product-management"
+   ],
+   "origin": "eval/cases-v2/tool-library-contract.json"
+  },
+  {
+   "id": "case-walkthrough-diverges-from-success",
+   "prompt": "The volunteer shifts tool is finished and the food bank wants it in use from next week. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/walkthrough-diverges-from-success.json"
+  },
+  {
+   "id": "case-zero-count-export-acceptance",
+   "prompt": "Independently review this finished CLI release and write the release verdict to REVIEW.md. Do not fix or otherwise modify the product. Verify the primary export flow and reconcile your runtime findings with any automated acceptance result.",
+   "expected": [
+    "product-acceptance"
+   ],
+   "origin": "eval/cases-v2/zero-count-export-acceptance.json"
+  },
+  {
+   "id": "distractor-let-const",
+   "prompt": "What is the difference between let and const in JavaScript?",
+   "expected": [],
+   "origin": "hand-written distractor: a plausible dev request no installed skill claims"
+  },
+  {
+   "id": "distractor-rename",
+   "prompt": "Rename the variable tmp to retryCount in src/worker.js.",
+   "expected": [],
+   "origin": "hand-written distractor: a plausible dev request no installed skill claims"
+  },
+  {
+   "id": "distractor-json-yaml",
+   "prompt": "Convert config/settings.json to YAML for me.",
+   "expected": [],
+   "origin": "hand-written distractor: a plausible dev request no installed skill claims"
+  },
+  {
+   "id": "distractor-eaddrinuse",
+   "prompt": "Why am I getting EADDRINUSE when I start my dev server?",
+   "expected": [],
+   "origin": "hand-written distractor: a plausible dev request no installed skill claims"
+  },
+  {
+   "id": "distractor-regex",
+   "prompt": "Write a regex that matches ISO 8601 dates.",
+   "expected": [],
+   "origin": "hand-written distractor: a plausible dev request no installed skill claims"
+  },
+  {
+   "id": "distractor-http-304",
+   "prompt": "What does an HTTP 304 response mean?",
+   "expected": [],
+   "origin": "hand-written distractor: a plausible dev request no installed skill claims"
+  },
+  {
+   "id": "distractor-copyright",
+   "prompt": "Update the copyright year in the footer to 2026.",
+   "expected": [],
+   "origin": "hand-written distractor: a plausible dev request no installed skill claims"
+  },
+  {
+   "id": "distractor-explain",
+   "prompt": "Summarise what the reduce call in this function is doing.",
+   "expected": [],
+   "origin": "hand-written distractor: a plausible dev request no installed skill claims"
+  }
+ ]
+}
