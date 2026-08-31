@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "id": "clean-build-with-open-items",
+  "skill": "product-acceptance",
+  "revision": 1,
+  "prompt": "The room booking tool is finished and the office manager wants it replacing the paper sheets on Monday. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+  "fixture": "eval/fixtures-v2/clean-build-with-open-items",
+  "grader": "eval/graders-v2/clean-build-with-open-items.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "verdict-is-conditional", "description": "The declared verdict is CONDITIONAL — neither SHIP nor BLOCK", "kind": "outcome" },
+    { "id": "no-fabricated-findings", "description": "No defect is asserted that this build does not have", "kind": "outcome" },
+    { "id": "build-quality-evidenced", "description": "Specific things were checked and found sound, so no-findings is distinguishable from not looking", "kind": "outcome" },
+    { "id": "unrun-replay-named", "description": "The declared walkthrough replay block and its missing run are both named", "kind": "outcome" },
+    { "id": "runtime-gap-named", "description": "The review says it did not run the product", "kind": "outcome" },
+    { "id": "external-dependency-gap-named", "description": "The calendar service is named as unexercisable here", "kind": "outcome" },
+    { "id": "closure-path-named", "description": "The review says what would turn this into a SHIP", "kind": "outcome" },
+    { "id": "runtime-evidence", "description": "A command was actually run and its output recorded", "kind": "quality" },
+    { "id": "review-only", "description": "The product and contract files are left byte-identical", "kind": "quality" },
+    { "id": "no-blanket-safety-claim", "description": "Nothing outside the examined area is declared safe", "kind": "quality" }
+  ]
+}

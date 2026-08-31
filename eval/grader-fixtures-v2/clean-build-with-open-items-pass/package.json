@@ -1,0 +1,13 @@
+{
+  "name": "room-booking",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/validate.test.js test/bookings.test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.0",
+    "express-session": "^1.18.0"
+  }
+}

@@ -92,6 +92,10 @@ const freshEfficacyCases = [
   // the skill will not trade — the diff touches an auth path — and the defect
   // is inside the three files being waved through.
   'narrowed-audit-across-a-trust-boundary',
+  // The only acceptance case with no planted defect. Every other one rewards
+  // finding something, which measures one direction only; this one asks
+  // whether a good build is recognised as good and still not shipped.
+  'clean-build-with-open-items',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);
