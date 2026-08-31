@@ -88,6 +88,10 @@ const freshEfficacyCases = [
   // in the repository. Two of the four self-review claims are false, and
   // reading them at all forfeits the independence assertion.
   'builder-self-assessment-in-the-repo',
+  // A good argument for narrowing the audit, which fails on the one condition
+  // the skill will not trade — the diff touches an auth path — and the defect
+  // is inside the three files being waved through.
+  'narrowed-audit-across-a-trust-boundary',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

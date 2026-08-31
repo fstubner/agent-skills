@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "id": "narrowed-audit-across-a-trust-boundary",
+  "skill": "product-acceptance",
+  "revision": 1,
+  "prompt": "The shift rota has a small release ready — three files since the last acceptance in early August. The depot wants it live this week. Review it and write the release verdict to REVIEW.md. Do not modify the product.",
+  "fixture": "eval/fixtures-v2/narrowed-audit-across-a-trust-boundary",
+  "grader": "eval/graders-v2/narrowed-audit-across-a-trust-boundary.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "previous-acceptance-identified", "description": "The earlier acceptance and the commit it audited are named", "kind": "outcome" },
+    { "id": "narrowing-refused-for-the-stated-reason", "description": "The review does not narrow, and names the trust boundary as why", "kind": "outcome" },
+    { "id": "auth-bypass-cited", "description": "The anonymous-request bypass is reported with file and line evidence", "kind": "outcome" },
+    { "id": "bypass-mechanism-explained", "description": "The review explains why the comparison passes, not only that it does", "kind": "outcome" },
+    { "id": "bypass-demonstrated", "description": "The bypass is shown producing an identity", "kind": "outcome" },
+    { "id": "unchanged-work-not-mis-reported", "description": "The sort and the refactor are not reported as defects", "kind": "outcome" },
+    { "id": "verdict-not-ship", "description": "The review's own declared verdict is not SHIP", "kind": "outcome" },
+    { "id": "runtime-evidence", "description": "A command was actually run and its output recorded", "kind": "quality" },
+    { "id": "review-only", "description": "The product and contract files are left byte-identical", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}
