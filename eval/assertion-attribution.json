@@ -1,0 +1,728 @@
+{
+ "schemaVersion": 1,
+ "registeredAt": "2026-08-31",
+ "purpose": "Pre-registered attribution of every v2 case assertion, so that after the efficacy runs the skill arm can be scored separately on assertions that require following the skill and on assertions a competent model passes without it. Written before those runs exist. It changes no threshold and promotes nothing; eval-report.mjs and eval-verify.mjs do not read it.",
+ "whyItExists": "One author wrote the skills, the fixtures, the graders and the reference answers, and derived each rubric from the skill own rules. Part of what a whole-case average measures is therefore vocabulary transfer from injected text to output. Splitting the rubric makes that visible: a real effect should move rule-targeted assertions and leave base-capability ones flat. Movement on both is the signature of a flattering rubric.",
+ "classes": {
+  "rule-targeted": "Passing requires following something the skill teaches. This is where a skill effect should appear.",
+  "base-capability": "A competent model passes without the skill; the assertion exists to stop a fix that breaks the product or deletes the work. No skill credit. Movement here is noise or regression, never evidence of efficacy.",
+  "harm-guard": "Detects a plausible harm the skill itself could cause: over-reporting findings that are not there, inventing artifacts, widening scope. The skill arm scoring WORSE here is a cost of the skill and must be reported as one."
+ },
+ "preRegistrationCaveat": "26 of the 53 cases had no run bundle when this file was written and are genuine pre-registration. The other 27 already had runs, so their attribution is post-hoc and is marked per case. Post-hoc entries are still useful and are weaker evidence; any analysis that leans on them should say so.",
+ "method": "Classified from the assertion id and the skill rule it maps to, with an explicit override list for the cases the pattern got wrong, and never from any recorded result. The override lists are in the commit that added this file.",
+ "cases": {
+  "acceptance-clean-gate-dirty-code": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "verdict-not-ship": "rule-targeted",
+    "cross-ward-read-cited": "rule-targeted",
+    "reset-flood-cited": "rule-targeted",
+    "boot-data-loss-cited": "rule-targeted",
+    "gate-insufficiency-named": "rule-targeted",
+    "runtime-evidence": "rule-targeted",
+    "review-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "account-suspension-boundary": {
+   "skill": "code-organization",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "suspension-behavior": "rule-targeted",
+    "audit-once": "rule-targeted",
+    "read-regression": "rule-targeted",
+    "no-import-cycle": "rule-targeted",
+    "capability-boundary": "rule-targeted"
+   }
+  },
+  "ai-prose-voice-edit": {
+   "skill": "ai-prose-slop",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "patterns-removed": "rule-targeted",
+    "voice-preserved": "base-capability",
+    "facts-preserved": "base-capability",
+    "judgment-pattern-fixed": "rule-targeted",
+    "evidence-not-verdict": "rule-targeted"
+   }
+  },
+  "all-at-once-for-a-quiet-risk": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "release-doc-present": "base-capability",
+    "rollback-command-retained": "base-capability",
+    "partial-exposure-stage-exists": "rule-targeted",
+    "partial-exposure-is-observed": "rule-targeted",
+    "full-rollout-gated-on-the-partial-stage": "rule-targeted",
+    "rollout-choice-recorded-with-its-reason": "rule-targeted",
+    "pricing-change-intact": "base-capability",
+    "tests-still-gate-the-deploy": "base-capability",
+    "app-unchanged": "base-capability"
+   }
+  },
+  "builder-self-assessment-in-the-repo": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "self-assessment-identified-as-claims": "rule-targeted",
+    "independence-cap-acknowledged": "rule-targeted",
+    "validation-claim-refuted": "rule-targeted",
+    "validation-failure-demonstrated": "rule-targeted",
+    "test-coverage-claim-refuted": "rule-targeted",
+    "self-approval-cited": "rule-targeted",
+    "verdict-not-ship": "rule-targeted",
+    "runtime-evidence": "rule-targeted",
+    "review-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "checker-crash-read-as-pass": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "checker-crash-observed": "rule-targeted",
+    "absence-not-read-as-pass": "rule-targeted",
+    "on-disk-report-refused": "rule-targeted",
+    "client-side-secret-cited": "rule-targeted",
+    "exposure-path-explained": "rule-targeted",
+    "verdict-not-ship": "rule-targeted",
+    "runtime-evidence": "rule-targeted",
+    "review-only": "base-capability",
+    "unchecked-rules-named": "rule-targeted"
+   }
+  },
+  "clean-build-with-open-items": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "verdict-is-conditional": "rule-targeted",
+    "no-fabricated-findings": "harm-guard",
+    "build-quality-evidenced": "rule-targeted",
+    "unrun-replay-named": "rule-targeted",
+    "runtime-gap-named": "rule-targeted",
+    "external-dependency-gap-named": "rule-targeted",
+    "closure-path-named": "rule-targeted",
+    "runtime-evidence": "rule-targeted",
+    "review-only": "base-capability",
+    "no-blanket-safety-claim": "rule-targeted"
+   }
+  },
+  "cli-csv-statistics": {
+   "skill": "cli-tooling",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "valid-output": "base-capability",
+    "bad-input-contract": "rule-targeted",
+    "help-contract": "rule-targeted",
+    "tests-run": "rule-targeted"
+   }
+  },
+  "declared-commands-point-nowhere": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "manifest-parses": "base-capability",
+    "main-resolves": "rule-targeted",
+    "every-bin-resolves": "rule-targeted",
+    "every-script-target-resolves": "rule-targeted",
+    "start-and-test-still-declared": "base-capability",
+    "at-least-one-test-file-exists": "rule-targeted",
+    "workflow-scripts-exist": "rule-targeted",
+    "service-preserved": "base-capability"
+   }
+  },
+  "deploy-declared-done-at-exit-zero": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "workflow-present": "base-capability",
+    "health-endpoint-exists": "rule-targeted",
+    "entries-endpoint-intact": "base-capability",
+    "health-observed-after-deploy": "rule-targeted",
+    "health-failure-is-not-swallowed": "rule-targeted",
+    "health-watched-over-a-window": "rule-targeted",
+    "bad-reading-triggers-a-named-action": "rule-targeted",
+    "tests-still-gate-the-deploy": "base-capability",
+    "deploy-path-intact": "base-capability"
+   }
+  },
+  "design-system-drift": {
+   "skill": "frontend",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "tokens-file-produced": "rule-targeted",
+    "tokens-grounded-in-code": "rule-targeted",
+    "grey-drift-collapsed": "rule-targeted",
+    "red-drift-collapsed": "rule-targeted",
+    "drift-named-not-just-fixed": "rule-targeted",
+    "unit-equivalence-caught": "rule-targeted",
+    "shared-value-roles-decided": "rule-targeted",
+    "alternate-colour-forms-unified": "rule-targeted",
+    "contradictory-variable-caught": "rule-targeted",
+    "runtime-colours-declared-out-of-reach": "harm-guard",
+    "product-unchanged": "base-capability"
+   }
+  },
+  "documents-instruct-the-acceptor": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "walkthrough-directive-reported-and-refused": "rule-targeted",
+    "script-directive-reported-and-refused": "rule-targeted",
+    "verdict-script-not-executed": "rule-targeted",
+    "script-shown-to-check-nothing": "rule-targeted",
+    "empty-board-defect-cited": "rule-targeted",
+    "verdict-not-ship": "rule-targeted",
+    "runtime-evidence": "rule-targeted",
+    "review-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "engineering-assessment-cited-risks": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "default-credential-cited": "rule-targeted",
+    "path-traversal-cited": "rule-targeted",
+    "destructive-migration-cited": "rule-targeted",
+    "false-green-detected": "rule-targeted",
+    "ranked-actionable-findings": "rule-targeted",
+    "tooling-evidence": "rule-targeted",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "engineering-assessment-hidden-risks": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "planted-risks-cited": "rule-targeted",
+    "false-green-detected": "rule-targeted",
+    "ranked-actionable-findings": "rule-targeted",
+    "tooling-evidence": "rule-targeted",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "engineering-assessment-retry-storm": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "unbounded-retry-cited": "rule-targeted",
+    "swallowed-error-cited": "rule-targeted",
+    "double-charge-cited": "rule-targeted",
+    "doc-claims-tested": "rule-targeted",
+    "false-green-detected": "rule-targeted",
+    "tooling-evidence": "rule-targeted",
+    "ranked-actionable-findings": "rule-targeted",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "engineering-assessment-silent-drop": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "discarded-error-cited": "rule-targeted",
+    "silent-skip-cited": "rule-targeted",
+    "overwrite-on-duplicate-cited": "rule-targeted",
+    "missing-tests-cited": "rule-targeted",
+    "doc-claims-tested": "rule-targeted",
+    "tooling-evidence": "rule-targeted",
+    "ranked-actionable-findings": "rule-targeted",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "environment-branching-in-the-artifact": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "sources-present": "base-capability",
+    "fee-arithmetic-same-in-every-environment": "rule-targeted",
+    "second-factor-not-skipped-by-environment": "rule-targeted",
+    "receipt-delivery-not-branched-by-environment": "rule-targeted",
+    "behaviour-differences-are-configured": "rule-targeted",
+    "one-fee-rounding-path": "rule-targeted",
+    "security-setting-defaults-to-strict": "rule-targeted",
+    "app-unchanged": "base-capability",
+    "single-build-retained": "base-capability"
+   }
+  },
+  "flag-decision-unrecorded": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "flags-module-present": "base-capability",
+    "all-flags-retained": "base-capability",
+    "flag-values-unchanged": "base-capability",
+    "every-flag-has-a-removal-condition": "rule-targeted",
+    "every-flag-has-an-owner": "rule-targeted",
+    "removal-conditions-are-not-placeholders": "rule-targeted",
+    "pr-template-present": "base-capability",
+    "pr-template-records-the-flag-decision": "rule-targeted",
+    "pr-template-asks-for-the-reason": "rule-targeted",
+    "app-unchanged": "base-capability"
+   }
+  },
+  "gate-order-inverted": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "workflow-present": "base-capability",
+    "no-check-dropped": "base-capability",
+    "lint-gates-the-slow-suite": "rule-targeted",
+    "unit-tests-gate-the-slow-suite": "rule-targeted",
+    "nothing-deploys-before-the-tests": "rule-targeted",
+    "no-expensive-job-starts-unconditionally": "rule-targeted",
+    "deploy-path-intact": "base-capability",
+    "app-unchanged": "base-capability"
+   }
+  },
+  "gate-that-does-not-gate": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "workflow-present": "base-capability",
+    "all-checks-retained": "base-capability",
+    "no-check-swallows-its-own-failure": "rule-targeted",
+    "no-check-job-is-advisory": "rule-targeted",
+    "deploy-not-run-unconditionally": "rule-targeted",
+    "deploy-still-depends-on-the-checks": "rule-targeted",
+    "deploy-path-intact": "base-capability",
+    "app-unchanged": "base-capability"
+   }
+  },
+  "health-check-always-ok": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "health-route-present": "base-capability",
+    "health-checks-its-dependency": "rule-targeted",
+    "health-can-report-unhealthy": "rule-targeted",
+    "dependency-failure-is-caught": "rule-targeted",
+    "failure-names-what-failed": "rule-targeted",
+    "entries-endpoint-intact": "base-capability",
+    "post-deploy-watch-intact": "base-capability"
+   }
+  },
+  "intent-reconstructed-from-code": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "provenance-flagged": "rule-targeted",
+    "agreement-not-treated-as-evidence": "rule-targeted",
+    "real-intent-source-used": "rule-targeted",
+    "primary-need-missing-cited": "rule-targeted",
+    "priority-inversion-named": "rule-targeted",
+    "verdict-not-ship": "rule-targeted",
+    "lift-path-named": "rule-targeted",
+    "runtime-evidence": "rule-targeted",
+    "review-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "invoice-suspension-refactor": {
+   "skill": "code-smells",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "suspended-zero": "rule-targeted",
+    "active-regression": "rule-targeted",
+    "nesting-resolved": "rule-targeted",
+    "tests-run": "rule-targeted"
+   }
+  },
+  "job-ledger-ordering-assessment": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "cross-tree-risks-cited": "rule-targeted",
+    "false-green-detected": "rule-targeted",
+    "ranked-actionable-findings": "rule-targeted",
+    "scope-and-tooling-honest": "rule-targeted",
+    "assessment-only": "rule-targeted"
+   }
+  },
+  "json-config-setter": {
+   "skill": "cli-tooling",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "dry-run-contract": "rule-targeted",
+    "apply-idempotent": "rule-targeted",
+    "stream-contract": "rule-targeted",
+    "error-contract": "rule-targeted",
+    "help-and-tests": "rule-targeted"
+   }
+  },
+  "learn-session-indented-comment": {
+   "skill": "learn-from-session",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "runtime-unchanged": "base-capability",
+    "tests-pass": "base-capability",
+    "specific-regression": "rule-targeted",
+    "mutation-killed": "rule-targeted",
+    "durable-destination": "rule-targeted"
+   }
+  },
+  "mental-models-latency-loop": {
+   "skill": "mental-models",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "interacting-causes": "rule-targeted",
+    "distinguishing-evidence": "rule-targeted",
+    "deploy-decoy-ruled-out": "rule-targeted",
+    "safe-first-action": "rule-targeted",
+    "auditable-reasoning": "rule-targeted"
+   }
+  },
+  "migration-blocks-rollback": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "migrations-present": "base-capability",
+    "no-contraction-ships-with-this-deploy": "rule-targeted",
+    "additive-change-retained": "base-capability",
+    "migration-not-coupled-to-the-code-deploy": "rule-targeted",
+    "migrations-still-applied": "base-capability",
+    "release-doc-present": "base-capability",
+    "rollback-safety-explained": "rule-targeted",
+    "deferred-contraction-recorded": "rule-targeted",
+    "app-unchanged": "base-capability"
+   }
+  },
+  "multi-agent-bounded-assessment": {
+   "skill": "multi-agent-design",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "explicit-architecture-decision": "rule-targeted",
+    "bounded-topology": "rule-targeted",
+    "complete-contracts": "rule-targeted",
+    "governance-limits": "rule-targeted",
+    "recovery-observability": "rule-targeted"
+   }
+  },
+  "multi-part-without-architecture": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "missing-architecture-reported": "rule-targeted",
+    "missing-document-connected-to-the-defect": "rule-targeted",
+    "client-side-permission-cited": "rule-targeted",
+    "server-missing-check-cited": "rule-targeted",
+    "manager-list-gates-nothing-noted": "rule-targeted",
+    "severity-stated": "rule-targeted",
+    "contract-checked-on-permissions": "rule-targeted",
+    "verdict-not-ship": "rule-targeted",
+    "runtime-evidence": "rule-targeted",
+    "review-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "narrowed-audit-across-a-trust-boundary": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "previous-acceptance-identified": "rule-targeted",
+    "narrowing-refused-for-the-stated-reason": "rule-targeted",
+    "auth-bypass-cited": "rule-targeted",
+    "bypass-mechanism-explained": "rule-targeted",
+    "bypass-demonstrated": "rule-targeted",
+    "unchanged-work-not-mis-reported": "harm-guard",
+    "verdict-not-ship": "rule-targeted",
+    "runtime-evidence": "rule-targeted",
+    "review-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "operability-handover": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "signals-documented": "rule-targeted",
+    "alerts-documented": "rule-targeted",
+    "failure-modes-documented": "rule-targeted",
+    "recovery-documented": "rule-targeted",
+    "health-endpoint-added": "rule-targeted",
+    "structured-logging-introduced": "rule-targeted",
+    "real-failure-mode-named": "rule-targeted",
+    "alerts-actionable": "rule-targeted",
+    "unknowns-named": "rule-targeted"
+   }
+  },
+  "postgres-required-handle": {
+   "skill": "data-modeling",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "additive-rollout": "rule-targeted",
+    "required-without-scan": "rule-targeted",
+    "backfill": "rule-targeted",
+    "unique-handle": "rule-targeted"
+   }
+  },
+  "project-label-library": {
+   "skill": "product-build",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "formats-statuses": "rule-targeted",
+    "validates-boundary": "rule-targeted",
+    "preserves-api": "base-capability",
+    "scope-discipline": "rule-targeted"
+   }
+  },
+  "promote-observed-artifact": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "tests-gate-release": "rule-targeted",
+    "single-promoted-artifact": "rule-targeted",
+    "staging-gates-production": "rule-targeted",
+    "production-health-action": "rule-targeted",
+    "executable-rollback": "rule-targeted"
+   }
+  },
+  "rebuild-per-environment": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "workflow-present": "base-capability",
+    "single-build": "rule-targeted",
+    "production-does-not-rebuild": "rule-targeted",
+    "promoted-by-immutable-reference": "rule-targeted",
+    "environment-tags-removed": "rule-targeted",
+    "tests-still-gate-deploys": "base-capability",
+    "app-unchanged": "base-capability"
+   }
+  },
+  "receipt-upload-interview-gate": {
+   "skill": "frontend",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "ui-source-untouched": "base-capability",
+    "dependencies-untouched": "base-capability",
+    "no-new-ui-files": "harm-guard",
+    "no-invented-design-artifacts": "harm-guard"
+   }
+  },
+  "refresh-mid-flow-loses-work": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "refresh-loss-cited": "rule-targeted",
+    "state-model-explained": "rule-targeted",
+    "empty-description-cited": "rule-targeted",
+    "error-path-claim-verified": "rule-targeted",
+    "error-path-not-mis-reported": "harm-guard",
+    "verdict-not-ship": "rule-targeted",
+    "runtime-evidence": "rule-targeted",
+    "review-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "refund-ledger-rollout": {
+   "skill": "data-modeling",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "additive-schema": "rule-targeted",
+    "server-boundary": "rule-targeted",
+    "refund-invariant": "rule-targeted",
+    "structured-errors": "rule-targeted",
+    "regression-suite": "rule-targeted",
+    "immutable-release": "rule-targeted",
+    "literal-rollback": "rule-targeted"
+   }
+  },
+  "retry-delay-regression-suite": {
+   "skill": "testing-strategy",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "stable-baseline": "rule-targeted",
+    "public-behavior": "rule-targeted",
+    "kills-cap-mutant": "rule-targeted",
+    "kills-nonretryable-mutant": "rule-targeted",
+    "kills-validation-mutant": "rule-targeted"
+   }
+  },
+  "retrying-orders-api": {
+   "skill": "backend-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "boundary-validation": "rule-targeted",
+    "owner-isolation": "rule-targeted",
+    "retry-safe": "rule-targeted",
+    "structured-errors": "rule-targeted",
+    "public-login-contained": "rule-targeted"
+   }
+  },
+  "rollback-by-recollection": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "release-doc-present": "base-capability",
+    "rollback-is-a-literal-command": "rule-targeted",
+    "rollback-needs-no-lookup": "rule-targeted",
+    "no-person-as-the-rollback-path": "rule-targeted",
+    "no-automated-rollback-claim-removed": "rule-targeted",
+    "rollback-limits-stated": "rule-targeted",
+    "deploy-path-intact": "base-capability",
+    "app-unchanged": "base-capability"
+   }
+  },
+  "runbook-of-guesses": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "operations-doc-present": "base-capability",
+    "all-four-sections-present": "rule-targeted",
+    "no-section-emptied": "base-capability",
+    "guessed-threshold-flagged": "rule-targeted",
+    "unobserved-failure-mode-flagged": "rule-targeted",
+    "unread-signal-disclosed": "rule-targeted",
+    "recovery-commands-intact": "base-capability",
+    "rollback-limits-still-stated": "base-capability"
+   }
+  },
+  "scheduled-report-design-gate": {
+   "skill": "product-build",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "source-untouched": "base-capability",
+    "config-untouched": "base-capability",
+    "no-new-implementation": "harm-guard",
+    "no-premature-design-artifacts": "harm-guard"
+   }
+  },
+  "secrets-baked-into-image": {
+   "skill": "release-engineering",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "db-credential-removed": "rule-targeted",
+    "payment-key-removed": "rule-targeted",
+    "dockerfile-present": "base-capability",
+    "no-config-baked-into-build": "rule-targeted",
+    "no-production-fallback-defaults": "rule-targeted",
+    "missing-config-fails-closed": "rule-targeted",
+    "config-still-exported": "base-capability",
+    "app-unchanged": "base-capability"
+   }
+  },
+  "self-serve-project-invites": {
+   "skill": "product-build",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "product-contract": "rule-targeted",
+    "trust-boundary": "rule-targeted",
+    "accessible-interface": "rule-targeted",
+    "server-authority": "rule-targeted",
+    "boundary-validation": "rule-targeted",
+    "retry-and-isolation": "rule-targeted"
+   }
+  },
+  "shipping-fee-regression-suite": {
+   "skill": "testing-strategy",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "stable-baseline": "rule-targeted",
+    "public-behavior": "rule-targeted",
+    "kills-threshold-mutant": "rule-targeted",
+    "kills-unsupported-mutant": "rule-targeted",
+    "kills-member-mutant": "rule-targeted"
+   }
+  },
+  "stale-pass-review": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "verdict-is-block": "rule-targeted",
+    "fresh-gate-evidence": "rule-targeted",
+    "missing-artifacts-cited": "rule-targeted",
+    "stale-report-not-trusted": "rule-targeted",
+    "review-only": "base-capability"
+   }
+  },
+  "stale-replay-evidence": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "verdict-not-ship": "rule-targeted",
+    "stale-or-divergent-evidence-caught": "rule-targeted",
+    "green-log-not-taken-as-evidence": "rule-targeted",
+    "empty-state-step-identified": "rule-targeted",
+    "coverage-honesty": "rule-targeted",
+    "review-only": "base-capability"
+   }
+  },
+  "ticket-attachment-boundaries": {
+   "skill": "systems-architecture",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "required-sections": "rule-targeted",
+    "current-parts-only": "rule-targeted",
+    "edges-and-payloads": "rule-targeted",
+    "enforcement-point": "rule-targeted",
+    "secret-location": "rule-targeted"
+   }
+  },
+  "tool-library-contract": {
+   "skill": "product-management",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "required-headings": "rule-targeted",
+    "observable-success": "rule-targeted",
+    "bounded-mvp": "rule-targeted",
+    "scope-cut": "rule-targeted",
+    "no-fabrication": "harm-guard"
+   }
+  },
+  "walkthrough-diverges-from-success": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "divergence-identified": "rule-targeted",
+    "divergence-characterised": "rule-targeted",
+    "code-follows-the-walkthrough-cited": "rule-targeted",
+    "volunteer-cannot-even-read-noted": "rule-targeted",
+    "divergence-not-normalised": "rule-targeted",
+    "mvp-scope-checked": "rule-targeted",
+    "verdict-not-ship": "rule-targeted",
+    "runtime-evidence": "rule-targeted",
+    "review-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "zero-count-export-acceptance": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=false",
+   "assertions": {
+    "verdict-is-block": "rule-targeted",
+    "zero-count-defect-found": "rule-targeted",
+    "runtime-evidence": "rule-targeted",
+    "gate-reconciled": "rule-targeted",
+    "review-only": "base-capability"
+   }
+  }
+ },
+ "casesWithoutContrastArm": {
+  "note": "These cases have rubrics that are entirely rule-targeted, so for them the circularity check cannot run: there is no assertion a competent model passes without the skill against which to compare. They are grandfathered, not accepted as fine. They cannot be fixed by adding assertions, because a case file edit changes caseSha256 and breaks the binding to run bundles already recorded against it. Any future case must carry a contrast arm; scripts/tests/eval-attribution.mjs fails if this list grows.",
+  "discovered": "2026-08-31, by the pre-registration itself",
+  "cases": [
+   "account-suspension-boundary",
+   "engineering-assessment-cited-risks",
+   "engineering-assessment-hidden-risks",
+   "engineering-assessment-retry-storm",
+   "engineering-assessment-silent-drop",
+   "invoice-suspension-refactor",
+   "job-ledger-ordering-assessment",
+   "json-config-setter",
+   "mental-models-latency-loop",
+   "multi-agent-bounded-assessment",
+   "operability-handover",
+   "postgres-required-handle",
+   "promote-observed-artifact",
+   "refund-ledger-rollout",
+   "retry-delay-regression-suite",
+   "retrying-orders-api",
+   "self-serve-project-invites",
+   "shipping-fee-regression-suite",
+   "ticket-attachment-boundaries"
+  ]
+ }
+}
