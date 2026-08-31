@@ -1,17 +1,19 @@
 ---
 name: code-organization
 description: >-
-  Structure a codebase's files, modules, and dependencies so the layout
-  reflects what the system does, not the framework it's built with —
-  covering module boundaries, dependency direction, cohesion vs. coupling,
-  and naming that survives a reorg. Triggers when starting a new module or
-  directory structure, when a codebase's organization is fighting a change
-  (the same conceptual edit keeps touching unrelated folders), or when
-  explicitly asked how to structure something. Operates one level up from
-  `code-smells` (which is about one function or class) and one level down
-  from `systems-architecture` (which is about parts, boundaries, and trust
-  between whole services) — this is the layer in between: how one service's
-  own internals are laid out.
+  Decide where code should live: which module or directory a new file belongs
+  in, where the boundary between two modules falls, which way a dependency
+  should point, and naming that survives a reorg — cohesion vs. coupling, and
+  keeping one conceptual change in one place. Triggers when adding to an
+  existing area and it should stay coherent for the next change, when
+  starting a new module or directory structure, when the same conceptual edit
+  keeps touching unrelated folders, or on "where should this go" / "how
+  should I structure this". Operates between `code-smells` (one function or
+  class) and `systems-architecture` (parts, boundaries and trust between
+  whole services): this is how one service's own internals are laid out. Not
+  the trusted-side rules for validation, secrets or auth — that is
+  backend-engineering — and not the shape of persisted data, which is
+  data-modeling.
 compatibility: Requires Node 18+ to run the deterministic checker script.
 ---
 

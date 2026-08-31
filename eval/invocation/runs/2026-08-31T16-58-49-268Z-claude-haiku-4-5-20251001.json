@@ -1,0 +1,571 @@
+{
+ "schemaVersion": 1,
+ "protocol": "selection-declared",
+ "model": "claude-haiku-4-5-20251001",
+ "trialsPerPrompt": 3,
+ "startedAt": "2026-08-31T16:58:49.266Z",
+ "promptsSha256": "fa4b73b718f4215d8c77a1c8ed06302d6cbcb19a504c49583483680498ba3ed4",
+ "descriptionsSha256": "94721f73e405eab0339446c7a66c7406f4df0e85383fbf5c69a77199ee1e7655",
+ "descriptionsVariant": "revised-2026-08-31",
+ "aggregate": {
+  "skillTrials": 18,
+  "top1": 18,
+  "altHit": 0,
+  "distractorTrials": 6,
+  "nullCorrect": 2,
+  "parseErrors": 0,
+  "perSkill": {
+   "code-organization": {
+    "trials": 9,
+    "top1": 9
+   },
+   "mental-models": {
+    "trials": 9,
+    "top1": 9
+   }
+  },
+  "confusion": {}
+ },
+ "records": [
+  {
+   "promptId": "heldout-co-scattered-pricing",
+   "trial": 0,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "code-organization",
+    "alternatives": [
+     "code-smells",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 3
+   },
+   "costUsd": 0.0201394,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-organization\", \"alternatives\": [\"code-smells\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "heldout-co-scattered-pricing",
+   "trial": 1,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "code-organization",
+    "alternatives": [
+     "systems-architecture",
+     "code-smells"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 6
+   },
+   "costUsd": 0.019046399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-organization\", \"alternatives\": [\"systems-architecture\", \"code-smells\"]}\n```"
+  },
+  {
+   "promptId": "heldout-co-scattered-pricing",
+   "trial": 2,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "code-organization",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.020195400000000002,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-organization\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "heldout-co-second-provider",
+   "trial": 0,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "code-organization",
+    "alternatives": [
+     "systems-architecture",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 16
+   },
+   "costUsd": 0.0192394,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-organization\", \"alternatives\": [\"systems-architecture\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "heldout-co-second-provider",
+   "trial": 1,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "code-organization",
+    "alternatives": [
+     "systems-architecture"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 4
+   },
+   "costUsd": 0.0196524,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-organization\", \"alternatives\": [\"systems-architecture\"]}\n```"
+  },
+  {
+   "promptId": "heldout-co-second-provider",
+   "trial": 2,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "code-organization",
+    "alternatives": [
+     "systems-architecture",
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 17
+   },
+   "costUsd": 0.0191724,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-organization\", \"alternatives\": [\"systems-architecture\", \"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "heldout-co-utils-tangle",
+   "trial": 0,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "code-organization",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 10
+   },
+   "costUsd": 0.0187444,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-organization\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "heldout-co-utils-tangle",
+   "trial": 1,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "code-organization",
+    "alternatives": [
+     "code-smells",
+     "mental-models"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 17
+   },
+   "costUsd": 0.0195364,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-organization\", \"alternatives\": [\"code-smells\", \"mental-models\"]}\n```"
+  },
+  {
+   "promptId": "heldout-co-utils-tangle",
+   "trial": 2,
+   "expected": [
+    "code-organization"
+   ],
+   "reply": {
+    "skill": "code-organization",
+    "alternatives": [
+     "code-smells"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 3
+   },
+   "costUsd": 0.0187514,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-organization\", \"alternatives\": [\"code-smells\"]}\n```"
+  },
+  {
+   "promptId": "heldout-mm-conversion-drop",
+   "trial": 0,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 2
+   },
+   "costUsd": 0.0186684,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "heldout-mm-conversion-drop",
+   "trial": 1,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [
+     "engineering-assessment",
+     "release-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 13
+   },
+   "costUsd": 0.0201804,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": [\"engineering-assessment\", \"release-engineering\"]}\n```"
+  },
+  {
+   "promptId": "heldout-mm-conversion-drop",
+   "trial": 2,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.0185214,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "heldout-mm-rewrite-or-patch",
+   "trial": 0,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [
+     "engineering-assessment",
+     "code-smells"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 10
+   },
+   "costUsd": 0.019859400000000003,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": [\"engineering-assessment\", \"code-smells\"]}\n```"
+  },
+  {
+   "promptId": "heldout-mm-rewrite-or-patch",
+   "trial": 1,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [
+     "code-smells",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 11
+   },
+   "costUsd": 0.0188584,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": [\"code-smells\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "heldout-mm-rewrite-or-patch",
+   "trial": 2,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [
+     "code-smells",
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 8
+   },
+   "costUsd": 0.0189234,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": [\"code-smells\", \"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "heldout-mm-premature-conclusion",
+   "trial": 0,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 5
+   },
+   "costUsd": 0.0184384,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "heldout-mm-premature-conclusion",
+   "trial": 1,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [
+     "engineering-assessment"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 13
+   },
+   "costUsd": 0.0189454,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": [\"engineering-assessment\"]}\n```"
+  },
+  {
+   "promptId": "heldout-mm-premature-conclusion",
+   "trial": 2,
+   "expected": [
+    "mental-models"
+   ],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [
+     "engineering-assessment",
+     "code-smells"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": true,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 5
+   },
+   "costUsd": 0.019136399999999998,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": [\"engineering-assessment\", \"code-smells\"]}\n```"
+  },
+  {
+   "promptId": "distractor-rename-folder",
+   "trial": 0,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [
+     "code-organization"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0227054,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": [\"code-organization\"]}\n```"
+  },
+  {
+   "promptId": "distractor-rename-folder",
+   "trial": 1,
+   "expected": [],
+   "reply": {
+    "skill": null,
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": true,
+    "altHit": false,
+    "chosenPosition": null
+   },
+   "costUsd": 0.0198124,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": null, \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-rename-folder",
+   "trial": 2,
+   "expected": [],
+   "reply": {
+    "skill": "code-organization",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 16
+   },
+   "costUsd": 0.0180644,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"code-organization\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-econnreset",
+   "trial": 0,
+   "expected": [],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 1
+   },
+   "costUsd": 0.0198754,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": []}\n```"
+  },
+  {
+   "promptId": "distractor-econnreset",
+   "trial": 1,
+   "expected": [],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [
+     "backend-engineering"
+    ],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 17
+   },
+   "costUsd": 0.0183874,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": [\"backend-engineering\"]}\n```"
+  },
+  {
+   "promptId": "distractor-econnreset",
+   "trial": 2,
+   "expected": [],
+   "reply": {
+    "skill": "mental-models",
+    "alternatives": [],
+    "parseError": null
+   },
+   "score": {
+    "top1": false,
+    "nullCorrect": false,
+    "altHit": false,
+    "chosenPosition": 5
+   },
+   "costUsd": 0.0198484,
+   "exitCode": 0,
+   "rawReply": "```json\n{\"skill\": \"mental-models\", \"alternatives\": []}\n```"
+  }
+ ]
+}

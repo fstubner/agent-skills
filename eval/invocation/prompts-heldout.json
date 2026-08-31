@@ -1,0 +1,89 @@
+{
+ "schemaVersion": 1,
+ "descriptionsVariant": "revised-2026-08-31b",
+ "notes": "Held-out generalization set for the two descriptions revised on 2026-08-31 (code-organization, mental-models). Written BEFORE the re-run and deliberately not reusing the wording of the revised descriptions, so a pass here is not the description matching itself. The two near-miss distractors exist to catch the opposite failure: a revised description that now over-triggers. `distractor-rename-folder` uses folder/naming vocabulary on a mechanical task; `distractor-econnreset` uses the phrase root cause on a factual question. Both must answer null.",
+ "prompts": [
+  {
+   "id": "heldout-co-scattered-pricing",
+   "prompt": "This service has grown to about 40 files under src/ and I can no longer tell which ones belong together. Every time I change how a booking is priced I end up editing four different folders. Sort it out.",
+   "expected": [
+    "code-organization"
+   ],
+   "origin": "held-out, hand-written 2026-08-31"
+  },
+  {
+   "id": "heldout-co-second-provider",
+   "prompt": "I am about to add a second payment provider to this codebase. Where should the provider-specific code go so that adding it does not force changes to the first one?",
+   "expected": [
+    "code-organization"
+   ],
+   "origin": "held-out, hand-written 2026-08-31"
+  },
+  {
+   "id": "heldout-co-utils-tangle",
+   "prompt": "We have utils.js, helpers.js and common.js, and two of them import each other. What should this look like instead?",
+   "expected": [
+    "code-organization"
+   ],
+   "origin": "held-out, hand-written 2026-08-31"
+  },
+  {
+   "id": "heldout-mm-conversion-drop",
+   "prompt": "Checkout conversion dropped eight percent last Tuesday and has not recovered. Three changes shipped that day and marketing also swapped the homepage hero. Work out what actually caused it.",
+   "expected": [
+    "mental-models"
+   ],
+   "origin": "held-out, hand-written 2026-08-31"
+  },
+  {
+   "id": "heldout-mm-rewrite-or-patch",
+   "prompt": "The team is split between rewriting the sync worker and patching it. Help me think the decision through properly rather than just picking one.",
+   "expected": [
+    "mental-models"
+   ],
+   "origin": "held-out, hand-written 2026-08-31"
+  },
+  {
+   "id": "heldout-mm-premature-conclusion",
+   "prompt": "I have convinced myself the memory leak is in the image resizer, but I have only looked at that one file. Before I spend a day on it, help me check that conclusion.",
+   "expected": [
+    "mental-models"
+   ],
+   "origin": "held-out, hand-written 2026-08-31"
+  },
+  {
+   "id": "distractor-rename-folder",
+   "prompt": "Rename the utils folder to lib and update the imports.",
+   "expected": [],
+   "origin": "near-miss distractor: folder and naming vocabulary, mechanical task"
+  },
+  {
+   "id": "distractor-econnreset",
+   "prompt": "What is the root cause of an ECONNRESET error in Node?",
+   "expected": [],
+   "origin": "near-miss distractor: uses the phrase root cause, but is a factual question"
+  },
+  {
+   "id": "distractor-eaddrinuse-2",
+   "prompt": "Why am I getting EADDRINUSE when I start my dev server?",
+   "expected": [],
+   "origin": "promoted from the main set: regressed to mental-models after the 2026-08-31 revision"
+  },
+  {
+   "id": "heldout-mm-flaky-suite",
+   "prompt": "Our integration suite fails about one run in five, always a different test. Nobody can agree whether it is the database fixtures, the CI runner or a race in the app. Work out where to look first.",
+   "expected": [
+    "mental-models"
+   ],
+   "origin": "held-out, added 2026-08-31 to check the tightened wording keeps recall"
+  },
+  {
+   "id": "distractor-rollback-plan",
+   "prompt": "Write the rollback steps for tomorrow s deploy of the billing service.",
+   "expected": [
+    "release-engineering"
+   ],
+   "origin": "RELABELLED after the 2026-08-31 run, and the original label was my error rather than a routing failure. I wrote it as a distractor expecting null, but release-engineering.description claims rollback planning outright (\"rollback as a required part of the plan\"), so release-engineering is the correct answer on the descriptions as written. It scored 3/3 to release-engineering. Kept as a positive case for that skill."
+  }
+ ]
+}

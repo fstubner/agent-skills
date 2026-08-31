@@ -1,19 +1,20 @@
 ---
 name: mental-models
 description: >-
-  A catalog of reasoning lenses — root-cause tracing, systems/interconnected
-  mapping, goal decomposition, divergent/convergent generation, and checks
-  against premature closure and unsupported conclusions — plus four named
-  mindsets (Skeptic, Systems Thinker, Pragmatist, Explorer) that apply a lens
-  with an explicit voice and a stated blind spot. Triggers when a problem's
-  cause isn't obvious, when facing an ambiguous goal with no clear starting
-  decomposition, when choosing between several plausible approaches, when
-  asked to "poke holes in this" / "what am I missing" / "what are the other
-  ways to do this," or when explicitly asked to think about something
-  differently. Not for routine tasks with an obvious next step, and not a
-  substitute for a domain skill's own specific rules (e.g. frontend's
-  interview-before-styling) — this is a general-purpose complement to
-  those, never a replacement.
+  Reason through an open problem in your own system that has more than one
+  candidate explanation — diagnosing an incident with several possible
+  causes, choosing between plausible approaches, or testing a conclusion you
+  have already reached. Supplies reasoning lenses (root-cause tracing,
+  systems mapping, goal decomposition, divergent/convergent generation,
+  guards against premature closure) and four mindsets (Skeptic, Systems
+  Thinker, Pragmatist, Explorer), each with a stated blind spot, so the
+  reasoning is auditable rather than asserted. Triggers on "diagnose this",
+  "why is this happening", "what am I missing", "what are the other ways to
+  do this", or any task where stopping at the first plausible answer is the
+  risk. Not for explaining what a known error or concept means, or a fault
+  with one standard cause — answer those directly. Not a codebase audit
+  (engineering-assessment) and not release or pipeline design
+  (release-engineering). Not for routine tasks with an obvious next step.
 ---
 
 # Mental models
