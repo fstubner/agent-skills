@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 2,
+  "id": "checker-crash-read-as-pass",
+  "skill": "product-acceptance",
+  "revision": 1,
+  "prompt": "The invoice list is finished and billing want it live this week. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+  "fixture": "eval/fixtures-v2/checker-crash-read-as-pass",
+  "grader": "eval/graders-v2/checker-crash-read-as-pass.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "checker-crash-observed", "description": "The registered checker was re-run and its failure observed", "kind": "outcome" },
+    { "id": "absence-not-read-as-pass", "description": "The crashed checker is reported as not evaluated, never as a pass", "kind": "outcome" },
+    { "id": "on-disk-report-refused", "description": "The stale report file is named and refused as evidence", "kind": "outcome" },
+    { "id": "client-side-secret-cited", "description": "The billing token in a client path is reported with file and line evidence", "kind": "outcome" },
+    { "id": "exposure-path-explained", "description": "The review says how the file reaches a browser", "kind": "outcome" },
+    { "id": "verdict-not-ship", "description": "The review's own declared verdict is not SHIP", "kind": "outcome" },
+    { "id": "runtime-evidence", "description": "A command was actually run and its output recorded", "kind": "quality" },
+    { "id": "review-only", "description": "The product and contract files are left byte-identical", "kind": "quality" },
+    { "id": "unchecked-rules-named", "description": "The rules the crash left unchecked are named as unchecked, not assumed clean", "kind": "quality" }
+  ]
+}

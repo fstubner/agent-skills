@@ -96,6 +96,10 @@ const freshEfficacyCases = [
   // finding something, which measures one direction only; this one asks
   // whether a good build is recognised as good and still not shipped.
   'clean-build-with-open-items',
+  // The registered checker dies parsing its own config, exits 1 — the same
+  // code it uses for findings — and a clean report from before it broke is
+  // sitting on disk. The rule it declares is being broken in public/.
+  'checker-crash-read-as-pass',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

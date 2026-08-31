@@ -1,0 +1,11 @@
+{
+  "name": "invoice-list",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/invoices.test.js",
+    "check:backend": "node scripts/check-backend.js --root ."
+  },
+  "dependencies": { "express": "^4.19.0", "express-session": "^1.18.0" }
+}

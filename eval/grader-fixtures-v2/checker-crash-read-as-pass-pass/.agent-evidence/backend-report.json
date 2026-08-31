@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 2,
+  "checker": "backend",
+  "generatedAt": "2026-08-09T11:02:41Z",
+  "findings": [],
+  "summary": "No backend findings. Secrets, ORM and session-cookie rules all clean."
+}
