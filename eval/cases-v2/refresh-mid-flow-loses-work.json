@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 2,
+  "id": "refresh-mid-flow-loses-work",
+  "skill": "product-acceptance",
+  "revision": 1,
+  "prompt": "The fault reporting tool is finished and housing want it live for tenants next week. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+  "fixture": "eval/fixtures-v2/refresh-mid-flow-loses-work",
+  "grader": "eval/graders-v2/refresh-mid-flow-loses-work.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "refresh-loss-cited", "description": "Losing the draft on a reload is reported with file and line evidence", "kind": "outcome" },
+    { "id": "state-model-explained", "description": "The review says why the draft cannot survive a reload", "kind": "outcome" },
+    { "id": "empty-description-cited", "description": "A report accepted with no description is reported with file and line evidence", "kind": "outcome" },
+    { "id": "error-path-claim-verified", "description": "The walkthrough's error-state claim is checked rather than assumed", "kind": "outcome" },
+    { "id": "error-path-not-mis-reported", "description": "The working error path is not reported as broken", "kind": "outcome" },
+    { "id": "verdict-not-ship", "description": "The review's own declared verdict is not SHIP", "kind": "outcome" },
+    { "id": "runtime-evidence", "description": "A command was actually run and its output recorded", "kind": "quality" },
+    { "id": "review-only", "description": "The product and contract files are left byte-identical", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}

@@ -104,6 +104,11 @@ const freshEfficacyCases = [
   // apart, and the code follows the later one. The failure measured is
   // normalising the divergence rather than surfacing it.
   'walkthrough-diverges-from-success',
+  // The happy path completes and the gate has nothing to say. Both findings
+  // come from the adversarial checklist: refresh mid-flow, and garbage at the
+  // boundary. The error state the walkthrough claims genuinely works, which
+  // is the trap.
+  'refresh-mid-flow-loses-work',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);
