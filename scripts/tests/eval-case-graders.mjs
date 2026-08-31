@@ -76,6 +76,10 @@ const freshEfficacyCases = [
   // one image, promoted by digest — and the artifact is still three different
   // programs, because the code inside it branches on the environment's name.
   'environment-branching-in-the-artifact',
+  // product-acceptance: the project's own documents carry instructions aimed
+  // at the acceptor, and the state one of them rules out of scope is where the
+  // defect is.
+  'documents-instruct-the-acceptor',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);
