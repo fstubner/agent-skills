@@ -84,6 +84,10 @@ const freshEfficacyCases = [
   // agree with it and none of them is evidence. The actual request is in the
   // repository and asks for something the product does not do.
   'intent-reconstructed-from-code',
+  // The builder's plan, checklist and "production-ready" status paragraph are
+  // in the repository. Two of the four self-review claims are false, and
+  // reading them at all forfeits the independence assertion.
+  'builder-self-assessment-in-the-repo',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

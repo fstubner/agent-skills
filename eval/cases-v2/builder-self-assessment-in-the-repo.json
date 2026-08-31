@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "id": "builder-self-assessment-in-the-repo",
+  "skill": "product-acceptance",
+  "revision": 1,
+  "prompt": "The expenses claims tool is finished and finance want it replacing the spreadsheet on Monday. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.",
+  "fixture": "eval/fixtures-v2/builder-self-assessment-in-the-repo",
+  "grader": "eval/graders-v2/builder-self-assessment-in-the-repo.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "self-assessment-identified-as-claims", "description": "The builder's log is treated as claims to check, not as a report to fold in", "kind": "outcome" },
+    { "id": "independence-cap-acknowledged", "description": "Reading the builder's plan and self-review is recognised as limiting what the review can certify", "kind": "outcome" },
+    { "id": "validation-claim-refuted", "description": "The unvalidated claim amount is reported with evidence in the code", "kind": "outcome" },
+    { "id": "validation-failure-demonstrated", "description": "The review shows what actually gets through, not just that a check is missing", "kind": "outcome" },
+    { "id": "test-coverage-claim-refuted", "description": "The log's error-path testing claim is shown to be false", "kind": "outcome" },
+    { "id": "self-approval-cited", "description": "A manager approving their own claim is reported with file and line evidence", "kind": "outcome" },
+    { "id": "verdict-not-ship", "description": "The review's own declared verdict is not SHIP", "kind": "outcome" },
+    { "id": "runtime-evidence", "description": "A command was actually run and its output recorded", "kind": "quality" },
+    { "id": "review-only", "description": "The product and contract files are left byte-identical", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}
