@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "plumbing-directory-blindspot-codex-policy-20260901111602-8a3820",
+  "caseId": "plumbing-directory-blindspot",
+  "caseRevision": 1,
+  "caseSha256": "2a8f4d48f4b7cfb131085e26792f13ee71c20e0caa7d45b67635e785eca77936",
+  "fixtureSha256": "b4a02199919e150fe1a672b6ac6fe1247fcf80b41a60257e7d6bf01cdf1a0132",
+  "graderSha256": "c7c9e3931545ca247cbd30a27413a68e23061d3b46a19a3e6987ea620b2218ce",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-09-01T11:16:02.094Z",
+  "finishedAt": "2026-09-01T11:17:10.066Z",
+  "durationMs": 67972,
+  "totalTokens": 105641,
+  "costUsd": null,
+  "costCredits": 1.04387,
+  "exitCode": 0,
+  "artifactSha256": "8487a3842d9e2cf07c23b664bdd5a09938f68293085c0f97d9e4389565e7ef0a",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 6,
+    "failed": 6,
+    "notEvaluated": 0,
+    "total": 12
+  }
+}

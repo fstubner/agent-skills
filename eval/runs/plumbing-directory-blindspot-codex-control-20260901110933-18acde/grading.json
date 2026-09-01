@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 2,
+  "caseId": "plumbing-directory-blindspot",
+  "assertions": [
+    {
+      "id": "retention-workflow-cited",
+      "status": "fail",
+      "evidence": "described=true; cited near .github/workflows/retention.yml:16"
+    },
+    {
+      "id": "unbounded-delete-cited",
+      "status": "fail",
+      "evidence": "described=true; cited near migrations/0004_orders_retention.sql:3"
+    },
+    {
+      "id": "recurring-ddl-cited",
+      "status": "fail",
+      "evidence": "described=true; cited near migrations/0004_orders_retention.sql:5"
+    },
+    {
+      "id": "stubbed-restore-check-cited",
+      "status": "fail",
+      "evidence": "described=true; cited near scripts/restore-check.sh:4"
+    },
+    {
+      "id": "plumbing-directories-enumerated",
+      "status": "fail",
+      "evidence": "plumbing directories named in the report: migrations, scripts"
+    },
+    {
+      "id": "declared-commands-run",
+      "status": "fail",
+      "evidence": "the report shows npm test and its output=false"
+    },
+    {
+      "id": "thin-test-coverage-noted",
+      "status": "pass",
+      "evidence": "the report must note the suite covers a formatting helper and nothing else"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "status": "fail",
+      "evidence": "severity vocabulary=true; unconfirmed section=false"
+    },
+    {
+      "id": "strengths-evidenced",
+      "status": "fail",
+      "evidence": "at least two evidenced strengths, which this codebase genuinely has"
+    },
+    {
+      "id": "assessment-only",
+      "status": "pass",
+      "evidence": "the audited files must be byte-identical to the fixture"
+    },
+    {
+      "id": "no-fabricated-findings",
+      "status": "pass",
+      "evidence": "defects asserted that the application code does not have: none"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "fail",
+      "evidence": "gaps=false; specific absences named=true; no blanket safety claim=true"
+    }
+  ]
+}

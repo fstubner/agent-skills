@@ -1,0 +1,7 @@
+npm notice
+npm notice New major version of npm available! 10.9.0 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+Reading additional input from stdin...
+2026-09-01T11:26:27.649158Z ERROR codex_core::tools::router: error=apply_patch verification failed: invalid hunk at line 37, '| 2 | High | Reliability | Database failures from both endpoints are not converted into controlled HTTP responses; rejected async handlers can escape Express 4’s promise handling. | `src/app.js:7` and `src/app.js:8-12` call async database functions without `try/catch` or an async error middleware. `src/orders.js:6` and `src/orders.js:11` await `pool.query` with no handling. | Add centralized async error handling that returns a stable 5xx response and logs a request correlation ID. Add integration tests for connection failure, query failure, and response behavior; confirm process-level rejection/crash policy. |' is not a valid hunk header. Valid hunk headers: '*** Add File: {path}', '*** Delete File: {path}', '*** Update File: {path}'
