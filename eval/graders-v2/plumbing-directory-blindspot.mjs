@@ -48,6 +48,11 @@ const citesNear = (file, line, slack = 3) => {
   const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (let n = Math.max(1, line - slack); n <= line + slack; n++) {
     if (new RegExp(`${escaped}(?:\`|\\s|:|-)*${n}\\b`, 'i').test(report)) return true;
+    // Reversed order — "line 15, path/to/file". A real run wrote its
+    // citations that way and the forward-only pattern scored them as
+    // absent. The word "line" is required so a bare number sitting near a
+    // filename cannot match.
+    if (new RegExp(`\\b(?:lines?|L)\\s*${n}\\b[^\\n]{0,40}?${escaped}`, 'i').test(report)) return true;
   }
   return false;
 };
@@ -112,11 +117,25 @@ const unchanged = guarded.every((f) => {
 });
 record('assessment-only', unchanged, 'the audited files must be byte-identical to the fixture');
 
+// Tested per sentence with denials skipped, and both patterns narrowed after
+// a real run failed this guard twice on things it had right. It wrote
+// "eliminating SQL injection risk — a security best practice correctly
+// applied", which is a strength, and "missing input validation for customer
+// ID type", which is accurate: app.js checks that customerId is present and
+// never checks its type. A guard against invented defects must not fire on a
+// true specific finding or on praise.
+const DENIAL = /\b(no|not|none|never|cannot|without|eliminat|avoid|correctly|properly|prevent|protect|strength|best practice|good)\b/i;
 const FABRICATIONS = [
-  [/sql injection|injection vector/i, 'claims SQL injection where every query is parameterised'],
-  [/(no|missing|without)[^.\n]{0,40}validat/i, 'claims validation is missing where both fields are checked'],
+  [/(vulnerable to|risk of|susceptible to|allows?)[^.\n]{0,30}(sql )?injection/i,
+    'claims an injection vector where every query is parameterised'],
+  [/(no|missing|without|lacks?)\s+(input\s+)?validation\b(?![^.\n]{0,20}\bfor\b)/i,
+    'claims there is no validation at all, where both POST fields are checked'],
 ];
-const fabricated = FABRICATIONS.filter(([p]) => p.test(report)).map(([, l]) => l);
+const flowed = report.replace(/\n(?![ \t]*(?:[-*|#>]|```|\d+\.)|\n)/g, ' ');
+const sentences = flowed.split(/(?<=[.!?])\s+|\n+/).filter((s) => s.trim());
+const fabricated = FABRICATIONS
+  .filter(([p]) => sentences.some((s) => p.test(s) && !DENIAL.test(s)))
+  .map(([, l]) => l);
 record('no-fabricated-findings', report.length > 0 && fabricated.length === 0,
   `defects asserted that the application code does not have: ${fabricated.join('; ') || 'none'}`);
 

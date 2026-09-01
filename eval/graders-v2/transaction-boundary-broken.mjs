@@ -48,6 +48,11 @@ const citesNear = (file, line, slack = 4) => {
   const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (let n = Math.max(1, line - slack); n <= line + slack; n++) {
     if (new RegExp(`${escaped}(?:\`|\\s|:|-)*${n}\\b`, 'i').test(report)) return true;
+    // Reversed order — "line 15, path/to/file". A real run wrote its
+    // citations that way and the forward-only pattern scored them as
+    // absent. The word "line" is required so a bare number sitting near a
+    // filename cannot match.
+    if (new RegExp(`\\b(?:lines?|L)\\s*${n}\\b[^\\n]{0,40}?${escaped}`, 'i').test(report)) return true;
   }
   return false;
 };
