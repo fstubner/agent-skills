@@ -352,7 +352,15 @@ import {
     // eval/runs/ holds hash-bound captures that cannot be edited without
     // destroying the artifact. Anything else exempted is real code going
     // unchecked, which is why this list is enumerated rather than a prefix.
-    const ALLOWED_EXEMPTIONS = ['^fixtures/', '^eval/fixtures-v2/', '^eval/grader-fixtures-v2/', '^eval/runs/'];
+    //
+    // eval/runs-superseded/ was added 2026-09-01. It holds bundles moved out
+    // of eval/runs/ when the grader or case they answer changed, so it is the
+    // same captured-output argument one directory over — and it blocked a
+    // commit the day it appeared, because a superseded bundle carries a copy
+    // of the circular-dependency fixture and check-organization reported the
+    // cycle that fixture exists to contain.
+    const ALLOWED_EXEMPTIONS = ['^fixtures/', '^eval/fixtures-v2/', '^eval/grader-fixtures-v2/',
+      '^eval/runs/', '^eval/runs-superseded/'];
     // Regex literals, so an escaped slash inside the pattern is not a
     // delimiter — matching on a bare / truncated every entry to "^eval\".
     const patterns = (exemptBlock[1].match(/\/(?:\\.|[^/\\])+\//g) || [])

@@ -14,6 +14,7 @@
 //   node scripts/eval-batch.mjs --case plumbing-directory-blindspot --dry-run
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { spawnSync } from 'child_process';
 
 const root = path.resolve(import.meta.dirname, '..');
@@ -37,6 +38,9 @@ const cases = fs.readdirSync(path.join(root, 'eval', 'cases-v2'))
   .filter((c) => (onlyCase ? c.id === onlyCase : true))
   .sort((a, b) => a.id.localeCompare(b.id));
 
+const sha256 = (buf) => crypto.createHash('sha256').update(buf).digest('hex');
+const caseGrader = new Map(cases.map((c) => [c.id, path.join(root, c.grader)]));
+
 // What is already recorded. A cell is keyed exactly as the matrix defines it.
 const existing = new Map();
 const runsDir = path.join(root, 'eval', 'runs');
@@ -46,6 +50,19 @@ for (const entry of fs.existsSync(runsDir) ? fs.readdirSync(runsDir) : []) {
   let m = null;
   try { m = JSON.parse(fs.readFileSync(manifest, 'utf8')); } catch { continue; }
   if (!m.grading) continue;
+  // Only runs the CURRENT instrument produced count toward a cell.
+  //
+  // 322 of the bundles on disk carry no graderSha256 at all — they predate
+  // the binding, and eval-verify's check is conditional on the field being
+  // there, so they pass without being checked. Twenty graders changed today.
+  // Counting those toward the matrix would let the programme report itself
+  // complete on gradings that cannot be reproduced, which is the same failure
+  // as trusting a stale report file — the thing this suite refuses everywhere
+  // else.
+  if (!m.graderSha256) continue;
+  const graderPath = caseGrader.get(m.caseId);
+  if (!graderPath || !fs.existsSync(graderPath)) continue;
+  if (m.graderSha256 !== sha256(fs.readFileSync(graderPath))) continue;
   const key = [m.caseId, m.condition, m.harness, m.model].join('|');
   existing.set(key, (existing.get(key) ?? 0) + 1);
 }

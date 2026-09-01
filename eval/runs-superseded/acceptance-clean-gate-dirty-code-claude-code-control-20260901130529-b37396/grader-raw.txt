@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "caseId": "acceptance-clean-gate-dirty-code",
+  "assertions": [
+    {
+      "id": "verdict-not-ship",
+      "status": "fail",
+      "evidence": "saysShip=true; saysBlockOrConditional=true"
+    },
+    {
+      "id": "cross-ward-read-cited",
+      "status": "fail",
+      "evidence": "issueNamed=true; citedNear=src/server.js:31"
+    },
+    {
+      "id": "reset-flood-cited",
+      "status": "pass",
+      "evidence": "issueNamed=true; citedNear=src/server.js:50"
+    },
+    {
+      "id": "boot-data-loss-cited",
+      "status": "pass",
+      "evidence": "issueNamed=true; citedNear=src/store.js:8"
+    },
+    {
+      "id": "gate-insufficiency-named",
+      "status": "fail",
+      "evidence": "namesGate=false; namesInsufficiency=false"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "fail",
+      "evidence": "reportShowsCommandOrRequestOutput=false"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract files must be byte-identical to the fixture"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "fail",
+      "evidence": "gaps=false; namesAbsent=true; noSafetyAssumption=true"
+    }
+  ]
+}

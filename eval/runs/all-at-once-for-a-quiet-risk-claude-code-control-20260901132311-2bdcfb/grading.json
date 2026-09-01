@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 2,
+  "caseId": "all-at-once-for-a-quiet-risk",
+  "assertions": [
+    {
+      "id": "release-doc-present",
+      "status": "pass",
+      "evidence": "RELEASE.md bytes=3155"
+    },
+    {
+      "id": "rollback-command-retained",
+      "status": "pass",
+      "evidence": "the documented one-command rollback must survive"
+    },
+    {
+      "id": "partial-exposure-stage-exists",
+      "status": "fail",
+      "evidence": "jobs exposing the change to part of the traffic: none"
+    },
+    {
+      "id": "partial-exposure-is-observed",
+      "status": "fail",
+      "evidence": "the partial stage compares or checks something before proceeding=false"
+    },
+    {
+      "id": "full-rollout-gated-on-the-partial-stage",
+      "status": "fail",
+      "evidence": "full-rollout jobs=production; each depends on the partial stage=false"
+    },
+    {
+      "id": "rollout-choice-recorded-with-its-reason",
+      "status": "fail",
+      "evidence": "the doc names the shape of the risk=true; it names the rollout choice=false"
+    },
+    {
+      "id": "pricing-change-intact",
+      "status": "pass",
+      "evidence": "src/pricing.js must keep the new invoice-total fee calculation"
+    },
+    {
+      "id": "tests-still-gate-the-deploy",
+      "status": "pass",
+      "evidence": "the test job must still gate what follows it"
+    },
+    {
+      "id": "app-unchanged",
+      "status": "pass",
+      "evidence": "src/server.js must keep its exported createApp"
+    }
+  ]
+}

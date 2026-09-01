@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "acceptance-clean-gate-dirty-code-codex-policy-20260901131217-7860df",
+  "caseId": "acceptance-clean-gate-dirty-code",
+  "caseRevision": 1,
+  "caseSha256": "1e1d9cde06559acb0d191b84eeed0c16dcbe7790e13e0e5b103287441745d835",
+  "fixtureSha256": "13aa828d1041eb25f455155a4bc83dff9769432f38d9bc0b1759de7d2694bfd4",
+  "graderSha256": "24692b78fc3fe0fc7d6c21a63eec31f8eed10541073111bfd5554b7e4001ecb4",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-09-01T13:12:17.528Z",
+  "finishedAt": "2026-09-01T13:13:17.345Z",
+  "durationMs": 59817,
+  "totalTokens": 97194,
+  "costUsd": null,
+  "costCredits": 0.98221,
+  "exitCode": 0,
+  "artifactSha256": "474133f8a2074e3a9ffd7591a00810155e159440969bf0b16d2faa98b007f6ed",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 3,
+    "failed": 5,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}

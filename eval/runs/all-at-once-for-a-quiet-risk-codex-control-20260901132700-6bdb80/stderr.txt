@@ -1,0 +1,10 @@
+npm notice
+npm notice New major version of npm available! 10.9.0 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+Reading additional input from stdin...
+2026-09-01T13:27:42.185142Z ERROR codex_core::tools::router: error=apply_patch verification failed: Failed to find expected lines in /workspace/RELEASE.md:
+## This release
+Fee rounding moves from per-line to once on the invoice total. Finance asked
+for it and signed off on the new numbers.

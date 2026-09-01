@@ -37,6 +37,7 @@ const MODULES = [
   'eval-invocation.mjs',  // selection harness: extractor, shuffle determinism, reply parsing, prompt-set integrity
   'eval-reliability.mjs', // pass^k: not_evaluated is not a pass, k held constant, pass^k never above pass@k
   'eval-attribution.mjs', // the pre-registered rule-targeted/base-capability split stays complete and can fail
+  'eval-citation-forms.mjs', // the shared citation matcher reads the forms real runs write
   'hooks.mjs',            // pre-commit secret scanning (skips only when gitleaks is absent)
   'hooks-scan-set.mjs',   // the pre-commit scan set travels in a file, not argv
   'installer.mjs',        // harnessPaths, installed-skill smoke test, clobber refusal

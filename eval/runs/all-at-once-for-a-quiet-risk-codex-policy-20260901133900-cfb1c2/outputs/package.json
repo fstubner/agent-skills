@@ -1,0 +1,1 @@
+{"name":"ledger-api","private":true,"type":"module","scripts":{"test":"NODE_ENV=test node --test test/*.test.js","build":"node --check src/pricing.js && node --check src/server.js"},"dependencies":{"express":"^4.19.0"}}

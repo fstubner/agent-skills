@@ -44,7 +44,10 @@ const lineOf = (file, needle) => {
 const citesNear = (file, line, slack = 1) => {
   const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (let n = line - slack; n <= line + slack; n++) {
-    if (n > 0 && new RegExp(escaped + '(?:`|\\s|:)*' + n + '\\b', 'i').test(report)) return true;
+    // The connector set is the one tested in scripts/tests/eval-citation-forms.mjs.
+    // A narrower version read "`src/x.js`, lines 25-27" as no citation at all.
+    if (n > 0 && new RegExp(escaped + '(?:[\\s`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*' + n + '\\b', 'i').test(report)) return true;
+    if (n > 0 && new RegExp('\\b(?:lines?|L)\\s*' + n + '\\b[^\\n]{0,40}?' + escaped, 'i').test(report)) return true;
   }
   return false;
 };

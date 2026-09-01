@@ -41,3 +41,31 @@ answer no longer exists, so they are not mixed with revision 2 evidence.
 This is also the case that showed the defect: it was the only one in the first
 50-run batch where the skill arm scored below control, which is what prompted
 looking at it.
+
+## 2026-09-01 — the second citation fix
+
+89 runs across five cases, moved whole.
+
+The first citation fix handled `line 15, path/to/file`. A skill-condition run
+of `block-softened-into-prose` then wrote:
+
+    **Location:** `src/server.js`, lines 25-27
+
+File before the number, which the forward pattern handles — but separated by
+a comma and the word "lines", which its character class did not allow. Three
+citation forms in real output, two of which the graders could not read.
+
+Measured before deciding: re-grading every bundle in place with the fixed
+matcher changed 20 of 491 verdicts, gaining 38 assertions. Control gained 10
+across 6 runs, policy 8 across 4, skill 20 across 10. Small, and not
+symmetric — the skill arm cites most, so a matcher that misses citations
+costs it most.
+
+The five cases are moved entire, not the 20 bundles whose score moved, for
+the reason recorded above: a set graded partly by one matcher and partly by
+another is worse than a set that is simply absent.
+
+The lesson, since this is twice: the reference fixtures were written by one
+author in one citation style, so the graders were tuned to that style and
+every other real form read as no citation at all. A grader tuned on
+hand-written references is tuned on a sample of one.

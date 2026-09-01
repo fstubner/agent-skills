@@ -33,8 +33,13 @@ const lineOf = (file, needle) => {
     return fs.readFileSync(path.join(root, file), 'utf8').split(/\r?\n/).findIndex((l) => l.includes(needle)) + 1;
   } catch { return -1; }
 };
-const citesAt = (file, line) =>
-  new RegExp(file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?:`|\\s|:)*' + line, 'i').test(report);
+// The connector set is the one tested in scripts/tests/eval-citation-forms.mjs.
+// A narrower version read "`src/x.js`, lines 25-27" as no citation at all.
+const citesAt = (file, line) => {
+  const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(escaped + '(?:[\\s`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*' + line, 'i').test(report)
+    || new RegExp('\\b(?:lines?|L)\\s*' + line + '\\b[^\\n]{0,40}?' + escaped, 'i').test(report);
+};
 
 const citations = [
   ['unbounded-retry-cited', 'app/worker.py', lineOf('app/worker.py', 'while True'),

@@ -1,0 +1,7 @@
+The clinic appointments app is finished and the practice wants patients using it from Monday. Review it independently and write the release verdict to REVIEW.md. Do not modify the product.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/product-acceptance/SKILL.md
+Load only references relevant to this task.

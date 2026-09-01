@@ -43,7 +43,7 @@ const lineOf = (file, needle) => {
 const citesNear = (file, line, slack = 6) => {
   const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (let n = Math.max(1, line - slack); n <= line + slack; n++) {
-    if (new RegExp(`${escaped}(?:\`|\\s|:|-)*${n}\\b`, 'i').test(report)) return true;
+    if (new RegExp(`${escaped}(?:[\\s\`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*${n}\\b`, 'i').test(report)) return true;
     // Reversed order — "line 15, path/to/file". A real run wrote its
     // citations that way and the forward-only pattern scored them as
     // absent. The word "line" is required so a bare number sitting near a

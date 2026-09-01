@@ -41,7 +41,7 @@ const record = (id, pass, evidence) => assertions.push({ id, status: pass ? 'pas
 const citesInRange = (file, from, to) => {
   const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (let n = from; n <= to; n++) {
-    if (n > 0 && new RegExp(`${escaped}(?:\`|\\s|:)*${n}\\b`, 'i').test(report)) return true;
+    if (n > 0 && new RegExp(`${escaped}(?:[\\s\`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*${n}\\b`, 'i').test(report)) return true;
     // Reversed order — "line 15, path/to/file". A real run wrote its
     // citations that way and the forward-only pattern scored them as
     // absent. The word "line" is required so a bare number sitting near a

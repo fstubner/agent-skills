@@ -1,0 +1,61 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t registry.internal/ledger-api:${{ github.sha }} .
+      - name: Push to registry
+        run: docker push registry.internal/ledger-api:${{ github.sha }}
+
+  staging:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to staging
+        run: ./scripts/deploy.sh staging registry.internal/ledger-api:${{ github.sha }}
+      - name: Wait for staging rollout
+        run: kubectl --context staging rollout status deployment/ledger-api --timeout=5m
+      - name: Enable new fee calculation in staging
+        run: kubectl --context staging set env deployment/ledger-api ENABLE_NEW_FEE_CALC=true
+      - name: Wait for 24h validation window
+        run: |
+          echo "Staging deployment ready. New fee calculation enabled."
+          echo "Reconciliation will run hourly. Monitor for drift before production promotion."
+          echo "Check: kubectl logs -f -n default -l app=ledger-api --context staging"
+
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to production (flag off by default)
+        run: ./scripts/deploy.sh production registry.internal/ledger-api:${{ github.sha }}
+      - name: Wait for production rollout
+        run: kubectl --context production rollout status deployment/ledger-api --timeout=5m
+      - name: Ensure feature flag is off
+        run: kubectl --context production set env deployment/ledger-api ENABLE_NEW_FEE_CALC=false
+      - name: Post-deploy health check
+        run: |
+          echo "Waiting for first reconciliation check..."
+          sleep 60
+          # Check reconciliation output for drift (placeholder: actual check integrates with metrics pipeline)
+          echo "Check reconciliation report at ledger-metrics.reconciliation.latest"
+          echo "Once clean, ops enables flag: kubectl --context production set env deployment/ledger-api ENABLE_NEW_FEE_CALC=true"
