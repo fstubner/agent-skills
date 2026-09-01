@@ -1,0 +1,6 @@
+{
+  "name": "job-worker",
+  "type": "module",
+  "main": "src/worker.js",
+  "scripts": { "test": "node --test test/queue.test.js" }
+}

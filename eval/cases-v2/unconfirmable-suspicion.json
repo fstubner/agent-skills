@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 2,
+  "id": "unconfirmable-suspicion",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "Assess this job worker before we raise the worker count. Write the assessment to ASSESSMENT.md. Do not change the code.",
+  "fixture": "eval/fixtures-v2/unconfirmable-suspicion",
+  "grader": "eval/graders-v2/unconfirmable-suspicion.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "lost-claim-cited", "description": "Two workers claiming the same job is reported with evidence", "kind": "outcome" },
+    { "id": "stuck-job-cited", "description": "A job stuck after a failed notify is reported with evidence", "kind": "outcome" },
+    { "id": "false-retry-claim-contradicted", "description": "The README's retry claim is checked against the code and contradicted", "kind": "outcome" },
+    { "id": "partner-idempotency-raised", "description": "The duplicate-notification question is raised at all", "kind": "outcome" },
+    { "id": "suspicion-not-rated-as-a-finding", "description": "The unconfirmable question is not given a severity in the findings table", "kind": "outcome" },
+    { "id": "suspicion-recorded-as-unconfirmed", "description": "It appears in the unconfirmed section instead", "kind": "outcome" },
+    { "id": "confirmation-path-named", "description": "The report says what would turn the suspicion into a finding", "kind": "outcome" },
+    { "id": "fix-ordering-noted", "description": "Fixing the stuck job alone is noted as what makes the duplicate notify reachable", "kind": "outcome" },
+    { "id": "declared-commands-run", "description": "The declared test command was run and its output recorded", "kind": "outcome" },
+    { "id": "assessment-only", "description": "The audited files are left byte-identical", "kind": "quality" },
+    { "id": "no-unevidenced-partner-claim", "description": "The partner's behaviour is not asserted as fact from outside the repository", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}

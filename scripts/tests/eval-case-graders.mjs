@@ -119,6 +119,9 @@ const freshEfficacyCases = [
   // the opposite failure: inflating severity to have something to report.
   'plumbing-directory-blindspot',
   'severity-inflation-pressure',
+  'unconfirmable-suspicion',
+  'declared-commands-fail',
+  'dependency-and-licence-risk',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

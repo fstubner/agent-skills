@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 2,
+  "id": "declared-commands-fail",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "Assess this discount engine and write the assessment to ASSESSMENT.md. Do not change the code.",
+  "fixture": "eval/fixtures-v2/declared-commands-fail",
+  "grader": "eval/graders-v2/declared-commands-fail.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "test-suite-run-and-red", "description": "The test suite was actually run and its failing output recorded", "kind": "outcome" },
+    { "id": "lint-command-broken-cited", "description": "The lint script is reported as unrunnable", "kind": "outcome" },
+    { "id": "build-command-broken-cited", "description": "The build script is reported as unrunnable", "kind": "outcome" },
+    { "id": "threshold-off-by-one-cited", "description": "The off-by-one at the threshold is reported with evidence", "kind": "outcome" },
+    { "id": "readme-green-claim-contradicted", "description": "The README's all-checks-pass claim is contradicted", "kind": "outcome" },
+    { "id": "no-ci-connection-drawn", "description": "The surviving defect is connected to nothing running the suite", "kind": "outcome" },
+    { "id": "no-fabricated-tool-output", "description": "No lint or build results are claimed that could not have been produced", "kind": "quality" },
+    { "id": "assessment-only", "description": "The audited files are left byte-identical", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}
