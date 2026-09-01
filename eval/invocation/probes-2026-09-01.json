@@ -1,0 +1,48 @@
+{
+ "schemaVersion": 1,
+ "ranOn": "2026-09-01",
+ "harness": "claude -p, --output-format json",
+ "runner": "eval/invocation/probe-runner.mjs",
+ "supersedes": "probes-2026-08-31.json, which used the wrong fire detector. See detectorCorrection.",
+ "detectorCorrection": "The 2026-08-31 probes detected firing by whether the reply named the skill. That is wrong: the model uses a skill content without announcing it. The correct detector is the planted figures — 4.2 Nm, 90 seconds, 0.3 degrees — which appear only in the planted SKILL.md and cannot come from training data. The 2026-08-31 conclusions happen to survive, because the figure check was also negative there, but the reasoning was unsound and one condition below fires with the figures present and the name absent.",
+ "plantedSkill": "zqx-handler, an uninformative name with a hydrofoil trim tab description and three invented figures in its body. Installed at .claude/skills/ in a scratch workspace.",
+ "fireCriterion": "at least two of the three planted figures present in the reply",
+ "conditions": [
+  {
+   "id": "A-full-library-bare-question",
+   "model": "claude-haiku-4-5-20251001",
+   "librarySize": "~44 skills from four sources",
+   "prompt": "bare question",
+   "fired": "0/3"
+  },
+  {
+   "id": "B-small-library-bare-question",
+   "model": "claude-haiku-4-5-20251001",
+   "librarySize": "13, via --setting-sources project",
+   "prompt": "bare question",
+   "fired": "3/3"
+  },
+  {
+   "id": "C-full-library-sonnet",
+   "model": "claude-sonnet-5",
+   "librarySize": "~44",
+   "prompt": "bare question",
+   "fired": "1/3"
+  },
+  {
+   "id": "D-full-library-task-shaped",
+   "model": "claude-haiku-4-5-20251001",
+   "librarySize": "~44",
+   "prompt": "task-shaped, writes a file",
+   "fired": "3/3"
+  }
+ ],
+ "finding": "The failure needs BOTH a large library AND a bare question. Shrinking the library rescues it (0/3 -> 3/3) and so does giving it a task-shaped prompt (0/3 -> 3/3). A stronger model helps a little and does not fix it (1/3).",
+ "measurementArtifactFound": "The first sonnet run recorded 0/3. --max-budget-usd was set to 0.3 in the runner and a sonnet trial costs about 0.36, so the trials were truncated before answering. Re-run at 1.5 it is 1/3. A budget flag chosen for haiku silently produced a wrong number for a different model.",
+ "limits": [
+  "n=3 per condition, one planted skill, one harness mode.",
+  "B changes which skills are installed as well as how many: --setting-sources project drops the plugin-provided skills rather than sampling 13 of the 44. Size and composition are confounded.",
+  "Every condition is claude -p. Whether interactive sessions behave the same is still untested and is the Q3 the sketch names as least automatable and most consequential.",
+  "A planted skill on an invented subject is the cleanest possible signal. A real skill competing with the model own knowledge of the subject is a harder case and is not measured here."
+ ]
+}
