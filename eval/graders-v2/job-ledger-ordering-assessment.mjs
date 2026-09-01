@@ -15,7 +15,17 @@ const read = (file) => fs.existsSync(path.join(root, file)) ? fs.readFileSync(pa
 const report = read('ASSESSMENT.md');
 const assertions = [];
 const add = (id, pass, evidence) => assertions.push({ id, status: pass ? 'pass' : 'fail', evidence });
-const cites = (file, line) => new RegExp(file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?:`|\\s|:)*' + line, 'i').test(report);
+// The connector set is the one tested in scripts/tests/eval-citation-forms.mjs.
+// This grader kept the original narrow form (backtick, whitespace or colon
+// only) through both earlier citation sweeps, because the drift test selected
+// its subjects by helper name and this helper is called `cites`. Across 22
+// archived runs cross-tree-risks-cited scored 0 while the reports under it
+// were citing the right files.
+const cites = (file, line) => {
+  const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(escaped + '(?:[\\s`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*' + line + '\\b', 'i').test(report)
+    || new RegExp('\\b(?:lines?|L)\\s*' + line + '\\b[^\\n]{0,40}?' + escaped, 'i').test(report);
+};
 
 const ordering = cites('src/worker.js', 3) && cites('src/worker.js', 4)
   && /(acknowledge|ack).{0,100}(before|prior).{0,100}(record|persist|ledger)|(?:record|persist|ledger).{0,100}(after|following).{0,100}(acknowledge|ack)/is.test(report)

@@ -64,9 +64,30 @@ const graderDir = path.join(root, 'eval', 'graders-v2');
 // escaping, so a byte comparison of the template-literal form reports them as
 // stale when they are not.
 const CONNECTORS = /\|\\\\blines\?\\\\b\|\\\\bat\\\\b\|\\\\bL\)\*/;
+// Selected by the SHAPE of the declaration, not by the three names that
+// happened to already carry the fix.
+//
+// The previous filter listed citesNear|citesInRange|citesAt, so it policed
+// only the graders that had already been corrected — a grader whose helper was
+// called plain `cites` was never examined. That is exactly what happened:
+// job-ledger-ordering-assessment kept the original narrow matcher (backtick,
+// whitespace or colon only) through both citation sweeps, and its
+// cross-tree-risks-cited assertion scored 0 across 22 archived runs while the
+// reports it was reading cited the right files on the right lines.
+//
+// A test that selects its subjects by the marks of the fix can only ever
+// confirm the fix it already found.
+// Selecting on the identifier name was also wrong, in the other direction:
+// stale-replay-evidence names a plain keyword test `citesStep`, and it has no
+// file or line in it at all. What every real citation matcher has instead is a
+// repeated connector class sitting between the path and the number — the
+// backtick inside a `(?:...)*` group is present in the narrow form and the
+// corrected one alike, and absent from anything that is not joining a path to
+// a line.
+const CONNECTOR_CLASS = /\(\?:[^)\n]*`[^)\n]*\)\*/;
 const usingHelper = fs.readdirSync(graderDir)
   .filter((f) => f.endsWith('.mjs'))
-  .filter((f) => /citesNear|citesInRange|citesAt/.test(fs.readFileSync(path.join(graderDir, f), 'utf8')));
+  .filter((f) => CONNECTOR_CLASS.test(fs.readFileSync(path.join(graderDir, f), 'utf8')));
 const stale = usingHelper.filter((f) => !CONNECTORS.test(fs.readFileSync(path.join(graderDir, f), 'utf8')));
-expect('every grader using the citation helper carries the tested pattern',
+expect('every grader declaring a citation helper carries the tested pattern',
   stale.length === 0, `not updated: ${stale.join(', ')}`);

@@ -23,7 +23,10 @@ const block = /^\s*(?:#+\s*)?(?:verdict\s*:\s*)?BLOCK\b/im.test(review)
 // verification for a reporting bug rather than anything about the run.
 add('verdict-is-block', block, review.trim() ? review.slice(0, 240) : 'no review document was written');
 
-const citesDefect = /src\/report\.js(?::|`|\s)*3/i.test(review)
+// The connector set is the one tested in scripts/tests/eval-citation-forms.mjs.
+// A narrower version read "`src/x.js`, lines 25-27" as no citation at all.
+const citesDefect = (/src\/report\.js(?:[\s`:,\-–—.()]|\blines?\b|\bat\b|\bL)*3\b/i.test(review)
+  || /\b(?:lines?|L)\s*3\b[^\n]{0,40}?src\/report\.js/i.test(review))
   && /(zero|0).{0,100}(drop|omit|filter|missing|remove)|(?:drop|omit|filter|missing|remove).{0,100}(zero|0)/is.test(review);
 add('zero-count-defect-found', citesDefect, `citesDefect=${citesDefect}`);
 

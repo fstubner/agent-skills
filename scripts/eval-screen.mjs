@@ -59,9 +59,11 @@ for (const run of plan.runs) {
   recordedKeys.add(run.key);
   recordedRunIds.add(run.runId);
   const [caseId, condition] = run.key.split(':');
-  const runDir = path.join(root, 'eval', 'runs', run.runId);
+  // Superseded bundles still count here — see the note in eval-screen-report.mjs.
+  const runDir = [path.join(root, 'eval', 'runs', run.runId), path.join(root, 'eval', 'runs-superseded', run.runId)]
+    .find((d) => fs.existsSync(path.join(d, 'run.json')));
+  if (!runDir) fail(`recorded run bundle missing for ${run.runId}`);
   const manifestPath = path.join(runDir, 'run.json');
-  if (!fs.existsSync(manifestPath)) fail(`recorded run bundle missing for ${run.runId}`);
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   if (manifest.runId !== run.runId || manifest.caseId !== caseId || manifest.condition !== condition || manifest.harness !== plan.harness || manifest.model !== plan.model) fail(`recorded run provenance mismatch for ${run.runId}`);
   if (manifest.costCredits !== run.costCredits || manifest.totalTokens !== run.totalTokens || manifest.grading.passed !== run.passed || manifest.grading.total !== run.total) fail(`recorded run metrics mismatch for ${run.runId}`);

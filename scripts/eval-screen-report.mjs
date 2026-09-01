@@ -22,12 +22,17 @@ if (byKey.size !== plan.runs.length || new Set(plan.runs.map((run) => run.runId)
 }
 for (const run of plan.runs) {
   const [caseId, condition] = run.key.split(':');
-  const runDir = path.join(root, 'eval', 'runs', run.runId);
-  const manifestPath = path.join(runDir, 'run.json');
-  if (!fs.existsSync(manifestPath)) {
+  // Superseded bundles still count here. The screen is a closed record of a
+  // past measurement — its costs, tokens and verdicts were produced by the
+  // grader of its time — so retiring a grader moves the bundle out of the
+  // current evidence set without unmaking the screen that cites it.
+  const runDir = [path.join(root, 'eval', 'runs', run.runId), path.join(root, 'eval', 'runs-superseded', run.runId)]
+    .find((d) => fs.existsSync(path.join(d, 'run.json')));
+  if (!runDir) {
     console.error(`run bundle missing for ${run.runId}`);
     process.exit(1);
   }
+  const manifestPath = path.join(runDir, 'run.json');
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   if (manifest.caseId !== caseId || manifest.condition !== condition || manifest.harness !== plan.harness || manifest.model !== plan.model
     || manifest.costCredits !== run.costCredits || manifest.totalTokens !== run.totalTokens || manifest.grading.passed !== run.passed || manifest.grading.total !== run.total) {

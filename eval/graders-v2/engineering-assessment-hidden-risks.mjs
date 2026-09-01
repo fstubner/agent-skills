@@ -16,7 +16,14 @@ const citations = [
   ['src/files.js', lineOf('src/files.js', 'path.join'), /(path traversal|containment|outside|escape)/i],
   ['migrations/003_remove_audit.sql', 1, /(drop|destructive|data loss)/i]
 ];
-const citationPass = citations.map(([file, line, issue]) => issue.test(report) && new RegExp(file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?:`|\\s|:)*' + line, 'i').test(report));
+// The connector set is the one tested in scripts/tests/eval-citation-forms.mjs.
+// A narrower version read "`src/x.js`, lines 25-27" as no citation at all.
+const citesAt = (file, line) => {
+  const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(escaped + '(?:[\\s`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*' + line + '\\b', 'i').test(report)
+    || new RegExp('\\b(?:lines?|L)\\s*' + line + '\\b[^\\n]{0,40}?' + escaped, 'i').test(report);
+};
+const citationPass = citations.map(([file, line, issue]) => issue.test(report) && citesAt(file, line));
 record('planted-risks-cited', citationPass.every(Boolean), `citationChecks=${citationPass.join(',')}`);
 
 const smoke = /(smoke|tests\/smoke\.js|tests\\smoke\.js)/i.test(report);

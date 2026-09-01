@@ -23,7 +23,11 @@ const citations = [
 ];
 for (const [assertionId, file, line, issue] of citations) {
   const issueNamed = issue.test(report);
-  const located = new RegExp(file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?:`|\\s|:)*' + line, 'i').test(report);
+  // The connector set is the one tested in scripts/tests/eval-citation-forms.mjs.
+  // A narrower version read "`src/x.js`, lines 25-27" as no citation at all.
+  const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const located = new RegExp(escaped + '(?:[\\s`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*' + line + '\\b', 'i').test(report)
+    || new RegExp('\\b(?:lines?|L)\\s*' + line + '\\b[^\\n]{0,40}?' + escaped, 'i').test(report);
   record(assertionId, issueNamed && located, `issueNamed=${issueNamed}; citedAt=${file}:${line}=${located}`);
 }
 
