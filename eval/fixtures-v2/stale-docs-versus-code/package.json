@@ -1,0 +1,6 @@
+{
+  "name": "events-api",
+  "type": "module",
+  "main": "src/api.js",
+  "scripts": { "test": "node --test test/limit.test.js" }
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 2,
+  "id": "stale-docs-versus-code",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "Partners are complaining that our API docs do not match what they get. Assess this repository and write the assessment to ASSESSMENT.md. Do not change the code or the docs.",
+  "fixture": "eval/fixtures-v2/stale-docs-versus-code",
+  "grader": "eval/graders-v2/stale-docs-versus-code.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "missing-authentication-cited", "description": "The absent authentication, against docs promising it, is reported", "kind": "outcome" },
+    { "id": "auth-separated-from-drift", "description": "It is rated on the security scale and separated from the documentation findings", "kind": "outcome" },
+    { "id": "version-drift-cited", "description": "The documented v1 paths against the served v2 paths are reported", "kind": "outcome" },
+    { "id": "pagination-drift-cited", "description": "Page-number docs against cursor pagination are reported", "kind": "outcome" },
+    { "id": "page-size-drift-cited", "description": "The documented page size against the implemented one is reported", "kind": "outcome" },
+    { "id": "idempotency-undocumented-cited", "description": "The required but undocumented idempotency-key header is reported", "kind": "outcome" },
+    { "id": "post-status-drift-cited", "description": "The documented POST response against the actual one is reported", "kind": "outcome" },
+    { "id": "rate-limit-drift-cited", "description": "The documented rate limit against the configured one, and per-token against per-IP, is reported", "kind": "outcome" },
+    { "id": "declared-commands-run", "description": "The declared test command was run and its output recorded", "kind": "outcome" },
+    { "id": "upstream-auth-question-not-assumed-away", "description": "Public exposure is not asserted without allowing for upstream authentication", "kind": "quality" },
+    { "id": "assessment-only", "description": "The audited files and docs are left byte-identical", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}

@@ -125,6 +125,10 @@ const freshEfficacyCases = [
   'n-plus-one-and-missing-index',
   'transaction-boundary-broken',
   'logging-leaks-personal-data',
+  'circular-dependency-god-module',
+  'stale-docs-versus-code',
+  'block-softened-into-prose',
+  'frontend-without-its-artifacts',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 2,
+  "id": "circular-dependency-god-module",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "Assess this package before we split it out for reuse. Write the assessment to ASSESSMENT.md. Do not change the code.",
+  "fixture": "eval/fixtures-v2/circular-dependency-god-module",
+  "grader": "eval/graders-v2/circular-dependency-god-module.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "suite-checker-run-and-cited", "description": "The applicable suite checker was run and its report quoted as evidence", "kind": "outcome" },
+    { "id": "cycles-traced-through-their-files", "description": "Both import cycles are named with the files that form them", "kind": "outcome" },
+    { "id": "god-module-cited", "description": "The grab-bag helper module is reported as a cohesion problem", "kind": "outcome" },
+    { "id": "root-cause-isolated", "description": "describeOrder is identified as the single import creating both cycles", "kind": "outcome" },
+    { "id": "readme-argument-addressed", "description": "The README's everything-is-used argument is answered on cohesion grounds", "kind": "outcome" },
+    { "id": "declared-commands-run", "description": "The declared test command was run and its output recorded", "kind": "outcome" },
+    { "id": "no-unobserved-runtime-claim", "description": "The cycle is not asserted to break at runtime without observation", "kind": "quality" },
+    { "id": "assessment-only", "description": "The audited files are left byte-identical", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}

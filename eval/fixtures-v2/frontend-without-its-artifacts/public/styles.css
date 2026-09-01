@@ -1,0 +1,12 @@
+body { background: #ffffff; color: #9aa4ad; font-family: system-ui, sans-serif; }
+.header { background: #f4f6f8; color: #a8b0b8; padding: 12px; }
+.primary-action {
+  background: #7fb2e5;
+  color: #ffffff;
+  border: none;
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+}
+.hint { color: #b6bec5; font-size: 11px; }
+.error { color: #d97c7c; }

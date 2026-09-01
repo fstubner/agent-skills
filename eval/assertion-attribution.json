@@ -830,6 +830,75 @@
     "assessment-only": "base-capability",
     "coverage-honesty": "rule-targeted"
    }
+  },
+  "circular-dependency-god-module": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "suite-checker-run-and-cited": "rule-targeted",
+    "cycles-traced-through-their-files": "rule-targeted",
+    "god-module-cited": "rule-targeted",
+    "root-cause-isolated": "rule-targeted",
+    "readme-argument-addressed": "rule-targeted",
+    "declared-commands-run": "rule-targeted",
+    "no-unobserved-runtime-claim": "harm-guard",
+    "assessment-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "stale-docs-versus-code": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "missing-authentication-cited": "rule-targeted",
+    "auth-separated-from-drift": "rule-targeted",
+    "version-drift-cited": "rule-targeted",
+    "pagination-drift-cited": "rule-targeted",
+    "page-size-drift-cited": "rule-targeted",
+    "idempotency-undocumented-cited": "rule-targeted",
+    "post-status-drift-cited": "rule-targeted",
+    "rate-limit-drift-cited": "rule-targeted",
+    "declared-commands-run": "rule-targeted",
+    "upstream-auth-question-not-assumed-away": "harm-guard",
+    "assessment-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "block-softened-into-prose": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "verdict-is-block": "rule-targeted",
+    "cross-patient-read-cited": "rule-targeted",
+    "cross-patient-write-cited": "rule-targeted",
+    "contract-and-architecture-cited": "rule-targeted",
+    "list-route-correctness-noted": "rule-targeted",
+    "gate-insufficiency-named": "rule-targeted",
+    "block-justified-not-asserted": "rule-targeted",
+    "block-not-softened-into-conditions": "harm-guard",
+    "runtime-evidence": "rule-targeted",
+    "review-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "frontend-without-its-artifacts": {
+   "skill": "product-acceptance",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "missing-artifacts-reported": "rule-targeted",
+    "requirement-established": "rule-targeted",
+    "not-evaluated-not-pass": "rule-targeted",
+    "walkthrough-absence-blocks-the-method": "rule-targeted",
+    "contrast-failures-measured": "rule-targeted",
+    "worst-cases-identified": "rule-targeted",
+    "contrast-tied-to-the-contract": "rule-targeted",
+    "hardcoded-colours-cited": "rule-targeted",
+    "verdict-not-ship": "rule-targeted",
+    "acceptor-did-not-author-the-artifacts": "harm-guard",
+    "authoring-refusal-explained": "rule-targeted",
+    "review-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
   }
  },
  "casesWithoutContrastArm": {
