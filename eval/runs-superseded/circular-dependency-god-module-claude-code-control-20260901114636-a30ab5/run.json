@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "circular-dependency-god-module-claude-code-control-20260901114636-a30ab5",
+  "caseId": "circular-dependency-god-module",
+  "caseRevision": 1,
+  "caseSha256": "efb7e5bbcd7667c1fc4549822a15a26edf0c95df1083d901d35d0a1281a9416a",
+  "fixtureSha256": "29fd0458d66514875facf8dfd39e1f64af09ffddcda31d28cd701276b1689e01",
+  "graderSha256": "18a7479e58383afa4f61a7ae5a8c33cd6f28a0943ffb51b2c432dace534ec4af",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-09-01T11:46:36.387Z",
+  "finishedAt": "2026-09-01T11:47:16.074Z",
+  "durationMs": 39687,
+  "totalTokens": 130102,
+  "costUsd": 0.0417081,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "42b0b0f9a0db5d7585a447eaa4b1e06884c0662cc3e6e0a4778e3a4e4d3363a1",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 3,
+    "failed": 6,
+    "notEvaluated": 0,
+    "total": 9
+  }
+}

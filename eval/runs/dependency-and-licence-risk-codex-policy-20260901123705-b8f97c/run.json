@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "dependency-and-licence-risk-codex-policy-20260901123705-b8f97c",
+  "caseId": "dependency-and-licence-risk",
+  "caseRevision": 1,
+  "caseSha256": "de13c97165ffcf74874e897fb1419e7a3cf9b1af7a3c0421bd1b9952922facee",
+  "fixtureSha256": "1ce0cd9f16ff4cfd4b54d89ad1202b033ab6f5666a3817c94773f1af80a1c0d3",
+  "graderSha256": "ba19e5b5ae8daf089e41309fc86acf9a9a881bbea4ebedc04755f4cf07c514a1",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "policy",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-09-01T12:37:05.425Z",
+  "finishedAt": "2026-09-01T12:38:09.656Z",
+  "durationMs": 64231,
+  "totalTokens": 88621,
+  "costUsd": null,
+  "costCredits": 0.77093,
+  "exitCode": 0,
+  "artifactSha256": "032447cf8a6f1b83612845a1c0d1b2cd81b4f77fa9e184586b69327c54272bab",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 8,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 9
+  }
+}

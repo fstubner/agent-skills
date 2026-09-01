@@ -175,7 +175,14 @@ function stagedFiles() {
 // planted DROP — the hook forbidding the evidence that the checkers work.
 // Captures additionally cannot be edited: a run bundle's hash is what makes
 // it evidence, so "fix the finding" would destroy the artifact.
-const CONTENT_EXEMPT = [/^fixtures\//, /^eval\/fixtures-v2\//, /^eval\/grader-fixtures-v2\//, /^eval\/runs\//];
+// eval/runs-superseded/ is the same thing as eval/runs/ — bundles moved out
+// when the grader or case they answer changed. It was added on 2026-09-01 and
+// immediately blocked a commit: a superseded bundle carries a copy of the
+// circular-dependency fixture, so check-organization reported the cycle the
+// fixture exists to contain. Same argument as the line above, one directory
+// over, and the same reason it cannot be fixed by editing the file.
+const CONTENT_EXEMPT = [/^fixtures\//, /^eval\/fixtures-v2\//, /^eval\/grader-fixtures-v2\//,
+  /^eval\/runs\//, /^eval\/runs-superseded\//];
 
 const staged = stagedFiles();
 if (staged === null) {

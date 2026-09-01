@@ -25,3 +25,19 @@ the act of tidying up. A case's evidence set is kept whole or moved whole.
 The runs are still readable here: prompts, transcripts, workspaces and the
 gradings the old grader produced. What cannot be done is compare them to runs
 graded by the current one.
+
+## 2026-09-01 — circular-dependency-god-module revision 2
+
+18 runs, moved whole. The case asserted that the run had executed
+`code-organization/scripts/check-organization.js`, and the harness stages only
+the case's own skill into the workspace, so that checker was never present.
+Zero of six skill-condition runs could pass it, and a run that declined to
+attempt an absent checker was behaving correctly.
+
+The assertion is gone at revision 2. These runs were graded against revision 1
+and the eight surviving assertions would score the same, but the case they
+answer no longer exists, so they are not mixed with revision 2 evidence.
+
+This is also the case that showed the defect: it was the only one in the first
+50-run batch where the skill arm scored below control, which is what prompted
+looking at it.

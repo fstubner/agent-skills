@@ -35,12 +35,14 @@ const low = report.toLowerCase();
 const assertions = [];
 const record = (id, pass, evidence) => assertions.push({ id, status: pass ? 'pass' : 'fail', evidence });
 
-// The checker was run and its own output quoted, not paraphrased. Its check
-// id and verdict are strings nothing else in the repository contains.
-const namesChecker = /check-organization/i.test(report);
-const quotesResult = /O-circular-deps/i.test(report) && /\bBLOCK\b/.test(report);
-record('suite-checker-run-and-cited', namesChecker && quotesResult,
-  `checker named=${namesChecker}; its check id and verdict quoted=${quotesResult}`);
+// suite-checker-run-and-cited was removed at revision 2. It required the run
+// to have executed code-organization/scripts/check-organization.js, and the
+// harness stages only the case's own skill into the workspace, so that file
+// is not there. engineering-assessment says to run this suite's checkers
+// "where they apply" — an absent checker does not apply, so a run that did
+// not attempt it was behaving correctly and the assertion was punishing it.
+// Zero of six skill-condition runs could pass it. The rule it tried to
+// measure is currently unmeasurable in this harness.
 
 // Both cycles, with the files that form them. Naming "a circular dependency"
 // without the edges is not evidence.

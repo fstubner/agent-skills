@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "circular-dependency-god-module-codex-skill-20260901120319-0ed6ca",
+  "caseId": "circular-dependency-god-module",
+  "caseRevision": 1,
+  "caseSha256": "efb7e5bbcd7667c1fc4549822a15a26edf0c95df1083d901d35d0a1281a9416a",
+  "fixtureSha256": "29fd0458d66514875facf8dfd39e1f64af09ffddcda31d28cd701276b1689e01",
+  "graderSha256": "18a7479e58383afa4f61a7ae5a8c33cd6f28a0943ffb51b2c432dace534ec4af",
+  "checkerSha256": null,
+  "stagedInputSha256": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+  "condition": "skill",
+  "harness": "codex",
+  "harnessVersion": "codex-cli 0.146.0 (Ubuntu container)",
+  "model": "gpt-5.6-luna",
+  "startedAt": "2026-09-01T12:03:19.930Z",
+  "finishedAt": "2026-09-01T12:05:00.161Z",
+  "durationMs": 100231,
+  "totalTokens": 147352,
+  "costUsd": null,
+  "costCredits": 1.398965,
+  "exitCode": 0,
+  "artifactSha256": "ce9132dc95079b15cd0faf20f011bb788a44ee73e92b6195adf633a6963eda58",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 5,
+    "failed": 4,
+    "notEvaluated": 0,
+    "total": 9
+  }
+}

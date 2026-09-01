@@ -20,3 +20,14 @@
 # invalidate the artifact it exists to prove.
 eval/runs/self-serve-project-invites-codex-skill-20260813190249-2de06b/transcript.jsonl:curl-auth-header:28
 eval/runs/self-serve-project-invites-codex-skill-20260813190249-2de06b/transcript.jsonl:curl-auth-header:29
+
+# --- eval run-bundle assessments ---
+# `outputs/ASSESSMENT.md` in a run bundle is model-written prose, hash-bound
+# into the artifact the same way a transcript is, so it cannot be edited to
+# remove a match without invalidating the run.
+#
+# Inspected 2026-09-01 before adding. The matched "secret" is the phrase
+# `correctness/reliability`, from the sentence "public API shape,
+# correctness/reliability risks". gitleaks' generic-api-key rule fires because
+# the word API sits a few tokens earlier. There is no credential on the line.
+eval/runs-superseded/circular-dependency-god-module-codex-skill-20260901120159-284d2b/outputs/ASSESSMENT.md:generic-api-key:7

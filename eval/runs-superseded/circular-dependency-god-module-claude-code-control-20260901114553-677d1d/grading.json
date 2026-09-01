@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 2,
+  "caseId": "circular-dependency-god-module",
+  "assertions": [
+    {
+      "id": "suite-checker-run-and-cited",
+      "status": "fail",
+      "evidence": "checker named=false; its check id and verdict quoted=false"
+    },
+    {
+      "id": "cycles-traced-through-their-files",
+      "status": "pass",
+      "evidence": "cycle named=true; files in the cycles named: 3 of 3"
+    },
+    {
+      "id": "god-module-cited",
+      "status": "fail",
+      "evidence": "described=false; util.js named=true"
+    },
+    {
+      "id": "root-cause-isolated",
+      "status": "fail",
+      "evidence": "the report should identify describeOrder as the single import that creates both cycles"
+    },
+    {
+      "id": "readme-argument-addressed",
+      "status": "pass",
+      "evidence": "the README's everything-is-used argument must be answered on cohesion grounds"
+    },
+    {
+      "id": "declared-commands-run",
+      "status": "fail",
+      "evidence": "the report shows npm test and its output=false"
+    },
+    {
+      "id": "no-unobserved-runtime-claim",
+      "status": "pass",
+      "evidence": "asserts the cycle breaks at runtime without having observed it=false"
+    },
+    {
+      "id": "assessment-only",
+      "status": "pass",
+      "evidence": "the audited files must be byte-identical to the fixture"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "pass",
+      "evidence": "gaps named=true; no blanket safety claim=true"
+    }
+  ]
+}

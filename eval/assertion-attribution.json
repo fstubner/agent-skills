@@ -835,7 +835,6 @@
    "skill": "engineering-assessment",
    "registeredBefore": "no-runs-existed=true",
    "assertions": {
-    "suite-checker-run-and-cited": "rule-targeted",
     "cycles-traced-through-their-files": "rule-targeted",
     "god-module-cited": "rule-targeted",
     "root-cause-isolated": "rule-targeted",

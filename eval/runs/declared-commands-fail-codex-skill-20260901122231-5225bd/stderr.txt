@@ -1,0 +1,7 @@
+npm notice
+npm notice New major version of npm available! 10.9.0 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+Reading additional input from stdin...
+2026-09-01T12:23:41.137064Z ERROR codex_core::tools::router: error=apply_patch verification failed: invalid hunk at line 26, '| 2 | High | Correctness / Reliability | Membership years are calculated against a hardcoded date, so the engine becomes stale after that date and can produce a discount for a future membership start year. | `src/discount.js:6` subtracts `memberSince` from `new Date('2026-09-01').getFullYear()`. The direct probe returned `100` for subtotal `10000`, membership year `2030`; the loyalty term is negative and reduces the base discount. | Derive the calculation date from an injected clock or the current business date, validate that `memberSince` is not in the future, and define how anniversary/month/day boundaries are handled. |' is not a valid hunk header. Valid hunk headers: '*** Add File: {path}', '*** Delete File: {path}', '*** Update File: {path}'
