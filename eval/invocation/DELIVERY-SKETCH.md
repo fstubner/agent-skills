@@ -1,116 +1,121 @@
-# Delivery: does a skill reach context at all?
+# Delivery: why doesn't a visible, matching skill fire?
 
-Design sketch, 2026-08-31. Nothing here has been run. Written after the
-selection harness produced a number that reframes the problem.
+Design sketch, rewritten 2026-09-01. The first version of this file was wrong
+and is worth reading as a lesson before the rewrite.
 
-## The gap this exists to close
+## The version this replaces, and why it failed
 
-Two measurements now sit side by side:
+The first sketch assumed skills fail to fire because the model cannot see
+them, and proposed four arms with a startup hook injecting the skill listing
+as the main treatment. It was going to cost about 144 agent runs.
 
-| | measured | how |
-|---|---|---|
-| **selection** — asked which skill fits, does the model pick the right one | **138/159, ~87%** | `scripts/eval-invocation.mjs`, 2026-08-31 |
-| **invocation** — unasked, does a skill fire in a real session | **~0%** | unprimed protocol, both recorded runs, 15 skills installed |
+Four probes at roughly $0.15 total killed it before it ran
+(`probes-2026-08-31.json`):
 
-Deployed value is the product of the two. The model routes well when asked
-and never asks, so the binding constraint is delivery, not description
-wording. That is why description tuning has little left to give: today's
-attempt recovered `mental-models` from 0/3 to 3/3 and moved overall top-1 by
-one trial, because there was only 13% of headroom to begin with.
+- **Skills are already visible.** `claude -p` lists every installed skill by
+  name — about 44 on this machine, from four sources — including a
+  project-level one planted in `.claude/skills/`. The hook arm was solving a
+  problem that does not exist.
+- **A near-exactly matching skill still does not fire.** A skill named
+  `zqx-handler` (deliberately uninformative) described as "use this whenever
+  the user asks about calibrating a hydrofoil trim tab" did not fire on "How
+  do I calibrate a hydrofoil trim tab?". The reply contained none of the
+  skill's planted figures.
+- **A standing instruction did not fix it.** `CLAUDE.md` reading "check the
+  list of available Agent Skills and invoke any whose description matches"
+  changed nothing. That was arm C.
 
-`~0%` is also the weakest number in this repository. It rests on two runs
-scored by hand from transcripts. Before spending anything on improving
-delivery, it needs to be measured properly — automated, repeatable, and
-cheap enough to run as a matrix.
+Two of four arms dead, and the premise of the whole design falsified, for the
+price of four single runs. The lesson worth keeping: **the assumption
+underneath an experiment is usually cheaper to test than the experiment.**
 
-## What to measure
+It also puts today's description work in its place. `eval-invocation.mjs`
+measured ~87% selection by handing the model 17 descriptions and asking a
+direct question. That is not the deployed condition — where ~44 names compete,
+descriptions may or may not be present, and nothing prompts the question at
+all. The 87% is real for what it measured and it does not license a claim
+about live sessions.
 
-For a single task prompt in a workspace with skills installed: **did any
-skill's content enter the model's context before it started work, and was it
-the right skill?**
+## The question now
 
-Detectable from `claude -p --output-format json`, whose transcript records
-tool calls. A skill fired if the transcript contains either a `Skill` tool
-call naming an installed skill, or a `Read` whose path ends in a
-`SKILL.md` under the install root. Both are unambiguous and neither needs a
-judge.
+Not "can the model see the skills" but **why does a visible, matching skill
+not fire?** Four candidate explanations, each testable at about one run each,
+in rough order of how much they would change what we ship.
 
-Three outcomes per trial, and the middle one matters as much as the first:
+### Q1 — library size
 
-- `fired-correct` — the intended skill's content entered context
-- `fired-wrong` — some other skill did, which is a routing cost, not a win
-- `silent` — nothing fired
+This machine has ~44 skills from four sources. The skills survey reports a
+phase transition in selection accuracy as a library grows, and the selection
+harness tested 17 in isolation.
 
-Scored against the same `expected` labels the selection harness already
-uses, so selection and delivery are directly comparable on identical
-prompts.
+*Test:* the same `zqx-handler` probe in workspaces holding 1, 5, 17 and ~44
+skills. If it fires at 1 and not at 44, selection pressure is the mechanism
+and the answer is a smaller default install — which is also the tiered-install
+question from the design review, in testable form.
 
-## Arms
+### Q2 — model tier
 
-Factorial over how the suite is presented. Each arm is a workspace fixture;
-the task prompts and the model are held constant.
+Every probe used Haiku, and every recorded unprimed run used a small model.
 
-| arm | workspace | question it answers |
-|---|---|---|
-| **A** installed only | skills in the install root, nothing else | the honest baseline — reproduces the ~0% figure automatically |
-| **B** + listing hook | a SessionStart hook injecting names and descriptions | does the router fire when the menu is in front of it, rather than on disk |
-| **C** + standing instruction | `AGENTS.md`/`CLAUDE.md` line telling the agent to check installed skills before starting | does one sentence of policy do what the hook does, for no context cost |
-| **D** + dispatcher | `product-build` installed and named in the instruction | does routing-through-one-skill beat routing-through-seventeen |
+*Test:* the same probe on Haiku, Sonnet and Opus. If firing is tier-dependent,
+the suite's deployed value depends on which model the user runs, and that
+belongs in `INSTALL.md` rather than being discovered.
 
-A vs B separates "the descriptions are wrong" from "the descriptions were
-never read" — and the selection result already predicts B should be close to
-87% if delivery is the whole problem. If B lands far below 87%, something
-other than visibility is wrong and the plan changes.
+### Q3 — harness mode
 
-B vs C is the one with a real deployment consequence: a hook costs context
-on every session forever, a sentence costs almost nothing, and if they
-perform the same the hook should not ship.
+All four probes and both historical unprimed runs are non-interactive
+`claude -p`. This session's own listing does carry descriptions, which hints
+the two modes differ.
 
-D tests the shape the suite is actually built around, since `product-build`
-already exists as a dispatcher. If D beats B, the answer is one loud skill
-rather than seventeen quiet ones — which is also the tiered-install question
-from the design review.
+*Test:* the same probe interactively versus `-p`. Hard to automate — likely a
+handful of manual sessions with the transcript kept. Worth doing even at n=3,
+because if skills fire interactively and not in `-p`, then every invocation
+number in this repository is an artifact of the harness rather than a property
+of skills.
 
-## What it costs
+### Q4 — prompt shape
 
-Unlike the selection harness, each trial is a full agent run: the model
-works the task, so cost and wall clock are comparable to an efficacy run
-(~62s median, ~325k tokens on Haiku, from the 142 recorded claude-code
-bundles). A first cut of 12 prompts x 4 arms x 3 trials is 144 runs — the
-same order as the 139 claude-code runs already recorded, which cost $11.23
-imputed and are flat-rate on a Max plan.
+The probe was a bare question. The suite's skills are written for tasks in a
+repository.
 
-That is affordable, but it is not free the way the selection harness was, so
-it is worth cutting the prompt set to the skills whose delivery matters most
-rather than running all 61.
+*Test:* the same planted skill against a task-shaped prompt in a populated
+workspace. This one is closest to the eval cases and most likely to be the
+condition the suite was actually designed for.
 
-## Traps to avoid
+## Method, unchanged from the first version
 
-**Do not let the task prompt name a skill.** The prompts must be the same
-scenario-shaped prompts the selection harness uses. A prompt that says
-"review this" to a suite containing `product-acceptance` is a fair trigger;
-one that says "use the acceptance skill" measures nothing.
+One trial is: a scratch workspace, a real `claude -p` run on an ordinary task,
+then the transcript inspected for whether a skill's content entered context —
+a `Skill` tool call, or a `Read` of a `SKILL.md`. No judge, nothing to argue
+about.
+
+Use a planted skill with an uninformative name and invented figures in its
+body, so that firing can only come from the description and use of the body is
+detectable in the reply. Testing with the suite's own skills confounds firing
+with the model already knowing the material.
+
+Three outcomes per trial: fired-correct, fired-wrong, silent. The middle one
+is a cost, not a partial win.
+
+## Traps
 
 **A fired skill is not a followed skill.** This measures delivery only.
-Whether the content then changes the output is the efficacy programme's
-question, and conflating them is the mistake `eval/README.md` already warns
-about. Report the two separately and never multiply them into a single
-headline.
+Efficacy is the other programme's question and `eval/README.md` already warns
+against conflating them.
 
-**The hook arm changes the system prompt for every task**, including tasks
-no skill should serve. Carry the distractor prompts through, and count a
-skill firing on `"Rename the utils folder to lib"` as a cost. An arm that
-fires 100% of the time has not solved routing, it has removed it.
+**An arm that fires on everything has removed routing, not fixed it.** Carry
+nonsense prompts through every arm and count a skill firing on "rename this
+folder" against it.
 
-**Arms B, C and D each add context**, so any efficacy difference between
-arms is confounded with context length. Do not read output quality across
-arms; read firing rate only.
+**n=1 falsifies; it does not characterise.** The probes above are enough to
+kill a hypothesis and not enough to explain anything. Any answer to Q1–Q4
+needs replication before it goes in a README.
 
-## What would make this unnecessary
+## What would make all of this moot
 
-If the answer is that skills only ever reach context through explicit user
-invocation — `/skill-name`, or a harness that always injects them — then the
-efficacy programme is measuring the right thing under the right assumption,
-and this experiment just documents that assumption instead of testing a way
-around it. That is a legitimate outcome and should be written into
-`AGENTS.md` either way, since it is currently unstated.
+If skills only ever reach context through explicit user invocation — a
+`/skill-name` call, or a harness that always injects them — then the efficacy
+programme is measuring the right thing under the right assumption, and the
+honest move is to write that assumption into `AGENTS.md` rather than keep
+hunting for a way around it. Q3 is the probe most likely to settle that, which
+is why it is worth the manual effort despite being the least automatable.
