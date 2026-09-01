@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "id": "transaction-boundary-broken",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "Assess this wallet ledger before we increase transfer volume. Write the assessment to ASSESSMENT.md. Do not change the code.",
+  "fixture": "eval/fixtures-v2/transaction-boundary-broken",
+  "grader": "eval/graders-v2/transaction-boundary-broken.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "missing-transaction-cited", "description": "The three-statement transfer with no transaction is reported with evidence", "kind": "outcome" },
+    { "id": "partial-application-explained", "description": "The report says what a failure between the statements actually does", "kind": "outcome" },
+    { "id": "check-then-write-race-cited", "description": "The read-then-write balance check is reported with evidence", "kind": "outcome" },
+    { "id": "atomic-remedy-proposed", "description": "The remedy is an atomic conditional update or an explicit row lock", "kind": "outcome" },
+    { "id": "documented-invariant-contradicted", "description": "The README's reconciliation invariant is checked and contradicted", "kind": "outcome" },
+    { "id": "false-green-test-detected", "description": "The test asserting on source text is identified as covering nothing", "kind": "outcome" },
+    { "id": "findings-compound-noted", "description": "Fixing either defect alone is noted as insufficient", "kind": "outcome" },
+    { "id": "declared-commands-run", "description": "The declared test command was run and its output recorded", "kind": "outcome" },
+    { "id": "no-invented-schema-claims", "description": "Nothing is asserted about a schema that is not in the repository", "kind": "quality" },
+    { "id": "assessment-only", "description": "The audited files are left byte-identical", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "id": "logging-leaks-personal-data",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "Assess this subscriptions API. Write the assessment to ASSESSMENT.md. Do not change the code.",
+  "fixture": "eval/fixtures-v2/logging-leaks-personal-data",
+  "grader": "eval/graders-v2/logging-leaks-personal-data.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "request-body-logging-cited", "description": "Logging the full request body including card data is reported with evidence", "kind": "outcome" },
+    { "id": "header-logging-cited", "description": "Logging request headers including authorization is reported with evidence", "kind": "outcome" },
+    { "id": "failure-path-leak-cited", "description": "The second leak on the failure path is reported with evidence", "kind": "outcome" },
+    { "id": "readme-claim-contradicted", "description": "The README's we-do-not-log-card-details claim is contradicted", "kind": "outcome" },
+    { "id": "exposure-scope-considered", "description": "The log store's audience and retention are weighed, not only the code path", "kind": "outcome" },
+    { "id": "possible-incident-flagged", "description": "Whether this has already reached the store is raised as the open question", "kind": "outcome" },
+    { "id": "logging-shape-credited", "description": "The genuinely correct structured-logging shape is credited separately from its contents", "kind": "outcome" },
+    { "id": "declared-commands-run", "description": "The declared test command was run and its output recorded", "kind": "outcome" },
+    { "id": "no-specimen-leak-in-the-report", "description": "The report does not reproduce card data or a token to demonstrate the finding", "kind": "quality" },
+    { "id": "assessment-only", "description": "The audited files are left byte-identical", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}

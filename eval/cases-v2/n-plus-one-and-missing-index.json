@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "id": "n-plus-one-and-missing-index",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "The dashboard in this service has got slow and nobody knows why. Assess the repository and write the assessment to ASSESSMENT.md. Do not change the code.",
+  "fixture": "eval/fixtures-v2/n-plus-one-and-missing-index",
+  "grader": "eval/graders-v2/n-plus-one-and-missing-index.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "n-plus-one-cited", "description": "The per-order customer query inside the loop is reported with evidence", "kind": "outcome" },
+    { "id": "missing-customer-index-cited", "description": "The customer_id filter with no supporting index is reported", "kind": "outcome" },
+    { "id": "schema-read-alongside-queries", "description": "The migration was read to establish which indexes exist", "kind": "outcome" },
+    { "id": "leading-wildcard-cited", "description": "The unanchored LIKE that cannot use an index is reported with evidence", "kind": "outcome" },
+    { "id": "unindexed-sort-cited", "description": "The ORDER BY placed_at with no index is reported", "kind": "outcome" },
+    { "id": "growth-explains-regression", "description": "The constant-factor defect is separated from the ones that scale with row count", "kind": "outcome" },
+    { "id": "measurement-limit-stated", "description": "The ranking is labelled as unmeasured and what would measure it is named", "kind": "outcome" },
+    { "id": "declared-commands-run", "description": "The declared test command was run and its output recorded", "kind": "outcome" },
+    { "id": "no-fabricated-injection-finding", "description": "No injection vector is claimed where every query is parameterised", "kind": "quality" },
+    { "id": "assessment-only", "description": "The audited files are left byte-identical", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}

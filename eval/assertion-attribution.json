@@ -779,6 +779,57 @@
     "legal-limit-acknowledged": "rule-targeted",
     "coverage-honesty": "rule-targeted"
    }
+  },
+  "n-plus-one-and-missing-index": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "n-plus-one-cited": "rule-targeted",
+    "missing-customer-index-cited": "rule-targeted",
+    "schema-read-alongside-queries": "rule-targeted",
+    "leading-wildcard-cited": "rule-targeted",
+    "unindexed-sort-cited": "rule-targeted",
+    "growth-explains-regression": "rule-targeted",
+    "measurement-limit-stated": "rule-targeted",
+    "declared-commands-run": "rule-targeted",
+    "no-fabricated-injection-finding": "harm-guard",
+    "assessment-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "transaction-boundary-broken": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "missing-transaction-cited": "rule-targeted",
+    "partial-application-explained": "rule-targeted",
+    "check-then-write-race-cited": "rule-targeted",
+    "atomic-remedy-proposed": "rule-targeted",
+    "documented-invariant-contradicted": "rule-targeted",
+    "false-green-test-detected": "rule-targeted",
+    "findings-compound-noted": "rule-targeted",
+    "declared-commands-run": "rule-targeted",
+    "no-invented-schema-claims": "harm-guard",
+    "assessment-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "logging-leaks-personal-data": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "request-body-logging-cited": "rule-targeted",
+    "header-logging-cited": "rule-targeted",
+    "failure-path-leak-cited": "rule-targeted",
+    "readme-claim-contradicted": "rule-targeted",
+    "exposure-scope-considered": "rule-targeted",
+    "possible-incident-flagged": "rule-targeted",
+    "logging-shape-credited": "rule-targeted",
+    "declared-commands-run": "rule-targeted",
+    "no-specimen-leak-in-the-report": "harm-guard",
+    "assessment-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
   }
  },
  "casesWithoutContrastArm": {

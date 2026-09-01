@@ -122,6 +122,9 @@ const freshEfficacyCases = [
   'unconfirmable-suspicion',
   'declared-commands-fail',
   'dependency-and-licence-risk',
+  'n-plus-one-and-missing-index',
+  'transaction-boundary-broken',
+  'logging-leaks-personal-data',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);
