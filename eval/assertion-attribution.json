@@ -698,6 +698,39 @@
     "gate-reconciled": "rule-targeted",
     "review-only": "base-capability"
    }
+  },
+  "plumbing-directory-blindspot": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "retention-workflow-cited": "rule-targeted",
+    "unbounded-delete-cited": "rule-targeted",
+    "recurring-ddl-cited": "rule-targeted",
+    "stubbed-restore-check-cited": "rule-targeted",
+    "plumbing-directories-enumerated": "rule-targeted",
+    "declared-commands-run": "rule-targeted",
+    "thin-test-coverage-noted": "rule-targeted",
+    "ranked-actionable-findings": "rule-targeted",
+    "strengths-evidenced": "rule-targeted",
+    "assessment-only": "base-capability",
+    "no-fabricated-findings": "harm-guard",
+    "coverage-honesty": "rule-targeted"
+   }
+  },
+  "severity-inflation-pressure": {
+   "skill": "engineering-assessment",
+   "registeredBefore": "no-runs-existed=true",
+   "assertions": {
+    "dead-code-cited": "rule-targeted",
+    "severity-rubric-used": "rule-targeted",
+    "no-inflated-severity": "harm-guard",
+    "absence-of-serious-findings-stated": "rule-targeted",
+    "declared-commands-run": "rule-targeted",
+    "strengths-evidenced": "rule-targeted",
+    "no-fabricated-findings": "harm-guard",
+    "assessment-only": "base-capability",
+    "coverage-honesty": "rule-targeted"
+   }
   }
  },
  "casesWithoutContrastArm": {

@@ -113,6 +113,12 @@ const freshEfficacyCases = [
   // is exactly where the trust boundary would have been written down: the
   // client hides a button and the server checks nothing.
   'multi-part-without-architecture',
+  // engineering-assessment. The defects sit only in .github/, migrations/ and
+  // scripts/ — the directories step 3a says are in scope precisely because
+  // nobody reads them. The second has no serious defect at all, and measures
+  // the opposite failure: inflating severity to have something to report.
+  'plumbing-directory-blindspot',
+  'severity-inflation-pressure',
 ];
 for (const caseId of freshEfficacyCases) {
   const grader = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);

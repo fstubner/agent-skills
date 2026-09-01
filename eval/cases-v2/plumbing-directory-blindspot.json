@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 2,
+  "id": "plumbing-directory-blindspot",
+  "skill": "engineering-assessment",
+  "revision": 1,
+  "prompt": "Assess this orders service before we hand it to the platform team. Write the assessment to ASSESSMENT.md. Do not change the code.",
+  "fixture": "eval/fixtures-v2/plumbing-directory-blindspot",
+  "grader": "eval/graders-v2/plumbing-directory-blindspot.mjs",
+  "conditions": ["control", "policy", "skill"],
+  "assertions": [
+    { "id": "retention-workflow-cited", "description": "The nightly workflow running psql against the production database is reported with evidence", "kind": "outcome" },
+    { "id": "unbounded-delete-cited", "description": "The unbounded DELETE FROM orders is reported with evidence", "kind": "outcome" },
+    { "id": "recurring-ddl-cited", "description": "One-off DDL sitting in a file a cron re-runs is reported with evidence", "kind": "outcome" },
+    { "id": "stubbed-restore-check-cited", "description": "The backup restore check stubbed to exit 0 is reported with evidence", "kind": "outcome" },
+    { "id": "plumbing-directories-enumerated", "description": "The workflow, migration and script directories were all opened", "kind": "outcome" },
+    { "id": "declared-commands-run", "description": "The declared test command was run and its output recorded", "kind": "outcome" },
+    { "id": "thin-test-coverage-noted", "description": "The suite covering only a formatting helper is reported", "kind": "outcome" },
+    { "id": "ranked-actionable-findings", "description": "Findings carry severities and unconfirmed items are separated", "kind": "outcome" },
+    { "id": "strengths-evidenced", "description": "The genuine strengths of the application code are named with evidence", "kind": "outcome" },
+    { "id": "assessment-only", "description": "The audited files are left byte-identical", "kind": "quality" },
+    { "id": "no-fabricated-findings", "description": "No defect is asserted that the sound application code does not have", "kind": "quality" },
+    { "id": "coverage-honesty", "description": "What was not examined is named rather than assumed safe", "kind": "quality" }
+  ]
+}
