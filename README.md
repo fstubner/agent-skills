@@ -30,7 +30,8 @@ The behavioural claim splits into two questions that have to be measured
 separately, and conflating them is the easiest way to be wrong about this
 suite ([eval/results/](./eval/results/)):
 
-**Does a skill get used unprompted? Measured: essentially never.** In both
+**Does a skill get used unprompted? It depends on whether a human is in the
+session.** Non-interactive: essentially never. In both
 a Task-tool subagent and a genuine top-level `claude -p` session, with all
 of the skills in the then-current tagged release installed, neither run invoked a single
 skill on a prompt matching `product-build`'s own stated trigger almost
@@ -47,6 +48,18 @@ none of the competing plugin
 The two are not in conflict: the hook cannot tell whether the human typed
 the skill's name or the model chose it, so field usage says the skills get
 reached for, and says nothing yet about who reaches.
+
+Reading the session transcripts themselves answers who reaches
+([field-outcomes-2026-09-02.md](./eval/results/field-outcomes-2026-09-02.md)).
+Over a month of interactive Claude Code work across 15 projects: 89
+invocations, 27 typed by the human, **62 chosen by the model — 21 of them
+from a prompt that named no activity at all**. The acceptance gate returned
+BLOCK 11 times, CONDITIONAL 5, SHIP 2, and a BLOCK was followed by a
+specific fix instruction in 5 of 11 cases. So interactive delivery works,
+`-p` delivery does not, and the difference is the setting rather than the
+wording. The user in that data is the suite's author, who knows the skills
+exist; it is delivery evidence, not efficacy evidence. Codex shows a
+handful of real sessions, Antigravity two, Cursor none.
 
 **Does the guidance help once followed? Unknown.** The historical forced
 runs lack the raw transcripts, output bundles, cost data, replication, and
