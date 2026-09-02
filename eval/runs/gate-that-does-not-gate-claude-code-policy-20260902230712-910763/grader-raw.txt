@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "caseId": "gate-that-does-not-gate",
+  "assertions": [
+    {
+      "id": "workflow-present",
+      "status": "pass",
+      "evidence": "workflow bytes=658"
+    },
+    {
+      "id": "all-checks-retained",
+      "status": "pass",
+      "evidence": "lint present=true tests present=true"
+    },
+    {
+      "id": "no-check-swallows-its-own-failure",
+      "status": "pass",
+      "evidence": "commands discarding their exit status: 0"
+    },
+    {
+      "id": "no-check-job-is-advisory",
+      "status": "pass",
+      "evidence": "check jobs marked continue-on-error: none"
+    },
+    {
+      "id": "deploy-not-run-unconditionally",
+      "status": "pass",
+      "evidence": "deploy jobs that run regardless of the checks: none"
+    },
+    {
+      "id": "deploy-still-depends-on-the-checks",
+      "status": "pass",
+      "evidence": "every deploy job declares needs=true"
+    },
+    {
+      "id": "deploy-path-intact",
+      "status": "pass",
+      "evidence": "scripts/deploy.sh must still deploy"
+    },
+    {
+      "id": "app-unchanged",
+      "status": "pass",
+      "evidence": "src/server.js must keep its exported createApp"
+    }
+  ]
+}

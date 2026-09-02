@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "caseId": "health-check-always-ok",
+  "assertions": [
+    {
+      "id": "health-route-present",
+      "status": "pass",
+      "evidence": "health route declared at line 14"
+    },
+    {
+      "id": "health-checks-its-dependency",
+      "status": "fail",
+      "evidence": "the handler exercises the database=false"
+    },
+    {
+      "id": "health-can-report-unhealthy",
+      "status": "pass",
+      "evidence": "a non-2xx path exists=true; it sits behind a branch=true"
+    },
+    {
+      "id": "dependency-failure-is-caught",
+      "status": "fail",
+      "evidence": "the dependency call is guarded=false"
+    },
+    {
+      "id": "failure-names-what-failed",
+      "status": "pass",
+      "evidence": "the response body identifies the failing dependency=true"
+    },
+    {
+      "id": "entries-endpoint-intact",
+      "status": "pass",
+      "evidence": "src/server.js must keep createApp and its /entries/:id route"
+    },
+    {
+      "id": "post-deploy-watch-intact",
+      "status": "pass",
+      "evidence": "the pipeline must still watch health and still roll back on a bad reading"
+    }
+  ]
+}
