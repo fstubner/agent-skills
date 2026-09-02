@@ -43,13 +43,23 @@ const caseGrader = new Map(cases.map((c) => [c.id, path.join(root, c.grader)]));
 
 // What is already recorded. A cell is keyed exactly as the matrix defines it.
 const existing = new Map();
-const runsDir = path.join(root, 'eval', 'runs');
+// --runs-dir exists so the counting rules can be tested against a directory
+// that is not the evidence.
+const runsDir = opt('runs-dir', null) ? path.resolve(opt('runs-dir', null)) : path.join(root, 'eval', 'runs');
 for (const entry of fs.existsSync(runsDir) ? fs.readdirSync(runsDir) : []) {
   const manifest = path.join(runsDir, entry, 'run.json');
   if (!fs.existsSync(manifest)) continue;
   let m = null;
   try { m = JSON.parse(fs.readFileSync(manifest, 'utf8')); } catch { continue; }
   if (!m.grading) continue;
+  // A bundle in which nothing was evaluated is a record of a harness failure,
+  // not a trial. On 2026-09-02 the claude-code session limit tripped mid-batch
+  // and 158 consecutive runs returned "429 session limit" in about three
+  // seconds each. eval-run.mjs correctly marked every assertion not_evaluated,
+  // eval-report correctly excluded them — and this counted them as filled
+  // cells, reported "completed 100, failed 0" three times, and then reported
+  // the whole arm complete with 0 outstanding.
+  if (m.grading.notEvaluated === m.grading.total) continue;
   // Only runs the CURRENT instrument produced count toward a cell.
   //
   // 322 of the bundles on disk carry no graderSha256 at all — they predate
@@ -95,6 +105,12 @@ console.log(`running ${todo.length} of them this invocation\n`);
 
 let ok = 0;
 let failed = 0;
+let empty = 0;
+let consecutiveEmpty = 0;
+// Three empty runs in a row is a quota or auth problem, not three coincidences.
+// Continuing past it burns the rest of the batch producing nothing — 163 such
+// bundles were written on 2026-09-02 before anyone looked.
+const EMPTY_STREAK_LIMIT = 3;
 for (const [i, w] of todo.entries()) {
   const args = ['scripts/eval-run.mjs', '--case', w.caseId, '--condition', w.condition,
     '--harness', w.harness, '--model', w.model];
@@ -108,8 +124,17 @@ for (const [i, w] of todo.entries()) {
   // eval-run.mjs exits 1 whenever any assertion failed, which is the normal
   // outcome for a control arm — the first batch reported 10 consecutive RUN
   // FAILED for runs that had completed and scored 3/12.
-  if (grading) {
+  if (grading && grading.notEvaluated === grading.total) {
+    empty += 1;
+    consecutiveEmpty += 1;
+    console.log(`[${i + 1}/${todo.length}] ${w.caseId} ${w.condition}/${w.harness} t${w.trial} -> NO MODEL TURN, nothing evaluated (${secs}s)`);
+    if (consecutiveEmpty >= EMPTY_STREAK_LIMIT) {
+      console.log(`\n${consecutiveEmpty} empty runs in a row — stopping. Check quota or auth, then re-run; the cells are still outstanding.`);
+      break;
+    }
+  } else if (grading) {
     ok += 1;
+    consecutiveEmpty = 0;
     console.log(`[${i + 1}/${todo.length}] ${w.caseId} ${w.condition}/${w.harness} t${w.trial} -> ${grading.passed}/${grading.total} (${secs}s)`);
   } else {
     failed += 1;
@@ -118,4 +143,6 @@ for (const [i, w] of todo.entries()) {
     if (err) console.log(`      ${err.slice(0, 200)}`);
   }
 }
-console.log(`\ncompleted ${ok}, failed ${failed}, ${wanted.length - todo.length} still outstanding`);
+// "Outstanding" is recounted rather than derived from the plan: an empty run
+// leaves its cell exactly as short as it was.
+console.log(`\ncompleted ${ok}, failed ${failed}, empty (no model turn) ${empty}, ${wanted.length - ok} still outstanding`);
