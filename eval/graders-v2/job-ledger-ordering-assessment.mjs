@@ -89,13 +89,33 @@ const smokeNamed = /test\/smoke\.test\.js|npm test|smoke/i.test(report);
 const smokeWeak = /(no assertion|assertion-free|only logs|does not (?:exercise|test|verify)|false green|non-protective)/i.test(report);
 add('false-green-detected', smokeNamed && smokeWeak, `smokeNamed=${smokeNamed}; smokeWeak=${smokeWeak}`);
 
-const severities = (report.match(/\b(?:critical|high|medium|low)\b/gi) || []).length;
+// Two constructs, and the old rule got both halves wrong. It scored 1 of 21
+// archived reports.
+//
+// Counting severity WORDS passed 21 of 21 — a clause that never discriminated
+// anything. Ranked means the findings are DIFFERENTIATED, so the measure is
+// distinct severity levels, not how often a severity word appears. That still
+// fails one report of the 21, so it is not free either.
+//
+// Requiring all three remedies ANDed three roughly-even events (9/21, 7/21,
+// 12/21) down to almost nothing. It also re-tested finding all three risks,
+// which the three per-risk assertions above now do on their own. Two of three
+// is the rule because the prompt asks for "the four highest-value confirmed
+// findings" out of more than four real ones — leaving one planted risk out of
+// the report is an editorial choice the prompt invites, and this assertion is
+// about the quality of the remedies offered, not the count of risks found.
+//
+// Measured after the change: 7 of 21, against 12/30 and 9/30 on the sibling
+// engineering-assessment cases.
+const severityLevels = new Set((report.match(/\b(?:critical|high|medium|low)\b/gi) || []).map((s) => s.toLowerCase()));
 const remedies = [
   /(persist|record).{0,100}(before).{0,100}(acknowledge|ack)/is,
   /(additive|rename|backup|preserve|migrate).{0,100}(idempotency|key|table)/is,
   /(sigterm|shutdown).{0,120}(wait|drain|graceful|in.?flight)/is,
 ].map((pattern) => pattern.test(report));
-add('ranked-actionable-findings', severities >= 3 && remedies.every(Boolean), `severityTerms=${severities}; remedies=${remedies.join(',')}`);
+const remedyCount = remedies.filter(Boolean).length;
+add('ranked-actionable-findings', severityLevels.size >= 2 && remedyCount >= 2,
+  `severityLevels=${[...severityLevels].sort().join('|') || 'none'}; remedies=${remedyCount}/3 [${remedies.join(',')}]`);
 
 const test = process.platform === 'win32'
   ? spawnSync(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', 'npm test'], { cwd: root, encoding: 'utf8', timeout: 20_000 })
