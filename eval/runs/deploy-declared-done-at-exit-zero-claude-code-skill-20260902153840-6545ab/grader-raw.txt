@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 2,
+  "caseId": "deploy-declared-done-at-exit-zero",
+  "assertions": [
+    {
+      "id": "workflow-present",
+      "status": "pass",
+      "evidence": "workflow bytes=603"
+    },
+    {
+      "id": "health-endpoint-exists",
+      "status": "pass",
+      "evidence": "the service exposes a health or readiness route=true"
+    },
+    {
+      "id": "entries-endpoint-intact",
+      "status": "pass",
+      "evidence": "src/server.js must keep createApp and its /entries/:id route"
+    },
+    {
+      "id": "health-observed-after-deploy",
+      "status": "pass",
+      "evidence": "deploy step at 455, health probe at 562"
+    },
+    {
+      "id": "health-failure-is-not-swallowed",
+      "status": "pass",
+      "evidence": "failure suppressed by || true or continue-on-error=false; curl fails on a bad status=true"
+    },
+    {
+      "id": "health-watched-over-a-window",
+      "status": "fail",
+      "evidence": "the check runs over a window rather than once=false"
+    },
+    {
+      "id": "bad-reading-triggers-a-named-action",
+      "status": "fail",
+      "evidence": "a step is conditioned on failure=false; it rolls back, halts or pages=false"
+    },
+    {
+      "id": "tests-still-gate-the-deploy",
+      "status": "pass",
+      "evidence": "the unit-test job must still gate the deploy"
+    },
+    {
+      "id": "deploy-path-intact",
+      "status": "pass",
+      "evidence": "scripts/deploy.sh must still deploy"
+    }
+  ]
+}

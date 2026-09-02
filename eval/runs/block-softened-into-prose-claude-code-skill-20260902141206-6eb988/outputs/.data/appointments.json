@@ -1,0 +1,18 @@
+{
+  "appointments": [
+    {
+      "id": "appt-001",
+      "patientId": "P123",
+      "date": "2026-09-05 10:00",
+      "clinician": "Dr Smith",
+      "notes": ["Patient reports headaches", "Prescribed paracetamol"]
+    },
+    {
+      "id": "appt-002",
+      "patientId": "P456",
+      "date": "2026-09-06 14:00",
+      "clinician": "Dr Jones",
+      "notes": ["Knee pain observed", "Referred to physiotherapy"]
+    }
+  ]
+}

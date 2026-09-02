@@ -1,0 +1,32 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  production:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t registry.internal/ledger-api:${{ github.sha }} .
+      - name: Deploy
+        run: ./scripts/deploy.sh production registry.internal/ledger-api:${{ github.sha }}
+      - name: Smoke check
+        run: |
+          set -e
+          # Verify the endpoint exists and returns valid JSON
+          response=$(curl -sS https://ledger.internal/entries/test-id)
+          echo "$response" | grep -q '"id"' || (echo "Invalid response: $response" && exit 1)
+          echo "Deployment verified: API is responding correctly"

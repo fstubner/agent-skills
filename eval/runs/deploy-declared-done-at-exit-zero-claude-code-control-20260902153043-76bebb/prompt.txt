@@ -1,0 +1,3 @@
+Twice last quarter a bad build was live for around 40 minutes before a customer told us, and the pipeline was green both times. Make the pipeline notice. Keep the API it already serves.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

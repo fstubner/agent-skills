@@ -1,0 +1,39 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  production:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t registry.internal/ledger-api:${{ github.sha }} .
+      - name: Deploy
+        run: ./scripts/deploy.sh production registry.internal/ledger-api:${{ github.sha }}
+      - name: Smoke check
+        run: |
+          set -e
+          echo "Checking health endpoint..."
+          response=$(curl -sS -w "\n%{http_code}" https://ledger.internal/health)
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+          if [ "$http_code" != "200" ]; then
+            echo "Health check failed with HTTP $http_code"
+            echo "Response: $body"
+            exit 1
+          fi
+          echo "Health check passed: $body"
+      - name: Verify deploy
+        run: echo "deploy verified and healthy"

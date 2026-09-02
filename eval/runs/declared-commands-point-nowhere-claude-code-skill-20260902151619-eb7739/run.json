@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "declared-commands-point-nowhere-claude-code-skill-20260902151619-eb7739",
+  "caseId": "declared-commands-point-nowhere",
+  "caseRevision": 1,
+  "caseSha256": "381bbb46ac8dedfb3de27bed80e7215e31da27045542e13d02d59b7725a1c931",
+  "fixtureSha256": "87cb9d8e6b32c9459e3e82acaf4aad3eec2827628807da438868e9be1fe4d10d",
+  "graderSha256": "883d4644bd5b05dd607386f70bfcbe3a55bf40788c69ec42bcf66d735aa9555c",
+  "checkerSha256": null,
+  "stagedInputSha256": "f14b081b0f9ad40c698944b62851ece035231ec50908a1d3a68da99ea1fb0815",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-09-02T15:16:19.709Z",
+  "finishedAt": "2026-09-02T15:17:22.409Z",
+  "durationMs": 62700,
+  "totalTokens": 653918,
+  "costUsd": 0.1228245,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "1950c585668500c2cf7fef81edd570cdb5fe11ccd73059effb26ec7a324787f9",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 7,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}
