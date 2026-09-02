@@ -57,12 +57,33 @@ const citedSpans = (file) => {
 };
 const cites = (file, line) => citedSpans(file).some(([a, b]) => a <= line && line <= b);
 
-const ordering = cites('src/worker.js', 3) && cites('src/worker.js', 4)
-  && /(acknowledge|ack).{0,100}(before|prior).{0,100}(record|persist|ledger)|(?:record|persist|ledger).{0,100}(after|following).{0,100}(acknowledge|ack)/is.test(report)
+// One assertion per planted risk, at revision 2.
+//
+// These were a single all-or-nothing conjunction, which is the mistake already
+// recorded in the header of engineering-assessment-retry-storm: a combined
+// citation assertion cannot tell citing none from citing two. Measured on 22
+// archived runs of this case before the split, the three clauses scored
+// 0, 12 and 2 out of 22 — three quite different facts reported as one zero,
+// and the case contributed a flat 0 to every arm while distinguishing nothing.
+//
+// Citing either line of the ack/record pair is enough. Requiring both was the
+// old rule and it is not what the finding is: reports name the ordering defect
+// and point at one line of it, which locates the defect exactly.
+const orderingDescribed = /(acknowledge|ack).{0,100}(before|prior).{0,100}(record|persist|ledger)|(?:record|persist|ledger).{0,100}(after|following).{0,100}(acknowledge|ack)/is.test(report)
   && /(record|persist).{0,100}(before).{0,100}(acknowledge|ack)|(?:acknowledge|ack).{0,100}(after).{0,100}(record|persist)/is.test(report);
-const migration = cites('migrations/007_reset_job_keys.sql', 1) && /(drop|destructive|data loss)/i.test(report);
-const shutdown = cites('ops/start-worker.js', 5) && /(sigkill|force|graceful|in.?flight)/i.test(report);
-add('cross-tree-risks-cited', ordering && migration && shutdown, `ordering=${ordering}; migration=${migration}; shutdown=${shutdown}`);
+const orderingCited = cites('src/worker.js', 3) || cites('src/worker.js', 4);
+add('ordering-risk-cited', orderingDescribed && orderingCited,
+  `described=${orderingDescribed}; citedAt=src/worker.js:3|4=${orderingCited}`);
+
+const migrationDescribed = /(drop|destructive|data loss)/i.test(report);
+const migrationCited = cites('migrations/007_reset_job_keys.sql', 1);
+add('migration-risk-cited', migrationDescribed && migrationCited,
+  `described=${migrationDescribed}; citedAt=migrations/007_reset_job_keys.sql:1=${migrationCited}`);
+
+const shutdownDescribed = /(sigkill|force|graceful|in.?flight)/i.test(report);
+const shutdownCited = cites('ops/start-worker.js', 5);
+add('shutdown-risk-cited', shutdownDescribed && shutdownCited,
+  `described=${shutdownDescribed}; citedAt=ops/start-worker.js:5=${shutdownCited}`);
 
 const smokeNamed = /test\/smoke\.test\.js|npm test|smoke/i.test(report);
 const smokeWeak = /(no assertion|assertion-free|only logs|does not (?:exercise|test|verify)|false green|non-protective)/i.test(report);
@@ -85,7 +106,7 @@ const gaps = /(coverage gaps|not examined|not attempted|unavailable|out of scope
 add('scope-and-tooling-honest', test.status === 0 && deep && testRecorded && gaps, `actualExit=${test.status}; deep=${deep}; testRecorded=${testRecorded}; gaps=${gaps}`);
 
 const hash = (file) => crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
-const inputs = ['package.json', 'README.md', 'src/worker.js', 'migrations/007_reset_job_keys.sql', 'ops/start-worker.js', 'test/smoke.test.js'];
+const inputs = ['package.json', 'README.md', 'src/main.js', 'src/worker.js', 'migrations/007_reset_job_keys.sql', 'ops/start-worker.js', 'test/smoke.test.js'];
 const unchanged = inputs.every((file) => fs.existsSync(path.join(root, file)) && hash(path.join(root, file)) === hash(path.join(fixture, file)));
 add('assessment-only', unchanged, 'input hashes must match the original fixture');
 

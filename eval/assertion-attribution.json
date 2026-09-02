@@ -334,7 +334,9 @@
    "skill": "engineering-assessment",
    "registeredBefore": "no-runs-existed=false",
    "assertions": {
-    "cross-tree-risks-cited": "rule-targeted",
+    "ordering-risk-cited": "rule-targeted",
+    "migration-risk-cited": "rule-targeted",
+    "shutdown-risk-cited": "rule-targeted",
     "false-green-detected": "rule-targeted",
     "ranked-actionable-findings": "rule-targeted",
     "scope-and-tooling-honest": "rule-targeted",
