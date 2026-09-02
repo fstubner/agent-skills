@@ -7,6 +7,51 @@ import { expect } from './harness.mjs';
 const root = path.resolve(import.meta.dirname, '..', '..');
 const node = process.execPath;
 const require = createRequire(import.meta.url);
+const runsDir = path.join(root, 'eval', 'runs');
+const verifyNow = () => spawnSync(node, [path.join(root, 'scripts', 'eval-verify.mjs')], { cwd: root, encoding: 'utf8' });
+
+// Each check below proves a binding works by showing eval-verify a run whose
+// hash is wrong. They used to do that by editing a REAL bundle's run.json in
+// place and putting it back in a finally block.
+//
+// On 2026-09-02 that bill came due. A transient filesystem error (UNKNOWN,
+// errno -4094) landed on the restoring write itself, the suite died, and a
+// committed run manifest was left modified in the working tree. It was
+// recovered with git checkout, but a test that corrupts real evidence to prove
+// the corruption check works can corrupt it for good — and the window is every
+// run of the suite, on the one file whose whole purpose is being trustworthy.
+//
+// So the sabotage now happens to a DISPOSABLE COPY of the bundle, placed beside
+// the originals so eval-verify picks it up, and deleted afterwards. The
+// original is never opened for writing. A crash here leaves an untracked
+// directory that `git status` shows and `rm -r` fixes, instead of a damaged
+// record that looks exactly like a real one.
+//
+// The copy is removed before the run starts as well as after it ends, so a
+// bundle stranded by an earlier crash cannot fail the next suite.
+function withDisposableBundle(caseId, label, body) {
+  const source = fs.readdirSync(runsDir).find((name) => name.startsWith(`${caseId}-`));
+  expect(`a bundle exists ${label}`, Boolean(source), String(source));
+  if (!source) return;
+
+  const runId = `${source}-binding-probe`;
+  const dir = path.join(runsDir, runId);
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.cpSync(path.join(runsDir, source), dir, { recursive: true });
+  const manifestPath = path.join(dir, 'run.json');
+  // runId must equal the directory name, so the copy carries its own.
+  const doc = { ...JSON.parse(fs.readFileSync(manifestPath, 'utf8')), runId };
+  const write = (patch) => fs.writeFileSync(manifestPath, `${JSON.stringify({ ...doc, ...patch }, null, 2)}\n`);
+  try {
+    write({});
+    body(write);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+  const removed = verifyNow();
+  expect(`eval-verify passes again once the ${caseId} probe is removed`,
+    removed.status === 0, removed.stdout || removed.stderr);
+}
 
 // ---------- A run must record the fixture it ran against ----------
 //
@@ -22,11 +67,7 @@ const require = createRequire(import.meta.url);
 // they ran against, which is the honest position rather than backfilling a
 // hash that asserts something nobody measured.
 {
-  const runsDir = path.join(root, 'eval', 'runs');
   const caseId = 'design-system-drift';
-  const bundle = fs.readdirSync(runsDir).find((name) => name.startsWith(`${caseId}-`));
-  expect('a bundle exists to bind a fixture to', Boolean(bundle), String(bundle));
-
   // Deliberately a third implementation rather than an import: if this agreed
   // with eval-run and eval-verify by sharing their code, it could not catch
   // the two of them agreeing on a wrong hash. The digest is the contract.
@@ -45,23 +86,15 @@ const require = createRequire(import.meta.url);
     return sha256(chunks.join(''));
   };
 
-  const manifestPath = path.join(runsDir, bundle, 'run.json');
-  const original = fs.readFileSync(manifestPath, 'utf8');
-  const fixtureDir = path.join(root, 'eval', 'fixtures-v2', caseId);
-  const correct = hashTreeForTest(fixtureDir);
+  const correct = hashTreeForTest(path.join(root, 'eval', 'fixtures-v2', caseId));
 
-  const verifyNow = () => spawnSync(node, [path.join(root, 'scripts', 'eval-verify.mjs')], { cwd: root, encoding: 'utf8' });
-  try {
-    const doc = JSON.parse(original);
-
-    doc.fixtureSha256 = correct;
-    fs.writeFileSync(manifestPath, `${JSON.stringify(doc, null, 2)}\n`);
+  withDisposableBundle(caseId, 'to bind a fixture to', (write) => {
+    write({ fixtureSha256: correct });
     const matching = verifyNow();
     expect('eval-verify accepts a run whose fixtureSha256 matches the fixture',
       matching.status === 0, matching.stdout || matching.stderr);
 
-    doc.fixtureSha256 = 'f'.repeat(64);
-    fs.writeFileSync(manifestPath, `${JSON.stringify(doc, null, 2)}\n`);
+    write({ fixtureSha256: 'f'.repeat(64) });
     const mismatched = verifyNow();
     // Matches the fixture check's own wording, not merely the word "fixture":
     // a schema rejection of the unknown property also says "fixtureSha256",
@@ -69,12 +102,7 @@ const require = createRequire(import.meta.url);
     expect('eval-verify rejects a run whose fixture changed after it ran',
       mismatched.status !== 0 && /fixture content changed after the run/.test(mismatched.stdout + mismatched.stderr),
       mismatched.stdout || mismatched.stderr);
-  } finally {
-    fs.writeFileSync(manifestPath, original);
-  }
-  const restored = verifyNow();
-  expect('eval-verify passes again once the manifest is restored',
-    restored.status === 0, restored.stdout || restored.stderr);
+  });
 }
 
 // ---------- A run must record the grader that scored it ----------
@@ -95,37 +123,23 @@ const require = createRequire(import.meta.url);
 // dynamically pull from the workspace under test rather than from suite code,
 // so the grader's own bytes fully determine its behaviour. One file, one hash.
 {
-  const runsDir = path.join(root, 'eval', 'runs');
   const caseId = 'design-system-drift';
-  const bundle = fs.readdirSync(runsDir).find((name) => name.startsWith(`${caseId}-`));
-  const manifestPath = path.join(runsDir, bundle, 'run.json');
-  const original = fs.readFileSync(manifestPath, 'utf8');
   const crypto = require('crypto');
   const graderPath = path.join(root, 'eval', 'graders-v2', `${caseId}.mjs`);
   const correct = crypto.createHash('sha256').update(fs.readFileSync(graderPath)).digest('hex');
 
-  const verifyNow = () => spawnSync(node, [path.join(root, 'scripts', 'eval-verify.mjs')], { cwd: root, encoding: 'utf8' });
-  try {
-    const doc = JSON.parse(original);
-
-    doc.graderSha256 = correct;
-    fs.writeFileSync(manifestPath, `${JSON.stringify(doc, null, 2)}\n`);
+  withDisposableBundle(caseId, 'to bind a grader to', (write) => {
+    write({ graderSha256: correct });
     const matching = verifyNow();
     expect('eval-verify accepts a run whose graderSha256 matches the grader',
       matching.status === 0, matching.stdout || matching.stderr);
 
-    doc.graderSha256 = 'e'.repeat(64);
-    fs.writeFileSync(manifestPath, `${JSON.stringify(doc, null, 2)}\n`);
+    write({ graderSha256: 'e'.repeat(64) });
     const mismatched = verifyNow();
     expect('eval-verify rejects a run whose grader changed after it scored',
       mismatched.status !== 0 && /grader content changed after the run/.test(mismatched.stdout + mismatched.stderr),
       mismatched.stdout || mismatched.stderr);
-  } finally {
-    fs.writeFileSync(manifestPath, original);
-  }
-  const restored = verifyNow();
-  expect('eval-verify passes again once the grader binding is removed',
-    restored.status === 0, restored.stdout || restored.stderr);
+  });
 }
 
 // ---------- A run records the checker its grader may execute ----------
@@ -144,38 +158,22 @@ const require = createRequire(import.meta.url);
 // Note the checker CONDITION has zero runs to date. The binding earns its
 // place through the graders that execute a checker, not through that arm.
 {
-  const runsDir = path.join(root, 'eval', 'runs');
   const caseId = 'postgres-required-handle';
   const checkerRel = 'data-modeling/scripts/check-migrations.js';
-  const bundle = fs.readdirSync(runsDir).find((name) => name.startsWith(`${caseId}-`));
-  expect('a bundle exists for a case that declares a checker', Boolean(bundle), String(bundle));
-
-  const manifestPath = path.join(runsDir, bundle, 'run.json');
-  const original = fs.readFileSync(manifestPath, 'utf8');
   const crypto = require('crypto');
   const correct = crypto.createHash('sha256')
     .update(fs.readFileSync(path.join(root, ...checkerRel.split('/')))).digest('hex');
 
-  const verifyNow = () => spawnSync(node, [path.join(root, 'scripts', 'eval-verify.mjs')], { cwd: root, encoding: 'utf8' });
-  try {
-    const doc = JSON.parse(original);
-
-    doc.checkerSha256 = correct;
-    fs.writeFileSync(manifestPath, `${JSON.stringify(doc, null, 2)}\n`);
+  withDisposableBundle(caseId, 'for a case that declares a checker', (write) => {
+    write({ checkerSha256: correct });
     const matching = verifyNow();
     expect('eval-verify accepts a run whose checkerSha256 matches the checker',
       matching.status === 0, matching.stdout || matching.stderr);
 
-    doc.checkerSha256 = 'd'.repeat(64);
-    fs.writeFileSync(manifestPath, `${JSON.stringify(doc, null, 2)}\n`);
+    write({ checkerSha256: 'd'.repeat(64) });
     const mismatched = verifyNow();
     expect('eval-verify rejects a run whose checker changed after it ran',
       mismatched.status !== 0 && /checker content changed after the run/.test(mismatched.stdout + mismatched.stderr),
       mismatched.stdout || mismatched.stderr);
-  } finally {
-    fs.writeFileSync(manifestPath, original);
-  }
-  const restored = verifyNow();
-  expect('eval-verify passes again once the checker binding is removed',
-    restored.status === 0, restored.stdout || restored.stderr);
+  });
 }
