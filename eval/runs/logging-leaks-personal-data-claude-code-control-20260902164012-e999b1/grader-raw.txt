@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 2,
+  "caseId": "logging-leaks-personal-data",
+  "assertions": [
+    {
+      "id": "request-body-logging-cited",
+      "status": "fail",
+      "evidence": "described=false; cited near src/server.js:15"
+    },
+    {
+      "id": "header-logging-cited",
+      "status": "fail",
+      "evidence": "described=false; cited near src/server.js:16"
+    },
+    {
+      "id": "failure-path-leak-cited",
+      "status": "fail",
+      "evidence": "cited near src/server.js:27 or src/billing.js:10"
+    },
+    {
+      "id": "readme-claim-contradicted",
+      "status": "fail",
+      "evidence": "the README's we-do-not-log-card-details claim must be contradicted"
+    },
+    {
+      "id": "exposure-scope-considered",
+      "status": "fail",
+      "evidence": "the report must weigh the log store audience and retention, not only the code path"
+    },
+    {
+      "id": "possible-incident-flagged",
+      "status": "fail",
+      "evidence": "whether this has already reached the store must be raised as the open question"
+    },
+    {
+      "id": "logging-shape-credited",
+      "status": "fail",
+      "evidence": "the genuinely correct logging shape must be credited separately from its contents"
+    },
+    {
+      "id": "declared-commands-run",
+      "status": "fail",
+      "evidence": "the report shows npm test and its output=false"
+    },
+    {
+      "id": "no-specimen-leak-in-the-report",
+      "status": "pass",
+      "evidence": "the report itself contains a card-shaped number, a bearer token or a CVC=false"
+    },
+    {
+      "id": "assessment-only",
+      "status": "pass",
+      "evidence": "the audited files must be byte-identical to the fixture"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "fail",
+      "evidence": "gaps named=false; no blanket safety claim=true"
+    }
+  ]
+}

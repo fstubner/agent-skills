@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "caseId": "rebuild-per-environment",
+  "assertions": [
+    {
+      "id": "workflow-present",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "single-build",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "production-does-not-rebuild",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "promoted-by-immutable-reference",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "environment-tags-removed",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "tests-still-gate-deploys",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "app-unchanged",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+This release switches the API over to the amount_minor column. RELEASE.md says a bad deploy is undone in thirty seconds with rollout undo. Make sure that is still true after this release goes out, and that whoever reads RELEASE.md next can tell why. Keep the API reading amount_minor.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Apply this concise engineering policy:
+
+# Engineering policy baseline
+
+- Clarify material unknowns before committing to architecture or UX.
+- Prefer the smallest coherent implementation that satisfies the request.
+- Validate inputs and authorization at trust boundaries.
+- Use additive, backwards-compatible data changes for rolling deploys.
+- Add focused automated tests for critical behavior and failure paths.
+- Run the product, tests, and build before claiming completion.
+- Report remaining uncertainty explicitly.

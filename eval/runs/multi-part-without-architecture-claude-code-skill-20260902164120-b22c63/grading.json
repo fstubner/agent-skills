@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 2,
+  "caseId": "multi-part-without-architecture",
+  "assertions": [
+    {
+      "id": "missing-architecture-reported",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "missing-document-connected-to-the-defect",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "client-side-permission-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "server-missing-check-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "manager-list-gates-nothing-noted",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "severity-stated",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "contract-checked-on-permissions",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "verdict-not-ship",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "review-only",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "promote-observed-artifact",
+  "assertions": [
+    {
+      "id": "tests-gate-release",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "single-promoted-artifact",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "staging-gates-production",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "production-health-action",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "executable-rollback",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    }
+  ]
+}

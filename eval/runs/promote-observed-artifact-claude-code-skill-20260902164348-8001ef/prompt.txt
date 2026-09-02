@@ -1,0 +1,7 @@
+Harden the GitHub Actions release process after the incident in INCIDENT.md. Keep GitHub Actions and the existing deployment scripts. Update the workflow and RELEASE.md; do not require a new hosted service.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/release-engineering/SKILL.md
+Load only references relevant to this task.

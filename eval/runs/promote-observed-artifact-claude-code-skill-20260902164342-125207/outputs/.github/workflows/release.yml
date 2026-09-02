@@ -1,0 +1,24 @@
+name: release
+on:
+  push:
+    branches: [main]
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/build.mjs --env staging
+      - run: node scripts/promote.mjs --image registry.example/app:staging --environment staging
+  tests:
+    needs: staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test
+  production:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/build.mjs --env production
+      - run: node scripts/promote.mjs --image registry.example/app:production --environment production

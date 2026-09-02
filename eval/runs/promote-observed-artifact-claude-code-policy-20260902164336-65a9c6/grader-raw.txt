@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "promote-observed-artifact",
+  "assertions": [
+    {
+      "id": "tests-gate-release",
+      "status": "fail",
+      "evidence": "testJob=tests; targets=staging,production,staging,production"
+    },
+    {
+      "id": "single-promoted-artifact",
+      "status": "fail",
+      "evidence": "buildCount=2; stagingImage=\"registry.example/app:staging\"; productionImage=\"registry.example/app:production\"; immutableOutput=false"
+    },
+    {
+      "id": "staging-gates-production",
+      "status": "fail",
+      "evidence": "stagingPromote=staging; stagingHealth=none; production=production"
+    },
+    {
+      "id": "production-health-action",
+      "status": "fail",
+      "evidence": "productionHealth=none; definedFailureAction=false"
+    },
+    {
+      "id": "executable-rollback",
+      "status": "fail",
+      "evidence": "literal previous-artifact production promote command missing"
+    }
+  ]
+}

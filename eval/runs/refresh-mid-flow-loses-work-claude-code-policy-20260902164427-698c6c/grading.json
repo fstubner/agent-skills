@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 2,
+  "caseId": "refresh-mid-flow-loses-work",
+  "assertions": [
+    {
+      "id": "refresh-loss-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "state-model-explained",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "empty-description-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "error-path-claim-verified",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "error-path-not-mis-reported",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "verdict-not-ship",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "review-only",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    }
+  ]
+}

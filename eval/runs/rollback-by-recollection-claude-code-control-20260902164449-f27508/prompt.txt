@@ -1,0 +1,3 @@
+A bad release here took 40 minutes to undo last month because the only person who knew the previous revision was asleep. Fix the release documentation so that whoever is on call can undo a bad deploy without waking anyone or looking anything up. Do not change the application.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

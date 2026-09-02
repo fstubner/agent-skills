@@ -1,0 +1,3 @@
+This service deploys from main through staging to production and we have twice seen production behave differently from staging with no code change between them. Fix the delivery pipeline in .github/workflows so that what runs in production is what staging verified. Keep GitHub Actions and the existing deploy.sh interface, and do not change the application.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

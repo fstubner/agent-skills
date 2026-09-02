@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 2,
+  "caseId": "migration-blocks-rollback",
+  "assertions": [
+    {
+      "id": "migrations-present",
+      "status": "pass",
+      "evidence": "migration files: 0006_add_amount_minor.sql,0007_drop_legacy_amount.sql"
+    },
+    {
+      "id": "no-contraction-ships-with-this-deploy",
+      "status": "fail",
+      "evidence": "migrations containing a destructive change: 0007_drop_legacy_amount.sql"
+    },
+    {
+      "id": "additive-change-retained",
+      "status": "pass",
+      "evidence": "a migration still establishes amount_minor=true"
+    },
+    {
+      "id": "migration-not-coupled-to-the-code-deploy",
+      "status": "fail",
+      "evidence": "jobs that both migrate and deploy: production"
+    },
+    {
+      "id": "migrations-still-applied",
+      "status": "pass",
+      "evidence": "the pipeline still applies migrations=true"
+    },
+    {
+      "id": "release-doc-present",
+      "status": "pass",
+      "evidence": "RELEASE.md bytes=299"
+    },
+    {
+      "id": "rollback-safety-explained",
+      "status": "fail",
+      "evidence": "the doc says why a code rollback is safe against this schema=false"
+    },
+    {
+      "id": "deferred-contraction-recorded",
+      "status": "fail",
+      "evidence": "the doc records the deferred drop and what releases it=false"
+    },
+    {
+      "id": "app-unchanged",
+      "status": "pass",
+      "evidence": "src/server.js must still read amount_minor"
+    }
+  ]
+}

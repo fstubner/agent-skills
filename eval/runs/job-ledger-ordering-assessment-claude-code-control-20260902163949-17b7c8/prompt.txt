@@ -1,0 +1,3 @@
+Perform a deep engineering assessment of this repository and write ASSESSMENT.md. Limit the report to the four highest-value confirmed findings, do not change the application, and keep unconfirmed risks separate.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
