@@ -1,0 +1,7 @@
+On 12 August the database was unreachable for 22 minutes and every request to /entries/:id failed. /health returned 200 the whole time, the pipeline's post-deploy watch stayed green, and the automatic rollback never fired. Fix that. Keep the existing API and keep the pipeline's watch and rollback.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/release-engineering/SKILL.md
+Load only references relevant to this task.

@@ -1,0 +1,3 @@
+A partner says subscribers are missing after their last import, but the tool reported success. Assess this repository and write your findings to ASSESSMENT.md, limited to the five highest-value findings. Do not change the application.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

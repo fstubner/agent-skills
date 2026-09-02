@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-silent-drop-claude-code-skill-20260902162650-092482",
+  "caseId": "engineering-assessment-silent-drop",
+  "caseRevision": 1,
+  "caseSha256": "17942ac509684ac61b2b134c95da1cbb25added29b6f89e58d9a3b072531e76a",
+  "fixtureSha256": "2c44b4986c41d58e9a7d364e4c6898389abab18edb72b6e7d9da632af4fd4e29",
+  "graderSha256": "c2938e0fe28edaee4fff46c749a22a55739c5e444780be2e8d03065069bf999e",
+  "checkerSha256": null,
+  "stagedInputSha256": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-09-02T16:26:50.617Z",
+  "finishedAt": "2026-09-02T16:28:33.251Z",
+  "durationMs": 102634,
+  "totalTokens": 533183,
+  "costUsd": 0.1219335,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "f11c30b36efecb911aabf39a6b304a4ea80ee962f4e1d306c41ac7a95213a308",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 6,
+    "failed": 2,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}

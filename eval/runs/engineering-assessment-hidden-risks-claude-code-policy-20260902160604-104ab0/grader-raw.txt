@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "engineering-assessment-hidden-risks",
+  "assertions": [
+    {
+      "id": "planted-risks-cited",
+      "status": "fail",
+      "evidence": "citationChecks=true,true,false"
+    },
+    {
+      "id": "false-green-detected",
+      "status": "fail",
+      "evidence": "smoke=true; inadequate=false; readmeContrast=true"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "status": "fail",
+      "evidence": "severity=true; remediationTerms=10; confirmedSplit=false"
+    },
+    {
+      "id": "tooling-evidence",
+      "status": "fail",
+      "evidence": "actualExit=0; reportRecordsPass=false; reportQuestionsAdequacy=false"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "fail",
+      "evidence": "gaps=false; productionEvidenceNamed=false; noSafetyAssumption=false"
+    }
+  ]
+}

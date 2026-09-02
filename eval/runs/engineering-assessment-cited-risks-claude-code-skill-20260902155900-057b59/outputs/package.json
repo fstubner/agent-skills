@@ -1,0 +1,8 @@
+{
+  "name": "small-file-service",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node tests/smoke.js"
+  }
+}

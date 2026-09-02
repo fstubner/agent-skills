@@ -1,0 +1,7 @@
+{
+  "name": "expense-claims-ui",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": { "start": "node src/server.js", "test": "node --test test/claims.test.js" },
+  "dependencies": { "express": "^4.19.0" }
+}

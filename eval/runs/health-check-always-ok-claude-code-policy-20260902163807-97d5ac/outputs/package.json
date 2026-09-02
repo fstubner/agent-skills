@@ -1,0 +1,1 @@
+{"name":"ledger-api","private":true,"type":"module","scripts":{"lint":"eslint src test","test":"node --test test/"},"dependencies":{"express":"^4.19.0"}}

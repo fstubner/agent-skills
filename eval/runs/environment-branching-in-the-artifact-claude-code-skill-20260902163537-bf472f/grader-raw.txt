@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 2,
+  "caseId": "environment-branching-in-the-artifact",
+  "assertions": [
+    {
+      "id": "sources-present",
+      "status": "pass",
+      "evidence": "source files: 4"
+    },
+    {
+      "id": "fee-arithmetic-same-in-every-environment",
+      "status": "fail",
+      "evidence": "src/fees.js branches on the environment name=true"
+    },
+    {
+      "id": "second-factor-not-skipped-by-environment",
+      "status": "fail",
+      "evidence": "src/auth.js branches on the environment name=true"
+    },
+    {
+      "id": "receipt-delivery-not-branched-by-environment",
+      "status": "fail",
+      "evidence": "src/mailer.js branches on the environment name=true"
+    },
+    {
+      "id": "behaviour-differences-are-configured",
+      "status": "pass",
+      "evidence": "the second-factor check and receipt suppression must both survive as settings"
+    },
+    {
+      "id": "one-fee-rounding-path",
+      "status": "pass",
+      "evidence": "fee rounding calls remaining: 3; production's adjustment retained=true"
+    },
+    {
+      "id": "security-setting-defaults-to-strict",
+      "status": "pass",
+      "evidence": "an unset variable would leave the second factor off=false"
+    },
+    {
+      "id": "app-unchanged",
+      "status": "pass",
+      "evidence": "src/server.js must keep createApp and its /invoices route"
+    },
+    {
+      "id": "single-build-retained",
+      "status": "pass",
+      "evidence": "image build invocations in the workflow: 1"
+    }
+  ]
+}

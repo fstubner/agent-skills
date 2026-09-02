@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "caseId": "flag-decision-unrecorded",
+  "assertions": [
+    {
+      "id": "flags-module-present",
+      "status": "pass",
+      "evidence": "src/flags.js still exports isEnabled=true"
+    },
+    {
+      "id": "all-flags-retained",
+      "status": "pass",
+      "evidence": "flags no longer declared: none"
+    },
+    {
+      "id": "flag-values-unchanged",
+      "status": "pass",
+      "evidence": "flags whose value no longer reads as it did: none"
+    },
+    {
+      "id": "every-flag-has-a-removal-condition",
+      "status": "fail",
+      "evidence": "flags with no removal condition: newLedgerWriter,batchedExports,legacyCurrencyRounding,fastEntryLookup,reconciliationV2"
+    },
+    {
+      "id": "every-flag-has-an-owner",
+      "status": "fail",
+      "evidence": "flags with no owning team: newLedgerWriter,batchedExports,legacyCurrencyRounding,fastEntryLookup,reconciliationV2"
+    },
+    {
+      "id": "removal-conditions-are-not-placeholders",
+      "status": "pass",
+      "evidence": "flags whose condition is a placeholder: none"
+    },
+    {
+      "id": "pr-template-present",
+      "status": "pass",
+      "evidence": "PR template bytes=180"
+    },
+    {
+      "id": "pr-template-records-the-flag-decision",
+      "status": "fail",
+      "evidence": "line prompting for a yes-or-no flag decision: none"
+    },
+    {
+      "id": "pr-template-asks-for-the-reason",
+      "status": "fail",
+      "evidence": "the template asks why, not only whether=false"
+    },
+    {
+      "id": "app-unchanged",
+      "status": "pass",
+      "evidence": "src/server.js must keep its exported createApp"
+    }
+  ]
+}

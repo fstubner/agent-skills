@@ -1,0 +1,3 @@
+This pipeline has been green for four months. The flaky tests it was worked around for were fixed in March and the noisy lint config was cleaned up in April. Make the pipeline's green mean something again. Keep every check, and do not change the application.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

@@ -1,0 +1,12 @@
+# Deliberately declares no third-party dependencies.
+#
+# This is eval fixture data, and every run copies the fixture into a committed
+# run bundle — so one pinned vulnerable version here became one security alert
+# per bundle, 56 of them from a single two-line file. The worker imports
+# `requests` in source, which is what an assessment needs to see; nothing is
+# ever installed, so the manifest does not need to name it.
+[project]
+name = "payments-worker"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = []

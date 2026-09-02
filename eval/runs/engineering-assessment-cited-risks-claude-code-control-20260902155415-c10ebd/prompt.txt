@@ -1,0 +1,3 @@
+Perform a deep engineering assessment of this repository. Put the result in ASSESSMENT.md, limited to the five highest-value findings. Do not change the application.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

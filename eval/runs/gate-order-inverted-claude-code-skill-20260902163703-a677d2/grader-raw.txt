@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "caseId": "gate-order-inverted",
+  "assertions": [
+    {
+      "id": "workflow-present",
+      "status": "pass",
+      "evidence": "workflow bytes=1204"
+    },
+    {
+      "id": "no-check-dropped",
+      "status": "pass",
+      "evidence": "lint=true unit=true integration=true"
+    },
+    {
+      "id": "lint-gates-the-slow-suite",
+      "status": "fail",
+      "evidence": "integration jobs=integration each reached by lint=false"
+    },
+    {
+      "id": "unit-tests-gate-the-slow-suite",
+      "status": "fail",
+      "evidence": "integration jobs depend on a unit-test job=false"
+    },
+    {
+      "id": "nothing-deploys-before-the-tests",
+      "status": "fail",
+      "evidence": "deploying jobs=staging,production; all gated by unit and integration=false"
+    },
+    {
+      "id": "no-expensive-job-starts-unconditionally",
+      "status": "fail",
+      "evidence": "jobs with no needs: staging; expensive among them: staging"
+    },
+    {
+      "id": "deploy-path-intact",
+      "status": "pass",
+      "evidence": "scripts/deploy.sh must still deploy"
+    },
+    {
+      "id": "app-unchanged",
+      "status": "pass",
+      "evidence": "src/server.js must keep its exported createApp"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      # The lint config is noisy on the legacy files, so this is advisory.
+      - run: npm run lint || true
+
+  test:
+    runs-on: ubuntu-latest
+    # Two tests are flaky against the shared fixture database and we got tired
+    # of re-running the pipeline.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  production:
+    needs: [lint, test]
+    if: always()
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t registry.internal/ledger-api:${{ github.sha }} .
+      - name: Deploy
+        run: ./scripts/deploy.sh production registry.internal/ledger-api:${{ github.sha }}

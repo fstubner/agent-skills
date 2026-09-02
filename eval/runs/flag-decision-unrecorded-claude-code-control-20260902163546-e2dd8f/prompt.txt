@@ -1,0 +1,3 @@
+Four of the five flags in src/flags.js have been on for over a year and nobody is willing to delete one, because nobody can say what turning it off would do. We also have no record of which changes shipped behind a flag and which deliberately did not. Fix both, without changing what the application does today.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
