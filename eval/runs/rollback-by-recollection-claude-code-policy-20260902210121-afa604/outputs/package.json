@@ -1,0 +1,1 @@
+{"name":"notifications","private":true,"type":"module","scripts":{"test":"node --test test/"},"dependencies":{"express":"^4.19.0"}}

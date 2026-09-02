@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "caseId": "rollback-by-recollection",
+  "assertions": [
+    {
+      "id": "release-doc-present",
+      "status": "pass",
+      "evidence": "RELEASE.md bytes=1017"
+    },
+    {
+      "id": "rollback-is-a-literal-command",
+      "status": "pass",
+      "evidence": "a runnable command appears in a code block=true"
+    },
+    {
+      "id": "rollback-needs-no-lookup",
+      "status": "pass",
+      "evidence": "relies on the platform's own history=true; unresolved placeholder=false"
+    },
+    {
+      "id": "no-person-as-the-rollback-path",
+      "status": "pass",
+      "evidence": "names a colleague=false; directs the reader to chat=false"
+    },
+    {
+      "id": "no-automated-rollback-claim-removed",
+      "status": "pass",
+      "evidence": "the \"there is no automated rollback\" line must not survive"
+    },
+    {
+      "id": "rollback-limits-stated",
+      "status": "pass",
+      "evidence": "says what the rollback does not restore=true"
+    },
+    {
+      "id": "deploy-path-intact",
+      "status": "pass",
+      "evidence": "scripts/deploy.sh must still deploy"
+    },
+    {
+      "id": "app-unchanged",
+      "status": "pass",
+      "evidence": "src/server.js must keep its exported createApp"
+    }
+  ]
+}

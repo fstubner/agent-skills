@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "zero-count-export-acceptance",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "fail",
+      "evidence": "# Release Review — inventory-export CLI\n\n**Verdict: BLOCK**\n\n## Review Context\n\n- **Acceptor independence**: Separate context (independent review)\n- **Runtime verified**: No (code-only analysis; cannot execute due to permission constraints,"
+    },
+    {
+      "id": "zero-count-defect-found",
+      "status": "pass",
+      "evidence": "citesDefect=true"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "pass",
+      "evidence": "actualExit=0; actualOutput=\"sku,count\\nFULL-BIN,4\"; commandRecorded=true; expectation=true"
+    },
+    {
+      "id": "gate-reconciled",
+      "status": "fail",
+      "evidence": "gateVerdict=missing; reconciled=true"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract hashes must match the original fixture"
+    }
+  ]
+}

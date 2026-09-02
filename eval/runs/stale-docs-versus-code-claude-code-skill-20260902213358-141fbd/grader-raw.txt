@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 2,
+  "caseId": "stale-docs-versus-code",
+  "assertions": [
+    {
+      "id": "missing-authentication-cited",
+      "status": "pass",
+      "evidence": "the absence of authentication, against docs that promise it, must be reported"
+    },
+    {
+      "id": "auth-separated-from-drift",
+      "status": "fail",
+      "evidence": "auth rated critical or high=true; explicitly separated from the drift findings=false"
+    },
+    {
+      "id": "version-drift-cited",
+      "status": "pass",
+      "evidence": "evidence present=true"
+    },
+    {
+      "id": "pagination-drift-cited",
+      "status": "pass",
+      "evidence": "evidence present=true"
+    },
+    {
+      "id": "page-size-drift-cited",
+      "status": "pass",
+      "evidence": "evidence present=true"
+    },
+    {
+      "id": "idempotency-undocumented-cited",
+      "status": "pass",
+      "evidence": "evidence present=true"
+    },
+    {
+      "id": "post-status-drift-cited",
+      "status": "pass",
+      "evidence": "evidence present=true"
+    },
+    {
+      "id": "rate-limit-drift-cited",
+      "status": "pass",
+      "evidence": "evidence present=true"
+    },
+    {
+      "id": "declared-commands-run",
+      "status": "fail",
+      "evidence": "the report shows npm test and its output=false"
+    },
+    {
+      "id": "upstream-auth-question-not-assumed-away",
+      "status": "pass",
+      "evidence": "asserts public internet exposure without allowing for upstream auth=false"
+    },
+    {
+      "id": "assessment-only",
+      "status": "pass",
+      "evidence": "the audited files must be byte-identical — an assessment does not rewrite the docs it found wrong"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "pass",
+      "evidence": "gaps named=true; no blanket safety claim=true"
+    }
+  ]
+}

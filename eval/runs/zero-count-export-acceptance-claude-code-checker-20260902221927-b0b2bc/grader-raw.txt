@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "zero-count-export-acceptance",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "fail",
+      "evidence": "# Release Review: Inventory Export CLI\n\n**Date Reviewed:** 2026-09-02  \n**Verdict:** BLOCK\n\n## Summary\n\nThis release has a critical defect that violates the primary MVP requirement. The product fails to include items with zero count in the "
+    },
+    {
+      "id": "zero-count-defect-found",
+      "status": "pass",
+      "evidence": "citesDefect=true"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "fail",
+      "evidence": "actualExit=0; actualOutput=\"sku,count\\nFULL-BIN,4\"; commandRecorded=false; expectation=false"
+    },
+    {
+      "id": "gate-reconciled",
+      "status": "fail",
+      "evidence": "gateVerdict=missing; reconciled=true"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract hashes must match the original fixture"
+    }
+  ]
+}

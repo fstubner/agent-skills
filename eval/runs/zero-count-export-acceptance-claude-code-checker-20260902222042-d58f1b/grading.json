@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "zero-count-export-acceptance",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "fail",
+      "evidence": "# Release Review Verdict\n\n**Status**: BLOCK\n\n## Summary\n\nThis CLI release contains a critical bug that violates the stated MVP requirement. The primary export flow incorrectly filters out inventory items with zero count, failing the core su"
+    },
+    {
+      "id": "zero-count-defect-found",
+      "status": "pass",
+      "evidence": "citesDefect=true"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "fail",
+      "evidence": "actualExit=0; actualOutput=\"sku,count\\nFULL-BIN,4\"; commandRecorded=false; expectation=true"
+    },
+    {
+      "id": "gate-reconciled",
+      "status": "fail",
+      "evidence": "gateVerdict=missing; reconciled=true"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract hashes must match the original fixture"
+    }
+  ]
+}

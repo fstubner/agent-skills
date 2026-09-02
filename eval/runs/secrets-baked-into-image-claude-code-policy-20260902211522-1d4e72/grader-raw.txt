@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "caseId": "secrets-baked-into-image",
+  "assertions": [
+    {
+      "id": "db-credential-removed",
+      "status": "pass",
+      "evidence": "the database password appears anywhere in the tree=false"
+    },
+    {
+      "id": "payment-key-removed",
+      "status": "pass",
+      "evidence": "the live Stripe key appears anywhere in the tree=false"
+    },
+    {
+      "id": "dockerfile-present",
+      "status": "pass",
+      "evidence": "Dockerfile bytes=128"
+    },
+    {
+      "id": "no-config-baked-into-build",
+      "status": "pass",
+      "evidence": "Dockerfile ENV lines carrying deploy config: 0"
+    },
+    {
+      "id": "no-production-fallback-defaults",
+      "status": "fail",
+      "evidence": "env reads with a hardcoded fallback: 3"
+    },
+    {
+      "id": "missing-config-fails-closed",
+      "status": "fail",
+      "evidence": "config refuses to start without its variables=false"
+    },
+    {
+      "id": "config-still-exported",
+      "status": "pass",
+      "evidence": "src/config.js must still export config"
+    },
+    {
+      "id": "app-unchanged",
+      "status": "pass",
+      "evidence": "src/server.js must keep its exported createApp"
+    }
+  ]
+}

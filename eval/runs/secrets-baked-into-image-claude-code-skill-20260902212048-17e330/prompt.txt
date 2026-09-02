@@ -1,0 +1,7 @@
+Staging for this service is talking to the production database and nobody can work out how to point it somewhere else. Make the same built image runnable in any environment. Keep the service working and do not change what the API returns.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/release-engineering/SKILL.md
+Load only references relevant to this task.

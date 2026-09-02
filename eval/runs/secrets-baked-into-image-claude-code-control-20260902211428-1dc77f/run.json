@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "secrets-baked-into-image-claude-code-control-20260902211428-1dc77f",
+  "caseId": "secrets-baked-into-image",
+  "caseRevision": 1,
+  "caseSha256": "ff756504568baa265c056366b6f3e644b4cfceb3aed28123d08a13295e70fca2",
+  "fixtureSha256": "e7319cfac6501771e0cc0e62dfbab285f68bb7df8fda2c3a608f484505f98e37",
+  "graderSha256": "536c759a8fafe34661c3b1882bf281de4c99b442ced89b11b33bc3caac15db5b",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-09-02T21:14:28.025Z",
+  "finishedAt": "2026-09-02T21:15:22.260Z",
+  "durationMs": 54235,
+  "totalTokens": 468121,
+  "costUsd": 0.0851347,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "f0e412adb1cb821b559a434e2fee16035022e5897ea5b6e113574411c1153ef1",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 4,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}

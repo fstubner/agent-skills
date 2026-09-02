@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "transaction-boundary-broken-claude-code-control-20260902214829-deb0bf",
+  "caseId": "transaction-boundary-broken",
+  "caseRevision": 1,
+  "caseSha256": "068327c3218b5f3f80cabf027d83c21d8e3f43803da5345004f0e20d549ce075",
+  "fixtureSha256": "d0c207dd95adbf34cc9f3d18d584f5ea474934504130678f65ebb6dedaee76f4",
+  "graderSha256": "1b949705ed371d00d44548f55a969c6338895326938b3fe9540c8321e5761357",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-09-02T21:48:29.220Z",
+  "finishedAt": "2026-09-02T21:49:00.681Z",
+  "durationMs": 31461,
+  "totalTokens": 178230,
+  "costUsd": 0.041343,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "07c365a7412994489ca9e227f07c45baec5a95b7f6c537d2c6c28b05e01d38ad",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 4,
+    "failed": 7,
+    "notEvaluated": 0,
+    "total": 11
+  }
+}

@@ -1,0 +1,7 @@
+We hand this service to the platform on-call rota next week. They have never operated it. Go over OPERATIONS.md and make sure it will not mislead them at 3am. Keep the runbook usable — they still need the commands.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/release-engineering/SKILL.md
+Load only references relevant to this task.

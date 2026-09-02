@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "caseId": "walkthrough-diverges-from-success",
+  "assertions": [
+    {
+      "id": "divergence-identified",
+      "status": "fail",
+      "evidence": "both documents named=false; named as disagreeing=true"
+    },
+    {
+      "id": "divergence-characterised",
+      "status": "pass",
+      "evidence": "the review states what each document asks for=true"
+    },
+    {
+      "id": "code-follows-the-walkthrough-cited",
+      "status": "pass",
+      "evidence": "the coordinator gate is named=true; cited near src/server.js:25"
+    },
+    {
+      "id": "volunteer-cannot-even-read-noted",
+      "status": "pass",
+      "evidence": "the review notes volunteers cannot see the shifts either=true"
+    },
+    {
+      "id": "divergence-not-normalised",
+      "status": "fail",
+      "evidence": "surfaced for a person to decide=false; silently picked a winner=false"
+    },
+    {
+      "id": "mvp-scope-checked",
+      "status": "fail",
+      "evidence": "the review checks the MVP list, not only the Success sentence"
+    },
+    {
+      "id": "verdict-not-ship",
+      "status": "fail",
+      "evidence": "verdict line: **Recommendation:** Halt deployment; significant work required before food bank use. -> unrecognised"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "pass",
+      "evidence": "report shows a command and its output=true"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract files must be byte-identical to the fixture"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "fail",
+      "evidence": "gaps named=false; specific areas named=true; no blanket safety claim=true"
+    }
+  ]
+}
