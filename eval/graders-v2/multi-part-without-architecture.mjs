@@ -40,18 +40,47 @@ const low = report.toLowerCase();
 const assertions = [];
 const record = (id, pass, evidence) => assertions.push({ id, status: pass ? 'pass' : 'fail', evidence });
 
-const citesInRange = (file, from, to) => {
+// A citation may be a single line or a range, and a range is read as the span
+// it covers: "src/x.js:2-5" locates a defect on any of lines 2..5. Reading only
+// a range's first number was a real fault — job-ledger-ordering-assessment
+// scored 0 across 22 runs while 18 of 21 reports named its bug correctly, and
+// every other grader hid the same fault behind its slack window.
+//
+// A span covering the whole file is a reference to the file, not a citation of
+// anything in it. The test is proportional rather than a line count, settled by
+// measurement: a flat cap of 8 rejected 26 real citations across the archive,
+// reports pointing at "app/worker.py:9-20" — the function holding the defect,
+// in a file far longer than the span. No absolute number separates a 12-line
+// function from a 10-line file quoted end to end.
+//
+// WHOLE_FILE_MIN is the floor: without it the rule rejected a four-line stub
+// script cited as :1-4, where the whole file IS the defect. RANGE_MAX is only a
+// backstop for the pathological case. All three are pinned in
+// scripts/tests/eval-citation-forms.mjs.
+const RANGE_MAX = 40;
+const WHOLE_FILE_SHARE = 0.8;
+const WHOLE_FILE_MIN = 20;
+const citedSpans = (file) => {
   const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  for (let n = from; n <= to; n++) {
-    if (n > 0 && new RegExp(`${escaped}(?:[\\s\`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*${n}\\b`, 'i').test(report)) return true;
-    // Reversed order — "line 15, path/to/file". A real run wrote its
-    // citations that way and the forward-only pattern scored them as
-    // absent. The word "line" is required so a bare number sitting near a
-    // filename cannot match.
-    if (new RegExp(`\\b(?:lines?|L)\\s*${n}\\b[^\\n]{0,40}?${escaped}`, 'i').test(report)) return true;
+  let totalLines = 0;
+  try { totalLines = fs.readFileSync(path.join(root, file), 'utf8').split(/\r?\n/).length; } catch { /* not in the workspace */ }
+  const forms = [
+    new RegExp(`${escaped}(?:[\\s\`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*(\\d+)(?:\\s*[-–—]\\s*(\\d+))?`, 'gi'),
+    new RegExp(`\\b(?:lines?|L)\\s*(\\d+)(?:\\s*[-–—]\\s*(\\d+))?\\b[^\\n]{0,40}?${escaped}`, 'gi'),
+  ];
+  const spans = [];
+  for (const form of forms) {
+    for (const m of report.matchAll(form)) {
+      const a = Number(m[1]);
+      const b = m[2] === undefined ? a : Number(m[2]);
+      const width = Math.abs(b - a) + 1;
+      const wholeFile = totalLines >= WHOLE_FILE_MIN && width >= totalLines * WHOLE_FILE_SHARE;
+      if (width <= RANGE_MAX && !wholeFile) spans.push([Math.min(a, b), Math.max(a, b)]);
+    }
   }
-  return false;
+  return spans;
 };
+const citesInRange = (file, from, to) => citedSpans(file).some(([a, b]) => a <= to && from <= b);
 const lineOf = (file, needle) => {
   try {
     return fs.readFileSync(path.join(root, file), 'utf8').split(/\r?\n/).findIndex((l) => l.includes(needle)) + 1;

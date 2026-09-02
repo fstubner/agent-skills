@@ -30,26 +30,83 @@ const samples = [
   ['src/store.js:19 is the other one', false],
 ];
 
+// Ranges, the fifth form and the reason for the rewrite below.
+//
+// The per-line matcher read only a range's FIRST endpoint, so for
+// "src/worker.js:2-4" line 2 scored and lines 3 and 4 did not. Graders papered
+// over it with a slack window, which is why most of them never showed the
+// fault: the window happened to reach the endpoint. The one grader with no
+// slack scored 0 across 22 runs while 18 of 21 reports named its bug correctly.
+//
+// A range is now read as the span it covers, and a span that covers the whole
+// file is a reference to the file rather than a citation of anything in it.
+//
+// The rule is proportional, not a line count, and that was settled by
+// measurement rather than taste. A flat cap of 8 lines was tried first and
+// rejected 26 assertions across the archive that were real: reports citing
+// `app/worker.py:9-20` and `:7-15` — the function containing the defect, in a
+// file far longer than the span. No absolute number can separate "a 12-line
+// function" from "a 10-line file quoted end to end", because they are the same
+// width. The share of the file is what distinguishes them.
+//
+// WHOLE_FILE_MIN is the floor, and it was also found by measurement rather
+// than argued for. Without it the rule rejected `scripts/restore-check.sh:1-4`
+// — a four-line stub script whose entire body IS the defect, where citing all
+// four lines is the most precise citation available. Below this size "the
+// whole file" and "the exact place" are the same statement.
+//
+// RANGE_MAX is a backstop for the pathological case (`:1-4000`) and is
+// deliberately generous. WHOLE_FILE_SHARE does the real work.
+const RANGE_MAX = 40;
+const WHOLE_FILE_SHARE = 0.8;
+const WHOLE_FILE_MIN = 20;
+// [sample, totalLinesInFile, expected]. Graders pass the real line count;
+// 0 means "unknown", where only the backstop applies.
+const ranges = [
+  ['src/server.js:24-28', 0, true],            // interior of a range — the fault above
+  ['reported at lines 24-28 in src/server.js', 0, true],
+  ['`src/server.js` lines 22–26 look wrong', 0, true], // en dash
+  ['src/server.js:20-31', 200, true],          // a function span in a long file
+  ['src/server.js:30-34', 0, false],           // a range that does not contain 26
+  ['src/server.js:1-4000 reviewed in full', 0, false], // absurd span, backstop
+  ['src/server.js:1-30', 32, false],           // 94% of a 32-line file — a reference, not a citation
+  ['src/server.js:24-28', 4, true],            // a tiny file cited whole is still precise
+];
+
 const file = 'src/server.js';
-const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-// Byte-identical to the helper the graders carry.
-function cites(report, n) {
-  const fwd = new RegExp(`${escaped}(?:[\\s\`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*${n}\\b`, 'i');
-  const rev = new RegExp(`\\b(?:lines?|L)\\s*${n}\\b[^\\n]{0,40}?${escaped}`, 'i');
-  return fwd.test(report) || rev.test(report);
+// Byte-identical to the helper the graders carry, except that they read
+// totalLines from the workspace and this takes it as an argument.
+function citedSpans(report, totalLines = 0) {
+  const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const forms = [
+    new RegExp(`${escaped}(?:[\\s\`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*(\\d+)(?:\\s*[-–—]\\s*(\\d+))?`, 'gi'),
+    new RegExp(`\\b(?:lines?|L)\\s*(\\d+)(?:\\s*[-–—]\\s*(\\d+))?\\b[^\\n]{0,40}?${escaped}`, 'gi'),
+  ];
+  const spans = [];
+  for (const form of forms) {
+    for (const m of report.matchAll(form)) {
+      const a = Number(m[1]);
+      const b = m[2] === undefined ? a : Number(m[2]);
+      const width = Math.abs(b - a) + 1;
+      const wholeFile = totalLines >= WHOLE_FILE_MIN && width >= totalLines * WHOLE_FILE_SHARE;
+      if (width <= RANGE_MAX && !wholeFile) spans.push([Math.min(a, b), Math.max(a, b)]);
+    }
+  }
+  return spans;
 }
-
-// Graders scan a window around the target line, so a range citation only has
-// to land one endpoint inside it.
-const near = (report, line, slack = 4) => {
-  for (let n = Math.max(1, line - slack); n <= line + slack; n++) if (cites(report, n)) return true;
-  return false;
-};
+const citesAt = (report, line, total = 0) => citedSpans(report, total).some(([a, b]) => a <= line && line <= b);
+const near = (report, line, slack = 4) => citedSpans(report).some(([a, b]) => a - slack <= line && line <= b + slack);
 
 for (const [sample, want] of samples) {
   const label = want ? 'recognised' : 'correctly ignored';
   expect(`citation ${label}: ${sample.slice(0, 46)}`, near(sample, 26) === want, sample);
+}
+// Ranges are checked without a slack window, so the span logic is what is
+// under test rather than the window reaching an endpoint.
+for (const [sample, total, want] of ranges) {
+  const label = want ? 'recognised' : 'correctly ignored';
+  expect(`range ${label}: ${sample.slice(0, 46)}`, citesAt(sample, 26, total) === want, sample);
 }
 
 // The pattern in the test must not drift from the pattern in the graders.
@@ -77,17 +134,37 @@ const CONNECTORS = /\|\\\\blines\?\\\\b\|\\\\bat\\\\b\|\\\\bL\)\*/;
 //
 // A test that selects its subjects by the marks of the fix can only ever
 // confirm the fix it already found.
-// Selecting on the identifier name was also wrong, in the other direction:
-// stale-replay-evidence names a plain keyword test `citesStep`, and it has no
-// file or line in it at all. What every real citation matcher has instead is a
-// repeated connector class sitting between the path and the number — the
-// backtick inside a `(?:...)*` group is present in the narrow form and the
-// corrected one alike, and absent from anything that is not joining a path to
-// a line.
-const CONNECTOR_CLASS = /\(\?:[^)\n]*`[^)\n]*\)\*/;
-const usingHelper = fs.readdirSync(graderDir)
-  .filter((f) => f.endsWith('.mjs'))
-  .filter((f) => CONNECTOR_CLASS.test(fs.readFileSync(path.join(graderDir, f), 'utf8')));
+//
+// The replacement was worse. Selecting on the shape of the connector class —
+// a backtick inside a `(?:...)*` group — matched ZERO graders, because the
+// corrected connector set contains `.()` and so `[^)]*` stops at that paren.
+// It had matched only the four NARROW graders, whose connector set has no
+// parens in it, so the moment they were fixed the check went quiet and green
+// while testing nothing at all. Two selectors, two silent holes.
+//
+// So this no longer trusts a pattern to find its own subjects. The set of
+// citation graders is stated, and a separate check fails when a grader
+// declares a cites* helper that is not accounted for — a new one must be
+// classified deliberately rather than being skipped by a regex that happens
+// not to reach it.
+const NOT_CITATION_HELPERS = new Set([
+  'stale-replay-evidence.mjs', // citesStep matches an empty-state phrase, no file or line
+]);
+const declaresHelper = /\bcites\w*\s*=/;
+const all = fs.readdirSync(graderDir).filter((f) => f.endsWith('.mjs'));
+const declaring = all.filter((f) => declaresHelper.test(fs.readFileSync(path.join(graderDir, f), 'utf8')));
+const usingHelper = declaring.filter((f) => !NOT_CITATION_HELPERS.has(f));
+// The guard against a vacuous run: if the set ever empties, the two checks
+// below pass without examining anything, which is the failure recorded above.
+expect('the citation-grader set is not empty', usingHelper.length > 0,
+  `declaring=${declaring.length}`);
+// Range capture, checked separately from the connector set. Carrying the
+// connectors is no longer enough: a grader can read every punctuation form and
+// still see only the first number of "2-4".
+const SPAN_CAPTURE = /\(\\\\d\+\)\(\?:\\\\s\*\[-–—\]\\\\s\*\(\\\\d\+\)\)\?/;
 const stale = usingHelper.filter((f) => !CONNECTORS.test(fs.readFileSync(path.join(graderDir, f), 'utf8')));
 expect('every grader declaring a citation helper carries the tested pattern',
   stale.length === 0, `not updated: ${stale.join(', ')}`);
+const noRanges = usingHelper.filter((f) => !SPAN_CAPTURE.test(fs.readFileSync(path.join(graderDir, f), 'utf8')));
+expect('every grader declaring a citation helper reads line ranges',
+  noRanges.length === 0, `first endpoint only: ${noRanges.join(', ')}`);
