@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { assertionDiagnostics, discriminatingRate } from './lib/eval-diagnostics.mjs';
 import { applyInterimCohort } from './lib/eval-interim.mjs';
+import { runEligibility } from './lib/eval-eligibility.mjs';
 import { inProgramme } from './lib/eval-programme.mjs';
 import { currentSkillDigest, latestExperiments, skillCurrencyReasons, supersededReason } from './lib/eval-versions.mjs';
 
@@ -37,29 +38,6 @@ if (fs.existsSync(runsDir)) {
   }
 }
 
-function runEligibility(run) {
-  if (!run.testCase) return 'case definition missing';
-  if (run.manifest.exitCode !== 0) return `harness exit ${run.manifest.exitCode}`;
-  if (run.manifest.grading.notEvaluated !== 0) return `${run.manifest.grading.notEvaluated} assertions not evaluated`;
-  if (typeof run.manifest.totalTokens !== 'number') return 'token usage missing';
-  if (typeof run.manifest.costUsd !== 'number' && typeof run.manifest.costCredits !== 'number') return 'cost usage missing';
-  const ambientPath = /(?:[A-Z]:\\\\Users\\\\[^\s"']+\\\\(?:\.agents|\.codex)\\\\skills\\\\|\/(?:home|Users)\/[^\s"']+\/(?:\.agents|\.codex)\/skills\/)/i;
-  const accessedAmbientSkill = run.transcript.split(/\r?\n/).filter(Boolean).some((line) => {
-    try {
-      const event = JSON.parse(line);
-      const payload = event.payload || event;
-      if (payload.type === 'custom_tool_call') return ambientPath.test(payload.input || '');
-      if (payload.type === 'item.completed' || payload.type === 'item.started') {
-        return payload.item?.type === 'command_execution' && ambientPath.test(payload.item.command || '');
-      }
-      return false;
-    } catch { return false; }
-  });
-  if (['control', 'policy'].includes(run.manifest.condition) && accessedAmbientSkill) {
-    return 'ambient installed skill accessed';
-  }
-  return null;
-}
 
 const cells = new Map();
 for (const run of runs) {

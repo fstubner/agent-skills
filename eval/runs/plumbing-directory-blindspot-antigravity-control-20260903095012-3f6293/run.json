@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "plumbing-directory-blindspot-antigravity-control-20260903095012-3f6293",
+  "caseId": "plumbing-directory-blindspot",
+  "caseRevision": 1,
+  "caseSha256": "2a8f4d48f4b7cfb131085e26792f13ee71c20e0caa7d45b67635e785eca77936",
+  "fixtureSha256": "b4a02199919e150fe1a672b6ac6fe1247fcf80b41a60257e7d6bf01cdf1a0132",
+  "graderSha256": "9a4aee0b58d1da5524d2d870f58af8ec9dacb6cb25512d861bfdce75a722fe1f",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.25",
+  "model": "gemini-3.8-flash-low",
+  "startedAt": "2026-09-03T09:50:12.606Z",
+  "finishedAt": "2026-09-03T09:54:32.050Z",
+  "durationMs": 259444,
+  "totalTokens": 591697,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "471158d911ceaa09634851a80f451a648532413b92bfbb76c09fe58523684c38",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 10,
+    "failed": 2,
+    "notEvaluated": 0,
+    "total": 12
+  }
+}

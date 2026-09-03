@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "plumbing-directory-blindspot-antigravity-control-20260903095451-d67269",
+  "caseId": "plumbing-directory-blindspot",
+  "caseRevision": 1,
+  "caseSha256": "2a8f4d48f4b7cfb131085e26792f13ee71c20e0caa7d45b67635e785eca77936",
+  "fixtureSha256": "b4a02199919e150fe1a672b6ac6fe1247fcf80b41a60257e7d6bf01cdf1a0132",
+  "graderSha256": "9a4aee0b58d1da5524d2d870f58af8ec9dacb6cb25512d861bfdce75a722fe1f",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.25",
+  "model": "gpt-oss-120b-medium",
+  "startedAt": "2026-09-03T09:54:51.513Z",
+  "finishedAt": "2026-09-03T09:55:01.623Z",
+  "durationMs": 10110,
+  "totalTokens": 34722,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 1,
+  "artifactSha256": "b4a02199919e150fe1a672b6ac6fe1247fcf80b41a60257e7d6bf01cdf1a0132",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 1,
+    "failed": 11,
+    "notEvaluated": 0,
+    "total": 12
+  }
+}
