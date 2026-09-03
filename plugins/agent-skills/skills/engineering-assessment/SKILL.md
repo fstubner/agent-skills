@@ -160,6 +160,38 @@ If a potential issue is suspected but cannot be confirmed with evidence,
 list it separately under "Unconfirmed / Requires Investigation" with an
 explanation of what additional information or access is needed.
 
+#### Two checks before each finding goes in the table
+
+Both of these are measured failures of this skill, not hypotheticals. Across
+ten cases, runs that read this skill scored **18 points worse** on the checks
+against asserting more than was established than runs given a short policy
+summary instead. The rules were already stated — as non-negotiables 1, 4 and
+5, at the end of this file — and stating them there did not work. They are
+here because this is where a severity gets chosen.
+
+**Does the evidence show this defect, in this code?** Not "code like this
+often has this problem". A defect asserted about code you have read and which
+does not contain it is a fabrication, however plausible it sounds. On a case
+whose README stated that writes go to a temp file and are renamed into place,
+runs in every condition still reported a partial-write risk. If you have not
+seen it, it belongs under Unconfirmed with what you would need to confirm it,
+or it does not go in.
+
+**Does the impact match the severity definition, or only the example's
+words?** The rubric's High examples include "unhandled errors that crash the
+process" and "missing error handling on external service calls in critical
+paths". Reaching for High because a finding can be phrased that way is the
+inflation this skill measurably causes: on a two-module local inventory tool
+with one real defect, no control or policy run rated anything High and every
+skill run did — one of them rating four findings High, including "no test
+coverage for persistence layer".
+
+Ask what actually happens to a user or an operator if this is left alone, in
+*this* system at *its* scale. A gap that would be High in a payments service
+is Medium or Low in a tool one person runs by hand. If nothing serious is
+there, the correct report says so plainly — an assessment that finds a clean
+codebase clean is a successful assessment, not an empty one.
+
 ### 5. Produce Findings Table
 
 Present all confirmed findings in a single table, sorted by severity

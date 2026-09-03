@@ -29,7 +29,7 @@ const model = evidence.minimumEvidence.requiredModelsByHarness[harness][0];
 const runsDir = path.join(tmpBase, 'eval-batch-runs');
 fs.mkdirSync(runsDir, { recursive: true });
 
-function bundle(name, exitCode, grading) {
+function bundle(name, exitCode, grading, extra = {}) {
   const dir = path.join(runsDir, name);
   fs.mkdirSync(dir);
   fs.writeFileSync(path.join(dir, 'run.json'), JSON.stringify({
@@ -41,6 +41,7 @@ function bundle(name, exitCode, grading) {
     exitCode,
     graderSha256: sha256(fs.readFileSync(path.join(root, testCase.grader))),
     grading,
+    ...extra,
   }));
 }
 // One usable trial, and the two kinds of bundle that are not one.
@@ -60,6 +61,13 @@ bundle(`${caseId}-${harness}-control-truncated`, 1, { passed: 2, failed: 9, notE
 // exitCode check alone would catch them and the check would look load-bearing
 // when it is not.
 bundle(`${caseId}-${harness}-control-void`, 0, { passed: 0, failed: 0, notEvaluated: 5, total: 5 });
+// A skill-arm run staged from a SKILL.md that has since been edited. Whatever
+// the current digest is, this is not it, so the run measures a version nobody
+// ships and eval-report drops its case from completedCaseCount. Counting it
+// here reported engineering-assessment's arm complete on 2026-09-03 when every
+// one of its skill trials had just gone stale.
+bundle(`${caseId}-${harness}-skill-stale`, 0, { passed: 4, failed: 1, notEvaluated: 0, total: 5 },
+  { condition: 'skill', stagedInputSha256: 'f'.repeat(64) });
 
 const r = spawnSync(process.execPath, [
   path.join(root, 'scripts', 'eval-batch.mjs'),
@@ -70,7 +78,7 @@ const trials = evidence.minimumEvidence.trialsPerCondition;
 const conditions = testCase.conditions.length;
 // Every condition of the case is short by `trials`, except control, which has
 // exactly one usable trial. Neither the empty nor the truncated bundle counts.
-const wantOutstanding = trials * conditions - 1;
+const wantOutstanding = trials * conditions - 1; // the stale skill run must not reduce this
 const reported = /(\d+) runs outstanding/.exec(r.stdout);
 expect('eval-batch --dry-run reports an outstanding count', Boolean(reported), r.stdout || r.stderr);
 expect('only a run eval-report can use fills a cell',

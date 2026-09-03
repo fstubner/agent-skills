@@ -16,6 +16,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { spawnSync } from 'child_process';
+import { currentSkillDigest } from './lib/eval-versions.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const argv = process.argv.slice(2);
@@ -40,6 +41,9 @@ const cases = fs.readdirSync(path.join(root, 'eval', 'cases-v2'))
 
 const sha256 = (buf) => crypto.createHash('sha256').update(buf).digest('hex');
 const caseGrader = new Map(cases.map((c) => [c.id, path.join(root, c.grader)]));
+// The digest of the skill text a skill-arm run would stage today, per case,
+// computed the same way eval-report does so the two cannot drift.
+const caseSkillDigest = new Map(cases.map((c) => [c.id, currentSkillDigest(root, c.skills || [c.skill])]));
 
 // What is already recorded. A cell is keyed exactly as the matrix defines it.
 const existing = new Map();
@@ -72,6 +76,17 @@ for (const entry of fs.existsSync(runsDir) ? fs.readdirSync(runsDir) : []) {
   // manifest can carry. The rest of that function needs the transcript.
   if (m.exitCode !== 0) continue;
   if (m.grading.notEvaluated !== 0) continue;
+  // A skill-arm run staged from a SKILL.md that has since been edited measures
+  // a version nobody ships. eval-report says so — "the skill arm measures a
+  // superseded version" — and drops the case from completedCaseCount, so
+  // counting it here reports an arm complete that the report cannot use.
+  //
+  // Third time this pair has disagreed, after 429 empties and truncated runs.
+  // Found on 2026-09-03: engineering-assessment's SKILL.md was edited to fix a
+  // measured regression, every one of its skill trials went stale, and this
+  // still said 0 outstanding — so the re-measurement could not be run.
+  const currentSkill = caseSkillDigest.get(m.caseId);
+  if (m.condition === 'skill' && currentSkill && (m.stagedInputSha256 || 'legacy') !== currentSkill) continue;
   // Only runs the CURRENT instrument produced count toward a cell.
   //
   // 322 of the bundles on disk carry no graderSha256 at all — they predate

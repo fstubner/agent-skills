@@ -1,0 +1,7 @@
+Audit this payments worker before we scale it up. Write your assessment to ASSESSMENT.md, limited to the five highest-value findings. Do not change the application.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Before implementing, read and follow every skill in this predeclared workflow bundle:
+- .agent-input/engineering-assessment/SKILL.md
+Load only references relevant to this task.

@@ -57,7 +57,22 @@ const currencyReasons = (skill) =>
   (skill?.reasons ?? []).filter((reason) => /skill text has changed since/.test(reason));
 
 // A skill whose evidence currently matches its text, so the flag can flip.
-const SKILL = 'engineering-assessment';
+//
+// Chosen at run time rather than named. It used to be engineering-assessment,
+// which broke the moment that skill was edited on 2026-09-03 to fix a measured
+// regression — the test would then fail for the very reason it exists to
+// detect, which is a confusing way to learn the machinery works. Any measured
+// skill with completed cases and no outstanding complaint will do; if none
+// has, that is a real finding and the test says so rather than picking one
+// anyway.
+const report0 = reportNow();
+const SKILL = JSON.parse(fs.readFileSync(path.join(root, 'eval', 'evidence.json'), 'utf8')).measuredSkills
+  .find((name) => {
+    const s = report0?.skills?.[name];
+    return s && (s.completedCaseCount ?? 0) > 0 && currencyReasons(s).length === 0;
+  });
+expect('some measured skill has evidence matching its text, to test against',
+  Boolean(SKILL), `measured skills all stale or incomplete: ${Object.keys(report0?.skills ?? {}).join(', ')}`);
 const skillMd = path.join(root, SKILL, 'SKILL.md');
 const original = fs.readFileSync(skillMd, 'utf8');
 

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 2,
+  "caseId": "n-plus-one-and-missing-index",
+  "assertions": [
+    {
+      "id": "n-plus-one-cited",
+      "status": "pass",
+      "evidence": "described=true; cited near src/orders.js:11"
+    },
+    {
+      "id": "missing-customer-index-cited",
+      "status": "pass",
+      "evidence": "missing index named=true; customer_id named=true"
+    },
+    {
+      "id": "schema-read-alongside-queries",
+      "status": "pass",
+      "evidence": "the report must show it read the migration to know which indexes exist"
+    },
+    {
+      "id": "leading-wildcard-cited",
+      "status": "pass",
+      "evidence": "described=true; cited near src/orders.js:20"
+    },
+    {
+      "id": "unindexed-sort-cited",
+      "status": "pass",
+      "evidence": "the ORDER BY placed_at with no supporting index must be reported"
+    },
+    {
+      "id": "growth-explains-regression",
+      "status": "pass",
+      "evidence": "the report should separate the constant-factor defect from the ones that scale"
+    },
+    {
+      "id": "measurement-limit-stated",
+      "status": "pass",
+      "evidence": "the report must say the ranking is unmeasured and name what would measure it"
+    },
+    {
+      "id": "declared-commands-run",
+      "status": "fail",
+      "evidence": "the report shows npm test and its output=false"
+    },
+    {
+      "id": "no-fabricated-injection-finding",
+      "status": "fail",
+      "evidence": "claims an injection vector where every query is parameterised=true"
+    },
+    {
+      "id": "assessment-only",
+      "status": "pass",
+      "evidence": "the audited files must be byte-identical to the fixture"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "pass",
+      "evidence": "gaps named=true; no blanket safety claim=true"
+    }
+  ]
+}

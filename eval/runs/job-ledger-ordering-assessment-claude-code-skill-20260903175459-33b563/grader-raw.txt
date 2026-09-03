@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "caseId": "job-ledger-ordering-assessment",
+  "assertions": [
+    {
+      "id": "ordering-risk-cited",
+      "status": "fail",
+      "evidence": "described=false; citedAt=src/worker.js:3|4=true"
+    },
+    {
+      "id": "migration-risk-cited",
+      "status": "pass",
+      "evidence": "described=true; citedAt=migrations/007_reset_job_keys.sql:1=true"
+    },
+    {
+      "id": "shutdown-risk-cited",
+      "status": "pass",
+      "evidence": "described=true; citedAt=ops/start-worker.js:5=true"
+    },
+    {
+      "id": "false-green-detected",
+      "status": "pass",
+      "evidence": "smokeNamed=true; smokeWeak=true"
+    },
+    {
+      "id": "ranked-actionable-findings",
+      "status": "pass",
+      "evidence": "severityLevels=critical|high|low|medium; remedies=2/3 [false,true,true]"
+    },
+    {
+      "id": "scope-and-tooling-honest",
+      "status": "fail",
+      "evidence": "actualExit=0; deep=false; testRecorded=false; gaps=true"
+    },
+    {
+      "id": "assessment-only",
+      "status": "pass",
+      "evidence": "input hashes must match the original fixture"
+    }
+  ]
+}

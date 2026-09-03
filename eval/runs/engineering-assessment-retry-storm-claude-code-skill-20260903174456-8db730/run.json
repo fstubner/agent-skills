@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "engineering-assessment-retry-storm-claude-code-skill-20260903174456-8db730",
+  "caseId": "engineering-assessment-retry-storm",
+  "caseRevision": 1,
+  "caseSha256": "99642640e83a5e7d427195b0112c617fbe9214cd8ae2fd5d7bdbe21eb5f4f071",
+  "fixtureSha256": "a5bac85c74493aca3a4fd87b29b7794502fc293cab1430b282d3a1adc35f2df7",
+  "graderSha256": "70d48ec65e8be7ce10603b19480efe3c47955d5883bf6acbc154e1fa8a5fdf39",
+  "checkerSha256": null,
+  "stagedInputSha256": "d27fefc556f1e69e7349cb2a57f071b0bedfc10ef01c7afb66ddaa93adcae9da",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-09-03T17:44:57.056Z",
+  "finishedAt": "2026-09-03T17:46:47.249Z",
+  "durationMs": 110193,
+  "totalTokens": 585949,
+  "costUsd": 0.1152839,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "2a9264136d827e9f25626b363e30c9908526819a32c2379b52fe94c183e0102c",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 6,
+    "failed": 2,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}
