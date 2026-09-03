@@ -1,5 +1,61 @@
 # Changelog
 
+## [Unreleased]
+
+Reconstructed on 2026-09-03 from the 94 commits since alpha.22, after a
+self-assessment found this section missing. Written by theme rather than by
+commit; the commit messages carry the measurements.
+
+**The evaluation programme exists, and it is honest about what it can say.**
+The promotion contract's case count is now derived rather than asserted
+(`eval-power.mjs`: fifteen cases per skill at the observed between-case
+spread, not three), the programme is narrowed to the three skills that will
+be measured properly — `engineering-assessment`, `product-acceptance`,
+`release-engineering` — and each has its fifteen cases. Every run bundle is
+bound to the sha256 of the case, the fixture, the grader and any checker the
+grader executes, and `eval-verify` refuses a mismatch. A run that never
+reached a model is `not_evaluated`, never a failure. 369 claude-code runs on
+haiku are recorded as evidence and 163 more as records of a quota failure,
+with the last cells still running; the codex arm is not started. No
+efficacy claim is supported yet, and the README's first line still says so.
+
+**The instrument was wrong five times, and each time the fix is measured.**
+Graders could not read citations in the forms real models write — three
+sweeps for punctuation and word order, then line ranges, then a proportional
+whole-file rule with a small-file floor — and each sweep superseded the runs
+graded by the old matcher (89, 96, 61) rather than editing their hashes. A
+drift test that could only confirm the fix it already found was rewritten to
+state its subjects. One case's fixture launched a file that did not exist;
+its all-or-nothing assertion became three. The batch runner counted 158
+quota-failed runs as completed and reported an arm finished; it no longer
+counts a bundle in which nothing was evaluated, and stops after three empty
+runs in a row.
+
+**Who reaches for the skills is now known.** Reading a month of Claude Code
+transcripts across fifteen projects: 89 invocations, 27 typed by the human,
+62 chosen by the model, 21 of those from a prompt that named no activity.
+The acceptance gate returned BLOCK eleven times, SHIP twice. Unprompted
+invocation fails in non-interactive `claude -p` and works in interactive
+sessions; the README says which. Codex shows nine real sessions, Antigravity
+two, Cursor none. (`scripts/skill-outcomes.mjs`,
+`eval/results/field-outcomes-2026-09-02.md`.)
+
+**The suite runs its own checkers on itself.** `--exclude <dir>` on
+`check-organization` and `check-smells`, so a repository carrying
+deliberately defective fixtures can leave them out; CI now runs both on this
+one. `core/lib/classify.cjs` was 553 lines against the 400-line rule it
+enforces on everyone else and is split into `classify.cjs` and
+`classify-readers.cjs`. Four graders that had been committed as single
+minified lines are readable again, proved equivalent on 69 workspaces. A
+binding test that sabotaged a real run manifest in place now sabotages a
+disposable copy.
+
+**Smaller.** `engineering-assessment` hoists "run the project's own commands
+first" to step 0, measured 2/9 → 5/8. `release-engineering` gains the operate
+half (`OPERATIONS.md`, `check-operability`). Two skill descriptions
+rewritten after the selection harness showed them competing. Readable
+verdicts and the two-tier routing table shipped in alpha.22 are unchanged.
+
 ## 1.0.0-alpha.22 — 2026-08-17
 
 Two changes from a product review, both aimed at the suite being pleasant to
