@@ -321,3 +321,30 @@ import {
   expect('code-smells: the spread is counted per directory, not per first segment',
     Boolean(c) && /across 4 directories/.test(c.detail || ''), c && c.detail);
 }
+
+// ---------- --exclude: deliberately defective trees can be left out ----------
+// The suite's own repository carries eval fixtures and archived model output
+// that are supposed to be bad. Without a way to say so, both structure
+// checkers BLOCKed the repository on planted defects and the one real
+// defect (a 553-line core file) was hidden behind them.
+{
+  const ORG = path.join(root, 'code-organization', 'scripts', 'check-organization.js');
+  const SMELLS = path.join(root, 'code-smells', 'scripts', 'check-smells.js');
+  const tree = path.join(tmpBase, 'exclude-probe');
+  fs.mkdirSync(path.join(tree, 'src'), { recursive: true });
+  fs.writeFileSync(path.join(tree, 'src', 'ok.js'), "export const ok = 1;\n");
+  // A planted cycle and a planted long line, both under one directory.
+  fs.cpSync(path.join(root, 'fixtures', 'code-organization-circular'), path.join(tree, 'planted'), { recursive: true });
+  fs.writeFileSync(path.join(tree, 'planted', 'long.js'), `const x = "${'a'.repeat(1200)}";\n`);
+
+  const verdict = (script, args) => {
+    const r = runNode(script, ['--root', tree, ...args]);
+    try { return JSON.parse(r.stdout).verdict; } catch { return `unparseable: ${(r.stderr || r.stdout).slice(0, 120)}`; }
+  };
+  expect('--exclude: code-organization BLOCKs on the planted cycle without it', verdict(ORG, []) === 'BLOCK', verdict(ORG, []));
+  expect('--exclude: code-organization SHIPs with the planted directory excluded', verdict(ORG, ['--exclude', 'planted']) === 'SHIP', verdict(ORG, ['--exclude', 'planted']));
+  expect('--exclude: code-smells BLOCKs on the planted long line without it', verdict(SMELLS, []) === 'BLOCK', verdict(SMELLS, []));
+  expect('--exclude: code-smells SHIPs with the planted directory excluded', verdict(SMELLS, ['--exclude', 'planted']) === 'SHIP', verdict(SMELLS, ['--exclude', 'planted']));
+  // An exclude that names nothing must not widen or narrow anything.
+  expect('--exclude: a path that does not exist changes nothing', verdict(ORG, ['--exclude', 'nope']) === 'BLOCK', verdict(ORG, ['--exclude', 'nope']));
+}

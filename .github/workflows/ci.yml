@@ -80,3 +80,12 @@ jobs:
         run: gitleaks version
       - name: Suite tests (fixtures, registry cross-check, schema units, contract drift)
         run: node scripts/run-tests.mjs
+      # The suite's own structure checkers, run on the suite. Fixtures and
+      # archived model output are deliberately defective and excluded; the
+      # generated plugin bundles and the smoke tooling's node_modules are
+      # copies. Added after a self-assessment found core/lib/classify.cjs at
+      # 553 lines against the 400-line rule these enforce on everyone else.
+      - name: The suite passes its own structure checkers
+        run: |
+          node code-organization/scripts/check-organization.js --root . --exclude eval/fixtures-v2 --exclude eval/runs --exclude eval/runs-superseded --exclude eval/grader-fixtures-v2 --exclude fixtures --exclude plugins --exclude tooling
+          node code-smells/scripts/check-smells.js --root . --exclude eval/fixtures-v2 --exclude eval/runs --exclude eval/runs-superseded --exclude eval/grader-fixtures-v2 --exclude fixtures --exclude plugins --exclude tooling

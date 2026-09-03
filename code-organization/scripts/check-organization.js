@@ -25,11 +25,15 @@ const MAX_FILES = 20000;
 const MAX_FILE_BYTES = 2 * 1024 * 1024;
 
 function parseArgs(argv) {
-  const out = { root: '.', strict: false, reportPath: null, files: null };
+  const out = { root: '.', strict: false, reportPath: null, files: null, exclude: [] };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--root') out.root = argv[++i];
     else if (a === '--strict') out.strict = true;
+    // A directory under --root to leave out, relative to it; repeatable. See
+    // check-smells.js for why: a repository carrying deliberately defective
+    // code (eval fixtures, archived model output) needs a way to say so.
+    else if (a === '--exclude') { const v = argv[++i]; if (v) out.exclude.push(v); }
     else if (a === '--report' || a === '--out') out.reportPath = argv[++i];
     else if (a === '--files') {
       const v = argv[++i];
@@ -108,7 +112,7 @@ function findCycleThrough(graph, start) {
   return found;
 }
 
-function walk(dir, out, truncated) {
+function walk(dir, out, truncated, excluded = new Set()) {
   if (out.length >= MAX_FILES) { truncated.hit = true; return; }
   let entries;
   try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
@@ -116,8 +120,9 @@ function walk(dir, out, truncated) {
     if (out.length >= MAX_FILES) { truncated.hit = true; return; }
     if (SKIP_DIRS.has(e.name)) continue;
     const full = path.join(dir, e.name);
+    if (excluded.has(path.resolve(full))) continue;
     if (e.isDirectory()) {
-      walk(full, out, truncated);
+      walk(full, out, truncated, excluded);
     } else if (SCAN_EXTENSIONS.includes(path.extname(e.name))) {
       out.push(full);
     }
@@ -278,7 +283,8 @@ function run(root, opts = {}) {
   const truncated = { hit: false };
   // The full walk happens even when scoped — the graph must be complete for
   // cycle detection to be correct; only the reporting is narrowed below.
-  walk(root, files, truncated);
+  const excluded = new Set((opts.exclude || []).map((d) => path.resolve(root, d)));
+  walk(root, files, truncated, excluded);
 
   const scoped = Array.isArray(opts.files);
   const scopeFiles = scoped ? resolveScope(root, opts.files) : [];
@@ -353,7 +359,7 @@ module.exports = { run, findCycle, localImportsOf };
 if (require.main === module) {
   const args = parseArgs(process.argv.slice(2));
   try {
-    const checks = run(args.root, { files: args.files });
+    const checks = run(args.root, { files: args.files, exclude: args.exclude });
     const hasFail = checks.some((c) => c.status === 'fail');
     const exitCode = hasFail ? 1 : args.strict && checks.some((c) => c.status !== 'pass') ? 1 : 0;
     finish(checks, args, exitCode);
