@@ -108,3 +108,34 @@ score and the interior never does. Sibling graders hide this behind a ±4
 slack window; this one has none.
 
 Range-aware citation is therefore a fifth distinct form, not yet fixed.
+
+## 2026-09-03 — four minified graders reformatted
+
+61 runs across two cases, moved whole: `stale-pass-review` (41) and
+`scheduled-report-design-gate` (20). The other two reformatted graders,
+`receipt-upload-interview-gate` and `ticket-attachment-boundaries`, had no
+runs.
+
+The self-assessment found four graders whose entire source was one
+1460–1716-character line, with no readable original anywhere. They were
+reformatted — whitespace only, no identifier or expression touched — and the
+reformat was proved equivalent by grading every archived workspace of all
+four cases with both versions: 69 workspaces, 69 identical outputs, exit codes
+included.
+
+So these runs are superseded by a grader that provably scores them the same.
+They move anyway. `graderSha256` is a byte hash, and the alternative — editing
+61 manifests to carry the new hash because a measurement says it is safe —
+would make the binding something a person adjusts by hand when they are
+confident. The whole point of the hash is that nobody's confidence is
+consulted. Nine claude-code runs of stale-pass-review is the price, and it is
+cheap.
+
+## 2026-09-03 — `--exclude` added to two checkers
+
+Bundles of `account-suspension-boundary` and `invoice-suspension-refactor`,
+moved whole. Their graders execute `check-organization` and `check-smells`
+while scoring, so the cases carry `checkerSha256`, and both checkers gained a
+`--exclude` option. No grader passes it, so no verdict can have moved — and
+that is the argument the entry above already declines. A byte hash is a byte
+hash. Neither case is in the measured programme; nothing is re-run for them.
