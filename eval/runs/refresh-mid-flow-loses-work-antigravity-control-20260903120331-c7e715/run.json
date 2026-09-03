@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "refresh-mid-flow-loses-work-antigravity-control-20260903120331-c7e715",
+  "caseId": "refresh-mid-flow-loses-work",
+  "caseRevision": 1,
+  "caseSha256": "e48c7021e10f988267374ba65b1e945c368fab255589591e5899237dec0fa178",
+  "fixtureSha256": "1ff941a200dd19d622d244994986e84023a98522b705d1ecfee1891581ba926e",
+  "graderSha256": "686a60c826a43d92dcfd8f1bd1a5737611964740dfab2105eec513a9756078f8",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.25",
+  "model": "gpt-oss-120b-medium",
+  "startedAt": "2026-09-03T12:03:31.876Z",
+  "finishedAt": "2026-09-03T12:03:59.643Z",
+  "durationMs": 27767,
+  "totalTokens": 128426,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "1ff941a200dd19d622d244994986e84023a98522b705d1ecfee1891581ba926e",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 7,
+    "notEvaluated": 0,
+    "total": 9
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "declared-commands-fail-antigravity-control-20260903120310-f42ddb",
+  "caseId": "declared-commands-fail",
+  "caseRevision": 1,
+  "caseSha256": "9e0b91b489f951b326c7e5a292d558dd8708cae1c31bfc9893d18eabf7770f1c",
+  "fixtureSha256": "07962e2ab0139839f5ed7c4eb7cf8b6161c54d7bb68ae2e202a3fb46aab43711",
+  "graderSha256": "54d5aafbe18eb7392ac0d57557139b3951fcba9abaa3dfa55d585a71e9360521",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.25",
+  "model": "gpt-oss-120b-medium",
+  "startedAt": "2026-09-03T12:03:10.355Z",
+  "finishedAt": "2026-09-03T12:03:31.337Z",
+  "durationMs": 20982,
+  "totalTokens": 126466,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 1,
+  "artifactSha256": "07962e2ab0139839f5ed7c4eb7cf8b6161c54d7bb68ae2e202a3fb46aab43711",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 2,
+    "failed": 7,
+    "notEvaluated": 0,
+    "total": 9
+  }
+}
