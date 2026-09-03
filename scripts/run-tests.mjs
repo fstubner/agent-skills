@@ -37,6 +37,7 @@ const MODULES = [
   'eval-batch.mjs',       // and it does not fill a matrix cell either
   'eval-partial-bundle.mjs', // a bundle still being written is not a broken one
   'eval-power.mjs',       // the case count the contract cites is arithmetic, and it is checked
+  'eval-contract-amendments.mjs', // the contract may be amended, never silently
   'eval-invocation.mjs',  // selection harness: extractor, shuffle determinism, reply parsing, prompt-set integrity
   'eval-reliability.mjs', // pass^k: not_evaluated is not a pass, k held constant, pass^k never above pass@k
   'eval-attribution.mjs', // the pre-registered rule-targeted/base-capability split stays complete and can fail

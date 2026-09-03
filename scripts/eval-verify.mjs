@@ -8,7 +8,14 @@ import { hashTree, sha256 } from './lib/tree-hash.mjs';
 const require = createRequire(import.meta.url);
 const { validate } = require('../core/lib/schema.cjs');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const evalRoot = path.join(root, 'eval');
+// --eval-root, as eval-report.mjs already takes, so the contract floors can be
+// exercised against a throwaway evidence.json instead of by editing the real
+// one and putting it back. Editing real evidence to prove a check works is the
+// pattern that left a corrupted run manifest in the tree on 2026-09-02.
+// Everything outside the eval directory — skills, graders, checkers — still
+// resolves from the repository.
+const evalRootArg = process.argv.indexOf('--eval-root');
+const evalRoot = evalRootArg === -1 ? path.join(root, 'eval') : path.resolve(process.argv[evalRootArg + 1]);
 const failures = [];
 const note = (message) => console.log(`ok - ${message}`);
 const fail = (message) => failures.push(message);
@@ -163,9 +170,27 @@ if (evidence) {
   for (const condition of ['control', 'policy', 'skill']) {
     if (!evidence.minimumEvidence.requiredConditions.includes(condition)) fail(`eval/evidence.json: required condition ${condition} was removed`);
   }
-  for (const harness of ['claude-code', 'codex']) {
-    if (!evidence.minimumEvidence.requiredHarnesses.includes(harness)) fail(`eval/evidence.json: required harness ${harness} was removed`);
+  // Two harnesses, always, and claude-code is one of them — the completed arm
+  // is on it, and dropping it would discard the only evidence that exists.
+  //
+  // The SECOND harness may be swapped, because it was named for a purpose
+  // rather than for itself: a second harness exists to test whether an effect
+  // generalises past the model it was measured on, and which model serves that
+  // is a practical question. codex/gpt-5.6-luna became unrunnable when the
+  // account's quota ran out.
+  //
+  // What must not happen is a silent swap, so the amendment log is what makes
+  // it legal. A change with no entry naming the date, the change and a reason
+  // fails here exactly as removing a harness outright used to.
+  if (!evidence.minimumEvidence.requiredHarnesses.includes('claude-code')) fail('eval/evidence.json: required harness claude-code was removed');
+  if (!evidence.minimumEvidence.requiredModelsByHarness['claude-code']?.length) fail('eval/evidence.json: required model cohort for claude-code was removed');
+  if (evidence.minimumEvidence.requiredHarnesses.length < 2) fail('eval/evidence.json: a second harness is required');
+  for (const harness of evidence.minimumEvidence.requiredHarnesses) {
     if (!evidence.minimumEvidence.requiredModelsByHarness[harness]?.length) fail(`eval/evidence.json: required model cohort for ${harness} was removed`);
+  }
+  if (!evidence.minimumEvidence.requiredHarnesses.includes('codex')
+    && !(evidence.contractAmendments || []).some((a) => /requiredHarnesses/.test(a.change))) {
+    fail('eval/evidence.json: the second harness changed with no contractAmendments entry recording it');
   }
   if (evidence.minimumEvidence.primaryBaselineCondition !== 'policy') fail('eval/evidence.json: primary baseline must remain pre-specified as policy');
   if (evidence.minimumEvidence.confidenceLevel !== 0.95) fail('eval/evidence.json: promotion confidence level must remain 95%');

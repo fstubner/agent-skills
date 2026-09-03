@@ -16,13 +16,41 @@
 import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
-import { expect } from './harness.mjs';
+import { expect, tmpBase } from './harness.mjs';
 
 const root = path.resolve(import.meta.dirname, '..', '..');
 const node = process.execPath;
 
+// The report runs against a scratch eval root whose contract requires only the
+// harness that has actually been run, with the real cases and runs beside it —
+// runs by directory junction, because copying 800 bundles per invocation is
+// not worth it and the report only reads them.
+//
+// Needed since 2026-09-03, when the second harness changed from codex to
+// antigravity: no antigravity arm exists yet, so under the real contract NO
+// case is complete and the two completedCaseCount assertions below could not
+// tell a working skill-currency check from a broken one. Deriving the baseline
+// from a contract that the recorded runs can satisfy keeps the test measuring
+// what it is about — that editing a skill invalidates its evidence — instead
+// of the programme's progress.
+const scratchEvalRoot = (() => {
+  const dir = fs.mkdtempSync(path.join(tmpBase, 'skill-currency-'));
+  const evidence = JSON.parse(fs.readFileSync(path.join(root, 'eval', 'evidence.json'), 'utf8'));
+  evidence.minimumEvidence.requiredHarnesses = ['claude-code'];
+  evidence.minimumEvidence.requiredModelsByHarness = { 'claude-code': evidence.minimumEvidence.requiredModelsByHarness['claude-code'] };
+  fs.writeFileSync(path.join(dir, 'evidence.json'), JSON.stringify(evidence, null, 2) + '\n');
+  fs.cpSync(path.join(root, 'eval', 'cases-v2'), path.join(dir, 'cases-v2'), { recursive: true });
+  try {
+    fs.symlinkSync(path.join(root, 'eval', 'runs'), path.join(dir, 'runs'), 'junction');
+  } catch {
+    fs.cpSync(path.join(root, 'eval', 'runs'), path.join(dir, 'runs'), { recursive: true });
+  }
+  return dir;
+})();
+
 const reportNow = () => {
-  const r = spawnSync(node, [path.join(root, 'scripts', 'eval-report.mjs')], { cwd: root, encoding: 'utf8' });
+  const r = spawnSync(node, [path.join(root, 'scripts', 'eval-report.mjs'), '--eval-root', scratchEvalRoot],
+    { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
   try { return JSON.parse(r.stdout); } catch { return null; }
 };
 const currencyReasons = (skill) =>

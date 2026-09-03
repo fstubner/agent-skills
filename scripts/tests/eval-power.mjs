@@ -20,7 +20,9 @@ import { expect } from './harness.mjs';
 const root = path.resolve(import.meta.dirname, '..', '..');
 const run = (sigma) => spawnSync(process.execPath, [path.join(root, 'scripts', 'eval-power.mjs'), '--sigma', String(sigma)],
   { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
-const casesFor = (out) => Number(/pooled estimate\s+sigma=[\d.]+\s+->\s+(\d+) cases/.exec(out)?.[1]);
+// "stated sigma" when --sigma is given, "pooled estimate" when it is derived
+// from completed cases. Both label the same row.
+const casesFor = (out) => Number(/(?:stated sigma|pooled estimate)\s+sigma=[\d.]+\s+->\s+(\d+) cases/.exec(out)?.[1]);
 
 const at134 = run(0.134);
 expect('eval-power runs with an explicit sigma', at134.status === 0, at134.stderr || at134.stdout);

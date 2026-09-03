@@ -18,14 +18,14 @@
     ],
     "requiredHarnesses": [
       "claude-code",
-      "codex"
+      "antigravity"
     ],
     "requiredModelsByHarness": {
       "claude-code": [
         "claude-haiku-4-5-20251001"
       ],
-      "codex": [
-        "gpt-5.6-luna"
+      "antigravity": [
+        "gemini-3.6-flash-low"
       ]
     },
     "primaryBaselineCondition": "policy",
@@ -44,5 +44,14 @@
       "source": "https://help.openai.com/en/articles/20001106-codex-rate-card"
     }
   },
-  "notes": "Existing eval/results files are historical observations, not evidence for efficacy claims. Promotion requires complete v2 run bundles with raw traces, outputs, timing, grading evidence, and fresh cases."
+  "notes": "Existing eval/results files are historical observations, not evidence for efficacy claims. Promotion requires complete v2 run bundles with raw traces, outputs, timing, grading evidence, and fresh cases. The second harness was changed on 2026-09-03; see contractAmendments, which records what changed and why. Its model was selected on control-arm scores alone, so the selection cannot bias the skill comparison that follows.",
+  "contractAmendments": [
+    {
+      "date": "2026-09-03",
+      "change": "requiredHarnesses: codex/gpt-5.6-luna replaced by antigravity/gemini-3.6-flash-low as the second harness.",
+      "reason": "Two reasons, and the order matters. The forcing one is that codex quota is exhausted, so the pre-registered second arm cannot be run at all — a fact about the account, not about the results. The standing one is why a second harness exists: to test whether an effect generalises beyond the model it was measured on. The calibration made that concrete rather than theoretical — gemini-3.6-flash-low beats claude-haiku on two of five sampled cases and loses on three, so difficulty is model-specific and a single-model claim is narrower than it looks.",
+      "independentOfResults": true,
+      "evidence": "eval/results/second-harness-calibration-2026-09-03.md"
+    }
+  ]
 }

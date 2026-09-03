@@ -83,12 +83,18 @@ function observedSigma() {
   };
 }
 
+// --sigma is read FIRST, because it is the whole point of the flag: it says
+// "do not consult the data, use this spread". Requiring an observed estimate
+// before looking at it made the flag useless in the one situation it exists
+// for — no completed cases yet — and that is exactly the situation on
+// 2026-09-03, when the second harness changed and every case became
+// incomplete until its arm runs.
+const sigmaArg = num('sigma', null);
 const observed = observedSigma();
-if (!observed) {
-  console.error('no skill has two or more completed cases yet; sigma cannot be estimated');
+if (!observed && sigmaArg === null) {
+  console.error('no skill has two or more completed cases yet; pass --sigma to compute the case count from a stated spread');
   process.exit(1);
 }
-const sigmaArg = num('sigma', null);
 const designEffect = threshold * designMultiple;
 
 // Smallest n where a true effect of designEffect yields a CI lower bound above
@@ -103,8 +109,8 @@ function requiredCases(sigma) {
 }
 
 const rows = [
-  ['pooled estimate', sigmaArg ?? observed.sigma],
-  ...(sigmaArg == null && observed.sigmaUpper ? [['95% upper bound on sigma', observed.sigmaUpper]] : []),
+  [sigmaArg === null ? 'pooled estimate' : 'stated sigma', sigmaArg ?? observed.sigma],
+  ...(sigmaArg === null && observed?.sigmaUpper ? [['95% upper bound on sigma', observed.sigmaUpper]] : []),
 ];
 
 console.log(`threshold (outcomeDeltaRequired) : ${threshold}`);
@@ -112,10 +118,11 @@ console.log(`design effect (${designMultiple}x threshold)      : ${designEffect.
 console.log(`power                            : ${power}`);
 console.log(`configured freshCasesPerSkill    : ${configuredCases}`);
 console.log();
-for (const { skill, n, sd } of observed.perSkill) {
+for (const { skill, n, sd } of observed?.perSkill ?? []) {
   console.log(`  ${skill.padEnd(24)}n=${n}  SD=${sd.toFixed(4)}`);
 }
-console.log(`  pooled df=${observed.df}`);
+if (observed) console.log(`  pooled df=${observed.df}`);
+else console.log('  no completed cases; sigma is the stated one, not an observed estimate');
 console.log();
 for (const [label, sigma] of rows) {
   const n = requiredCases(sigma);
@@ -124,5 +131,5 @@ for (const [label, sigma] of rows) {
 console.log();
 console.log('what the CURRENT configuration can detect:');
 const df = configuredCases - 1;
-const halfWidth = lookup(T95, df, 1.96) * (observed.sigma / Math.sqrt(configuredCases));
+const halfWidth = lookup(T95, df, 1.96) * ((sigmaArg ?? observed.sigma) / Math.sqrt(configuredCases));
 console.log(`  at n=${configuredCases}, a mean delta below ${(threshold + halfWidth).toFixed(3)} can never clear the bar`);
