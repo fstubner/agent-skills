@@ -10,7 +10,12 @@ const root = path.resolve(import.meta.dirname, '..', '..');
 const attribution = JSON.parse(fs.readFileSync(path.join(root, 'eval', 'assertion-attribution.json'), 'utf8'));
 const caseFiles = fs.readdirSync(path.join(root, 'eval', 'cases-v2')).filter((f) => f.endsWith('.json'));
 const cases = caseFiles.map((f) => JSON.parse(fs.readFileSync(path.join(root, 'eval', 'cases-v2', f), 'utf8')));
-const CLASSES = new Set(['rule-targeted', 'base-capability', 'harm-guard']);
+const CLASSES = new Set(['rule-targeted', 'base-capability', 'harm-guard', 'integrity-guard']);
+// Only these two are a CONTRAST arm. integrity-guard is not: it confirms the
+// work product was not damaged, passes in every arm of every case, and was
+// split out of base-capability on 2026-09-03 precisely because counting it as
+// contrast made the circularity check look alive while it measured nothing.
+const CONTRAST = new Set(['base-capability', 'harm-guard']);
 
 expect('every v2 case is attributed',
   cases.every((c) => attribution.cases[c.id]),
@@ -51,7 +56,7 @@ expect('the declared classes are documented',
 {
   const listed = new Set(attribution.casesWithoutContrastArm.cases);
   const actual = Object.entries(attribution.cases)
-    .filter(([, c]) => !Object.values(c.assertions).some((k) => k !== 'rule-targeted'))
+    .filter(([, c]) => !Object.values(c.assertions).some((k) => CONTRAST.has(k)))
     .map(([id]) => id);
 
   const unlisted = actual.filter((id) => !listed.has(id));
