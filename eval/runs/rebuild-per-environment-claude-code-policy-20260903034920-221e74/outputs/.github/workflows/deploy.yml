@@ -1,0 +1,39 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  staging:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        id: build
+        run: |
+          IMAGE="registry.internal/ledger-api:${{ github.sha }}"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+      - name: Deploy
+        run: ./scripts/deploy.sh staging ${{ steps.build.outputs.image }}
+
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: ./scripts/deploy.sh production ${{ needs.staging.outputs.image }}

@@ -1,0 +1,45 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.image.outputs.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t registry.internal/ledger-api:${{ github.sha }} .
+      - name: Push
+        run: docker push registry.internal/ledger-api:${{ github.sha }}
+      - name: Export image name
+        id: image
+        run: echo "name=registry.internal/ledger-api:${{ github.sha }}" >> $GITHUB_OUTPUT
+
+  staging:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: ./scripts/deploy.sh staging ${{ needs.build.outputs.image }}
+
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: ./scripts/deploy.sh production ${{ needs.build.outputs.image }}

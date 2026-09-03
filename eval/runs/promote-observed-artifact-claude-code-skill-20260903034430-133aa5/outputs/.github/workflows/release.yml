@@ -1,0 +1,36 @@
+name: release
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        run: |
+          IMAGE=$(node scripts/build.mjs --env build-${{ github.sha }})
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+  staging:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/promote.mjs --image ${{ needs.build.outputs.image }} --environment staging
+  tests:
+    needs: staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test
+  production:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/promote.mjs --image ${{ needs.build.outputs.image }} --environment production
+      - run: node scripts/health.mjs --environment production
+      - if: failure()
+        run: node scripts/promote.mjs --image ${{ needs.build.outputs.image }} --environment production-rollback

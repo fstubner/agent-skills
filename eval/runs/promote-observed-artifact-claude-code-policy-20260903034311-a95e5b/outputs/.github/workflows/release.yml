@@ -1,0 +1,47 @@
+name: release
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        run: |
+          IMAGE=$(node scripts/build.mjs --env staging)
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+  staging:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/promote.mjs --image ${{ needs.build.outputs.image }} --environment staging
+      - run: node scripts/health.mjs --environment staging
+  tests:
+    needs: staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test
+  production:
+    needs: tests
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ needs.build.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/promote.mjs --image ${{ needs.build.outputs.image }} --environment production
+      - run: node scripts/health.mjs --environment production
+        name: Validate production health
+  rollback:
+    if: failure()
+    needs: production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          echo "Production deployment failed. See RELEASE.md for manual rollback instructions."
+          exit 1

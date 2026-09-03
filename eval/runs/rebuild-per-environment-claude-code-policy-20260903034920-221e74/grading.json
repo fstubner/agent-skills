@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "caseId": "rebuild-per-environment",
+  "assertions": [
+    {
+      "id": "workflow-present",
+      "status": "pass",
+      "evidence": "workflow bytes=906"
+    },
+    {
+      "id": "single-build",
+      "status": "pass",
+      "evidence": "image build invocations in the workflow: 1"
+    },
+    {
+      "id": "production-does-not-rebuild",
+      "status": "pass",
+      "evidence": "production-like jobs found=1; any of them builds=false"
+    },
+    {
+      "id": "promoted-by-immutable-reference",
+      "status": "pass",
+      "evidence": "digest reference=false; commit-pinned tag=true"
+    },
+    {
+      "id": "environment-tags-removed",
+      "status": "pass",
+      "evidence": "environment-named floating tags remaining: 0"
+    },
+    {
+      "id": "tests-still-gate-deploys",
+      "status": "pass",
+      "evidence": "test step present and depended on by a later job=true"
+    },
+    {
+      "id": "app-unchanged",
+      "status": "pass",
+      "evidence": "src/server.js must keep its exported createApp"
+    }
+  ]
+}

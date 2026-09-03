@@ -1,0 +1,3 @@
+The shift rota has a small release ready — three files since the last acceptance in early August. The depot wants it live this week. Review it and write the release verdict to REVIEW.md. Do not modify the product.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

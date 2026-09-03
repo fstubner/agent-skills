@@ -1,0 +1,45 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t registry.internal/ledger-api:${{ github.sha }} .
+      - name: Push
+        run: docker push registry.internal/ledger-api:${{ github.sha }}
+
+  staging:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag staging
+        run: |
+          docker pull registry.internal/ledger-api:${{ github.sha }}
+          docker tag registry.internal/ledger-api:${{ github.sha }} registry.internal/ledger-api:staging
+          docker push registry.internal/ledger-api:staging
+      - name: Deploy
+        run: ./scripts/deploy.sh staging registry.internal/ledger-api:${{ github.sha }}
+
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: ./scripts/deploy.sh production registry.internal/ledger-api:${{ github.sha }}

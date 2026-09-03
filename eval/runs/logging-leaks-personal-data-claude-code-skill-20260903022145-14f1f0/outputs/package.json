@@ -1,0 +1,7 @@
+{
+  "name": "subscriptions-api",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": { "test": "node --test test/log.test.js" },
+  "dependencies": { "express": "^4.19.0" }
+}

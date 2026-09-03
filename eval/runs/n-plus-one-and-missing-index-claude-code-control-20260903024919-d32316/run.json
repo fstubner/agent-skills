@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "n-plus-one-and-missing-index-claude-code-control-20260903024919-d32316",
+  "caseId": "n-plus-one-and-missing-index",
+  "caseRevision": 1,
+  "caseSha256": "b4e94a2d864c39f25a040e1187faed342dee4285ff61d313161360e0885a580b",
+  "fixtureSha256": "bb487dd41299c75ed49b2ecd8f9b39057185ee3cf35e2efbf7760b51e235ee49",
+  "graderSha256": "185ab63e9db67bfc5ae2d5977da2e2d1cc2d309507102bb7cf974ad5eea8e697",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-09-03T02:49:20.227Z",
+  "finishedAt": "2026-09-03T02:50:05.019Z",
+  "durationMs": 44792,
+  "totalTokens": 208518,
+  "costUsd": 0.050490400000000005,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "8c6d89189a85b818918f547f2915b0ff8b4d97adc1d1376b620e5a86f9c39a95",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 7,
+    "failed": 4,
+    "notEvaluated": 0,
+    "total": 11
+  }
+}

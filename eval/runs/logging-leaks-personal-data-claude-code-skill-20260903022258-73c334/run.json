@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "logging-leaks-personal-data-claude-code-skill-20260903022258-73c334",
+  "caseId": "logging-leaks-personal-data",
+  "caseRevision": 1,
+  "caseSha256": "00ae645eb968540c31a4f1a78a6eae8bded9377746355a7da84fe3401dc6dc2a",
+  "fixtureSha256": "ca0e580b84b9c63e06f7e150cbe99aa3598e3bdd441fae7304ef8eb23dc45982",
+  "graderSha256": "5857781931adbbfb3e083ea2ef46b3556b38d71e0ddd9cec52f1efec428f1709",
+  "checkerSha256": null,
+  "stagedInputSha256": "482b553478b179ef2868b3f74101bcb46df89379c67d1524394aacdebcc7a509",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-09-03T02:22:58.059Z",
+  "finishedAt": "2026-09-03T02:24:04.451Z",
+  "durationMs": 66392,
+  "totalTokens": 299185,
+  "costUsd": 0.08051380000000001,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "26ba5109b2b7b72e4c6c9e39d2b45c329ee8e135958fc39b02822b3188da009d",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 8,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 11
+  }
+}

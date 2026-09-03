@@ -1,0 +1,63 @@
+DISPATCH API - ON-CALL QUICK REFERENCE
+=====================================
+
+HEALTH CHECK
+  curl http://localhost:3000/health | jq .
+  - Look for "status": "healthy" or "degraded"
+  - If degraded: assignments are stuck waiting for drivers
+
+RESTART SERVICE
+  npm start
+  (Kills all in-memory driver state - only for recovery)
+
+MONITORING DASHBOARD SHOULD TRACK
+  - /health endpoint status code (200=OK, 503=Problem)
+  - assignments.oldestPendingMs from /health (should stay <5000ms)
+  - drivers.free by region (should be >0)
+  - Error/warn log counts
+
+COMMON ISSUES & FIXES
+  ┌─────────────────────────────────────────────────────────┐
+  │ Issue: curl shows status "degraded"                     │
+  │ Cause: No free drivers in requested region              │
+  │ Action: Check if regional outage; wait for drivers      │
+  │         or alert demand team to reduce load             │
+  └─────────────────────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────────────────────┐
+  │ Issue: API not responding to /health                    │
+  │ Cause: Service crashed or hung                          │
+  │ Action: Restart with: npm start                         │
+  │         Then verify: curl http://localhost:3000/health  │
+  └─────────────────────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────────────────────┐
+  │ Issue: Logs show "assignment timeout" warnings          │
+  │ Cause: Specific region is driver-starved                │
+  │ Action: 1. Check /health for affected region            │
+  │         2. Check if drivers are actually registered     │
+  │         3. If all busy: wait or escalate demand team    │
+  └─────────────────────────────────────────────────────────┘
+
+REQUEST TRACING (when customer reports issue)
+  1. Get the requestId from customer or error message
+  2. Search logs: grep "requestId.*<id>" logfile.txt
+  3. You'll see: request arrival, processing, result, timing
+
+LOG LEVELS
+  "info"  = normal operations (assignment success, request completed)
+  "warn"  = degraded state (timeout, no drivers available)
+  "error" = assignment failed
+
+NEED HELP?
+  - See RUNBOOK.md for detailed troubleshooting
+  - Review OPERABILITY_CHANGES.md for what was added
+  - All logs are JSON - pipe to jq for pretty printing
+
+KEY PORTS & ENDPOINTS
+  Port: 3000 (or $PORT env variable)
+
+  GET  /health              → Status: healthy/degraded + metrics
+  POST /jobs/:id/assign     → Assign driver to job
+                               Body: {"region": "us-east"}
+                               Response: {"driver": "driver-id"}

@@ -1,0 +1,39 @@
+name: release
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        run: |
+          IMAGE="registry.example/app:${{ github.sha }}"
+          node scripts/build.mjs --env staging > /dev/null
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+  staging-deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/promote.mjs --image ${{ needs.build.outputs.image }} --environment staging
+      - run: node scripts/health.mjs --environment staging
+  tests:
+    needs: staging-deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm test
+  production-deploy:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/promote.mjs --image ${{ needs.build.outputs.image }} --environment production
+      - id: health
+        run: node scripts/health.mjs --environment production
+      - if: failure()
+        run: node scripts/promote.mjs --image ${{ needs.build.outputs.image }} --environment production-previous && node scripts/health.mjs --environment production
