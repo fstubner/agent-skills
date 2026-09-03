@@ -47,9 +47,13 @@ runs, not a result.
 
 ## The measurement cannot settle this, and that is the more useful finding
 
-Harm-guard assertions are sparse: ten cases carry them, three to six assertions
-each, three trials per case. A "−33pp" in the table above is usually **one
-assertion flipping in one run**. The confidence interval spans 26 points.
+Harm-guard assertions are sparser than that sentence first said. **Correction:
+an earlier draft of this file put it at "three to six assertions each". That
+was a misread of counts already multiplied by trials.** Nine of the ten cases
+carry exactly ONE harm-guard assertion and the tenth carries two, observed over
+three trials. A "−33pp" in the table above is one trial flipping — the only
+values a one-assertion case can take at three trials are 0, 1/3, 2/3 and 1.
+The confidence interval spans 26 points.
 
 So this attempt establishes two things:
 

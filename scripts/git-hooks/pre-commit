@@ -243,7 +243,20 @@ for (const { skill, script } of SCOPED_CHECKERS) {
   }
 }
 } finally {
-  fs.rmSync(stagedRoot, { recursive: true, force: true });
+  // Cleanup failure is not a scan result. On Windows this rmSync raises EPERM
+  // when something still holds a handle under the temp tree — antivirus, or a
+  // checker's own child process that has exited but not been reaped — and it
+  // threw out of the finally block, so a commit whose scan had already PASSED
+  // was rejected with a stack trace. An environment failure must not read as a
+  // finding; that rule is enforced on eval runs and belongs here too.
+  //
+  // The directory is under the OS temp root and is named per invocation, so
+  // the worst case of leaving it is a stale directory the OS reclaims.
+  try {
+    fs.rmSync(stagedRoot, { recursive: true, force: true });
+  } catch (error) {
+    console.error(`pre-commit: could not remove ${stagedRoot} (${error.code || error.message}); continuing`);
+  }
 }
 
 if (blocked) {
