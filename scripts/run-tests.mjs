@@ -35,6 +35,7 @@ const MODULES = [
   'eval-skill-currency.mjs',  // evidence must describe the skill text as it stands
   'eval-harness-failure.mjs', // a run that never reached a model is not a failing run
   'eval-batch.mjs',       // and it does not fill a matrix cell either
+  'eval-power.mjs',       // the case count the contract cites is arithmetic, and it is checked
   'eval-invocation.mjs',  // selection harness: extractor, shuffle determinism, reply parsing, prompt-set integrity
   'eval-reliability.mjs', // pass^k: not_evaluated is not a pass, k held constant, pass^k never above pass@k
   'eval-attribution.mjs', // the pre-registered rule-targeted/base-capability split stays complete and can fail
