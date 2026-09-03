@@ -54,14 +54,24 @@ for (const entry of fs.existsSync(runsDir) ? fs.readdirSync(runsDir) : []) {
   let m = null;
   try { m = JSON.parse(fs.readFileSync(manifest, 'utf8')); } catch { continue; }
   if (!m.grading) continue;
-  // A bundle in which nothing was evaluated is a record of a harness failure,
-  // not a trial. On 2026-09-02 the claude-code session limit tripped mid-batch
-  // and 158 consecutive runs returned "429 session limit" in about three
-  // seconds each. eval-run.mjs correctly marked every assertion not_evaluated,
-  // eval-report correctly excluded them — and this counted them as filled
-  // cells, reported "completed 100, failed 0" three times, and then reported
-  // the whole arm complete with 0 outstanding.
-  if (m.grading.notEvaluated === m.grading.total) continue;
+  // A trial counts only if eval-report can USE it. The two must agree, and
+  // twice they have not:
+  //
+  //   - 2026-09-02: the session limit tripped mid-batch and 158 runs returned
+  //     "429 session limit" in about three seconds each with nothing
+  //     evaluated. This counted them, reported "completed 100, failed 0"
+  //     three times, then reported the arm complete with 0 outstanding.
+  //   - 2026-09-03: with that fixed and the arm reporting 0 outstanding,
+  //     eval-report still had two cases at 14 of 15 trials. A run truncated by
+  //     "API Error: Server error mid-response" exits non-zero with tokens
+  //     billed and a full grading — 2 passed, 9 failed — off incomplete
+  //     output. Grading a truncated answer is not a measurement, so the
+  //     report excludes it and this counted it.
+  //
+  // Mirrors runEligibility() in eval-report.mjs on the two conditions a
+  // manifest can carry. The rest of that function needs the transcript.
+  if (m.exitCode !== 0) continue;
+  if (m.grading.notEvaluated !== 0) continue;
   // Only runs the CURRENT instrument produced count toward a cell.
   //
   // 322 of the bundles on disk carry no graderSha256 at all — they predate
