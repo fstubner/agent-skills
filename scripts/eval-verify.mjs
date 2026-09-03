@@ -64,7 +64,13 @@ note(`${cases.size} reproducible v2 cases validated`);
 const runsDir = path.join(evalRoot, 'runs');
 let runCount = 0;
 if (fs.existsSync(runsDir)) {
-  for (const entry of fs.readdirSync(runsDir, { withFileTypes: true }).filter((entry) => entry.isDirectory()).sort((a, b) => a.name.localeCompare(b.name))) {
+  // A dot-prefixed directory is a bundle eval-run.mjs is still assembling (or
+  // one a crash abandoned). It is not evidence and must not be verified as
+  // though it were — see the staging note in eval-run.mjs.
+  const bundles = fs.readdirSync(runsDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  for (const entry of bundles) {
     const runDir = path.join(runsDir, entry.name);
     const manifestPath = path.join(runDir, 'run.json');
     if (!fs.existsSync(manifestPath)) { fail(`eval/runs/${entry.name}: missing run.json`); continue; }

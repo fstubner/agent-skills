@@ -266,7 +266,11 @@ const writableTemp = configuredTemp || (process.platform === 'win32' && fs.exist
 fs.mkdirSync(writableTemp, { recursive: true });
 const tempRoot = fs.mkdtempSync(path.join(writableTemp, 'agent-skills-eval-'));
 const workspace = path.join(tempRoot, 'workspace');
-const runDir = path.join(suiteRoot, 'eval', 'runs', runId);
+// Staged under a dot-prefixed name, renamed to runId once run.json lands: an
+// incomplete bundle is not evidence, and is what eval-verify refuses. The
+// reasoning and both halves of the rule: scripts/tests/eval-partial-bundle.mjs.
+const runDir = path.join(suiteRoot, 'eval', 'runs', `.${runId}.partial`);
+const finalRunDir = path.join(suiteRoot, 'eval', 'runs', runId);
 const outputsDir = path.join(runDir, 'outputs');
 copyTree(fixture, workspace);
 const stagedInput = stageConditionInputs(testCase, args.condition, workspace);
@@ -389,5 +393,8 @@ const manifest = {
   grading: counts,
 };
 fs.writeFileSync(path.join(runDir, 'run.json'), JSON.stringify(manifest, null, 2) + '\n');
-console.log(JSON.stringify({ runDir, ...manifest }, null, 2));
+// Complete: publish it under its real name in one atomic step.
+fs.rmSync(finalRunDir, { recursive: true, force: true });
+fs.renameSync(runDir, finalRunDir);
+console.log(JSON.stringify({ runDir: finalRunDir, ...manifest }, null, 2));
 process.exit(manifest.exitCode === 0 && counts.failed === 0 && counts.notEvaluated === 0 ? 0 : 1);

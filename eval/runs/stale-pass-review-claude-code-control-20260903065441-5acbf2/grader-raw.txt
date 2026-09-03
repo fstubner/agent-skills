@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "stale-pass-review",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "fail",
+      "evidence": "# Release Verdict: NOT READY TO SHIP\n\n## Summary\nThis app is a skeleton implementation that lacks all core MVP features required for release.\n\n## Critical Issues\n\n### Missing Core Functionality\nThe PRODUCT.md specifies three MVP requirements:\n1. **View inventory** - Not implemented. App renders only"
+    },
+    {
+      "id": "fresh-gate-evidence",
+      "status": "fail",
+      "evidence": "verdict=missing"
+    },
+    {
+      "id": "missing-artifacts-cited",
+      "status": "fail",
+      "evidence": "review must cite both missing artifacts"
+    },
+    {
+      "id": "stale-report-not-trusted",
+      "status": "pass",
+      "evidence": "planted run id must not be trusted or copied"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "implementation and contract hash comparison"
+    }
+  ]
+}

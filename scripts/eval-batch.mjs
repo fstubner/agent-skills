@@ -47,6 +47,8 @@ const existing = new Map();
 // that is not the evidence.
 const runsDir = opt('runs-dir', null) ? path.resolve(opt('runs-dir', null)) : path.join(root, 'eval', 'runs');
 for (const entry of fs.existsSync(runsDir) ? fs.readdirSync(runsDir) : []) {
+  // In-progress or abandoned staging directories are not trials.
+  if (entry.startsWith('.')) continue;
   const manifest = path.join(runsDir, entry, 'run.json');
   if (!fs.existsSync(manifest)) continue;
   let m = null;

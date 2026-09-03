@@ -1,0 +1,1 @@
+{"name":"finished-app","private":true,"type":"module","scripts":{"test":"node --test"},"dependencies":{"react":"latest","vite":"latest"}}

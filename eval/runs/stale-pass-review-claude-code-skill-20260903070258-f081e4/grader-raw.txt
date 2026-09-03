@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "stale-pass-review",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "fail",
+      "evidence": "# Product Acceptance Review\n\n**VERDICT: BLOCK**\n\n## Evidence Summary\n\n### A — Gate Check Findings\n\n**Required Documentation Missing:**\n- No `ARCHITECTURE.md` (required when frontend exists)\n- No `ux-walkthrough.md` (required for web apps)\n- No `design-direction.md` (required for frontend)\n\n**Stale R"
+    },
+    {
+      "id": "fresh-gate-evidence",
+      "status": "fail",
+      "evidence": "verdict=missing"
+    },
+    {
+      "id": "missing-artifacts-cited",
+      "status": "pass",
+      "evidence": "review must cite both missing artifacts"
+    },
+    {
+      "id": "stale-report-not-trusted",
+      "status": "pass",
+      "evidence": "planted run id must not be trusted or copied"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "implementation and contract hash comparison"
+    }
+  ]
+}

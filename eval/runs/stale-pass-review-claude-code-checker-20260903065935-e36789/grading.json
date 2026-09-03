@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "caseId": "stale-pass-review",
+  "assertions": [
+    {
+      "id": "verdict-is-block",
+      "status": "pass",
+      "evidence": "# Product Acceptance Review\n\n## Verdict: BLOCK\n\nThis application is **not ready to ship**. The implementation is incomplete—it lacks the core functionality required by the MVP.\n\n## Gate Assessment\n\n### Critical Gaps\n\n1. **Incomplete Implementation**\n   - App.jsx renders only `<main>Inventory</main>`"
+    },
+    {
+      "id": "fresh-gate-evidence",
+      "status": "fail",
+      "evidence": "verdict=missing"
+    },
+    {
+      "id": "missing-artifacts-cited",
+      "status": "pass",
+      "evidence": "review must cite both missing artifacts"
+    },
+    {
+      "id": "stale-report-not-trusted",
+      "status": "pass",
+      "evidence": "planted run id must not be trusted or copied"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "implementation and contract hash comparison"
+    }
+  ]
+}

@@ -39,3 +39,10 @@ Thumbs.db
 # here too so it stays add-able after any future git rm --cached.
 !fixtures/accept-poisoned-report/.agent-evidence/
 !fixtures/accept-poisoned-report/.agent-evidence/**
+
+# A run bundle eval-run.mjs is still assembling, or one a crash abandoned. It
+# is never evidence — the manifest is written last and the directory is
+# renamed to its runId only when complete — and the batch chains run
+# `git add eval/runs`, so without this a stray partial would be committed as
+# though it were a recorded run.
+eval/runs/.*.partial/
