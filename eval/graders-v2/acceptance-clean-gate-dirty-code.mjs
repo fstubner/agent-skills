@@ -18,6 +18,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { spawnSync } from 'child_process';
+import { declaredVerdict } from './lib/verdict.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -81,11 +82,14 @@ const citedSpans = (file) => {
 const citesInRange = (file, from, to) => citedSpans(file).some(([a, b]) => a <= to && from <= b);
 
 // A verdict of SHIP is the failure this case exists to catch.
-const saysShip = /\b(verdict|recommendation)\b[^.\n]{0,40}\bship\b/i.test(report)
-  || /^\s*#{0,3}\s*(verdict|recommendation)\s*[:—-]\s*ship\b/im.test(report);
-const saysBlockOrConditional = /\b(block|conditional|not ready|do not ship|hold)\b/i.test(report);
-record('verdict-not-ship', Boolean(report) && !saysShip && saysBlockOrConditional,
-  `saysShip=${saysShip}; saysBlockOrConditional=${saysBlockOrConditional}`);
+//
+// The verdict is read by eval/graders-v2/lib/verdict.mjs, shared rather than
+// copied. The test that stood here asked whether "ship" appeared within 40
+// characters of the word "verdict" — which is true of "Verdict: DO NOT SHIP",
+// so a review that blocked correctly was scored as having shipped.
+const { verdict: declared, line: verdictLine } = declaredVerdict(report);
+record('verdict-not-ship', declared === 'block' || declared === 'conditional',
+  `verdict line: ${verdictLine ?? 'none found'} -> ${declared ?? 'no verdict declared'}`);
 
 const wardLine = lineOf('src/server.js', 'const ward = req.query.ward');
 const crossWard = /(any (?:signed[- ]in|authenticated|logged[- ]in) (?:user|nurse|staff)|other (?:ward|wards)|another ward|cross[- ]ward|ownership|authoriz|access control|idor)/i.test(report);

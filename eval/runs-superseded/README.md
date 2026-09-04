@@ -237,3 +237,30 @@ recorded against these four guards was the guard misreading the report.
 
 `eval/results/harm-guard-false-positives-2026-09-04.md` has the detail and
 what it does to the reported regression.
+
+## 2026-09-04 — the verdict reader
+
+169 runs across thirteen cases, moved whole — every product-acceptance case
+with recorded evidence except two.
+
+Eleven graders each carried their own copy of the verdict parser, and two more
+carried a variant. Measured against all 246 archived reviews, it had two
+independent faults. It required "verdict" to open the line with a colon
+straight after, and found nothing in 131 of them — a verdict it could not find
+recorded a FAIL, so a review that blocked correctly and wrote "# Release
+Verdict: BLOCK" was scored as having shipped. And of the 115 it did find, 25
+were classified backwards, because it tested /\bship\b/ first and "DO NOT SHIP"
+contains "ship".
+
+156 of 246 recorded verdicts were wrong, on the single assertion every
+product-acceptance case turns on.
+
+Replaced by eval/graders-v2/lib/verdict.mjs — one file rather than thirteen,
+for the reason the citation entries above give — which reads all 246: 233
+block, 7 ship, 5 conditional, 1 unrecognised, 0 unfound.
+
+The skill is unmeasured until these are re-run. Its previous 11.0pp
+CI [3.3, 18.8] is withdrawn rather than corrected: it was computed with a
+reader that was wrong 63% of the time.
+
+Detail in eval/results/verdict-reader-2026-09-04.md.

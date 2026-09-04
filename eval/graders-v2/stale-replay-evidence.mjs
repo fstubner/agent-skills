@@ -14,6 +14,7 @@
 // everywhere else, arriving in a new costume.
 import fs from 'fs';
 import path from 'path';
+import { declaredVerdict } from './lib/verdict.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -30,11 +31,13 @@ const low = review.toLowerCase();
 const assertions = [];
 const record = (id, pass, evidence) => assertions.push({ id, status: pass ? 'pass' : 'fail', evidence });
 
-const saysShip = /\b(verdict|recommendation)\b[^.\n]{0,40}\bship\b/i.test(review)
-  || /^\s*#{0,3}\s*(verdict|recommendation)\s*[:—-]\s*ship\b/im.test(review);
-const holds = /\b(block|conditional|not ready|do not ship|hold)\b/i.test(review);
-record('verdict-not-ship', Boolean(review) && !saysShip && holds,
-  `saysShip=${saysShip}; holds=${holds}`);
+// The verdict is read by eval/graders-v2/lib/verdict.mjs, shared rather than
+// copied. The test that stood here asked whether "ship" appeared within 40
+// characters of the word "verdict" — which is true of "Verdict: DO NOT SHIP",
+// so a review that blocked correctly was scored as having shipped.
+const { verdict: declared, line: verdictLine } = declaredVerdict(review);
+record('verdict-not-ship', declared === 'block' || declared === 'conditional',
+  `verdict line: ${verdictLine ?? 'none found'} -> ${declared ?? 'no verdict declared'}`);
 
 // Either route to the truth counts, and both are named so the evidence says
 // which one the run took.

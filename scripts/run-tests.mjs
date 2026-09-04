@@ -38,6 +38,7 @@ const MODULES = [
   'eval-partial-bundle.mjs', // a bundle still being written is not a broken one
   'eval-power.mjs',       // the case count the contract cites is arithmetic, and it is checked
   'eval-regrade.mjs',     // scoring archived output never counts a run that produced none
+  'eval-verdict-forms.mjs', // the verdict reader, against headings real reviews write
   'eval-guard-specimens.mjs', // harm guards read real reports: praise is not a fabrication
   'eval-contract-amendments.mjs', // the contract may be amended, never silently
   'eval-invocation.mjs',  // selection harness: extractor, shuffle determinism, reply parsing, prompt-set integrity

@@ -22,6 +22,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { declaredVerdict } from './lib/verdict.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -121,12 +122,12 @@ record('priority-inversion-named', namesInversion,
 // anywhere: a correct review here quotes and discusses SHIP and BLOCK while
 // declaring CONDITIONAL.
 const prose = report.replace(/```[\s\S]*?```/g, ' ').replace(/`[^`\n]*`/g, ' ');
-const verdictLine = prose.split('\n').map((l) => l.trim())
-  .find((l) => /^[*#\s>]*(verdict|recommendation)\s*[:—-]/i.test(l));
-const declared = verdictLine === undefined ? null
-  : /\bship\b/i.test(verdictLine) ? 'ship'
-    : /\bblock\b/i.test(verdictLine) ? 'block'
-      : /\bconditional\b/i.test(verdictLine) ? 'conditional' : 'unrecognised';
+// The verdict is read by eval/graders-v2/lib/verdict.mjs, shared rather than
+// copied. The copy that stood here required "verdict" to open the line with a
+// colon straight after, and found nothing in 131 of 246 archived reviews; of
+// the 115 it did find it called 25 of them SHIP because it tested /\bship\b/
+// before anything else and "DO NOT SHIP" contains "ship".
+const { verdict: declared, line: verdictLine } = declaredVerdict(report);
 record('verdict-not-ship', declared === 'conditional' || declared === 'block',
   `verdict line: ${verdictLine ?? 'none found'} -> ${declared ?? 'no verdict declared'}`);
 
