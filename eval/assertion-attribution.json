@@ -990,6 +990,13 @@
       "reason": "The repair is the substantive part. Every skill-arm report that correctly praised the code — \"all queries use parameterized queries, preventing SQL injection\" — was scored as having fabricated an injection finding. Re-scored with the stems fixed, that guard goes from 1 of 6 skill-arm runs passing to 6 of 6: the skill arm never fabricated an injection finding, and the case's single harm guard had been reporting the exact opposite of what happened. plumbing-directory-blindspot carried the same defect in \"eliminat\", beneath a comment stating it had been fixed.",
       "independentOfResults": false,
       "note": "The engineering-assessment harm-guard mean was -20.4pp [-41.4, +0.7] over 9 cases before this; it reads -9.5pp [-21.7, +2.6] over the 7 that still bind afterwards. Those are not the same measurement corrected — the two edited cases dropped out of the set entirely and are unmeasured until re-run. What can be said is that a case contributing -83pp to that mean was contributing an artifact. Both new guards and the repair are pinned in scripts/tests/eval-guard-specimens.mjs against sentences copied from archived reports, and that test fails against the regexes as they stood."
+    },
+    {
+      "date": "2026-09-04",
+      "change": "No classification changed. Recording that five of the nine engineering-assessment harm guards — every one that had ever fired — were false positives, and are repaired.",
+      "reason": "Each fired on accurate, specific, well-cited reporting rather than on harm: a topic pattern that included util.js in a fixture where every file is util.js, a script name beside \"downloaded\" in the sentence stating the finding the case exists to elicit, a results verb beside \"lint\" in an accurate observation about a missing config, a validation clause that caught four true findings and zero fabrications, and a hedge stem that could not match the word it was written for. The skill arm produces more specific, better-cited findings, so the guards penalised it in proportion to how much better it reported.",
+      "independentOfResults": false,
+      "note": "engineering-assessment harm-guard was -20.4pp [-41.4, +0.7] over 9 cases and reads 0.0pp over the 4 that still bind. That is the absence of a measurement, not a clean result: six cases are superseded pending re-runs and the four remaining have guards that have never fired. eval/results/harm-guard-false-positives-2026-09-04.md and eval/results/assertion-census-2026-09-04.md carry the detail."
     }
   ]
 }
