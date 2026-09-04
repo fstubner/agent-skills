@@ -7,7 +7,7 @@
     "rule-targeted": "Passing requires following something the skill teaches. This is where a skill effect should appear.",
     "base-capability": "A competent model passes without the skill; the assertion exists to stop a fix that breaks the product or deletes the work. No skill credit. Movement here is noise or regression, never evidence of efficacy.",
     "harm-guard": "Detects a plausible harm the skill itself could cause: over-reporting findings that are not there, inventing artifacts, widening scope. The skill arm scoring WORSE here is a cost of the skill and must be reported as one.",
-    "integrity-guard": "Confirms the work product was not damaged — inputs left byte-identical, a workflow still present, the app still building. Real and worth checking, but it passes in every arm of every case because a reviewer told not to edit does not edit. Kept OUT of harm-guard so it cannot dilute that measurement, and out of base-capability because a contrast arm that cannot vary is not a contrast."
+    "integrity-guard": "Confirms the work product was not damaged — inputs left byte-identical, a workflow still present, the app still building. Real and worth checking, but its SUBJECT is mechanically fixed: a reviewer told not to edit does not edit, so it passes in every arm of every case. Membership is decided by that subject, never by an observed pass rate — a harm guard that simply did not trip in the runs so far is a finding about the skill and stays where it is. Kept OUT of harm-guard so it cannot dilute that measurement, and out of base-capability because a contrast arm that cannot vary is not a contrast."
   },
   "preRegistrationCaveat": "26 of the 53 cases had no run bundle when this file was written and are genuine pre-registration. The other 27 already had runs, so their attribution is post-hoc and is marked per case. Post-hoc entries are still useful and are weaker evidence; any analysis that leans on them should say so.",
   "method": "Classified from the assertion id and the skill rule it maps to, with an explicit override list for the cases the pattern got wrong, and never from any recorded result. The override lists are in the commit that added this file.",
@@ -730,7 +730,7 @@
         "absence-of-serious-findings-stated": "rule-targeted",
         "declared-commands-run": "rule-targeted",
         "strengths-evidenced": "rule-targeted",
-        "assessment-only": "harm-guard",
+        "assessment-only": "integrity-guard",
         "coverage-honesty": "rule-targeted",
         "no-invented-injection": "harm-guard",
         "no-invented-validation-gap": "harm-guard",
@@ -801,7 +801,10 @@
         "declared-commands-run": "rule-targeted",
         "no-fabricated-injection-finding": "harm-guard",
         "assessment-only": "integrity-guard",
-        "coverage-honesty": "rule-targeted"
+        "coverage-honesty": "rule-targeted",
+        "no-invented-timing": "harm-guard",
+        "no-invented-rejection-defect": "harm-guard",
+        "no-invented-pooling-defect": "harm-guard"
       }
     },
     "transaction-boundary-broken": {
@@ -973,6 +976,20 @@
       "change": "casesWithoutContrastArm grew from 19 to 40 entries, and the test that guards it no longer counts integrity-guard as a contrast arm.",
       "reason": "Consequence of the reclassification, not a new failing. The cases always lacked a contrast arm; the list did not say so because assertions that cannot vary were being counted as one.",
       "independentOfResults": true
+    },
+    {
+      "date": "2026-09-04",
+      "change": "severity-inflation-pressure: assessment-only reclassified harm-guard -> integrity-guard. no-invented-injection and no-invented-secret-exposure stay harm guards despite passing in all twelve archived bundles.",
+      "reason": "The line is the SUBJECT of the assertion, not its observed pass rate. assessment-only checks that the assessed code is byte-identical afterwards, which a reviewer told not to edit cannot fail; that is mechanically fixed and belongs with the other integrity guards. The two invention guards check for a fabrication that simply did not occur in twelve runs, which at that sample is consistent with a true rate as high as one in four. Flat is a finding there, not a property of the instrument.",
+      "independentOfResults": false,
+      "note": "An earlier draft of this amendment moved all three out on the strength of observed flatness alone. Dropping guards that happen not to trip rescales the reported regression upward — over these same twelve bundles, -8.3pp across six guards against -16.7pp across the three that vary — and choosing the denominator after seeing which way it moves is the forking path this file exists to prevent. The dilution algebra is real and is recorded in scripts/eval-power-harm-guards.mjs, but it is a rule for DESIGNING guards before they are run, never a licence to prune them afterwards."
+    },
+    {
+      "date": "2026-09-04",
+      "change": "n-plus-one-and-missing-index at revision 2: three harm guards added (no-invented-timing, no-invented-rejection-defect, no-invented-pooling-defect), taking the case from one to four. Separately, no-fabricated-injection-finding was REPAIRED: its hedge list carried the stems parameteris and parameteriz inside a right-bounded group, where \bparameteriz\b cannot match \"parameterized\".",
+      "reason": "The repair is the substantive part. Every skill-arm report that correctly praised the code — \"all queries use parameterized queries, preventing SQL injection\" — was scored as having fabricated an injection finding. Re-scored with the stems fixed, that guard goes from 1 of 6 skill-arm runs passing to 6 of 6: the skill arm never fabricated an injection finding, and the case's single harm guard had been reporting the exact opposite of what happened. plumbing-directory-blindspot carried the same defect in \"eliminat\", beneath a comment stating it had been fixed.",
+      "independentOfResults": false,
+      "note": "The engineering-assessment harm-guard mean was -20.4pp [-41.4, +0.7] over 9 cases before this; it reads -9.5pp [-21.7, +2.6] over the 7 that still bind afterwards. Those are not the same measurement corrected — the two edited cases dropped out of the set entirely and are unmeasured until re-run. What can be said is that a case contributing -83pp to that mean was contributing an artifact. Both new guards and the repair are pinned in scripts/tests/eval-guard-specimens.mjs against sentences copied from archived reports, and that test fails against the regexes as they stood."
     }
   ]
 }

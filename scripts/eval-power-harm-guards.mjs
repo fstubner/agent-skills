@@ -64,13 +64,14 @@ for (const f of fs.readdirSync(path.join(root, 'eval', 'cases-v2')).filter((x) =
 // Per case: the harm-guard rate of each recorded skill-arm run, grouped by the
 // staged skill digest so two versions of a skill are two samples, not one.
 const perCase = new Map();
+const seenStatuses = new Map();
 const runsDir = path.join(root, 'eval', 'runs');
 for (const d of fs.existsSync(runsDir) ? fs.readdirSync(runsDir) : []) {
   const mp = path.join(runsDir, d, 'run.json');
   if (!fs.existsSync(mp)) continue;
   let m; try { m = JSON.parse(fs.readFileSync(mp, 'utf8')); } catch { continue; }
   const rec = cases.get(m.caseId);
-  if (!rec || m.condition !== 'skill' || m.exitCode !== 0) continue;
+  if (!rec || m.exitCode !== 0) continue;
   if (!m.grading || m.grading.notEvaluated !== 0) continue;
   if (m.caseSha256 !== rec.sha || m.graderSha256 !== rec.grader) continue;
   const classes = attribution.cases[m.caseId]?.assertions;
@@ -78,8 +79,32 @@ for (const d of fs.existsSync(runsDir) ? fs.readdirSync(runsDir) : []) {
   const g = JSON.parse(fs.readFileSync(path.join(runsDir, d, 'grading.json'), 'utf8'));
   const guards = g.assertions.filter((a) => classes[a.id] === 'harm-guard');
   if (!guards.length) continue;
+  // Which guards were ever seen to vary, across every arm.
+  //
+  // A guard that lands the same way everywhere still occupies the denominator,
+  // so it rescales the reported effect toward zero while buying no
+  // detectability at all: with A varying guards and k fixed ones the measured
+  // delta is d*A/(A+k) and the step is 1/((A+k)*T), so effect-in-steps is
+  // d*A*T either way. Measured on severity-inflation-pressure, 2026-09-04: the
+  // same twelve bundles read -8.3pp over six guards and -16.7pp over the three
+  // that vary.
+  //
+  // That is a rule for DESIGNING a guard — require a mechanism by which it can
+  // fail, before it is ever run — and NOT a licence to drop guards afterwards.
+  // Pruning on observed flatness picks the denominator after seeing which way
+  // it moves, and it inflates: the -16.7pp reading above is what that move
+  // buys. So this count is reported as a diagnostic and never substituted for
+  // the pre-registered one. Twelve clean runs of a guard is consistent with a
+  // true failure rate near one in four; flat is usually a finding about the
+  // skill, not a defect in the instrument.
+  for (const a of guards) {
+    const k = `${m.caseId}\0${a.id}`;
+    if (!seenStatuses.has(k)) seenStatuses.set(k, new Set());
+    seenStatuses.get(k).add(a.status === 'pass');
+  }
+  if (m.condition !== 'skill') continue;
   const key = `${m.caseId}\0${m.stagedInputSha256 || 'legacy'}`;
-  if (!perCase.has(key)) perCase.set(key, { caseId: m.caseId, skill: rec.c.skill, assertions: guards.length, rates: [] });
+  if (!perCase.has(key)) perCase.set(key, { caseId: m.caseId, skill: rec.c.skill, assertions: guards.length, guardIds: guards.map((a) => a.id), rates: [] });
   perCase.get(key).rates.push(guards.filter((a) => a.status === 'pass').length / guards.length);
 }
 
@@ -108,11 +133,14 @@ for (const [skill, caseMap] of bySkill) {
   // where a skill was edited and re-run.
   const paired = [...caseMap.values()].filter((v) => v.length >= 2)
     .map((v) => mean(v[1].rates) - mean(v[0].rates));
+  const varyingCounts = [...caseMap.values()].map((v) =>
+    v[0].guardIds.filter((id) => (seenStatuses.get(`${v[0].caseId}\0${id}`)?.size ?? 1) > 1).length);
   const assertionCounts = [...caseMap.values()].map((v) => v[0].assertions);
   const resolution = 1 / (Math.min(...assertionCounts) * trials);
   console.log(`==== ${skill}`);
   console.log(`  cases carrying harm guards        ${caseMap.size}`);
   console.log(`  assertions per case               min ${Math.min(...assertionCounts)}, max ${Math.max(...assertionCounts)}`);
+  console.log(`  diagnostic: ever seen to vary     min ${Math.min(...varyingCounts)}, max ${Math.max(...varyingCounts)}   (not the denominator — see the note above this line in source)`);
   console.log(`  finest change a case can show     ${(resolution * 100).toFixed(0)}pp   ${resolution > detect ? `<-- LARGER than the ${detect * 100}pp being detected: unrepresentable` : 'ok'}`);
   // A*T must be at least 1/detect for the effect to land on a reachable value.
   const assertionsNeeded = Math.ceil(1 / (detect * trials));

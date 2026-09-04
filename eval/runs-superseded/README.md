@@ -164,9 +164,47 @@ guards at three trials can show a 5.6-point change where two could only move
 in steps of 17, and the regression being chased is 10 —
 `scripts/eval-power-harm-guards.mjs` has the derivation.
 
+**Correction, 2026-09-04.** That last paragraph overstates what the split
+bought. Scoring the twelve bundles with `scripts/eval-regrade.mjs` shows three
+of the six guards passing in every arm of every trial, so only three can carry
+a change and the case steps in elevenths, not eighteenths. The three that
+cannot move are kept in the denominator deliberately — dropping them would
+rescale the same twelve bundles from -8.3pp to -16.7pp, which is what choosing
+a denominator after seeing it move is worth here — but the resolution claim
+above should have been made about guards that vary, and was not. The case needs
+a fourth guard that can fail before it reaches the 8.3pp the contract wants.
+
 Also at revision 2: `assessment-only` reclassified to integrity-guard, and
 `behaviour-not-misstated` added as the case's first base-capability assertion
 that can actually fail. Its first draft required the report to state the stock
 bands and the reference fixture failed it, correctly — an assertion that
 demands optional content measures style, not capability. It is stated as a
 negative instead: no claim that contradicts the code.
+
+## 2026-09-04 — n-plus-one-and-missing-index revision 2, and a broken hedge
+
+21 runs of `n-plus-one-and-missing-index` and 27 of
+`plumbing-directory-blindspot`, moved whole.
+
+The case was being expanded from one harm guard to four, because one guard at
+three trials cannot show a change smaller than 33 points. Expanding it turned
+up a defect in the guard that was already there.
+
+`no-fabricated-injection-finding` hedged on a list containing the stems
+`parameteris` and `parameteriz` inside a group bounded on the right, and
+`\bparameteriz\b` does not match `parameterized`. Every skill-arm report that
+correctly praised the code — "all queries use parameterized queries,
+preventing SQL injection" — was therefore scored as having invented an
+injection finding. Re-scored with the stems fixed, the guard goes from 1 of 6
+skill-arm runs passing to 6 of 6.
+
+`plumbing-directory-blindspot` carried the same defect in `eliminat`, beneath
+a comment saying that exact phrasing had been handled. Its verdicts do not
+move — the sentence in question also contained `correctly`, which caught it —
+and its runs are moved anyway, for the reason the 2026-09-03 entry above
+already gives: a byte hash is a byte hash, and a measurement saying an edit is
+safe is not a licence to edit the manifests by hand.
+
+Full write-up, including the three replacement guards whose first drafts all
+fired on true findings and had to be rewritten:
+`eval/results/harm-guard-instrument-2026-09-04.md`.
