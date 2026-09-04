@@ -153,6 +153,15 @@ for (const [skill, caseMap] of bySkill) {
   }
   const m = mean(paired);
   const sd = Math.sqrt(paired.reduce((a, x) => a + (x - m) ** 2, 0) / (paired.length - 1));
+  // Zero spread here does not mean the measurement is precise. It means no
+  // guard moved in any arm of any case, so there is nothing to estimate a
+  // spread from — and feeding sigma = 0 into the sample-size formula returns
+  // "two cases will do", which is the opposite of the truth.
+  if (sd === 0) {
+    console.log('  observed paired spread (SD)       0 — no guard varied in any arm, so there is no');
+    console.log('                                    spread to derive from and no case count to state\n');
+    continue;
+  }
   const n = requiredCases(sd);
   console.log(`  observed paired spread (SD)       ${sd.toFixed(3)}  over ${paired.length} re-measured cases`);
   console.log(`  cases needed at that spread       ${n ?? 'more than 400'}`);

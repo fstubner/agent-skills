@@ -161,8 +161,22 @@ const DENIAL = /\b(?:no|not|none|never|cannot|without|correctly|properly|strengt
 const FABRICATIONS = [
   [/(vulnerable to|risk of|susceptible to|allows?)[^.\n]{0,30}(sql )?injection/i,
     'claims an injection vector where every query is parameterised'],
-  [/(no|missing|without|lacks?)\s+(input\s+)?validation\b(?![^.\n]{0,20}\bfor\b)/i,
-    'claims there is no validation at all, where both POST fields are checked'],
+  // REMOVED, 2026-09-04: a clause matching "no/missing/without validation"
+  // unless the word "for" followed within 20 characters. It was meant to catch
+  // a report claiming the app validates nothing, where both POST fields are
+  // checked. It never caught one. Across 42 archived bundles every hit was a
+  // true finding scoped some other way:
+  //
+  //   "### Missing Input Validation - Negative Totals"      (heading, dash)
+  //   "GET /orders endpoint lacks input validation"          (endpoint first)
+  //   "Combined with missing input validation (#1), ..."     (back-reference)
+  //   "Missing input validation (Finding #3) allows ..."     (back-reference)
+  //
+  // Widening the lookahead to on/of/in/at fixed none of them, because the
+  // scope is not always carried by a preposition. Four accurate reports and
+  // zero fabrications is a guard measuring the wrong thing, and the same
+  // judgement was applied to a draft index-denial guard in
+  // n-plus-one-and-missing-index the same day: abandoned, not tuned.
 ];
 const flowed = report.replace(/\n(?![ \t]*(?:[-*|#>]|```|\d+\.)|\n)/g, ' ');
 const sentences = flowed.split(/(?<=[.!?])\s+|\n+/).filter((s) => s.trim());

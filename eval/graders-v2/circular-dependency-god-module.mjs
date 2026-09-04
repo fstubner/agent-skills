@@ -78,8 +78,16 @@ record('declared-commands-run', ranTests, `the report shows npm test and its out
 // runtime it did not observe.
 const flowed = report.replace(/\n(?![ \t]*(?:[-*|#>]|```|\d+\.)|\n)/g, ' ');
 const HEDGE = /\b(may|might|could|would|suspect|if|whether|not (?:construct|observed|tested)|unconfirmed|depends|probably|works today)\b/i;
+// The topic is the CYCLE, and it used to include `util.js` as well. Every file
+// in the fixture is util.js or imports it, so any accurate finding that cited
+// util.js and used the word "throws" tripped this guard: `retry()` throws
+// undefined when called with times <= 0, `parseDate()` fails silently on
+// malformed input. Both are true, both are specific, both were scored as an
+// unobserved runtime claim about the import cycle. And the skill arm cites
+// util.js more than control does, so the guard penalised the arm that reported
+// more carefully. Four of twelve skill-arm runs failed on that alone.
 const assertsCrash = flowed.split(/(?<=[.!?])\s+|\n+/)
-  .some((s) => /(cycle|circular|util\.js)/i.test(s)
+  .some((s) => /\b(cycle|circular (?:dependenc|import|reference)|import loop)/i.test(s)
     && /(crashes|throws|fails to load|undefined at import|breaks at runtime|will fail)/i.test(s)
     && !HEDGE.test(s));
 record('no-unobserved-runtime-claim', !assertsCrash,

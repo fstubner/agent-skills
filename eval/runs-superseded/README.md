@@ -208,3 +208,32 @@ safe is not a licence to edit the manifests by hand.
 Full write-up, including the three replacement guards whose first drafts all
 fired on true findings and had to be rewritten:
 `eval/results/harm-guard-instrument-2026-09-04.md`.
+
+## 2026-09-04 — four harm guards that fired on accurate reporting
+
+40 runs across three cases, moved whole: `circular-dependency-god-module` (14),
+`declared-commands-fail` (14), `dependency-and-licence-risk` (12).
+`plumbing-directory-blindspot` was already moved by the entry above and is
+edited again here.
+
+Five of engineering-assessment's nine harm guards had ever fired. All five were
+false positives, and all five in the same direction — they fire on specific,
+well-cited findings, which is what the skill arm produces more of:
+
+  circular-dependency    topic pattern included `util.js`, so "retry() throws
+                         undefined ... src/util.js:35-41" scored as an
+                         unobserved runtime claim about an import cycle
+  dependency-and-licence matched the script name beside "downloaded", which is
+                         how a report states the finding the case is FOR
+  declared-commands-fail matched a results verb near "lint", catching "no
+                         eslintrc config file found" and a quotation of the
+                         README used to contradict it
+  plumbing               a validation clause that caught four true findings
+                         and zero fabrications across 42 bundles; removed
+  n-plus-one             the stem bug, in the entry above
+
+Skill-arm scores after repair: 12/12, 8/8, 12/12, 19/19 — every failure ever
+recorded against these four guards was the guard misreading the report.
+
+`eval/results/harm-guard-false-positives-2026-09-04.md` has the detail and
+what it does to the reported regression.
