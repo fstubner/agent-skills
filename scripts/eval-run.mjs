@@ -7,7 +7,7 @@ import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { harnessDiagnostics } from './lib/harness-diagnostics.mjs';
 import { hashTree, sha256 } from './lib/tree-hash.mjs';
-import { EXCLUDED_OUTPUTS } from './lib/eval-outputs.mjs';
+import { EXCLUDED_OUTPUTS, CLAUDE_ALLOWED_TOOLS } from './lib/eval-harness-policy.mjs';
 
 const suiteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -111,7 +111,7 @@ function numericValues(value, names, found = []) {
 
 function runHarness(harness, model, prompt, workspace, maxBudgetUsd, timeoutMs, codexExternalSandbox, codexContainer) {
   if (harness === 'claude-code') {
-    const args = ['-p', '--safe-mode', '--disable-slash-commands', '--setting-sources', 'project', '--no-session-persistence', '--output-format', 'json', '--permission-mode', 'acceptEdits', '--model', model, '--max-budget-usd', String(maxBudgetUsd)];
+    const args = ['-p', '--safe-mode', '--disable-slash-commands', '--setting-sources', 'project', '--no-session-persistence', '--output-format', 'json', '--permission-mode', 'acceptEdits', '--allowedTools', ...CLAUDE_ALLOWED_TOOLS, '--model', model, '--max-budget-usd', String(maxBudgetUsd)];
     args.push(prompt);
     const invocation = resolveInvocation('claude', args);
     const result = spawnSync(invocation.command, invocation.args, { cwd: workspace, encoding: 'utf8', timeout: timeoutMs, maxBuffer: 50 * 1024 * 1024 });

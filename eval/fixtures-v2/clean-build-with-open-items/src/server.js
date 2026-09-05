@@ -1,13 +1,23 @@
+import { randomBytes } from 'crypto';
 import express from 'express';
 import session from 'express-session';
-import { validateBooking } from './validate.js';
+import { validateBooking, isKnownStaff } from './validate.js';
 import { bookingsFor, create, cancel } from './bookings.js';
+
+// Required in production, random per process elsewhere. A fixed fallback
+// string would be a shared secret committed to the repository; a random one
+// only costs a developer their session when the process restarts.
+function sessionSecret() {
+  if (process.env.SESSION_SECRET) return process.env.SESSION_SECRET;
+  if (process.env.NODE_ENV === 'production') throw new Error('SESSION_SECRET is required in production');
+  return randomBytes(32).toString('hex');
+}
 
 export function createApp() {
   const app = express();
   app.use(express.json());
   app.use(session({
-    secret: process.env.SESSION_SECRET ?? 'change-me',
+    secret: sessionSecret(),
     resave: false,
     saveUninitialized: false,
     cookie: { httpOnly: true, sameSite: 'lax', secure: true },
@@ -16,6 +26,7 @@ export function createApp() {
   const requireStaff = (req, res, next) => (req.session.staffId ? next() : res.status(401).json({ error: 'sign in' }));
 
   app.post('/api/sign-in', (req, res) => {
+    if (!isKnownStaff(req.body?.staffId)) return res.status(401).json({ error: 'unknown staff account' });
     req.session.staffId = req.body.staffId;
     res.json({ ok: true });
   });

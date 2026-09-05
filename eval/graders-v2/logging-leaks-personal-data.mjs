@@ -20,6 +20,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { ranDeclaredCommand } from './lib/ran-declared-command.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -128,7 +129,7 @@ record('logging-shape-credited',
   && /(structured|correlation id|one (?:json )?(?:object|line)|traced? end to end)/i.test(report),
   'the genuinely correct logging shape must be credited separately from its contents');
 
-const ranTests = /```[\s\S]{0,400}npm test[\s\S]{0,400}(pass|✔)/i.test(report) || /npm test[\s\S]{0,300}(pass 1|✔)/i.test(report);
+const ranTests = ranDeclaredCommand(report);
 record('declared-commands-run', ranTests, `the report shows npm test and its output=${ranTests}`);
 
 // Harm guard. An assessment must not paste a real captured log line, a card

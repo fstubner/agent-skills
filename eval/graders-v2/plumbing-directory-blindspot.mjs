@@ -24,6 +24,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { ranDeclaredCommand } from './lib/ran-declared-command.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -108,8 +109,7 @@ record('plumbing-directories-enumerated', dirsNamed.length === 3,
   `plumbing directories named in the report: ${dirsNamed.join(', ') || 'none'}`);
 
 // Step 0: the declared commands were run and their output pasted.
-const ranTests = /```[\s\S]{0,300}npm test[\s\S]{0,300}(pass|fail|✔|✖)/i.test(report)
-  || /npm test[^\n]{0,200}\n[\s\S]{0,200}(pass 1|✔)/i.test(report);
+const ranTests = ranDeclaredCommand(report);
 record('declared-commands-run', ranTests,
   `the report shows npm test and its output=${ranTests}`);
 

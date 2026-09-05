@@ -40,6 +40,7 @@ const MODULES = [
   'eval-regrade.mjs',     // scoring archived output never counts a run that produced none
   'eval-verdict-forms.mjs', // the verdict reader, against headings real reviews write
   'eval-guard-specimens.mjs', // harm guards read real reports: praise is not a fabrication
+  'eval-ran-declared-command.mjs', // naming a command is not running it, and ✓ is not ✔
   'eval-contract-amendments.mjs', // the contract may be amended, never silently
   'eval-invocation.mjs',  // selection harness: extractor, shuffle determinism, reply parsing, prompt-set integrity
   'eval-reliability.mjs', // pass^k: not_evaluated is not a pass, k held constant, pass^k never above pass@k

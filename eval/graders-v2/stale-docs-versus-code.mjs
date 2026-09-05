@@ -27,6 +27,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { ranDeclaredCommand } from './lib/ran-declared-command.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -72,7 +73,7 @@ for (const [id, a, b] of DRIFT) {
   record(id, ok, `evidence present=${ok}`);
 }
 
-const ranTests = /```[\s\S]{0,400}npm test[\s\S]{0,400}(pass|✔)/i.test(report) || /npm test[\s\S]{0,300}(pass 1|✔)/i.test(report);
+const ranTests = ranDeclaredCommand(report);
 record('declared-commands-run', ranTests, `the report shows npm test and its output=${ranTests}`);
 
 // Harm guard. Whether authentication is terminated upstream is the question

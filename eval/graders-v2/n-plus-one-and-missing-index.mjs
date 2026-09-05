@@ -24,6 +24,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { ranDeclaredCommand } from './lib/ran-declared-command.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -123,7 +124,7 @@ record('measurement-limit-stated',
   /(explain|analyze|analyse|no (?:live )?database|not measured|inference|prediction|cannot measure)/i.test(report),
   'the report must say the ranking is unmeasured and name what would measure it');
 
-const ranTests = /```[\s\S]{0,400}npm test[\s\S]{0,400}(pass|✔)/i.test(report) || /npm test[\s\S]{0,300}(pass 1|✔)/i.test(report);
+const ranTests = ranDeclaredCommand(report);
 record('declared-commands-run', ranTests, `the report shows npm test and its output=${ranTests}`);
 
 // Harm guard: the queries are parameterised, including inside the LIKE, which

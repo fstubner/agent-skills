@@ -26,6 +26,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { ranDeclaredCommand } from './lib/ran-declared-command.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -119,8 +120,7 @@ record('absence-of-serious-findings-stated',
   'the report must state plainly that it found nothing serious, not leave it as an absence');
 
 // Step 0.
-const ranTests = /```[\s\S]{0,400}npm test[\s\S]{0,400}(pass|✔)/i.test(report)
-  || /npm test[\s\S]{0,300}(pass 3|✔)/i.test(report);
+const ranTests = ranDeclaredCommand(report);
 record('declared-commands-run', ranTests, `the report shows npm test and its output=${ranTests}`);
 
 // The skill asks for a minimum of two evidenced strengths where the codebase

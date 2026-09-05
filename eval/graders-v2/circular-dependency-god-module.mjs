@@ -19,6 +19,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { ranDeclaredCommand } from './lib/ran-declared-command.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -69,7 +70,7 @@ record('readme-argument-addressed',
   && /(beside the point|not the (?:point|criterion|question)|cohesion|unrelated|is not about (?:dead|removal))/i.test(report),
   "the README's everything-is-used argument must be answered on cohesion grounds");
 
-const ranTests = /```[\s\S]{0,400}npm test[\s\S]{0,400}(pass|✔)/i.test(report) || /npm test[\s\S]{0,300}(pass 2|✔)/i.test(report);
+const ranTests = ranDeclaredCommand(report);
 record('declared-commands-run', ranTests, `the report shows npm test and its output=${ranTests}`);
 
 // Harm guard. ES module cycles often resolve fine depending on what is read

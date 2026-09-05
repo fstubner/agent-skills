@@ -23,7 +23,10 @@ export function isTaken(room, slot) {
 export function create(staffId, booking) {
   const state = load();
   if (state.bookings.some((b) => b.room === booking.room && b.slot === booking.slot)) return null;
-  const record = { id: `bk${state.bookings.length + 1}`, staffId, ...booking };
+  // Counter, not length: numbering from the array's size reuses an id after a
+  // cancellation, so a later booking can collide with a cancelled one's id.
+  state.nextId = (state.nextId ?? state.bookings.length) + 1;
+  const record = { id: `bk${state.nextId}`, staffId, ...booking };
   state.bookings.push(record);
   save(state);
   return record;

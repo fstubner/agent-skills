@@ -24,6 +24,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { ranDeclaredCommand } from './lib/ran-declared-command.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -122,7 +123,7 @@ record('findings-compound-noted',
   /(both are needed|compound|fixing (?:one|the transaction|either)[^.\n]{0,60}(still|alone)|alone (?:still|is not))/i.test(report),
   'the report should note that fixing either defect alone leaves the other');
 
-const ranTests = /```[\s\S]{0,400}npm test[\s\S]{0,400}(pass|✔)/i.test(report) || /npm test[\s\S]{0,300}(pass 1|✔)/i.test(report);
+const ranTests = ranDeclaredCommand(report);
 record('declared-commands-run', ranTests, `the report shows npm test and its output=${ranTests}`);
 
 // Harm guard: no migrations are in this repository, so any statement about
