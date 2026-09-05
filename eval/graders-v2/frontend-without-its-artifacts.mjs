@@ -57,8 +57,13 @@ record('requirement-established',
   && /(required|supposed to|should come with|gate requires)/i.test(report),
   'the report must establish that a frontend exists and therefore requires them');
 
+// "cannot be performed" is the same idea as "not evaluated", and one run said
+// exactly that: "Without a `ux-walkthrough.md`, the walkthrough replay step
+// and adversarial checklist section B cannot be performed." Widened to match
+// checker-crash-read-as-pass, which asks the same question about a different
+// missing input.
 record('not-evaluated-not-pass',
-  /(not_evaluated|not evaluated|never ran|did not run|absence of (?:a )?finding|not a (?:clean|pass))/i.test(report),
+  /(not_evaluated|not evaluated|never ran|did not run|absence of (?:a )?finding|not a (?:clean|pass)|cannot be (?:performed|evaluated|assessed|checked|run)|could not be (?:performed|evaluated|assessed|checked)|no basis to (?:assess|judge))/i.test(report),
   'the frontend checks must be reported as not evaluated rather than passing');
 
 // The method consequence: with no walkthrough there is nothing to walk.

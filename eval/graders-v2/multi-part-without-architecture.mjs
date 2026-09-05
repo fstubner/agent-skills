@@ -104,7 +104,13 @@ record('missing-document-connected-to-the-defect', connectsToBoundary,
 
 // Client half.
 const clientLine = lineOf('client/src/app.js', 'Only shown to managers');
-const namesClientSide = /(client|browser|front[- ]?end)[^.\n]{0,80}(hidden|hides|omit|not shown|presentation|not enforce|is not (?:enforcement|a check))/i.test(report)
+// Scored 0 across all nine runs while six of them made the finding. Reviews
+// do not write "is not enforcement"; they write "Client-side authorization is
+// not a security boundary", "client-side enforcement ... is a fundamental
+// security violation", and "the client-side permission check is the only
+// guard, and the x-role header sent by the client cannot be trusted". The
+// idea is the same one every time and the wording never repeats.
+const namesClientSide = /(client|browser|front[- ]?end)[^.\n]{0,90}(hidden|hides|omit|not shown|presentation|not enforce|is not (?:enforcement|a check)|not a (?:security )?(?:boundary|check|guard|control|substitute)|cannot be trusted|only guard|can be bypass|security violation|trivially bypass)/i.test(report)
   || /(hidden|hiding) (?:the )?button[^.\n]{0,60}(not|is not)/i.test(report);
 record('client-side-permission-cited', namesClientSide
   && (citesInRange('client/src/app.js', clientLine - 4, clientLine + 4) || /client\/src\/permissions\.js/i.test(report)),

@@ -7,9 +7,9 @@ import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { harnessDiagnostics } from './lib/harness-diagnostics.mjs';
 import { hashTree, sha256 } from './lib/tree-hash.mjs';
+import { EXCLUDED_OUTPUTS } from './lib/eval-outputs.mjs';
 
 const suiteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const EXCLUDED_OUTPUTS = new Set(['.git', 'node_modules', '.agent-evidence', '.agent-input', '.codex', '.claude']);
 
 function usage(message) {
   if (message) console.error(message);

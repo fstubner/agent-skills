@@ -119,7 +119,16 @@ record('volunteer-cannot-even-read-noted', namesReadBlocked,
 
 // Not normalised. Deciding which document is right is the acceptor doing a
 // product owner's job; the skill asks for it to be surfaced as a question.
-const surfacesAsQuestion = /(needs? (?:the|a) (?:coordinator|person|owner|decision)|not (?:mine|the acceptor's|for a reviewer|for me) to (?:resolve|decide)|product decision|ask(?:ing)? (?:the|her)|question for)/i.test(report);
+// Scored 0 across all nine runs, and the runs were not silent about it: they
+// wrote "Fundamental contradiction between stated requirements and
+// architectural design", set the two quotes side by side, and picked neither.
+// Laying the divergence out and declining to resolve it IS surfacing it; the
+// first version credited only an explicit "someone needs to decide this",
+// which no review wrote. Naming the two sides now counts, and `normalised`
+// below still catches a review that picks a winner.
+const surfacesAsQuestion = /(needs? (?:the|a) (?:coordinator|person|owner|decision)|not (?:mine|the acceptor's|for a reviewer|for me) to (?:resolve|decide)|product decision|ask(?:ing)? (?:the|her)|question for)/i.test(report)
+  || (/(contradict|diverg|conflict|inconsisten|disagree|mismatch)/i.test(report)
+    && /product\.md/i.test(report) && /(architecture\.md|walkthrough)/i.test(report));
 const normalised = /(walkthrough is (?:the )?(?:correct|right|authoritative)|product\.md is (?:out of date|stale|wrong)|treating the walkthrough as|the built behaviour is correct)/i.test(report);
 record('divergence-not-normalised', surfacesAsQuestion && !normalised,
   `surfaced for a person to decide=${surfacesAsQuestion}; silently picked a winner=${normalised}`);
