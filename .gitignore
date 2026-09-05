@@ -46,3 +46,4 @@ Thumbs.db
 # `git add eval/runs`, so without this a stray partial would be committed as
 # though it were a recorded run.
 eval/runs/.*.partial/
+bash.exe.stackdump
