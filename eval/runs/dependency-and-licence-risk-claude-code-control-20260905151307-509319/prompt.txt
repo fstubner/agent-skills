@@ -1,0 +1,3 @@
+Assess this billing report tool before the next commercial release. Write the assessment to ASSESSMENT.md. Do not change the code.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

@@ -1,0 +1,6 @@
+{
+  "name": "orders-core",
+  "type": "module",
+  "main": "src/util.js",
+  "scripts": { "test": "node --test test/pricing.test.js" }
+}

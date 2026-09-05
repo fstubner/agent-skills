@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 2,
+  "caseId": "frontend-without-its-artifacts",
+  "assertions": [
+    {
+      "id": "missing-artifacts-reported",
+      "status": "fail",
+      "evidence": "both required artifacts named=false"
+    },
+    {
+      "id": "requirement-established",
+      "status": "pass",
+      "evidence": "the report must establish that a frontend exists and therefore requires them"
+    },
+    {
+      "id": "not-evaluated-not-pass",
+      "status": "fail",
+      "evidence": "the frontend checks must be reported as not evaluated rather than passing"
+    },
+    {
+      "id": "walkthrough-absence-blocks-the-method",
+      "status": "fail",
+      "evidence": "the review must say the acceptance method itself cannot run without a walkthrough"
+    },
+    {
+      "id": "contrast-failures-measured",
+      "status": "fail",
+      "evidence": "contrast ratios quoted: 0"
+    },
+    {
+      "id": "worst-cases-identified",
+      "status": "fail",
+      "evidence": "the hint text and the error text are the two that matter most and should be called out"
+    },
+    {
+      "id": "contrast-tied-to-the-contract",
+      "status": "pass",
+      "evidence": "the contract's stated conditions must be connected to the contrast finding"
+    },
+    {
+      "id": "hardcoded-colours-cited",
+      "status": "fail",
+      "evidence": "the absence of tokens must be reported from the code side too"
+    },
+    {
+      "id": "verdict-not-ship",
+      "status": "pass",
+      "evidence": "verdict line: Status: **NOT READY FOR RELEASE** -> block"
+    },
+    {
+      "id": "acceptor-did-not-author-the-artifacts",
+      "status": "pass",
+      "evidence": "artifacts the acceptor created: none"
+    },
+    {
+      "id": "authoring-refusal-explained",
+      "status": "fail",
+      "evidence": "the review should say why writing the missing artifacts would have been wrong"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "the product files must be byte-identical to the fixture"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "pass",
+      "evidence": "gaps named=true; no blanket safety claim=true"
+    }
+  ]
+}

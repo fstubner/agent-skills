@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "n-plus-one-and-missing-index-claude-code-skill-20260905014814-aab258",
+  "caseId": "n-plus-one-and-missing-index",
+  "caseRevision": 2,
+  "caseSha256": "69a2fd5437a727e71a323dfec3b8d1a0061246b41cdbce366efeae21bea6ea72",
+  "fixtureSha256": "bb487dd41299c75ed49b2ecd8f9b39057185ee3cf35e2efbf7760b51e235ee49",
+  "graderSha256": "917b36aefb5ab49b3690e42f22e16c45a78e77f134205947d7bcbe2fdba2ebac",
+  "checkerSha256": null,
+  "stagedInputSha256": "d27fefc556f1e69e7349cb2a57f071b0bedfc10ef01c7afb66ddaa93adcae9da",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-09-05T01:48:14.392Z",
+  "finishedAt": "2026-09-05T01:50:03.280Z",
+  "durationMs": 108888,
+  "totalTokens": 502728,
+  "costUsd": 0.11515599999999998,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "9c70aba8063e748a2d3c7d90b44c364ad25fd9b9ef777f77574dd45b089be65e",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 14,
+    "failed": 0,
+    "notEvaluated": 0,
+    "total": 14
+  }
+}

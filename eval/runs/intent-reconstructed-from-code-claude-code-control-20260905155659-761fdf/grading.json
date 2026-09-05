@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "caseId": "intent-reconstructed-from-code",
+  "assertions": [
+    {
+      "id": "provenance-flagged",
+      "status": "fail",
+      "evidence": "the review names the declared provenance=false"
+    },
+    {
+      "id": "agreement-not-treated-as-evidence",
+      "status": "fail",
+      "evidence": "the review says why agreement with a derived contract is not evidence=false"
+    },
+    {
+      "id": "real-intent-source-used",
+      "status": "pass",
+      "evidence": "the review draws on docs/brief-email.txt=true"
+    },
+    {
+      "id": "primary-need-missing-cited",
+      "status": "fail",
+      "evidence": "absence named=false; cited in the code=true"
+    },
+    {
+      "id": "priority-inversion-named",
+      "status": "pass",
+      "evidence": "the review notes what the requester ranked first against what was built=true"
+    },
+    {
+      "id": "verdict-not-ship",
+      "status": "pass",
+      "evidence": "verdict line: **Status:** NOT READY FOR RELEASE -> block"
+    },
+    {
+      "id": "lift-path-named",
+      "status": "fail",
+      "evidence": "the review says a person's confirmation lifts this, not a better document=false"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "fail",
+      "evidence": "report shows a command and its output=false"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract files must be byte-identical to the fixture"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "fail",
+      "evidence": "gaps named=false; specific areas named=true; no blanket safety claim=true"
+    }
+  ]
+}

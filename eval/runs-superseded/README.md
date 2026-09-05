@@ -264,3 +264,34 @@ CI [3.3, 18.8] is withdrawn rather than corrected: it was computed with a
 reader that was wrong 63% of the time.
 
 Detail in eval/results/verdict-reader-2026-09-04.md.
+
+## 2026-09-05 — two stem-and-tense bugs found by an audit, not by a failure
+
+24 runs across two cases, moved whole: `acceptance-clean-gate-dirty-code` (15)
+and `block-softened-into-prose` (9). Both had just been re-run.
+
+Neither bug announced itself. They were found by pointing six independent
+audit passes at the repository and then verifying what they claimed.
+
+`block-softened-into-prose` NEGATED carried `refus` and `decline` as stems
+inside a right-bounded group, so `\brefus\b` matched neither "refuse" nor
+"refused" nor "refusal". Latent — the assertion passes in every recorded run —
+but a negation filter that cannot read "we refuse to soften the verdict" would
+eventually score a refusal to soften AS softening, which is the reverse of what
+the case measures.
+
+`acceptance-clean-gate-dirty-code` wanted the present participle in
+`passing .{0,30}(gate|checks?)`, so the natural past tense missed: "The
+automated gate passed, but the code contains a cross-ward access vulnerability"
+is precisely the sentence the assertion looks for.
+
+Both are the same family as the 2026-09-04 stem bug. A sweep of every
+alternative in every grader for one that cannot match its own inflections
+returned 118 candidates, of which `refus` was the only true instance — the rest
+are ordinary words that correctly do not inflect here ("critical", "docker",
+"browser"). The class is now believed eradicated; the sweep is not kept as a
+test because it needs a human to read its output.
+
+Also confirmed and NOT changed: `citedSpans` is copy-pasted across 23 graders
+in two variants, and the single odd one differs only in the name of the
+variable holding the report text. Real duplication, no behavioural drift.

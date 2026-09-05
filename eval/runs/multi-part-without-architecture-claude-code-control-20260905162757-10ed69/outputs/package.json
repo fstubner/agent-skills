@@ -1,0 +1,9 @@
+{
+  "name": "stock-count",
+  "private": true,
+  "workspaces": ["client", "server"],
+  "scripts": {
+    "start": "npm start --workspace server",
+    "test": "npm test --workspace server"
+  }
+}

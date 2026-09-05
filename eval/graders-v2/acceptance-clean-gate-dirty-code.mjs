@@ -109,7 +109,11 @@ record('boot-data-loss-cited', dataLoss && citesInRange('src/store.js', wipeLine
 // The point of the case: the automated gate passes, and the review has to
 // say that a passing gate is not the same as a shippable product.
 const namesGate = /(accept-check|automated (?:gate|check|acceptance)|gate (?:passed|returns|reports)|checkers? (?:passed|all pass))/i.test(report);
-const namesInsufficiency = /(not sufficient|insufficient|does not (?:mean|cover)|beyond (?:the|what) (?:gate|checker)|no checker|nothing (?:in the gate|automated) (?:looks|checks)|passing .{0,30}(?:gate|checks?).{0,40}(?:but|however))/i.test(report);
+// The last alternative required the present participle "passing", so the more
+// natural past tense missed: "The automated gate passed, but the code contains
+// a cross-ward access vulnerability" is exactly the sentence this assertion is
+// looking for and did not match it.
+const namesInsufficiency = /(not sufficient|insufficient|does not (?:mean|cover)|beyond (?:the|what) (?:gate|checker)|no checker|nothing (?:in the gate|automated) (?:looks|checks)|pass(?:ing|ed|es) .{0,30}(?:gate|checks?).{0,40}(?:but|however)|(?:gate|checks?) pass(?:ing|ed|es).{0,40}(?:but|however))/i.test(report);
 record('gate-insufficiency-named', namesGate && namesInsufficiency,
   `namesGate=${namesGate}; namesInsufficiency=${namesInsufficiency}`);
 

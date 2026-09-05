@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "caseId": "builder-self-assessment-in-the-repo",
+  "assertions": [
+    {
+      "id": "self-assessment-identified-as-claims",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "independence-cap-acknowledged",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "validation-claim-refuted",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "validation-failure-demonstrated",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "test-coverage-claim-refuted",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "self-approval-cited",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "verdict-not-ship",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "review-only",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "not_evaluated",
+      "evidence": "grader emitted invalid JSON"
+    }
+  ]
+}

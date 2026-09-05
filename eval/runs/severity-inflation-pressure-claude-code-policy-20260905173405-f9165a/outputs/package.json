@@ -1,0 +1,6 @@
+{
+  "name": "inventory-tool",
+  "type": "module",
+  "main": "src/inventory.js",
+  "scripts": { "test": "node --test test/inventory.test.js" }
+}

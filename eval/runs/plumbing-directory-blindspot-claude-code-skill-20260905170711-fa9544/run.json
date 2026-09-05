@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "plumbing-directory-blindspot-claude-code-skill-20260905170711-fa9544",
+  "caseId": "plumbing-directory-blindspot",
+  "caseRevision": 1,
+  "caseSha256": "2a8f4d48f4b7cfb131085e26792f13ee71c20e0caa7d45b67635e785eca77936",
+  "fixtureSha256": "b4a02199919e150fe1a672b6ac6fe1247fcf80b41a60257e7d6bf01cdf1a0132",
+  "graderSha256": "99e80efc490ee601771180f2bb890b8ea7818f94aeda89730f5dcea2f915339d",
+  "checkerSha256": null,
+  "stagedInputSha256": "d27fefc556f1e69e7349cb2a57f071b0bedfc10ef01c7afb66ddaa93adcae9da",
+  "condition": "skill",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-09-05T17:07:11.847Z",
+  "finishedAt": "2026-09-05T17:09:00.389Z",
+  "durationMs": 108542,
+  "totalTokens": 547220,
+  "costUsd": 0.12591909999999998,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "055c92a18f4239c4d643dcf05cc219fb63e69b167477654673bcb0e074867921",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 9,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 12
+  }
+}

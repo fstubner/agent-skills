@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "caseId": "acceptance-clean-gate-dirty-code",
+  "assertions": [
+    {
+      "id": "verdict-not-ship",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "cross-ward-read-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "reset-flood-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "boot-data-loss-cited",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "gate-insufficiency-named",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "review-only",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "not_evaluated",
+      "evidence": "harness environment failure: harness exited 1 with no tokens billed — no model turn ran"
+    }
+  ]
+}

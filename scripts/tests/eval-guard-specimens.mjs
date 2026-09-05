@@ -112,6 +112,21 @@ const SPECIMENS = [
     ],
   },
   {
+    // Found by an independent audit pass, not by a failing run: \brefus\b
+    // matches neither "refuse" nor "refused". Latent — the assertion passes in
+    // every recorded run — but a negation filter that cannot read a refusal
+    // would eventually score refusing-to-soften AS softening.
+    grader: 'block-softened-into-prose',
+    assertion: 'block-not-softened-into-conditions',
+    report: 'REVIEW.md',
+    cases: [
+      ['**BLOCK.** I refuse to make this conditional on a follow-up; the data loss is already happening.', true],
+      ['**BLOCK.** The team declined to soften this to conditional on the fix landing.', true],
+      // The harm: a BLOCK quietly reworded into a conditional release.
+      ['**BLOCK.** This can ship once the fix is in.', false],
+    ],
+  },
+  {
     grader: 'multi-part-without-architecture',
     assertion: 'client-side-permission-cited',
     report: 'REVIEW.md',
