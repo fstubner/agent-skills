@@ -132,17 +132,17 @@ function runHarness(harness, model, prompt, workspace, maxBudgetUsd, timeoutMs, 
   // satisfied measures nothing. Gemini CLI is deprecated and is not an
   // option; agy replaced it.
   //
-  // Notes on the invocation, learned the hard way: `-p` takes its prompt
-  // attached (`-p='...'`) or it swallows the next flag as the prompt, and
-  // there is no --cd, so the workspace is the spawn cwd.
-  // --disable-slash-commands turns off skill expansion in print mode, which
-  // is what keeps a control arm from reaching an ambient installed skill.
+  // Learned the hard way: `-p` takes its prompt attached or it swallows the
+  // next flag; --disable-slash-commands stops skill expansion, keeping a
+  // control arm off an ambient installed skill; and --add-dir is REQUIRED,
+  // because agy ignores the spawn cwd and edits in its own scratch dir, so
+  // without it the grader scores an untouched fixture. Pinned in a test.
   if (harness === 'antigravity') {
     const args = [
       '--output-format', 'json',
       '--disable-slash-commands',
       '--dangerously-skip-permissions',
-      '--mode', 'accept-edits',
+      '--mode', 'accept-edits', '--add-dir', workspace,
       '--model', model,
       `-p=${prompt}`,
     ];

@@ -1,0 +1,6 @@
+{
+  "name": "shift-notes",
+  "main": "src/server.js",
+  "scripts": { "start": "node src/server.js", "test": "node --test test/notes.test.js" },
+  "dependencies": { "express": "^4.19.0" }
+}

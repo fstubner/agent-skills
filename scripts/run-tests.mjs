@@ -34,6 +34,7 @@ const MODULES = [
   'eval-fixture-binding.mjs', // a run is bound to the fixture it ran against
   'eval-skill-currency.mjs',  // evidence must describe the skill text as it stands
   'eval-harness-failure.mjs', // a run that never reached a model is not a failing run
+  'eval-harness-workspace.mjs', // and a run whose edits never reached the workspace is not a measurement
   'eval-batch.mjs',       // and it does not fill a matrix cell either
   'eval-partial-bundle.mjs', // a bundle still being written is not a broken one
   'eval-power.mjs',       // the case count the contract cites is arithmetic, and it is checked

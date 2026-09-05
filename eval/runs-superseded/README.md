@@ -295,3 +295,36 @@ test because it needs a human to read its output.
 Also confirmed and NOT changed: `citedSpans` is copy-pasted across 23 graders
 in two variants, and the single odd one differs only in the name of the
 variable holding the report text. Real duplication, no behavioural drift.
+
+## 2026-09-06 — the entire antigravity cohort measured an untouched fixture
+
+22 bundles moved (16 had been moved by earlier entries), leaving one: the
+single run taken after the fix, kept as the proof it works.
+
+agy ignores the spawn cwd. It edits inside its own scratch directory,
+`~/.gemini/antigravity-cli/scratch`, and then reports the file it wrote as
+being "in the current working directory" — which is why nobody noticed. The
+transcripts read like successful runs.
+
+Only 6 of 38 antigravity bundles ever put a file into their workspace: 5 of 22
+control, 0 of 9 policy, 1 of 7 skill. For the rest the grader scored the fixture
+as staged, so every run of a case scored identically in every arm —
+`acceptance-clean-gate-dirty-code` read 1/8 nine times and
+`all-at-once-for-a-quiet-risk` read 5/9 nine times. Zero variance looks exactly
+like "the skill does nothing" and was actually "the model's work never arrived".
+
+Reproduced outside the harness before changing anything: a bare agy run asked
+to write PROOF.md in the working directory wrote it to scratch; the same run
+with `--add-dir` wrote it where it was asked. Then verified through the harness
+— the first run after the fix wrote RELEASE.md into the workspace and added
+OPERATIONS.md.
+
+**Nothing in the hash-binding scheme could have caught this.** caseSha256,
+fixtureSha256, graderSha256 and stagedInputSha256 all bind INPUTS. The harness
+invocation is not an input to any of them, so an adapter can stop delivering
+the treatment entirely and every existing check stays green.
+`scripts/tests/eval-harness-workspace.mjs` pins the flag; it fails when
+`--add-dir` is removed.
+
+This was caught two cases into a planned 410-run batch, by asking why every
+score was identical.

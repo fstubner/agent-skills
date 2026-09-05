@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "acceptance-clean-gate-dirty-code-antigravity-policy-20260905231950-88d613",
+  "caseId": "acceptance-clean-gate-dirty-code",
+  "caseRevision": 1,
+  "caseSha256": "1e1d9cde06559acb0d191b84eeed0c16dcbe7790e13e0e5b103287441745d835",
+  "fixtureSha256": "13aa828d1041eb25f455155a4bc83dff9769432f38d9bc0b1759de7d2694bfd4",
+  "graderSha256": "9e1a1eb2869eace17e286d92ff4112bb10fc9e37cc1436eb2f4f2e07f02f0f1d",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "policy",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.27",
+  "model": "gemini-3.6-flash-low",
+  "startedAt": "2026-09-05T23:19:50.159Z",
+  "finishedAt": "2026-09-05T23:19:59.183Z",
+  "durationMs": 9024,
+  "totalTokens": 32271,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "13aa828d1041eb25f455155a4bc83dff9769432f38d9bc0b1759de7d2694bfd4",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 1,
+    "failed": 7,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}
