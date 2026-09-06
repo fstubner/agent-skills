@@ -88,7 +88,12 @@ const leadOf = (line) => strip(line).split(/[—–.:;]/)[0].trim().slice(0, 60)
  * recording it as a pass would be worse.
  */
 export function declaredVerdict(report) {
-  const prose = report.replace(/```[\s\S]*?```/g, ' ').replace(/`[^`\n]*`/g, ' ');
+  // Fenced blocks are pasted output and carry no verdict; they go. Inline
+  // code spans are UNWRAPPED, not removed: reviews write "**Verdict:** \`BLOCK\`",
+  // and deleting the span left the classifier a blank label, so the reader
+  // fell back to the heading above and a review that said BLOCK scored as
+  // having said nothing. Found 2026-09-06 in an antigravity skill-arm run.
+  const prose = report.replace(/\`\`\`[\s\S]*?\`\`\`/g, ' ').replace(/\`([^\`\n]*)\`/g, ' $1 ');
   const lines = prose.split('\n').map((l) => l.trim());
   let announced = null;
 

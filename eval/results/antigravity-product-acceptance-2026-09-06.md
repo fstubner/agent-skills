@@ -145,3 +145,29 @@ exists yet on this harness.
 Step 2 is the expensive one and the only one that changes shipped
 artifacts. It is also the one without which the skill arm cannot do the
 thing the skill tells it to do.
+
+## Repair applied, 2026-09-06
+
+All three steps landed the same day, in two commits.
+
+1. **Quarantined and guarded.** 38 runs moved. `runEligibility` refuses a
+   control or policy run whose workspace holds a suite checker report the
+   fixture did not plant, and the batch runner mirrors it. The first draft
+   counted the plants themselves and zeroed every control arm of the seven
+   cases built around one; byte comparison against the fixture fixed that.
+2. **Staged as shipped.** `scripts/lib/stage-skill.mjs` is the one definition
+   of a shipped skill — vendored core, `"type": "commonjs"` — used by the
+   installer, the bundle generator and the eval. Verified on a real run: the
+   staged checker executed inside an ESM fixture with zero module errors.
+   Every skill-arm run on disk is stale by design and reads so.
+3. **Graders repaired.** Shared citation matcher with the `#L` form, shared
+   runtime-evidence clause that reads the gate report, verdict reader that
+   keeps backticks. Proved on 24 cases and 698 cells: 0 decreases, 0
+   unintended changes, 23 gains.
+
+Found along the way, and worse than anything above for a public repository:
+seven fixtures plant a stale report in `.agent-evidence/`, the path was
+gitignored, and no fresh clone ever had them. All seven are tracked now.
+
+What remains is the re-run. Nothing here is a measurement; it is the
+instrument, the staging and the control arm made fit to take one.

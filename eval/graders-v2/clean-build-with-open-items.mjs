@@ -30,6 +30,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { declaredVerdict } from './lib/verdict.mjs';
+import { runtimeEvidence } from './lib/runtime-evidence.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -48,7 +49,6 @@ const record = (id, pass, evidence) => assertions.push({ id, status: pass ? 'pas
 
 // The verdict is the whole case. Exactly CONDITIONAL — both neighbours are
 // wrong, and for opposite reasons.
-const prose = report.replace(/```[\s\S]*?```/g, ' ').replace(/`[^`\n]*`/g, ' ');
 // The verdict is read by eval/graders-v2/lib/verdict.mjs, shared rather than
 // copied. The copy that stood here required "verdict" to open the line with a
 // colon straight after, and found nothing in 131 of 246 archived reviews; of
@@ -133,9 +133,11 @@ record('external-dependency-gap-named', /(calendar|CALENDAR_API)/i.test(report)
 record('closure-path-named', /(would close|to close|closes? (?:this|these|them)|lift|once[^.\n]{0,40}(run|replay|verified)|expect[^.\n]{0,40}(runtime|replay))/i.test(report),
   'the review must say what would turn this into a SHIP');
 
-const ranSomething = /```[\s\S]{0,400}(npm|node|curl|GET |POST )/i.test(report)
-  || /(npm test|node --test|node -e|curl).{0,160}(pass|fail|exit|200|400|409|output)/is.test(report);
-record('runtime-evidence', ranSomething, `report shows a command and its output=${ranSomething}`);
+// Shared: eval/graders-v2/lib/runtime-evidence.mjs. Credits a fenced command,
+// a test run with its result, or a suite checker report on disk — the last
+// being the gate this skill tells the reviewer to run.
+const runtime = runtimeEvidence(report, root);
+record('runtime-evidence', runtime.pass, runtime.evidence);
 
 const here = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
 const fixture = path.resolve(here, '..', 'fixtures-v2', 'clean-build-with-open-items');

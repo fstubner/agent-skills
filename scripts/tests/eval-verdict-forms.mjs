@@ -50,6 +50,12 @@ const CASES = [
   ['## Verdict: CONDITIONAL — proceed to production with noted gaps', 'conditional'],
   ['**Verdict:** CONDITIONAL PASS', 'conditional'],
   ['**Status:** ⚠️ Conditional Pass — Walkthrough passed, but gaps remain.', 'conditional'],
+  // Backticked values. The reader stripped inline code spans before reading,
+  // so the value vanished and it fell back to the heading — an antigravity
+  // skill-arm run that said BLOCK scored as having said nothing (2026-09-06).
+  ['# Release Review & Verdict: Clinic Appointments\n\n**Verdict:** `BLOCK`\n', 'block'],
+  ['**Verdict:** `CONDITIONAL`', 'conditional'],
+  ['## Verdict\n\n`SHIP`\n', 'ship'],
 
   // --- and a review that declares nothing ---
   ['# Release Review: inventory-export\n\nThe CLI has a defect in the export flow.', null],

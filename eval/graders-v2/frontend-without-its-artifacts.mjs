@@ -92,7 +92,6 @@ record('hardcoded-colours-cited',
   && /styles\.css/i.test(report),
   'the absence of tokens must be reported from the code side too');
 
-const prose = report.replace(/```[\s\S]*?```/g, ' ').replace(/`[^`\n]*`/g, ' ');
 // The verdict is read by eval/graders-v2/lib/verdict.mjs, shared rather than
 // copied. The copy that stood here required "verdict" to open the line with a
 // colon straight after, and found nothing in 131 of 246 archived reviews; of

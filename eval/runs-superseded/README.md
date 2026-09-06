@@ -376,3 +376,54 @@ original bytes. These 12 runs could no longer bind to it, and they were about
 to be superseded by the grader work below in any case.
 
 All seven plants are tracked now.
+
+## 2026-09-06 — one citation matcher, one runtime-evidence clause, a reader that keeps backticks
+
+342 runs across 25 cases, moved whole: 279 claude-code, 35 codex, 28
+antigravity.
+
+Three instrument repairs, each of which had to touch many graders because
+the logic it corrected was copy-pasted:
+
+- The citation matcher lived in 23 graders. Antigravity writes citations as
+  markdown links with the line number in the URL fragment —
+  `[server.js:L25-L28](file:///…/src/server.js#L25-L28)` — and none of the
+  23 read a fragment. 0 of 336 claude-code reports use the form; 33 of 99
+  antigravity reports do, 258 citations, and the skill arm, being the arm
+  that cites the graded lines, lost every one. The matcher is now
+  `eval/graders-v2/lib/citations.mjs`, with the fragment as its sixth form.
+  Each grader keeps its own one-line wrapper (its slack, its range test) and
+  nothing else. `scripts/tests/eval-citation-forms.mjs` tests the shared
+  module and fails if any grader grows a private copy back.
+
+- The runtime-evidence clause lived in 11 graders, in four drifted variants.
+  None credited the suite's own acceptance gate — the thing product-
+  acceptance tells the reviewer to run — so 21 of 48 antigravity runs with a
+  genuine `acceptance-report.json` on disk were scored as having run nothing.
+  `eval/graders-v2/lib/runtime-evidence.mjs` is the union of every variant
+  plus the report on disk, which only the suite's scripts write.
+
+- The verdict reader deleted inline code spans before reading, so a verdict
+  written as backticked BLOCK reached the classifier as a blank label and the
+  reader fell back to the heading above it. It unwraps the span now. One run.
+
+Proved rather than asserted. Every archived bundle of every touched case was
+scored by the old graders before the rewrite and by the new ones after — 25
+cases:
+
+    decreases                       0
+    changes outside the three repairs  0
+    intended gains                  23   (citations 8, runtime-evidence 14, verdict 1)
+
+The one verdict gain is the backticked run, checked by hand. The largest
+single gain is `block-softened-into-prose :: runtime-evidence` in the skill
+arm, 0 of 5 to 5 of 5: the arm had run the gate every time, and the clause
+could not see the report it left.
+
+The first comparison also flagged fifteen movements on
+checker-crash-read-as-pass that were not repairs at all. Its baseline had
+been captured while its planted report was missing (see the entry above),
+so the contamination rule was excluding its control and policy arms; once
+the plant was back, more bundles were counted. Re-scored old-grader against
+new-grader on the same bundle set, those fifteen vanish. Recorded because a
+proof that needed a second look is worth more than one that did not.
