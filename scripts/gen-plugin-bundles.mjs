@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { finishStagedSkill } from './lib/stage-skill.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const registry = JSON.parse(fs.readFileSync(path.join(root, 'registry.json'), 'utf8'));
@@ -27,12 +28,11 @@ function copyTree(source, destination) {
   fs.cpSync(source, destination, { recursive: true });
 }
 
+// Vendoring and the module declaration come from the one place that defines
+// what a shipped skill is, so this generator, the installer and the eval
+// harness cannot disagree about it.
 function vendorCore(skillDestination) {
-  const scripts = path.join(skillDestination, 'scripts');
-  if (!fs.existsSync(path.join(scripts, 'resolve-core.cjs'))) return;
-  const vendor = path.join(scripts, 'vendor');
-  copyTree(path.join(root, 'core'), vendor);
-  fs.copyFileSync(path.join(root, 'registry.json'), path.join(vendor, 'registry.json'));
+  finishStagedSkill(root, skillDestination);
 }
 
 function assertOwnedOrAbsent(target) {

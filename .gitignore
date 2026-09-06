@@ -24,6 +24,12 @@ Thumbs.db
 # gateVerdict=missing in CI, green locally.
 !eval/grader-fixtures-v2/**/.agent-evidence/
 !eval/grader-fixtures-v2/**/.agent-evidence/**
+# Some eval fixtures PLANT a stale report for the case to be about (a passing
+# gate on disk, a checker report from last month). Ignoring the directory
+# meant seven of them lived only on one machine and a fresh clone never had
+# them. Found 2026-09-06.
+!eval/fixtures-v2/**/.agent-evidence/
+!eval/fixtures-v2/**/.agent-evidence/**
 # And under fixtures/replay-*, where a recorded walkthrough run IS the thing
 # under test — the fixture exists to prove a fresh log is read and a stale one
 # is refused, which needs both logs committed.

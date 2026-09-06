@@ -34,7 +34,8 @@ if (fs.existsSync(runsDir)) {
     const grading = JSON.parse(fs.readFileSync(path.join(runDir, manifest.files.grading), 'utf8'));
     const transcriptPath = manifest.files.transcript ? path.join(runDir, manifest.files.transcript) : null;
     const transcript = transcriptPath && fs.existsSync(transcriptPath) ? fs.readFileSync(transcriptPath, 'utf8') : '';
-    runs.push({ manifest, grading, transcript, testCase: cases.get(manifest.caseId) });
+    const testCase = cases.get(manifest.caseId);
+    runs.push({ runDir, fixtureDir: testCase?.fixture ? path.join(root, ...testCase.fixture.split("/")) : undefined, manifest, grading, transcript, testCase });
   }
 }
 

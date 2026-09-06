@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import { harnessDiagnostics } from './lib/harness-diagnostics.mjs';
 import { hashTree, sha256 } from './lib/tree-hash.mjs';
 import { EXCLUDED_OUTPUTS, CLAUDE_ALLOWED_TOOLS } from './lib/eval-harness-policy.mjs';
+import { stageSkill, copyTree } from './lib/stage-skill.mjs';
 
 const suiteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -43,16 +44,6 @@ function resolveInvocation(name, args) {
   return { command: candidates.find((candidate) => candidate.toLowerCase().endsWith('.exe')) || name, args };
 }
 
-function copyTree(src, dest, exclude = new Set()) {
-  fs.mkdirSync(dest, { recursive: true });
-  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
-    if (exclude.has(entry.name)) continue;
-    const from = path.join(src, entry.name);
-    const to = path.join(dest, entry.name);
-    if (entry.isDirectory()) copyTree(from, to, exclude);
-    else if (entry.isFile()) fs.copyFileSync(from, to);
-  }
-}
 
 function cleanupTemp(tempRoot) {
   try {
@@ -73,12 +64,12 @@ function stageConditionInputs(testCase, condition, workspace) {
   if (condition === 'skill') {
     const skillIds = testCase.skills || [testCase.skill];
     for (const skillId of skillIds) {
-      copyTree(path.join(suiteRoot, skillId), path.join(inputRoot, skillId));
+      stageSkill(suiteRoot, skillId, path.join(inputRoot, skillId));
     }
     return skillIds.map((skillId) => `.agent-input/${skillId}/SKILL.md`);
   }
   if (condition === 'checker') {
-    copyTree(path.join(suiteRoot, testCase.skill), path.join(inputRoot, testCase.skill));
+    stageSkill(suiteRoot, testCase.skill, path.join(inputRoot, testCase.skill));
     copyTree(path.join(suiteRoot, 'core'), path.join(inputRoot, 'core'));
     return `.agent-input/${testCase.checker}`;
   }

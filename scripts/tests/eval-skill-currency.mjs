@@ -17,6 +17,7 @@ import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
 import { expect, tmpBase } from './harness.mjs';
+import { currentSkillDigest } from '../lib/eval-versions.mjs';
 
 const root = path.resolve(import.meta.dirname, '..', '..');
 const node = process.execPath;
@@ -33,6 +34,32 @@ const node = process.execPath;
 // from a contract that the recorded runs can satisfy keeps the test measuring
 // what it is about — that editing a skill invalidates its evidence — instead
 // of the programme's progress.
+const readManifest = (file) => {
+  if (!fs.existsSync(file)) return null;
+  try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return null; }
+};
+// A skill-arm bundle staged from a skill text that has since changed.
+const isStaleSkillRun = (m, skillOf, currentDigest) => {
+  if (m.condition !== 'skill' || !skillOf.has(m.caseId)) return false;
+  const current = currentDigest(skillOf.get(m.caseId));
+  return Boolean(current) && (m.stagedInputSha256 || 'legacy') !== current;
+};
+// A real directory per bundle, because eval-report keeps only readdir entries
+// that are directories and a junction is a symlink Dirent, not a directory —
+// the first draft junctioned each bundle and the report saw an empty runs/.
+// The three small files are copied; outputs/ is the bulk and is junctioned,
+// which file reads follow transparently.
+const linkBundle = (src, dst) => {
+  fs.mkdirSync(dst);
+  for (const f of fs.readdirSync(src)) {
+    if (f === 'outputs') {
+      try { fs.symlinkSync(path.join(src, f), path.join(dst, f), 'junction'); }
+      catch { fs.cpSync(path.join(src, f), path.join(dst, f), { recursive: true }); }
+    } else if (fs.statSync(path.join(src, f)).isFile()) {
+      fs.copyFileSync(path.join(src, f), path.join(dst, f));
+    }
+  }
+};
 const scratchEvalRoot = (() => {
   const dir = fs.mkdtempSync(path.join(tmpBase, 'skill-currency-'));
   const evidence = JSON.parse(fs.readFileSync(path.join(root, 'eval', 'evidence.json'), 'utf8'));
@@ -40,10 +67,31 @@ const scratchEvalRoot = (() => {
   evidence.minimumEvidence.requiredModelsByHarness = { 'claude-code': evidence.minimumEvidence.requiredModelsByHarness['claude-code'] };
   fs.writeFileSync(path.join(dir, 'evidence.json'), JSON.stringify(evidence, null, 2) + '\n');
   fs.cpSync(path.join(root, 'eval', 'cases-v2'), path.join(dir, 'cases-v2'), { recursive: true });
-  try {
-    fs.symlinkSync(path.join(root, 'eval', 'runs'), path.join(dir, 'runs'), 'junction');
-  } catch {
-    fs.cpSync(path.join(root, 'eval', 'runs'), path.join(dir, 'runs'), { recursive: true });
+  // One junction per bundle rather than one for the whole directory, so the
+  // scratch root can omit bundles without touching the real one. It omits
+  // skill-arm bundles staged from a skill text that has since changed: the
+  // programme is allowed to be mid-migration (on 2026-09-06 a staging change
+  // staled every skill-arm run on disk at once, by design), and this test is
+  // about whether EDITING a skill invalidates its evidence — which needs a
+  // current baseline to start from, not a programme that happens to be one.
+  const skillOf = new Map();
+  for (const f of fs.readdirSync(path.join(root, 'eval', 'cases-v2')).filter((x) => x.endsWith('.json'))) {
+    const c = JSON.parse(fs.readFileSync(path.join(root, 'eval', 'cases-v2', f), 'utf8'));
+    skillOf.set(c.id, c.skills || [c.skill]);
+  }
+  const digestCache = new Map();
+  const currentDigest = (skills) => {
+    const key = skills.join('\0');
+    if (!digestCache.has(key)) digestCache.set(key, currentSkillDigest(root, skills));
+    return digestCache.get(key);
+  };
+  const runsSrc = path.join(root, 'eval', 'runs');
+  const runsDst = path.join(dir, 'runs');
+  fs.mkdirSync(runsDst);
+  for (const entry of fs.readdirSync(runsSrc)) {
+    const manifest = readManifest(path.join(runsSrc, entry, 'run.json'));
+    if (!manifest || isStaleSkillRun(manifest, skillOf, currentDigest)) continue;
+    linkBundle(path.join(runsSrc, entry), path.join(runsDst, entry));
   }
   return dir;
 })();
@@ -51,7 +99,11 @@ const scratchEvalRoot = (() => {
 const reportNow = () => {
   const r = spawnSync(node, [path.join(root, 'scripts', 'eval-report.mjs'), '--eval-root', scratchEvalRoot],
     { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
-  try { return JSON.parse(r.stdout); } catch { return null; }
+  try { return JSON.parse(r.stdout); } catch {
+    // A silent null here hid a crashing report for a full afternoon.
+    console.error("eval-report produced no JSON:", (r.stderr || r.stdout).slice(0, 600));
+    return null;
+  }
 };
 const currencyReasons = (skill) =>
   (skill?.reasons ?? []).filter((reason) => /skill text has changed since/.test(reason));

@@ -262,6 +262,9 @@ import {
   const bare = path.join(home, 'suite-without-git');
   fs.mkdirSync(path.join(bare, 'scripts'), { recursive: true });
   fs.copyFileSync(INSTALL, path.join(bare, 'scripts', 'install.mjs'));
+  // A source without .git is still a full checkout: the installer shares its
+  // staging with the eval harness and the bundle generator through scripts/lib.
+  fs.cpSync(path.join(root, 'scripts', 'lib'), path.join(bare, 'scripts', 'lib'), { recursive: true });
   for (const f of ['registry.json', 'VERSION']) fs.copyFileSync(path.join(root, f), path.join(bare, f));
   for (const d of ['core', 'mental-models']) fs.cpSync(path.join(root, d), path.join(bare, d), { recursive: true });
 

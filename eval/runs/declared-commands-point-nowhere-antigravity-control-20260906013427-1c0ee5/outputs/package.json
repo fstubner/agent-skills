@@ -1,0 +1,21 @@
+{
+  "name": "ledger-api",
+  "private": true,
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "ledger": "./bin/ledger.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test",
+    "lint": "eslint src test",
+    "build": "node scripts/build.js"
+  },
+  "dependencies": {
+    "express": "^4.19.0"
+  },
+  "devDependencies": {
+    "eslint": "^10.10.0"
+  }
+}

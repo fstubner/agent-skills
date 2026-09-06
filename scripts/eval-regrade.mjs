@@ -75,6 +75,8 @@ for (const dir of ['runs', 'runs-superseded']) {
     // a new assertion would be judged against output no model ever produced.
     const transcriptPath = path.join(base, d, 'transcript.jsonl');
     const ineligible = runEligibility({
+      runDir: path.join(base, d),
+      fixtureDir: testCase.fixture ? path.join(root, ...testCase.fixture.split("/")) : undefined,
       testCase,
       manifest: m,
       transcript: fs.existsSync(transcriptPath) ? fs.readFileSync(transcriptPath, 'utf8') : '',

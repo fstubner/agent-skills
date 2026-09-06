@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "environment-branching-in-the-artifact-antigravity-control-20260906020203-4213cd",
+  "caseId": "environment-branching-in-the-artifact",
+  "caseRevision": 1,
+  "caseSha256": "6e845fd02568f3ed9b13ef2de576dd1f1013cec38ed8efe11072bb0cb4648416",
+  "fixtureSha256": "fca24ca5891e972e1a5a9b19d0e8d34aeece5df8cc49503e32eddcb7f357955a",
+  "graderSha256": "86ec6fb08824e1983fea4333d320a8166ba493c4aeee54ba7f8f0d3760c7b027",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.27",
+  "model": "gemini-3.6-flash-low",
+  "startedAt": "2026-09-06T02:02:03.229Z",
+  "finishedAt": "2026-09-06T02:07:07.732Z",
+  "durationMs": 304503,
+  "totalTokens": 323589,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 1,
+  "artifactSha256": "e67db56668e4ae91e5ab91359c1b5387f54b6cc3b18c49d7184c51520b17524d",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 7,
+    "failed": 2,
+    "notEvaluated": 0,
+    "total": 9
+  }
+}

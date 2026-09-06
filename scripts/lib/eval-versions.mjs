@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { hashStagedSkills } from './tree-hash.mjs';
+import { stagedSkillsDigest } from './stage-skill.mjs';
 
 // Which experiment speaks for a [case, harness, model] block?
 //
@@ -49,7 +49,7 @@ export function supersededReason(supersededSkillTrials, caseId, harness, model) 
 // harness, not a stale one, and guessing either way would be wrong.
 export function currentSkillDigest(root, skillIds) {
   if (!skillIds.every((id) => fs.existsSync(path.join(root, id)))) return null;
-  return hashStagedSkills(root, skillIds);
+  return stagedSkillsDigest(root, skillIds);
 }
 
 // Evidence that describes a skill text nobody ships any more is not evidence

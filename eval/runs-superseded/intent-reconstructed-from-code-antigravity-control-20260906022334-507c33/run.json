@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "intent-reconstructed-from-code-antigravity-control-20260906022334-507c33",
+  "caseId": "intent-reconstructed-from-code",
+  "caseRevision": 1,
+  "caseSha256": "04b3d98a1fda0f06bcd1443b63ec649150965e19235094f1c3e384144327fd95",
+  "fixtureSha256": "ae41e056a243249df4be55a75505190fe33eda4b5f75fe4e22a91083517f35dd",
+  "graderSha256": "bfcd9cf53d7dbc6d4c850abe24f8660f3dc3f5d1ed920db395f684a719257460",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.27",
+  "model": "gemini-3.6-flash-low",
+  "startedAt": "2026-09-06T02:23:34.173Z",
+  "finishedAt": "2026-09-06T02:24:10.849Z",
+  "durationMs": 36676,
+  "totalTokens": 103292,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "b8734678b7ec4b1d2a9c789f92f858b63cd6b665a53a7d74ce8eb01da3321b84",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 7,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 10
+  }
+}

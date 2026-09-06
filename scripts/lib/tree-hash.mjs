@@ -37,24 +37,3 @@ export function hashTree(treeRoot) {
   collect(treeRoot, '', chunks);
   return sha256(chunks.join(''));
 }
-
-// The digest eval-run would record as stagedInputSha256 for a skill arm of
-// this case, computed WITHOUT staging anything.
-//
-// eval-run copies each skill directory into <workspace>/.agent-input/<id> and
-// hashes that tree, so the recorded digest is over paths like
-// `release-engineering/SKILL.md`. Reproducing it here is what lets the report
-// ask a question the run-time hashes cannot: not "did an input move since the
-// run" — eval-verify covers that — but "has the skill moved with no run since
-// at all", where there is no newer bundle to compare against because nobody
-// made one.
-//
-// Skill ids are sorted because hashTree visits a directory's entries in name
-// order, so a multi-skill case must contribute its trees in that same order.
-export function hashStagedSkills(suiteRoot, skillIds) {
-  const chunks = [];
-  for (const id of [...skillIds].sort((a, b) => a.localeCompare(b))) {
-    collect(path.join(suiteRoot, id), id, chunks);
-  }
-  return sha256(chunks.join(''));
-}

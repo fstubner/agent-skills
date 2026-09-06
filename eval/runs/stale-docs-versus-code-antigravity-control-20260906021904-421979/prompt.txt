@@ -1,0 +1,3 @@
+Partners are complaining that our API docs do not match what they get. Assess this repository and write the assessment to ASSESSMENT.md. Do not change the code or the docs.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

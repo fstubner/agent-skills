@@ -1,0 +1,1 @@
+[36mℹ[0m Running in native sandbox: npm -y install

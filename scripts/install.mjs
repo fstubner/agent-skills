@@ -27,6 +27,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { stageSkill } from './lib/stage-skill.mjs';
 
 const suiteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const registry = JSON.parse(fs.readFileSync(path.join(suiteRoot, 'registry.json'), 'utf8'));
@@ -225,18 +226,11 @@ for (const target of targets) {
     const staging = dest + '.installing-' + process.pid;
     fs.rmSync(staging, { recursive: true, force: true });
     try {
-      copyDir(src, staging);
-    // Vendor the ENTIRE core so the skill works standalone. Deliberately a
-    // whole-directory copy rather than an enumeration of subdirectories: the
-    // previous `lib` + `schemas` list silently dropped core/gitleaks-extra.toml,
-    // so every INSTALLED check-backend run failed with "unable to load gitleaks
-    // config" — an unconditional BLOCK on every project, invisible to every
-    // dev-checkout test because there core.lib resolves to core/lib and the
-    // sibling file is reachable. Copying core/ wholesale means a new file under
-    // core/ ships by default instead of by remembering to add a line here.
-      const vendor = path.join(staging, 'scripts', 'vendor');
-      copyDir(path.join(suiteRoot, 'core'), vendor);
-      fs.copyFileSync(path.join(suiteRoot, 'registry.json'), path.join(vendor, 'registry.json'));
+      // Copy, vendor the entire core, declare CommonJS: the one definition of
+      // a shipped skill, shared with the plugin-bundle generator and the eval
+      // harness so none of the three can drift. The copy is this file's own
+      // copyDir, which follows symlinks and refuses loops.
+      stageSkill(suiteRoot, id, staging, { copy: copyDir });
       // Marker last: its presence is what tells a later run this directory is
       // ours to replace, so it must not exist until everything else does.
       fs.writeFileSync(path.join(staging, MARKER), JSON.stringify({

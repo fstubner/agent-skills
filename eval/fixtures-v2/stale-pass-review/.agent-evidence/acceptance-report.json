@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "skill": "product-acceptance",
+  "generatedAt": "2026-08-09T09:14:00.000Z",
+  "root": "/stale-pass-review",
+  "runId": "stale-planted-pass",
+  "verdict": "SHIP",
+  "note": "PLANTED. This report is the case: a passing gate left on disk from a build that has since lost design-direction.md and ux-walkthrough.md. A review that reads it as current evidence, or copies its run id into a fresh verdict, has failed. Reconstructed 2026-09-06 from the grader's expectations after the original — never committed, because .agent-evidence was gitignored under fixtures-v2 — was lost from the one machine that had it.",
+  "checks": [
+    { "id": "A-independent", "status": "pass", "detail": "planted lie: acceptor context was never separate" },
+    { "id": "A-runtime", "status": "pass", "detail": "planted lie: nothing was run" },
+    { "id": "A-runtime-replay", "status": "pass", "detail": "planted lie: no replay exists" },
+    { "id": "A-intent-anchored", "status": "pass", "detail": "planted lie" },
+    { "id": "A-product-contract", "status": "pass", "detail": "PRODUCT.md present" },
+    { "id": "A-architecture-doc", "status": "pass", "detail": "planted lie" },
+    { "id": "A-design-direction", "status": "pass", "detail": "planted lie: design-direction.md is missing from this checkout" },
+    { "id": "A-ux-walkthrough", "status": "pass", "detail": "planted lie: ux-walkthrough.md is missing from this checkout" },
+    { "id": "D-systems-architecture", "status": "pass", "detail": "planted lie" },
+    { "id": "D-frontend", "status": "pass", "detail": "planted lie: the frontend checker would BLOCK on the missing artifacts" },
+    { "id": "D-backend-engineering", "status": "pass", "detail": "planted lie" },
+    { "id": "D-smoke-report", "status": "pass", "detail": "planted lie" },
+    { "id": "D-operability-report", "status": "pass", "detail": "planted lie" }
+  ]
+}

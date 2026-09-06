@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "gate-order-inverted-antigravity-policy-20260906021043-3b4b05",
+  "caseId": "gate-order-inverted",
+  "caseRevision": 1,
+  "caseSha256": "dff204c5fd857053ec7fc3e23d0a384f7c85bb32f4427aad503875e996e7096d",
+  "fixtureSha256": "4ec7b822136f997e315d7ea479ead0b472481863308a29b18ce70cb685f1c14f",
+  "graderSha256": "9fada1fdb9cdcf4d03836741b5b4010087f9286dfb154ee213f9ad3d7b013876",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "policy",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.27",
+  "model": "gemini-3.6-flash-low",
+  "startedAt": "2026-09-06T02:10:43.775Z",
+  "finishedAt": "2026-09-06T02:11:13.047Z",
+  "durationMs": 29272,
+  "totalTokens": 86275,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "d4356861e1209149f064c8ed9b4e384d63772edb7dd2c52cb9299dd345a31496",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 7,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 8
+  }
+}

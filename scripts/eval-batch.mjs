@@ -17,6 +17,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { spawnSync } from 'child_process';
 import { currentSkillDigest } from './lib/eval-versions.mjs';
+import { suiteReportsProducedIn } from './lib/eval-eligibility.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const argv = process.argv.slice(2);
@@ -41,6 +42,7 @@ const cases = fs.readdirSync(path.join(root, 'eval', 'cases-v2'))
 
 const sha256 = (buf) => crypto.createHash('sha256').update(buf).digest('hex');
 const caseGrader = new Map(cases.map((c) => [c.id, path.join(root, c.grader)]));
+const caseFixture = new Map(cases.map((c) => [c.id, path.join(root, ...c.fixture.split("/"))]));
 // The digest of the skill text a skill-arm run would stage today, per case,
 // computed the same way eval-report does so the two cannot drift.
 const caseSkillDigest = new Map(cases.map((c) => [c.id, currentSkillDigest(root, c.skills || [c.skill])]));
@@ -76,6 +78,9 @@ for (const entry of fs.existsSync(runsDir) ? fs.readdirSync(runsDir) : []) {
   // manifest can carry. The rest of that function needs the transcript.
   if (m.exitCode !== 0) continue;
   if (m.grading.notEvaluated !== 0) continue;
+  // A control or policy workspace holding a suite checker report ran an
+  // installed copy of the skill. eval-report refuses it; so must this.
+  if (["control", "policy"].includes(m.condition) && suiteReportsProducedIn(path.join(runsDir, entry), caseFixture.get(m.caseId)).length) continue;
   // A skill-arm run staged from a SKILL.md that has since been edited measures
   // a version nobody ships. eval-report says so — "the skill arm measures a
   // superseded version" — and drops the case from completedCaseCount, so

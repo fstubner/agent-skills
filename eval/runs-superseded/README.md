@@ -328,3 +328,51 @@ the treatment entirely and every existing check stays green.
 
 This was caught two cases into a planned 410-run batch, by asking why every
 score was identical.
+
+## 2026-09-06 — 38 antigravity control and policy runs that had the skill
+
+Not superseded by a grader change. Quarantined, because they were never
+control runs.
+
+The antigravity control arm produced an `acceptance-report.json` in 18 of 18
+product-acceptance runs, and the policy arm in 17 of 18. Its workspace held
+no copy of the script that writes one. The report carries the thirteen check
+ids only `accept-check.js` emits, rooted at the run's own workspace and
+generated inside its window; one transcript names the copy it ran, under
+`~/.gemini/config/plugins/`. So those arms had the gate the skill exists to
+deliver, and skill-minus-control measured only what the prose adds on top —
+which read as "the skill does not transfer".
+
+The ambient-skill guard could not see it. It reads tool calls out of the
+transcript, and agy's print-mode transcript is one JSON turn with no tool log.
+`runEligibility` now refuses any control or policy run whose workspace holds
+a suite checker report, which needs no transcript at all; the batch runner
+mirrors it so it cannot count a cell the report will discard. Pinned in
+`scripts/tests/eval-contamination.mjs`.
+
+35 product-acceptance, 3 release-engineering. The engineering-assessment arm
+was clean (0 of 36), and it is the one that transferred.
+
+## 2026-09-06 — stale-pass-review: the plant was never committed
+
+12 runs, all from 2026-09-03, moved whole.
+
+Seven cases plant a stale report in their fixture's `.agent-evidence/` — a
+passing gate left on disk, a checker report from last month, an acceptance
+note from 4 August. That path is gitignored, and under `fixtures-v2` nobody
+had un-ignored it the way `grader-fixtures-v2` is. The plants lived only on
+one machine. A fresh clone has never had these seven fixtures intact.
+
+Found by breaking it: while proving the contamination above I ran a checker
+directly against a fixture, then "cleaned up" every untracked `.agent-evidence`
+under `fixtures-v2` — and eval-verify went from 13 failures to 68, because
+those directories had been present when the runs were recorded and were in
+their fixture hashes. Five of the seven were recovered byte-for-byte from the
+earliest claude-code control bundle of each case, which archives the
+workspace as staged and whose harness could not have written a report.
+`stale-pass-review` had no such bundle — its runs predate evidence archiving —
+so its plant is reconstructed from what the grader demands and is not the
+original bytes. These 12 runs could no longer bind to it, and they were about
+to be superseded by the grader work below in any case.
+
+All seven plants are tracked now.
