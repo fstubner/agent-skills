@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "declared-commands-fail-antigravity-skill-20260906010403-c24587",
+  "caseId": "declared-commands-fail",
+  "caseRevision": 1,
+  "caseSha256": "9e0b91b489f951b326c7e5a292d558dd8708cae1c31bfc9893d18eabf7770f1c",
+  "fixtureSha256": "07962e2ab0139839f5ed7c4eb7cf8b6161c54d7bb68ae2e202a3fb46aab43711",
+  "graderSha256": "3b5103ff72b2df608f2b5dbce19b990dcb1eedef0d4b0a617a0e2e6b9abdc8be",
+  "checkerSha256": null,
+  "stagedInputSha256": "d27fefc556f1e69e7349cb2a57f071b0bedfc10ef01c7afb66ddaa93adcae9da",
+  "condition": "skill",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.27",
+  "model": "gemini-3.6-flash-low",
+  "startedAt": "2026-09-06T01:04:03.346Z",
+  "finishedAt": "2026-09-06T01:04:38.969Z",
+  "durationMs": 35623,
+  "totalTokens": 97171,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "f6f3ba5261592ef26ac2b4246560fd338f586d3c7cbcf8fbc27dcd34e1a8e361",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 8,
+    "failed": 1,
+    "notEvaluated": 0,
+    "total": 9
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "discount-engine",
+  "type": "module",
+  "main": "src/discount.js",
+  "scripts": {
+    "test": "node --test test/discount.test.js",
+    "lint": "eslint --config .eslintrc.json src",
+    "build": "node scripts/build.js"
+  }
+}

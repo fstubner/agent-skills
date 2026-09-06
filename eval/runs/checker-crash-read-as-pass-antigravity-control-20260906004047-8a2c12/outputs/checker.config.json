@@ -1,0 +1,8 @@
+{
+  "roots": ["src", "public"],
+  "rules": {
+    "secretsInClientPaths": "error",
+    "singleOrm": "error",
+    "sessionCookieFlags": "error",
+  }
+}

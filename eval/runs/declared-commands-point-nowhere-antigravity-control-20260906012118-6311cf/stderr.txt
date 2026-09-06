@@ -1,0 +1,2 @@
+
+agy status ERROR: Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 4m7s.

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "declared-commands-point-nowhere-antigravity-policy-20260906012010-0dccbe",
+  "caseId": "declared-commands-point-nowhere",
+  "caseRevision": 1,
+  "caseSha256": "381bbb46ac8dedfb3de27bed80e7215e31da27045542e13d02d59b7725a1c931",
+  "fixtureSha256": "87cb9d8e6b32c9459e3e82acaf4aad3eec2827628807da438868e9be1fe4d10d",
+  "graderSha256": "883d4644bd5b05dd607386f70bfcbe3a55bf40788c69ec42bcf66d735aa9555c",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "policy",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.27",
+  "model": "gemini-3.6-flash-low",
+  "startedAt": "2026-09-06T01:20:10.454Z",
+  "finishedAt": "2026-09-06T01:20:22.731Z",
+  "durationMs": 12277,
+  "totalTokens": 0,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 1,
+  "artifactSha256": "87cb9d8e6b32c9459e3e82acaf4aad3eec2827628807da438868e9be1fe4d10d",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 0,
+    "failed": 0,
+    "notEvaluated": 8,
+    "total": 8
+  }
+}

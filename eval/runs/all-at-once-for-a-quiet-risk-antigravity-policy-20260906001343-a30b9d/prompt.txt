@@ -1,0 +1,15 @@
+This release changes how fees are rounded. If it is wrong it will not crash anything — invoices are produced, customers are charged, and reconciliation disagrees with the payment processor the next morning. Plan how this goes out and write the decision down. Keep the new fee calculation and the existing rollback.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.
+
+Apply this concise engineering policy:
+
+# Engineering policy baseline
+
+- Clarify material unknowns before committing to architecture or UX.
+- Prefer the smallest coherent implementation that satisfies the request.
+- Validate inputs and authorization at trust boundaries.
+- Use additive, backwards-compatible data changes for rolling deploys.
+- Add focused automated tests for critical behavior and failure paths.
+- Run the product, tests, and build before claiming completion.
+- Report remaining uncertainty explicitly.

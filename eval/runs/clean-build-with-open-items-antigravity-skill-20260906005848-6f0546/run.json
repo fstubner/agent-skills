@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "clean-build-with-open-items-antigravity-skill-20260906005848-6f0546",
+  "caseId": "clean-build-with-open-items",
+  "caseRevision": 2,
+  "caseSha256": "93808a74433be12bb96eda52caf9cc82520a325939233168cddff8792044f282",
+  "fixtureSha256": "380a217cc4e28f9b09bbf8edc3b0ae64df1d8983d6f34306f231f1068470e1cc",
+  "graderSha256": "5ec87b5428448871c7e0650e8c0da8a86d4f21097a8451eb13dd7936eb9619f0",
+  "checkerSha256": null,
+  "stagedInputSha256": "3eb8cf9401a0c6e7b5bce112fbc98291e6b89063acecdcff0e28d98dbf157312",
+  "condition": "skill",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.27",
+  "model": "gemini-3.6-flash-low",
+  "startedAt": "2026-09-06T00:58:48.716Z",
+  "finishedAt": "2026-09-06T00:59:48.692Z",
+  "durationMs": 59976,
+  "totalTokens": 167462,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "16059cbd41346c3ceb3fe83aec116c95ad953b01445c67d59a223a69e4a87c30",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 5,
+    "failed": 5,
+    "notEvaluated": 0,
+    "total": 10
+  }
+}

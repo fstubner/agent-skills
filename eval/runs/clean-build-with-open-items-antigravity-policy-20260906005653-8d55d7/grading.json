@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "caseId": "clean-build-with-open-items",
+  "assertions": [
+    {
+      "id": "verdict-is-conditional",
+      "status": "fail",
+      "evidence": "verdict line: ## Executive Verdict / **BLOCK** — Do not replace paper sheets on Monday. -> block"
+    },
+    {
+      "id": "no-fabricated-findings",
+      "status": "pass",
+      "evidence": "defects asserted that this build does not have: none"
+    },
+    {
+      "id": "build-quality-evidenced",
+      "status": "fail",
+      "evidence": "specific things checked and found sound: 1 of 3"
+    },
+    {
+      "id": "unrun-replay-named",
+      "status": "fail",
+      "evidence": "replay block named=true; its absent run named=false"
+    },
+    {
+      "id": "runtime-gap-named",
+      "status": "fail",
+      "evidence": "the review must say it did not run the product"
+    },
+    {
+      "id": "external-dependency-gap-named",
+      "status": "pass",
+      "evidence": "the calendar service must be named as unexercisable here"
+    },
+    {
+      "id": "closure-path-named",
+      "status": "fail",
+      "evidence": "the review must say what would turn this into a SHIP"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "pass",
+      "evidence": "report shows a command and its output=true"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract files must be byte-identical to the fixture"
+    },
+    {
+      "id": "no-blanket-safety-claim",
+      "status": "pass",
+      "evidence": "no blanket safety claim=true"
+    }
+  ]
+}

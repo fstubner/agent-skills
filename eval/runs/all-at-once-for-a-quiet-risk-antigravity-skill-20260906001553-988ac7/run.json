@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "all-at-once-for-a-quiet-risk-antigravity-skill-20260906001553-988ac7",
+  "caseId": "all-at-once-for-a-quiet-risk",
+  "caseRevision": 1,
+  "caseSha256": "2e31f6a2be96d8993abda0743a87a89b75d7e81e509599c39658468e2e832330",
+  "fixtureSha256": "3b7116d58f7a5130f79eaa364e6b28c3a442da8a27672a866cd9c53058f1b3fa",
+  "graderSha256": "5b852b66d2e7d6f637884ccbb2ab0abdcbbf7c16f3f4bf98efc66f2d803ae5da",
+  "checkerSha256": null,
+  "stagedInputSha256": "f14b081b0f9ad40c698944b62851ece035231ec50908a1d3a68da99ea1fb0815",
+  "condition": "skill",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.27",
+  "model": "gemini-3.6-flash-low",
+  "startedAt": "2026-09-06T00:15:54.002Z",
+  "finishedAt": "2026-09-06T00:17:28.545Z",
+  "durationMs": 94543,
+  "totalTokens": 147142,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "4d72ef54ae934667cde9ae6d213965c87bc3cbc5e4f5e1e8a0a65868e6d97fb3",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 6,
+    "failed": 3,
+    "notEvaluated": 0,
+    "total": 9
+  }
+}

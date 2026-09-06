@@ -1,0 +1,1 @@
+{"conversation_id":"017fed70-3851-437f-bf28-7265d93d47bb","status":"ERROR","response":"","error":"Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 5m25s.","duration_seconds":3.5465347,"num_turns":1,"usage":{"input_tokens":0,"output_tokens":0,"thinking_tokens":0,"cache_read_tokens":0,"total_tokens":0}}

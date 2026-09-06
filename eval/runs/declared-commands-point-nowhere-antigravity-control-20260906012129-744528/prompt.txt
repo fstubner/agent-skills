@@ -1,0 +1,3 @@
+This repository was generated from a template last week and nobody has run any of the commands the README documents. Make the project's declared commands actually work. The service in src/server.js already works and should keep working.
+
+Work only inside the current workspace. Do not search for or inspect evaluation cases, graders, expected answers, or sibling run outputs. Finish by briefly stating what you verified.

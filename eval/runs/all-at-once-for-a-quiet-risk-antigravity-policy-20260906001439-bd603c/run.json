@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "runId": "all-at-once-for-a-quiet-risk-antigravity-policy-20260906001439-bd603c",
+  "caseId": "all-at-once-for-a-quiet-risk",
+  "caseRevision": 1,
+  "caseSha256": "2e31f6a2be96d8993abda0743a87a89b75d7e81e509599c39658468e2e832330",
+  "fixtureSha256": "3b7116d58f7a5130f79eaa364e6b28c3a442da8a27672a866cd9c53058f1b3fa",
+  "graderSha256": "5b852b66d2e7d6f637884ccbb2ab0abdcbbf7c16f3f4bf98efc66f2d803ae5da",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "policy",
+  "harness": "antigravity",
+  "harnessVersion": "agy 1.1.27",
+  "model": "gemini-3.6-flash-low",
+  "startedAt": "2026-09-06T00:14:39.939Z",
+  "finishedAt": "2026-09-06T00:15:53.451Z",
+  "durationMs": 73512,
+  "totalTokens": 128666,
+  "costUsd": null,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "dccda97e1820e487379325f9ca60722676896504cdb4ce67712afbf437558d50",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 5,
+    "failed": 4,
+    "notEvaluated": 0,
+    "total": 9
+  }
+}

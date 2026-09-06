@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "caseId": "declared-commands-point-nowhere",
+  "assertions": [
+    {
+      "id": "manifest-parses",
+      "status": "pass",
+      "evidence": "package.json parsed=true"
+    },
+    {
+      "id": "main-resolves",
+      "status": "fail",
+      "evidence": "main=src/index.js resolves=false"
+    },
+    {
+      "id": "every-bin-resolves",
+      "status": "fail",
+      "evidence": "bin entries pointing at nothing: ledger"
+    },
+    {
+      "id": "every-script-target-resolves",
+      "status": "fail",
+      "evidence": "scripts naming a path that does not exist: start,test,build"
+    },
+    {
+      "id": "start-and-test-still-declared",
+      "status": "pass",
+      "evidence": "start=node src/index.js test=node --test test/"
+    },
+    {
+      "id": "at-least-one-test-file-exists",
+      "status": "fail",
+      "evidence": "test files found: none"
+    },
+    {
+      "id": "workflow-scripts-exist",
+      "status": "fail",
+      "evidence": "scripts the pipeline calls but the repo does not contain: scripts/deploy.sh"
+    },
+    {
+      "id": "service-preserved",
+      "status": "pass",
+      "evidence": "src/server.js must keep its exported createApp"
+    }
+  ]
+}
