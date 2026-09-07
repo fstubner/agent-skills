@@ -22,11 +22,30 @@ version: 2
 # which is exactly what that reason is for; if a wave of alerts ever appears
 # under eval/, check it is fixture data and dismiss the same way rather than
 # bumping a pin that a fixture deliberately holds old.
+#
+# "Absent" was never the same thing as "excluded", and the comment above was
+# wrong about that for as long as it has existed. `directory: /` scans the
+# whole tree beneath it, so seven version-bump PRs against eval/ fixtures and
+# archived run bundles were opened anyway and closed by hand on 2026-09-07.
+# exclude-paths is the option that actually says no, per update entry.
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+    # Test data and archived evidence, never installed. Bumping a pin here
+    # either breaks a fixture's reason to exist or breaks the hash binding of
+    # every run that copied it.
+    #
+    # This stops version-update PRs and nothing else: SECURITY updates ignore
+    # exclude-paths (dependabot/dependabot-core#14408). One of them is why the
+    # Dependabot job has been failing since 2026-09-07 — it tries to patch qs
+    # in an archived run bundle, cannot, because that fixture pins
+    # express@4.22.2 which requires qs@~6.15.1, and exits non-zero. Dismissing
+    # those alerts as `not_used` is what stops it; there is no config for it.
+    exclude-paths:
+      - 'eval/**'
+      - 'fixtures/**'
 
   - package-ecosystem: npm
     directory: /tooling/runtime-smoke
