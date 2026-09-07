@@ -4,8 +4,13 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { documentText } from './lib/doc-text.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+// The smallest of the three canonical pages reads about 9k characters of
+// text. A page serving only its navigation comes in an order of magnitude
+// under that.
+const MIN_DOCUMENT_TEXT = 2000;
 const offline = process.argv.includes('--offline');
 const standards = readJson('core/marketplace-standards.json');
 const version = fs.readFileSync(path.join(root, 'VERSION'), 'utf8').trim();
@@ -56,7 +61,14 @@ async function validateCanonicalSources() {
     const response = await fetch(document.url, { redirect: 'follow' });
     requireValue(response.ok, `${document.id}: canonical documentation returned HTTP ${response.status}`);
     if (!response.ok) continue;
-    const body = (await response.text()).toLowerCase();
+    const text = documentText(await response.text());
+    // A page that renders its body client-side hands us navigation and
+    // nothing else. That is not evidence the vendor dropped anything, so it
+    // is reported as its own failure rather than as drift in every phrase.
+    requireValue(text.length >= MIN_DOCUMENT_TEXT,
+      `${document.id}: canonical documentation returned ${text.length} characters of readable text; too little to check`);
+    if (text.length < MIN_DOCUMENT_TEXT) continue;
+    const body = text.toLowerCase();
     for (const expected of document.requiredText) {
       requireValue(body.includes(expected.toLowerCase()),
         `${document.id}: canonical documentation no longer contains ${JSON.stringify(expected)}`);

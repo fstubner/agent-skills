@@ -2,6 +2,31 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { expect, root, tmpBase } from './harness.mjs';
+import { documentText } from '../lib/doc-text.mjs';
+
+// A real code block from https://antigravity.google/docs/cli/plugins, copied
+// on 2026-09-07. Shiki highlights per token, so the documented command is
+// split across three elements and occurs nowhere in the bytes. The drift job
+// substring-matched those bytes and reported for two weeks that Antigravity
+// had dropped a command it still documents.
+const SHIKI_CODE_BLOCK = '<code><span class="line">'
+  + '<span style="color:#6F42C1;--shiki-dark:#B392F0">agy</span>'
+  + '<span style="color:#032F62;--shiki-dark:#9ECBFF"> plugin</span>'
+  + '<span style="color:#032F62;--shiki-dark:#9ECBFF"> install</span>'
+  + '<span style="color:#032F62;--shiki-dark:#9ECBFF"> /path/to/local/plugin</span>'
+  + '</span></code>';
+
+expect('the specimen is why the raw-bytes check failed: the command is not in the markup',
+  !SHIKI_CODE_BLOCK.includes('agy plugin install'));
+expect('documentText reads a command split across highlight spans',
+  documentText(SHIKI_CODE_BLOCK).includes('agy plugin install'),
+  documentText(SHIKI_CODE_BLOCK));
+// Tags become a space, never nothing: two words either side of markup must
+// not be joined into a third word that appears on no page.
+expect('documentText does not invent words by deleting the markup between them',
+  !documentText('<td>agy</td><td>plugin</td>').includes('agyplugin'));
+expect('documentText still reports text that is genuinely absent',
+  !documentText(SHIKI_CODE_BLOCK).includes('agy plugin publish'));
 
 const result = spawnSync(process.execPath, [
   path.join(root, 'scripts', 'check-marketplace-standards.mjs'),
