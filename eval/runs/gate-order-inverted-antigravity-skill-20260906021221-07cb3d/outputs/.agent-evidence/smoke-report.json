@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "skill": "release-engineering",
+  "generatedAt": "2026-09-06T02:12:56.755Z",
+  "root": "C:\\tmp\\agent-skills-eval-icDK4L\\workspace",
+  "verdict": "SHIP",
+  "checks": [
+    {
+      "id": "R-script-targets",
+      "status": "pass",
+      "detail": "3 declared script(s), all referenced paths present"
+    },
+    {
+      "id": "R-entry-points",
+      "status": "pass",
+      "detail": "no main/module/bin declared"
+    },
+    {
+      "id": "R-test-command",
+      "status": "pass",
+      "detail": "test script: node --test test/"
+    },
+    {
+      "id": "R-tests-present",
+      "status": "pass",
+      "detail": "2 test file(s), e.g. integration/entries.test.js"
+    }
+  ]
+}

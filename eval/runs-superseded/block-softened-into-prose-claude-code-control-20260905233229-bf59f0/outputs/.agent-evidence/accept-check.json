@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "skill": "product-acceptance",
+  "generatedAt": "2026-08-31T09:14:00Z",
+  "verdict": "CONDITIONAL",
+  "checks": [
+    { "id": "A-documents", "status": "pass" },
+    { "id": "A-intent-anchored", "status": "pass" },
+    { "id": "A-single-orm", "status": "pass" },
+    { "id": "A-no-client-secrets", "status": "pass" },
+    { "id": "A-session-cookie-flags", "status": "pass" },
+    { "id": "A-scripts-resolve", "status": "pass" },
+    { "id": "A-runtime", "status": "not_evaluated" }
+  ]
+}

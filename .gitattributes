@@ -7,3 +7,12 @@
 # TARGET PROJECT files (e.g. a user's ARCHITECTURE.md saved on Windows),
 # not just the suite's own LF-pinned sources.
 fixtures/arch-ship-crlf/ARCHITECTURE.md -text
+
+# The eval corpus is hash-bound: a run records the sha256 of its fixture, its
+# grader and its own outputs, and eval-verify recomputes those from the files
+# on disk. Normalising line endings on commit breaks that binding, because the
+# bytes a clone receives are then not the bytes that were hashed. It already
+# had: secrets-baked-into-image was authored CRLF and stored LF, so nine runs
+# verified on the machine that wrote them and failed on every clean checkout.
+# Verbatim storage is the only setting under which the digests mean anything.
+eval/** -text

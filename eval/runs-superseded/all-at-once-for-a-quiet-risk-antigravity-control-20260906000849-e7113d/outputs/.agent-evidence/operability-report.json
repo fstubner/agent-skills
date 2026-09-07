@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "skill": "release-engineering",
+  "generatedAt": "2026-09-06T00:09:21.327Z",
+  "root": "C:\\tmp\\agent-skills-eval-qPuePV\\workspace",
+  "verdict": "BLOCK",
+  "checks": [
+    {
+      "id": "O-operations-doc",
+      "status": "fail",
+      "detail": "no OPERATIONS.md — a running service with no written signals, alerts, failure modes or recovery is operable only by whoever built it"
+    },
+    {
+      "id": "O-section-signals",
+      "status": "not_evaluated",
+      "detail": "no OPERATIONS.md to inspect"
+    },
+    {
+      "id": "O-section-alerts",
+      "status": "not_evaluated",
+      "detail": "no OPERATIONS.md to inspect"
+    },
+    {
+      "id": "O-section-failure-modes",
+      "status": "not_evaluated",
+      "detail": "no OPERATIONS.md to inspect"
+    },
+    {
+      "id": "O-section-recovery",
+      "status": "not_evaluated",
+      "detail": "no OPERATIONS.md to inspect"
+    },
+    {
+      "id": "O-health-endpoint",
+      "status": "fail",
+      "detail": "no health or readiness endpoint found; a deploy gate cannot observe health it cannot ask for"
+    },
+    {
+      "id": "O-structured-logs",
+      "status": "not_evaluated",
+      "detail": "no logging calls recognised; whether this service emits anything could not be determined from source"
+    }
+  ]
+}

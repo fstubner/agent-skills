@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "skill": "product-acceptance",
+  "generatedAt": "2026-09-06T00:21:08.385Z",
+  "root": "C:\\tmp\\agent-skills-eval-TU2CyK\\workspace",
+  "verdict": "BLOCK",
+  "checks": [
+    {
+      "id": "A-independent",
+      "status": "pass",
+      "detail": "acceptance ran in a separate context from the build"
+    },
+    {
+      "id": "A-runtime",
+      "status": "not_evaluated",
+      "detail": "runtime behavior was not independently verified; run the product and its critical path, then add --runtime-verified"
+    },
+    {
+      "id": "A-runtime-replay",
+      "status": "pass",
+      "detail": "ux-walkthrough.md declares no replay block; A-runtime carries the runtime claim"
+    },
+    {
+      "id": "A-intent-anchored",
+      "status": "not_evaluated",
+      "detail": "PRODUCT.md provenance is \"undeclared\" — intent is not anchored outside the implementation, so this verdict covers consistency and build quality, not whether it is the right product"
+    },
+    {
+      "id": "A-product-contract",
+      "status": "pass",
+      "detail": "PRODUCT.md (provenance undeclared)"
+    },
+    {
+      "id": "A-architecture-doc",
+      "status": "fail",
+      "detail": "ARCHITECTURE.md missing heading(s): Trust"
+    },
+    {
+      "id": "A-design-direction",
+      "status": "pass",
+      "detail": "design-direction.md (provenance undeclared)"
+    },
+    {
+      "id": "A-ux-walkthrough",
+      "status": "pass",
+      "detail": "ux-walkthrough.md (provenance undeclared)"
+    },
+    {
+      "id": "D-systems-architecture",
+      "status": "fail",
+      "detail": "systems-architecture verdict BLOCK (P-section-trust)"
+    },
+    {
+      "id": "D-frontend",
+      "status": "pass",
+      "detail": "frontend verdict SHIP"
+    },
+    {
+      "id": "D-backend-engineering",
+      "status": "pass",
+      "detail": "backend-engineering verdict SHIP"
+    },
+    {
+      "id": "D-smoke-report",
+      "status": "pass",
+      "detail": "release-engineering verdict SHIP"
+    },
+    {
+      "id": "D-operability-report",
+      "status": "fail",
+      "detail": "release-engineering verdict BLOCK (O-operations-doc, O-health-endpoint)"
+    }
+  ]
+}

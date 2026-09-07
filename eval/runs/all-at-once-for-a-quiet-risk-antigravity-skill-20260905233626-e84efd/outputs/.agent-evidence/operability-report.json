@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "skill": "release-engineering",
+  "generatedAt": "2026-09-05T23:38:06.594Z",
+  "root": "C:\\tmp\\agent-skills-eval-Oxy24L\\workspace",
+  "verdict": "SHIP",
+  "checks": [
+    {
+      "id": "O-operations-doc",
+      "status": "pass",
+      "detail": "OPERATIONS.md"
+    },
+    {
+      "id": "O-section-signals",
+      "status": "pass",
+      "detail": "Signals"
+    },
+    {
+      "id": "O-section-alerts",
+      "status": "pass",
+      "detail": "Alerts"
+    },
+    {
+      "id": "O-section-failure-modes",
+      "status": "pass",
+      "detail": "Failure modes"
+    },
+    {
+      "id": "O-section-recovery",
+      "status": "pass",
+      "detail": "Recovery"
+    },
+    {
+      "id": "O-health-endpoint",
+      "status": "pass",
+      "detail": "health/readiness route in src/server.js"
+    },
+    {
+      "id": "O-structured-logs",
+      "status": "pass",
+      "detail": "structured logging in .agent-input/release-engineering/scripts/check-operability.js"
+    }
+  ]
+}

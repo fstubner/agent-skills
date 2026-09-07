@@ -30,6 +30,14 @@ Thumbs.db
 # them. Found 2026-09-06.
 !eval/fixtures-v2/**/.agent-evidence/
 !eval/fixtures-v2/**/.agent-evidence/**
+# And inside run bundles, where a gate report a run WROTE is part of the
+# output tree that run's manifest hashes. Patching fixtures-v2 alone left this
+# half of the same hole open: 14 runs hashed evidence files a fresh clone
+# never received, which is why CI could not verify them. Found 2026-09-07.
+!eval/runs/**/.agent-evidence/
+!eval/runs/**/.agent-evidence/**
+!eval/runs-superseded/**/.agent-evidence/
+!eval/runs-superseded/**/.agent-evidence/**
 # And under fixtures/replay-*, where a recorded walkthrough run IS the thing
 # under test — the fixture exists to prove a fresh log is read and a stale one
 # is refused, which needs both logs committed.
