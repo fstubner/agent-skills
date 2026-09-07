@@ -27,26 +27,23 @@ version: 2
 # wrong about that for as long as it has existed. `directory: /` scans the
 # whole tree beneath it, so seven version-bump PRs against eval/ fixtures and
 # archived run bundles were opened anyway and closed by hand on 2026-09-07.
-# exclude-paths is the option that actually says no, per update entry.
+#
+# There is no npm entry for / any more, because there is nothing there to
+# watch: the repository has no root package.json, and the only npm manifest
+# outside eval/ and fixtures/ that declares a dependency is
+# tooling/runtime-smoke, which has its own entry below. Everything that entry
+# ever found was fixture data. Adding `exclude-paths: [eval/**, fixtures/**]`
+# to it was tried first and failed the job outright — with the fixtures
+# excluded it had no manifest left at all and reported
+# `dependency_file_not_found: /package.json not found`.
+#
+# None of this touches SECURITY updates, which ignore both the directory list
+# and exclude-paths (dependabot/dependabot-core#14408). One of those is the
+# other reason the Dependabot job fails: it tries to patch qs in an archived
+# run bundle, cannot, because that fixture pins express@4.22.2 which requires
+# qs@~6.15.1, and exits non-zero. Dismissing those alerts as `not_used` is
+# what stops it. There is no configuration for it.
 updates:
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: weekly
-    # Test data and archived evidence, never installed. Bumping a pin here
-    # either breaks a fixture's reason to exist or breaks the hash binding of
-    # every run that copied it.
-    #
-    # This stops version-update PRs and nothing else: SECURITY updates ignore
-    # exclude-paths (dependabot/dependabot-core#14408). One of them is why the
-    # Dependabot job has been failing since 2026-09-07 — it tries to patch qs
-    # in an archived run bundle, cannot, because that fixture pins
-    # express@4.22.2 which requires qs@~6.15.1, and exits non-zero. Dismissing
-    # those alerts as `not_used` is what stops it; there is no config for it.
-    exclude-paths:
-      - 'eval/**'
-      - 'fixtures/**'
-
   - package-ecosystem: npm
     directory: /tooling/runtime-smoke
     schedule:
