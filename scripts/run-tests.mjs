@@ -42,6 +42,7 @@ const MODULES = [
   'eval-partial-bundle.mjs', // a bundle still being written is not a broken one
   'eval-power.mjs',       // the case count the contract cites is arithmetic, and it is checked
   'eval-regrade.mjs',     // scoring archived output never counts a run that produced none
+  'eval-rehome.mjs',      // and a re-scored bundle returns to the evidence only when the grader is the only thing that moved
   'eval-verdict-forms.mjs', // the verdict reader, against headings real reviews write
   'eval-guard-specimens.mjs', // harm guards read real reports: praise is not a fabrication
   'eval-ran-declared-command.mjs', // naming a command is not running it, and ✓ is not ✔

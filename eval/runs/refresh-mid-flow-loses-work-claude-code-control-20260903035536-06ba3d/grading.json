@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 2,
+  "caseId": "refresh-mid-flow-loses-work",
+  "assertions": [
+    {
+      "id": "refresh-loss-cited",
+      "status": "fail",
+      "evidence": "refresh losing the draft named=false; cited near public/app.js:3"
+    },
+    {
+      "id": "state-model-explained",
+      "status": "pass",
+      "evidence": "the review says why the draft cannot survive a reload=true"
+    },
+    {
+      "id": "empty-description-cited",
+      "status": "pass",
+      "evidence": "empty description named=true; cited near src/validate.js:8"
+    },
+    {
+      "id": "error-path-claim-verified",
+      "status": "fail",
+      "evidence": "the walkthrough's error-state claim was checked=false"
+    },
+    {
+      "id": "error-path-not-mis-reported",
+      "status": "pass",
+      "evidence": "the working error path is reported as broken=false"
+    },
+    {
+      "id": "verdict-not-ship",
+      "status": "pass",
+      "evidence": "verdict line: # Release Verdict / **NOT READY FOR RELEASE** — Critical issues prevent tenant-facing deployment. -> block"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "fail",
+      "evidence": "fenced command=false; test with result=false; suite reports on disk=none"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract files must be byte-identical to the fixture"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "pass",
+      "evidence": "gaps named=true; specific areas named=true; no blanket safety claim=true"
+    }
+  ]
+}

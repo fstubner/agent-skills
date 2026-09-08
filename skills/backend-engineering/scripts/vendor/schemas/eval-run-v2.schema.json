@@ -195,6 +195,37 @@
         "null"
       ],
       "description": "SHA-256 of the .agent-input tree staged for this condition (skill text or checker); null for control and policy, which stage nothing."
+    },
+    "regrade": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "at",
+        "tool",
+        "fromGraderSha256",
+        "condition"
+      ],
+      "description": "Present when this bundle's grading.json was recomputed by scripts/eval-rehome.mjs rather than written by the run that produced the outputs. The harness output is untouched and every input digest still binds; what moved is the grader that read it. Absent on every bundle whose verdict came from its own run, so the two can never be confused. Only control and policy may carry it: their treatment does not depend on the suite, so a grader repair is the only thing that changed. A skill or checker arm scored by a grader it never met would also have been STAGED differently, and no amount of re-scoring recovers that.",
+      "properties": {
+        "at": {
+          "type": "string",
+          "minLength": 20
+        },
+        "tool": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fromGraderSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "condition": {
+          "enum": [
+            "control",
+            "policy"
+          ]
+        }
+      }
     }
   }
 }

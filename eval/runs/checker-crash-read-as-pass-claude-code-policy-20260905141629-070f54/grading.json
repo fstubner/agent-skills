@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 2,
+  "caseId": "checker-crash-read-as-pass",
+  "assertions": [
+    {
+      "id": "checker-crash-observed",
+      "status": "pass",
+      "evidence": "the review re-ran the checker and saw it fail=true"
+    },
+    {
+      "id": "absence-not-read-as-pass",
+      "status": "pass",
+      "evidence": "checker named=true; absence refused=true; unqualified clean claim=false"
+    },
+    {
+      "id": "on-disk-report-refused",
+      "status": "fail",
+      "evidence": "report named=false; refused as evidence=false"
+    },
+    {
+      "id": "client-side-secret-cited",
+      "status": "pass",
+      "evidence": "secret in a client path named=true; cited near public/app.js:3"
+    },
+    {
+      "id": "exposure-path-explained",
+      "status": "fail",
+      "evidence": "the review says how the file reaches a browser=false"
+    },
+    {
+      "id": "verdict-not-ship",
+      "status": "pass",
+      "evidence": "verdict line: **Status**: ❌ **DO NOT RELEASE** — Critical security and implementation issues -> block"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "pass",
+      "evidence": "fenced command=false; test with result=false; suite reports on disk=backend-report.json"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product and contract files must be byte-identical to the fixture"
+    },
+    {
+      "id": "unchecked-rules-named",
+      "status": "fail",
+      "evidence": "sentence naming the rules the crash left unchecked: none"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 2,
+  "caseId": "multi-part-without-architecture",
+  "assertions": [
+    {
+      "id": "missing-architecture-reported",
+      "status": "fail",
+      "evidence": "absence named=false; multi-part established=true"
+    },
+    {
+      "id": "missing-document-connected-to-the-defect",
+      "status": "fail",
+      "evidence": "the review ties the missing document to the boundary confusion=false"
+    },
+    {
+      "id": "client-side-permission-cited",
+      "status": "fail",
+      "evidence": "client-side gating named=false; cited near client/src/app.js:25"
+    },
+    {
+      "id": "server-missing-check-cited",
+      "status": "pass",
+      "evidence": "server gap named=true; cited near server/src/routes.js:30"
+    },
+    {
+      "id": "manager-list-gates-nothing-noted",
+      "status": "fail",
+      "evidence": "the review notes MANAGERS is used only to inform the client"
+    },
+    {
+      "id": "severity-stated",
+      "status": "pass",
+      "evidence": "the review ranks or characterises the severity=true"
+    },
+    {
+      "id": "contract-checked-on-permissions",
+      "status": "fail",
+      "evidence": "the review checks PRODUCT.md on who may clear counts"
+    },
+    {
+      "id": "verdict-not-ship",
+      "status": "pass",
+      "evidence": "verdict line: # Release Verdict: **REJECT** -> block"
+    },
+    {
+      "id": "runtime-evidence",
+      "status": "pass",
+      "evidence": "fenced command=true; test with result=false; suite reports on disk=none"
+    },
+    {
+      "id": "review-only",
+      "status": "pass",
+      "evidence": "product files byte-identical=true; the acceptor did not write the missing document=true"
+    },
+    {
+      "id": "coverage-honesty",
+      "status": "fail",
+      "evidence": "gaps named=false; specific areas named=true; no blanket safety claim=true"
+    }
+  ]
+}

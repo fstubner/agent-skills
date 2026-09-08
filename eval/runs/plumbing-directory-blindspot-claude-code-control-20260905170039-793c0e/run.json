@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 2,
+  "runId": "plumbing-directory-blindspot-claude-code-control-20260905170039-793c0e",
+  "caseId": "plumbing-directory-blindspot",
+  "caseRevision": 1,
+  "caseSha256": "2a8f4d48f4b7cfb131085e26792f13ee71c20e0caa7d45b67635e785eca77936",
+  "fixtureSha256": "b4a02199919e150fe1a672b6ac6fe1247fcf80b41a60257e7d6bf01cdf1a0132",
+  "graderSha256": "df811e4a68d61d3b0e2093d579584d2f537164dd0236526bb98962b26f07c7ca",
+  "checkerSha256": null,
+  "stagedInputSha256": null,
+  "condition": "control",
+  "harness": "claude-code",
+  "harnessVersion": "2.1.234 (Claude Code)",
+  "model": "claude-haiku-4-5-20251001",
+  "startedAt": "2026-09-05T17:00:39.279Z",
+  "finishedAt": "2026-09-05T17:01:28.743Z",
+  "durationMs": 49464,
+  "totalTokens": 132411,
+  "costUsd": 0.040565300000000006,
+  "costCredits": null,
+  "exitCode": 0,
+  "artifactSha256": "f47a5b7a0ca479f7983344c1e2186dca284421fa71aa1a268b7880c3d7b30184",
+  "files": {
+    "prompt": "prompt.txt",
+    "transcript": "transcript.jsonl",
+    "stderr": "stderr.txt",
+    "grading": "grading.json",
+    "workspace": "outputs"
+  },
+  "grading": {
+    "passed": 3,
+    "failed": 9,
+    "notEvaluated": 0,
+    "total": 12
+  },
+  "regrade": {
+    "at": "2026-09-08T02:56:08.948Z",
+    "tool": "scripts/eval-rehome.mjs",
+    "fromGraderSha256": "99e80efc490ee601771180f2bb890b8ea7818f94aeda89730f5dcea2f915339d",
+    "condition": "control"
+  }
+}

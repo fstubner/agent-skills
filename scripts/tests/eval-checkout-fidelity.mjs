@@ -62,10 +62,15 @@ function eolRewrites() {
   let parsed = 0;
   for (const line of out.stdout.split('\n')) {
     const tab = line.indexOf('\t');
-    const m = /^i\/(\S+)\s+w\/(\S+)\s/.exec(line);
+    const m = /^i\/(\S+)\s+w\/(\S*)\s/.exec(line);
     if (tab < 0 || !m) continue;
     parsed += 1;
     const [, index, worktree] = m;
+    // An empty w/ means the file is tracked but not in the worktree — a move
+    // or delete that has not been staged yet. It has no bytes on disk to
+    // disagree with, and `git status` is where that belongs. Counted as
+    // examined so the row-count clause stays exact.
+    if (!worktree) continue;
     if (index !== worktree) rewrites.push(`${line.slice(tab + 1)} (git ${index}, disk ${worktree})`);
   }
   return { rewrites, parsed };
