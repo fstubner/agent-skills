@@ -1,0 +1,32 @@
+{
+  "appointments": [
+    {
+      "id": "apt-001",
+      "patientId": "P001",
+      "date": "2026-09-10",
+      "clinician": "Dr. Smith",
+      "reason": "Check-up",
+      "notes": [
+        "Patient appears well. Blood pressure normal. No issues noted."
+      ]
+    },
+    {
+      "id": "apt-002",
+      "patientId": "P001",
+      "date": "2026-09-17",
+      "clinician": "Dr. Jones",
+      "reason": "Follow-up",
+      "notes": []
+    },
+    {
+      "id": "apt-003",
+      "patientId": "P002",
+      "date": "2026-09-11",
+      "clinician": "Dr. Smith",
+      "reason": "Consultation",
+      "notes": [
+        "Patient reported symptoms of dizziness. Further tests recommended."
+      ]
+    }
+  ]
+}

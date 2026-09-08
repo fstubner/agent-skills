@@ -1,0 +1,28 @@
+{
+  "appointments": [
+    {
+      "id": "apt-1",
+      "patientId": "patient-alice",
+      "date": "2026-09-10",
+      "time": "10:00",
+      "clinician": "Dr. Smith",
+      "notes": ["Alice's blood pressure was normal", "Follow up in 2 weeks"]
+    },
+    {
+      "id": "apt-2",
+      "patientId": "patient-bob",
+      "date": "2026-09-11",
+      "time": "14:30",
+      "clinician": "Dr. Jones",
+      "notes": ["Bob has a sprained ankle", "Rest and ice recommended"]
+    },
+    {
+      "id": "apt-3",
+      "patientId": "patient-alice",
+      "date": "2026-09-12",
+      "time": "11:00",
+      "clinician": "Dr. Smith",
+      "notes": ["Discussed medication changes"]
+    }
+  ]
+}

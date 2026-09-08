@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "skill": "product-acceptance",
+  "generatedAt": "2026-09-08T02:04:31.369Z",
+  "root": "C:\\tmp\\agent-skills-eval-uyerCu\\workspace",
+  "verdict": "BLOCK",
+  "checks": [
+    {
+      "id": "A-independent",
+      "status": "not_evaluated",
+      "detail": "acceptance ran in the builder context; re-run with --acceptor-context separate in a fresh session — SHIP is unreachable until then"
+    },
+    {
+      "id": "A-runtime",
+      "status": "not_evaluated",
+      "detail": "runtime behavior was not independently verified; run the product and its critical path, then add --runtime-verified"
+    },
+    {
+      "id": "A-runtime-replay",
+      "status": "pass",
+      "detail": "ux-walkthrough.md declares no replay block; A-runtime carries the runtime claim"
+    },
+    {
+      "id": "A-intent-anchored",
+      "status": "not_evaluated",
+      "detail": "PRODUCT.md provenance is \"undeclared\" — intent is not anchored outside the implementation, so this verdict covers consistency and build quality, not whether it is the right product"
+    },
+    {
+      "id": "A-product-contract",
+      "status": "pass",
+      "detail": "PRODUCT.md (provenance undeclared)"
+    },
+    {
+      "id": "A-architecture-doc",
+      "status": "fail",
+      "detail": "ARCHITECTURE.md missing heading(s): Trust"
+    },
+    {
+      "id": "A-design-direction",
+      "status": "pass",
+      "detail": "design-direction.md (provenance undeclared)"
+    },
+    {
+      "id": "A-ux-walkthrough",
+      "status": "pass",
+      "detail": "ux-walkthrough.md (provenance undeclared)"
+    },
+    {
+      "id": "D-systems-architecture",
+      "status": "not_evaluated",
+      "detail": "producer skill \"systems-architecture\" is not installed (systems-architecture/scripts/check-architecture.js)"
+    },
+    {
+      "id": "D-frontend",
+      "status": "not_evaluated",
+      "detail": "producer skill \"frontend\" is not installed (frontend/scripts/check-frontend.js)"
+    },
+    {
+      "id": "D-backend-engineering",
+      "status": "not_evaluated",
+      "detail": "producer skill \"backend-engineering\" is not installed (backend-engineering/scripts/check-backend.js)"
+    },
+    {
+      "id": "D-smoke-report",
+      "status": "not_evaluated",
+      "detail": "producer skill \"release-engineering\" is not installed (release-engineering/scripts/check-smoke.js)"
+    },
+    {
+      "id": "D-operability-report",
+      "status": "not_evaluated",
+      "detail": "producer skill \"release-engineering\" is not installed (release-engineering/scripts/check-operability.js)"
+    }
+  ]
+}
