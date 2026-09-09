@@ -5,7 +5,7 @@
     {
       "id": "dry-run-contract",
       "status": "pass",
-      "evidence": "exit=0; unchanged=true; stdout=\"{\\\"file\\\":\\\"C:\\\\\\\\Users\\\\\\\\Felix\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\config-set-eval-YaXUYU\\\\\\\\settings.json\\\",\\\"key\\\":\\\"service.retries\\\",\\\"value\\\":5,\\\"dryRun\\\":true,\\\"changed\\\":true}\\n\""
+      "evidence": "exit=0; unchanged=true; stdout=\"{\\\"file\\\":\\\"C:\\\\\\\\Users\\\\\\\\<user>\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\config-set-eval-YaXUYU\\\\\\\\settings.json\\\",\\\"key\\\":\\\"service.retries\\\",\\\"value\\\":5,\\\"dryRun\\\":true,\\\"changed\\\":true}\\n\""
     },
     {
       "id": "apply-idempotent",
@@ -15,12 +15,12 @@
     {
       "id": "stream-contract",
       "status": "pass",
-      "evidence": "stdout=\"{\\\"file\\\":\\\"C:\\\\\\\\Users\\\\\\\\Felix\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\config-set-eval-YaXUYU\\\\\\\\settings.json\\\",\\\"key\\\":\\\"service.retries\\\",\\\"value\\\":5,\\\"dryRun\\\":false,\\\"changed\\\":true}\\n\"; stderr=\"\""
+      "evidence": "stdout=\"{\\\"file\\\":\\\"C:\\\\\\\\Users\\\\\\\\<user>\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\config-set-eval-YaXUYU\\\\\\\\settings.json\\\",\\\"key\\\":\\\"service.retries\\\",\\\"value\\\":5,\\\"dryRun\\\":false,\\\"changed\\\":true}\\n\"; stderr=\"\""
     },
     {
       "id": "error-contract",
       "status": "pass",
-      "evidence": "exit=1; stdoutBytes=0; stderr=\"Error: Invalid JSON in C:\\\\Users\\\\Felix\\\\AppData\\\\Local\\\\Temp\\\\config-set-eval-YaXUYU\\\\malformed.json: Expected property name or '}' in JSON at position 2 (line 1 column 3)\\nUsage: config-set set [--dry-run] <json-file> <dotted-key> <json-value>\\n\\nSet a nested value in a JSON file.\\n\\nArguments:\\n  json-file   \""
+      "evidence": "exit=1; stdoutBytes=0; stderr=\"Error: Invalid JSON in <home>\\\\AppData\\\\Local\\\\Temp\\\\config-set-eval-YaXUYU\\\\malformed.json: Expected property name or '}' in JSON at position 2 (line 1 column 3)\\nUsage: config-set set [--dry-run] <json-file> <dotted-key> <json-value>\\n\\nSet a nested value in a JSON file.\\n\\nArguments:\\n  json-file   \""
     },
     {
       "id": "help-and-tests",

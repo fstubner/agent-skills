@@ -24,7 +24,7 @@ Output:
 ℹ skipped 0
 ℹ todo 0
 ℹ duration_ms 114.6315
-[31;1mnvx: [0mC:\Users\Felix\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1:4[0m
+[31;1mnvx: [0m<home>\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1:4[0m
 [31;1m[0m[36;1mLine |[0m
 [31;1m[0m[36;1m[36;1m   4 | [0m [36;1mnvx[0m env --shell=powershell | Out-String | Invoke-Expression[0m
 [31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m ~~~[0m

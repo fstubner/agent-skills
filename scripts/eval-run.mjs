@@ -9,6 +9,7 @@ import { harnessDiagnostics } from './lib/harness-diagnostics.mjs';
 import { hashTree, sha256 } from './lib/tree-hash.mjs';
 import { EXCLUDED_OUTPUTS, CLAUDE_ALLOWED_TOOLS } from './lib/eval-harness-policy.mjs';
 import { stageSkill, copyTree } from './lib/stage-skill.mjs';
+import { redactHome } from './lib/redact-home.mjs';
 
 const suiteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -288,13 +289,13 @@ try {
   harnessRun = runHarness(args.harness, args.model, prompt, workspace,
     Number(args['max-budget-usd'] || 2), Number(args['timeout-ms'] || 900_000),
     Boolean(args['codex-external-sandbox']), Boolean(args['codex-container']));
-  fs.writeFileSync(path.join(runDir, 'transcript.jsonl'), harnessRun.result.stdout || '');
-  fs.writeFileSync(path.join(runDir, 'stderr.txt'), harnessRun.result.stderr || harnessRun.result.error?.stack || '');
+  fs.writeFileSync(path.join(runDir, 'transcript.jsonl'), redactHome(harnessRun.result.stdout || ''));
+  fs.writeFileSync(path.join(runDir, 'stderr.txt'), redactHome(harnessRun.result.stderr || harnessRun.result.error?.stack || ''));
   gradingResult = spawnSync(process.execPath, [grader, '--root', workspace], {
     cwd: suiteRoot, encoding: 'utf8', timeout: 120_000, maxBuffer: 20 * 1024 * 1024,
   });
-  fs.writeFileSync(path.join(runDir, 'grader-raw.txt'), gradingResult.stdout || '');
-  fs.writeFileSync(path.join(runDir, 'grader-stderr.txt'), gradingResult.stderr || '');
+  fs.writeFileSync(path.join(runDir, 'grader-raw.txt'), redactHome(gradingResult.stdout || ''));
+  fs.writeFileSync(path.join(runDir, 'grader-stderr.txt'), redactHome(gradingResult.stderr || ''));
   copyTree(workspace, outputsDir, EXCLUDED_OUTPUTS);
 } finally {
   cleanupTemp(tempRoot);
@@ -338,7 +339,9 @@ if (environmentFailure || noModelTurn || ambientSkillAccess) {
     })),
   };
 }
-fs.writeFileSync(path.join(runDir, 'grading.json'), JSON.stringify(grading, null, 2) + '\n');
+// The grader quotes file paths in its evidence strings, so the same rule
+// applies here. Redacted on the JSON text, which covers the escaped form.
+fs.writeFileSync(path.join(runDir, 'grading.json'), redactHome(JSON.stringify(grading, null, 2)) + '\n');
 const counts = {
   passed: grading.assertions.filter((a) => a.status === 'pass').length,
   failed: grading.assertions.filter((a) => a.status === 'fail').length,

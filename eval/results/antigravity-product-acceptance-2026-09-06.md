@@ -38,7 +38,7 @@ those thirteen, in that order, with `root` set to its own workspace and
 `generatedAt` inside its run window. Its workspace contained no copy of the
 script. One control transcript names the copy it used:
 
-    node C:/Users/Felix/.gemini/config/plugins/agent-skills/skills/product-acceptance/scripts/accept-check.js --acceptor-context separate
+    node <home>/.gemini/config/plugins/agent-skills/skills/product-acceptance/scripts/accept-check.js --acceptor-context separate
 
 Antigravity runs that left a suite checker report in their workspace:
 

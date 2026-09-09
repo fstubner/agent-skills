@@ -67,6 +67,23 @@ import { root, expect, tmpBase } from './harness.mjs';
   expect('commit-msg: a vendor bot address in a merge commit is not a leak',
     vendorBot.status === 0, vendorBot.stderr);
 
+  // Six commits in this history carry `Co-authored-by: Cursor
+  // <cursoragent@cursor.com>`, put there by a tool. Removing those needs a
+  // history rewrite; refusing the seventh does not, and the standing rule for
+  // this project is that no commit carries a Co-Authored-By footer at all.
+  for (const [what, message] of [
+    ['a Co-authored-by trailer', 'Add the thing\n\nCo-authored-by: Cursor <cursoragent@cursor.com>\n'],
+    ['a generated-with footer', 'Add the thing\n\n🤖 Generated with [Some Tool](https://example.com)\n'],
+  ]) {
+    const blocked = runHook(message);
+    expect(`commit-msg: refuses ${what}`, blocked.status === 1, `exit ${blocked.status}: ${blocked.stderr}`);
+  }
+  // But not a squash-merge trailer GitHub wrote server-side, which never
+  // passes through this hook and claims nothing about authorship.
+  const squash = runHook('build(deps): bump the harness-clis group (#21)\n\nSigned-off-by: dependabot[bot] <support@github.com>\n');
+  expect('commit-msg: a GitHub squash-merge sign-off is not tool attribution',
+    squash.status === 0, squash.stderr);
+
   const noRemote = fs.mkdtempSync(path.join(tmpBase, 'commit-msg-local-'));
   spawnSync('git', ['init', '-q'], { cwd: noRemote });
   const local = runHook('A clean message\n', noRemote);

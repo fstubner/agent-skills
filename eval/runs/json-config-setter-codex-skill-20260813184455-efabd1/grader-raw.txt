@@ -5,7 +5,7 @@
     {
       "id": "dry-run-contract",
       "status": "pass",
-      "evidence": "exit=0; unchanged=true; stdout=\"{\\\"file\\\":\\\"C:\\\\\\\\Users\\\\\\\\Felix\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\config-set-eval-LQVwqw\\\\\\\\settings.json\\\",\\\"key\\\":\\\"service.retries\\\",\\\"value\\\":5,\\\"changed\\\":true,\\\"dryRun\\\":true}\\n\""
+      "evidence": "exit=0; unchanged=true; stdout=\"{\\\"file\\\":\\\"C:\\\\\\\\Users\\\\\\\\<user>\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\config-set-eval-LQVwqw\\\\\\\\settings.json\\\",\\\"key\\\":\\\"service.retries\\\",\\\"value\\\":5,\\\"changed\\\":true,\\\"dryRun\\\":true}\\n\""
     },
     {
       "id": "apply-idempotent",
@@ -15,12 +15,12 @@
     {
       "id": "stream-contract",
       "status": "pass",
-      "evidence": "stdout=\"{\\\"file\\\":\\\"C:\\\\\\\\Users\\\\\\\\Felix\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\config-set-eval-LQVwqw\\\\\\\\settings.json\\\",\\\"key\\\":\\\"service.retries\\\",\\\"value\\\":5,\\\"changed\\\":true,\\\"dryRun\\\":false}\\n\"; stderr=\"\""
+      "evidence": "stdout=\"{\\\"file\\\":\\\"C:\\\\\\\\Users\\\\\\\\<user>\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\config-set-eval-LQVwqw\\\\\\\\settings.json\\\",\\\"key\\\":\\\"service.retries\\\",\\\"value\\\":5,\\\"changed\\\":true,\\\"dryRun\\\":false}\\n\"; stderr=\"\""
     },
     {
       "id": "error-contract",
       "status": "pass",
-      "evidence": "exit=1; stdoutBytes=0; stderr=\"Error: cannot read or parse 'C:\\\\Users\\\\Felix\\\\AppData\\\\Local\\\\Temp\\\\config-set-eval-LQVwqw\\\\malformed.json': Expected property name or '}' in JSON at position 2 (line 1 column 3)\\n\""
+      "evidence": "exit=1; stdoutBytes=0; stderr=\"Error: cannot read or parse '<home>\\\\AppData\\\\Local\\\\Temp\\\\config-set-eval-LQVwqw\\\\malformed.json': Expected property name or '}' in JSON at position 2 (line 1 column 3)\\n\""
     },
     {
       "id": "help-and-tests",

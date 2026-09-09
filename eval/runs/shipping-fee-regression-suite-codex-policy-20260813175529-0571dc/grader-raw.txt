@@ -10,7 +10,7 @@
     {
       "id": "public-behavior",
       "status": "fail",
-      "evidence": "changed=true; exit=1; output=\"\\n> test\\n> node --test\\n\\nfile:///C:/Users/Felix/AppData/Local/Temp/shipping-eval-L0F0kN/private-rename/test/shipping-fee.test.js:3\\nimport { shippingFee, _normalizeCountry } from '../src/shipping-fee.js';\\n                      ^^^^^^^^^^^^^^^^^\\nSyntaxError: The requested module '../src/shipping-fee.js'\""
+      "evidence": "changed=true; exit=1; output=\"\\n> test\\n> node --test\\n\\nfile:///<home>/AppData/Local/Temp/shipping-eval-L0F0kN/private-rename/test/shipping-fee.test.js:3\\nimport { shippingFee, _normalizeCountry } from '../src/shipping-fee.js';\\n                      ^^^^^^^^^^^^^^^^^\\nSyntaxError: The requested module '../src/shipping-fee.js'\""
     },
     {
       "id": "kills-threshold-mutant",

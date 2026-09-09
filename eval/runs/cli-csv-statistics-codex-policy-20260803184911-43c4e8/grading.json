@@ -15,7 +15,7 @@
     {
       "id": "help-contract",
       "status": "fail",
-      "evidence": "exit=1; output=\"Error: ENOENT: no such file or directory, open 'C:\\\\Users\\\\Felix\\\\Documents\\\\Codex\\\\2026-08-03\\\\agent-skills-eval-cli-policy-luna\\\\--help'\\n\""
+      "evidence": "exit=1; output=\"Error: ENOENT: no such file or directory, open '<home>\\\\Documents\\\\Codex\\\\2026-08-03\\\\agent-skills-eval-cli-policy-luna\\\\--help'\\n\""
     },
     {
       "id": "tests-run",

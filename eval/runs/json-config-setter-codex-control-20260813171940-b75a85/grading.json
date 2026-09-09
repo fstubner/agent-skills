@@ -20,7 +20,7 @@
     {
       "id": "error-contract",
       "status": "pass",
-      "evidence": "exit=1; stdoutBytes=0; stderr=\"Error: could not read or parse C:\\\\Users\\\\Felix\\\\AppData\\\\Local\\\\Temp\\\\config-set-eval-wcKY8t\\\\malformed.json: Expected property name or '}' in JSON at position 2 (line 1 column 3)\\n\""
+      "evidence": "exit=1; stdoutBytes=0; stderr=\"Error: could not read or parse <home>\\\\AppData\\\\Local\\\\Temp\\\\config-set-eval-wcKY8t\\\\malformed.json: Expected property name or '}' in JSON at position 2 (line 1 column 3)\\n\""
     },
     {
       "id": "help-and-tests",

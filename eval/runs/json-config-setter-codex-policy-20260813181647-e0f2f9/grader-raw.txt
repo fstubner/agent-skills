@@ -5,7 +5,7 @@
     {
       "id": "dry-run-contract",
       "status": "pass",
-      "evidence": "exit=0; unchanged=true; stdout=\"{\\\"file\\\":\\\"C:\\\\\\\\Users\\\\\\\\Felix\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\config-set-eval-TqyUO1\\\\\\\\settings.json\\\",\\\"key\\\":\\\"service.retries\\\",\\\"value\\\":5,\\\"changed\\\":true,\\\"dryRun\\\":true,\\\"config\\\":{\\\"service\\\":{\\\"retries\\\":5},\\\"untouched\\\":true}}\\n\""
+      "evidence": "exit=0; unchanged=true; stdout=\"{\\\"file\\\":\\\"C:\\\\\\\\Users\\\\\\\\<user>\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\config-set-eval-TqyUO1\\\\\\\\settings.json\\\",\\\"key\\\":\\\"service.retries\\\",\\\"value\\\":5,\\\"changed\\\":true,\\\"dryRun\\\":true,\\\"config\\\":{\\\"service\\\":{\\\"retries\\\":5},\\\"untouched\\\":true}}\\n\""
     },
     {
       "id": "apply-idempotent",

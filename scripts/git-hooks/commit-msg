@@ -51,6 +51,20 @@ const REFUSED = [
     id: 'IP address',
     re: /\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b/g,
   },
+  {
+    // Six commits in this history carry `Co-authored-by: Cursor
+    // <cursoragent@cursor.com>`, added by a tool rather than chosen. The
+    // author does not want tool attribution in the log, and the standing
+    // instruction for this project is that no commit gets a Co-Authored-By
+    // footer at all. Removing the six needs a history rewrite; stopping the
+    // seventh does not.
+    // Narrow on purpose: a `Signed-off-by: dependabot[bot]` line is written by
+    // GitHub on a squash merge, arrives without this hook running, and is not
+    // a claim about who wrote the change. Refusing it would only ever fire on
+    // a merge the author performed by hand.
+    id: 'tool attribution trailer',
+    re: /^(?:Co-authored-by:.*|(?:🤖\s*)?Generated with \[?[A-Z].*)$/gim,
+  },
 ];
 
 // Everything after the first `#` on a line is git's own commentary, stripped
