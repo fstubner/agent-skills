@@ -53,6 +53,7 @@ const MODULES = [
   'eval-citation-forms.mjs', // the shared citation matcher reads the forms real runs write
   'hooks.mjs',            // pre-commit secret scanning (skips only when gitleaks is absent)
   'hooks-scan-set.mjs',   // the pre-commit scan set travels in a file, not argv
+  'hooks-commit-msg.mjs', // and the message itself is checked against the audience it will reach
   'installer.mjs',        // harnessPaths, installed-skill smoke test, clobber refusal
   'fail-closed.mjs',      // unreadable root, gitleaks precision, self-declared verdicts
   'classify.mjs',         // manifest parsers against real-world manifest shapes

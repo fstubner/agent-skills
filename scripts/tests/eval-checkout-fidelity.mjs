@@ -42,8 +42,12 @@ const available = git('rev-parse', '--is-inside-work-tree').status === 0;
 // be absent from a clone.
 const isStaging = (file) => file.split('/').some((seg) => seg.startsWith('.') && seg.endsWith('.partial'));
 
+// An audit pointed out that a failed git invocation returns empty stdout, and
+// an empty list of offenders is indistinguishable from a clean tree. The
+// eol clause below is guarded by its row count; this one needs the status.
 function ignoredButPresent() {
   const out = git('ls-files', '--others', '--ignored', '--exclude-standard', '--', 'eval/');
+  if (out.status !== 0) return [`git ls-files failed: ${(out.stderr || '').trim().split('\n')[0] || `exit ${out.status}`}`];
   return out.stdout.split('\n').map((l) => l.trim()).filter(Boolean).filter((f) => !isStaging(f));
 }
 

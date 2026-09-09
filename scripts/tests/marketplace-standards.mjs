@@ -27,6 +27,12 @@ expect('documentText does not invent words by deleting the markup between them',
   !documentText('<td>agy</td><td>plugin</td>').includes('agyplugin'));
 expect('documentText still reports text that is genuinely absent',
   !documentText(SHIKI_CODE_BLOCK).includes('agy plugin publish'));
+// An audit found this one: a naive <[^>]*> ends the tag at the `>` inside the
+// attribute and leaves `b">` in the text. Inventing text is the dangerous
+// direction here — it can only make a required phrase look present.
+expect('documentText does not leave attribute fragments behind as text',
+  documentText('<a title="a > b">documentation</a>') === 'documentation',
+  documentText('<a title="a > b">documentation</a>'));
 
 const result = spawnSync(process.execPath, [
   path.join(root, 'scripts', 'check-marketplace-standards.mjs'),
@@ -49,9 +55,18 @@ expect('release: archive is built exactly once',
   (release.match(/git archive/g) || []).length === 1);
 expect('release: publish consumes the build-once artifact',
   /publish:\s+needs: build-once/m.test(release));
-expect('release: checksum is verified before publication',
-  release.indexOf('sha256sum --check SHA256SUMS', release.indexOf('publish:')) <
-    release.indexOf('gh release create', release.indexOf('publish:')));
+// Both indices are required to exist first. An audit found that without
+// that, deleting the checksum step entirely makes indexOf return -1, and
+// -1 is less than any real offset — so the ordering assertion would keep
+// passing on a release that verifies nothing.
+{
+  const publishAt = release.indexOf('publish:');
+  const checksumAt = release.indexOf('sha256sum --check SHA256SUMS', publishAt);
+  const createAt = release.indexOf('gh release create', publishAt);
+  expect('release: checksum is verified before publication',
+    publishAt >= 0 && checksumAt >= 0 && createAt >= 0 && checksumAt < createAt,
+    `publish@${publishAt} checksum@${checksumAt} create@${createAt}`);
+}
 expect('release: published bytes are downloaded and verified again',
   release.includes('gh release download "$GITHUB_REF_NAME"') &&
     (release.match(/sha256sum --check SHA256SUMS/g) || []).length === 2);

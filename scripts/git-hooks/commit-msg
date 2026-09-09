@@ -1,0 +1,102 @@
+#!/usr/bin/env node
+'use strict';
+// Answers one question at every commit: who will read this message?
+//
+// The question is worth asking because the answer here is "everyone". This
+// repository is published, and a commit message is published with it — more
+// durably than the code, since a message cannot be edited after the fact
+// without rewriting history. The messages in this repository are long and
+// discursive by design; they explain what was wrong and why, which is exactly
+// the register in which private detail arrives by accident.
+//
+// It ANSWERS rather than ASKS. A prompt on every commit is answered
+// reflexively within a week, and it cannot run at all in the commits
+// eval-batch.mjs makes on its own after a verify pass — a hook that blocks on
+// stdin would hang a four-hour measurement run at the first bundle. So the
+// audience is stated from the configured remote, every time, and the classes
+// of private content that can be recognised mechanically are refused rather
+// than left to a human's judgment at the moment they are least likely to
+// exercise it.
+//
+// What it refuses is deliberately narrow: identifiers that are private by
+// construction and never belong in a public message. Not "sensitive-sounding
+// words" — a message that says a run failed on a quota event is describing
+// evidence, and a hook that argues with it would be trained away within a day.
+//
+// Install (opt-in per clone, alongside the pre-commit hook):
+//   git config core.hooksPath scripts/git-hooks
+
+const { spawnSync } = require('child_process');
+const fs = require('fs');
+
+const REFUSED = [
+  {
+    id: 'home-directory path',
+    // C:\Users\<name> or /home/<name> or /Users/<name>. Names a person and a
+    // machine, and is never information a reader of a public log can use.
+    re: /(?:[A-Za-z]:[\\/]Users[\\/][A-Za-z0-9._-]+|\/(?:home|Users)\/[A-Za-z0-9._-]+\/)/g,
+  },
+  {
+    id: 'local scratch path',
+    re: /(?:AppData[\\/]Local[\\/]Temp|[\\/]var[\\/]folders[\\/])/gi,
+  },
+  // There is no email clause, and that was decided by measurement rather than
+  // taste. Replayed against all 224 messages in this repository's history, one
+  // refused 11 of them — every hit a vendor bot quoted in a merge or agent
+  // commit (support@github.com, cursoragent@cursor.com), none a person's
+  // address. Tonight's own Dependabot squash was one of the 11. A rule that
+  // fires only on false positives teaches --no-verify, and the author's own
+  // address is in the author field of every commit anyway, published already.
+  {
+    id: 'IP address',
+    re: /\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b/g,
+  },
+];
+
+// Everything after the first `#` on a line is git's own commentary, stripped
+// before the message is stored. Scanning it would refuse commits over the
+// help text git itself wrote.
+function messageBody(raw) {
+  return raw.split('\n').filter((line) => !line.startsWith('#')).join('\n');
+}
+
+function audience() {
+  const remote = spawnSync('git', ['remote', 'get-url', 'origin'], { encoding: 'utf8' });
+  if (remote.status !== 0 || !remote.stdout.trim()) {
+    return { published: false, where: null };
+  }
+  const url = remote.stdout.trim();
+  // Whether the remote is a PRIVATE repository is not knowable offline, and a
+  // hook is not the place to make a network call. Published-to-a-remote is the
+  // honest thing this can say, and it is the part that matters: the message
+  // leaves this machine either way.
+  return { published: true, where: url.replace(/^https:\/\/[^@]+@/, 'https://') };
+}
+
+const messageFile = process.argv[2];
+if (!messageFile) {
+  console.error('commit-msg: no message file given');
+  process.exit(1);
+}
+
+const body = messageBody(fs.readFileSync(messageFile, 'utf8'));
+const found = [];
+for (const rule of REFUSED) {
+  const matches = [...new Set(body.match(rule.re) || [])];
+  for (const match of matches) found.push({ id: rule.id, match });
+}
+
+const { published, where } = audience();
+if (found.length) {
+  console.error('\ncommit-msg: this message contains content that is private to this machine.\n');
+  for (const f of found) console.error(`  ${f.id}: ${f.match}`);
+  console.error(published
+    ? `\nIt would be published at ${where}, where a commit message cannot be edited afterwards.`
+    : '\nNo remote is configured, so it would stay on this machine — but it would travel with the repository.');
+  console.error('Rewrite the message, or commit with --no-verify if this is deliberate.\n');
+  process.exit(1);
+}
+
+console.error(published
+  ? `commit-msg: this message will be published at ${where}`
+  : 'commit-msg: no remote configured; this message stays on this machine');

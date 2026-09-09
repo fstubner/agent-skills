@@ -25,7 +25,11 @@ export function documentText(html) {
     .replace(/<script[\s\S]*?<\/script>/gi, ' ')
     .replace(/<style[\s\S]*?<\/style>/gi, ' ')
     .replace(/<!--[\s\S]*?-->/g, ' ')
-    .replace(/<[^>]*>/g, ' ')
+    // Quote-aware, because `<a title="a > b">doc</a>` ends a naive `<[^>]*>`
+    // at the `>` inside the attribute and leaves `b">` behind as text. Text
+    // that is on no page is the dangerous direction for a drift check: it can
+    // only ever make a phrase look present.
+    .replace(/<[^>"']*(?:(?:"[^"]*"|'[^']*')[^>"']*)*>/g, ' ')
     .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
     .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(Number(dec)))
     .replace(/&[a-z]+;/gi, (entity) => ENTITIES[entity.toLowerCase()] ?? ' ')
