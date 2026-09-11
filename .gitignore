@@ -46,6 +46,20 @@ Thumbs.db
 # Local skill-invocation telemetry (scripts/log-skill-invocation.mjs). Per
 # project, never committed — it records what you did, not what the suite is.
 .agent-skills-telemetry/
+
+# Full harness transcripts, kept for local debugging. The bundle commits a
+# REDUCED transcript — tool-call commands, agent messages, the model's answer
+# — and the raw recording stays here, because the rest of it is a recording of
+# this machine: working directory, installed skills, account tier, whatever a
+# command happened to print.
+#
+# Deliberately at the repository root rather than inside the run bundle.
+# scripts/tests/eval-checkout-fidelity.mjs asserts that nothing under eval/ is
+# ignored-but-present, and that check caught a real defect the day it was
+# written. An ignored file inside eval/runs/<id>/ would have forced a
+# carve-out in it; a directory out here needs none, and the invariant stays
+# strict.
+.eval-raw-transcripts/
 **/.agent-skills-telemetry/
 # Exception: one fixture intentionally COMMITS a planted, lying report to
 # prove accept-check.js ignores on-disk evidence (see

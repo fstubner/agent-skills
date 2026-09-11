@@ -38,5 +38,6 @@
     "tool": "scripts/eval-rehome.mjs",
     "fromGraderSha256": "2a39feee8ff07958b18d59752d31ea06dcd24677f170272b66ded1bd61905330",
     "condition": "policy"
-  }
+  },
+  "transcriptReducedAt": "2026-09-10T15:22:35.352Z"
 }

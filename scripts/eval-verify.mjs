@@ -4,6 +4,7 @@ import path from 'path';
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 import { hashTree, sha256 } from './lib/tree-hash.mjs';
+import { isReducedTranscript } from './lib/reduce-transcript.mjs';
 
 const require = createRequire(import.meta.url);
 const { validate } = require('../core/lib/schema.cjs');
@@ -131,6 +132,16 @@ if (fs.existsSync(runsDir)) {
       const resolved = resolveInside(runDir, relative, `eval/runs/${entry.name}.${key}`);
       if (resolved && !fs.existsSync(resolved)) fail(`eval/runs/${entry.name}: missing ${key} file ${relative}`);
       resolvedFiles[key] = resolved;
+    }
+    // A manifest that claims its transcript is reduced has to be right about
+    // it. Without this the field is an assertion nothing tests, and a full
+    // transcript — working directory, installed skills, account tier — could
+    // be committed under a timestamp saying it had been stripped. Same reason
+    // the regrade field is checked rather than trusted: the bundle is the
+    // thing making the claim.
+    if (manifest.transcriptReducedAt && resolvedFiles.transcript && fs.existsSync(resolvedFiles.transcript)
+      && !isReducedTranscript(fs.readFileSync(resolvedFiles.transcript, 'utf8'))) {
+      fail(`eval/runs/${entry.name}: transcriptReducedAt is set but the transcript carries shapes a reduced one cannot`);
     }
     if (!resolvedFiles.grading || !fs.existsSync(resolvedFiles.grading)) continue;
     const grading = readJson(resolvedFiles.grading);

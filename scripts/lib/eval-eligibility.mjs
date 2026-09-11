@@ -46,7 +46,16 @@ export const COSTLESS_HARNESSES = new Set(['antigravity']);
 // the contamination it catches is a control arm reaching for a skill the
 // machine happens to have installed, wherever that is. `.gemini` covers both
 // of Antigravity's install roots — antigravity-cli/skills and config/plugins.
-const AMBIENT_SKILL_PATH = /(?:[A-Z]:\\\\Users\\\\[^\s"']+\\\\(?:\.agents|\.codex|\.gemini)\\\\|\/(?:home|Users)\/[^\s"']+\/(?:\.agents|\.codex|\.gemini)\/)/i;
+//
+// `<home>` is the third form, and it exists because of a mistake made here on
+// 2026-09-08. Redacting the operator's home directory out of committed
+// transcripts replaced the exact prefix this pattern keys on, and 30 control
+// and policy runs that were correctly excluded as contaminated silently became
+// eligible — the redaction quietly repaired the evidence it was cleaning.
+// Detection must therefore recognise the redacted spelling as well as the raw
+// one. Both separators appear in the archive: 768 occurrences carry a forward
+// slash and 279 a JSON-escaped backslash, because transcripts nest JSON.
+const AMBIENT_SKILL_PATH = /(?:[A-Z]:\\\\Users\\\\[^\s"']+\\\\(?:\.agents|\.codex|\.gemini)\\\\|\/(?:home|Users)\/[^\s"']+\/(?:\.agents|\.codex|\.gemini)\/|<home>(?:\\{1,4}|\/)(?:\.agents|\.codex|\.gemini)(?:\\{1,4}|\/))/i;
 
 function accessedAmbientSkill(transcript) {
   return transcript.split(/\r?\n/).filter(Boolean).some((line) => {

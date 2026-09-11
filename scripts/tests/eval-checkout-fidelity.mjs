@@ -75,6 +75,15 @@ function eolRewrites() {
     // disagree with, and `git status` is where that belongs. Counted as
     // examined so the row-count clause stays exact.
     if (!worktree) continue;
+    // `none` means git found no line endings to convert, which is what a
+    // zero-byte file reports. 13 transcripts reduce to empty — a harness that
+    // logs a single result object contributes no tool calls and no answer text
+    // when the run produced neither — and the index still remembers the line
+    // endings the file had before. A file with no line endings cannot have
+    // them rewritten on checkout, so this is not the rewrite the clause is
+    // looking for. A content change of any other kind still shows in
+    // `git status`, which is where it belongs.
+    if (worktree === 'none') continue;
     if (index !== worktree) rewrites.push(`${line.slice(tab + 1)} (git ${index}, disk ${worktree})`);
   }
   return { rewrites, parsed };

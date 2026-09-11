@@ -34,7 +34,23 @@ expect('handles a POSIX home directory',
   redactHome('at /home/someone/projects', '/home/someone'));
 
 const runner = fs.readFileSync(path.join(root, 'scripts', 'eval-run.mjs'), 'utf8');
-for (const file of ['transcript.jsonl', 'stderr.txt', 'grader-raw.txt', 'grader-stderr.txt', 'grading.json']) {
+// The transcript is redacted a step earlier than the rest. eval-run computes
+// `fullTranscriptText = redactHome(stdout)` once, writes the raw copy to the
+// ignored local directory, and commits `reduceTranscript(fullTranscriptText)`
+// — reduction has to run on already-redacted text, not beside it. So the
+// literal `redactHome(` no longer appears on the transcript's write line, and
+// asserting it there would fail against a correct implementation. Following
+// the variable pins the property instead of the spelling.
+expect('eval-run redacts the text the transcript is built from',
+  /const fullTranscriptText = redactHome\(/.test(runner),
+  'fullTranscriptText must be assigned from redactHome()');
+const transcriptWrite = runner.split('\n')
+  .find((l) => l.includes("'transcript.jsonl'") && l.includes('writeFileSync'));
+expect('eval-run commits the reduced form of that redacted text',
+  Boolean(transcriptWrite) && transcriptWrite.includes('reduceTranscript(fullTranscriptText)'),
+  transcriptWrite || 'no write found');
+
+for (const file of ['stderr.txt', 'grader-raw.txt', 'grader-stderr.txt', 'grading.json']) {
   const line = runner.split('\n').find((l) => l.includes(`'${file}'`) && l.includes('writeFileSync'));
   expect(`eval-run redacts ${file} as it is written`, Boolean(line) && line.includes('redactHome('), line || 'no write found');
 }

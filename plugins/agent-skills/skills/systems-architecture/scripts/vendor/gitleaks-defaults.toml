@@ -20,3 +20,36 @@
 # in-tree bypass: an inline `gitleaks:allow` comment on the offending line.
 [extend]
 useDefault = true
+
+# One exemption, and it is the opposite of the bypass this file exists to
+# defeat. The header above is about an AUDITED TREE voting on how it is
+# audited; this is the suite deciding, in its own configuration, that one
+# upstream rule misfires on one shape it produces.
+#
+# The shape: gitleaks' stock `curl-auth-header` rule fires on the form of a
+# bearer header without knowing what it points at. Eval fixtures boot a server
+# on 127.0.0.1 inside the same command line and then curl it, and a model
+# exercising an invite API invents `Authorization: Bearer admin-...` because
+# the endpoint sounds like it needs one. Nothing reads that header — the
+# fixtures have no auth check at all — and the server is gone when the command
+# ends. Three such values exist in 1,537 transcripts; every host in the corpus
+# is localhost, 127.0.0.1, or an example.com placeholder.
+#
+# SCOPED BY LINE, NOT BY PATH, deliberately. A `paths` entry for eval/runs/
+# would have been shorter and would have exempted the entire evidence corpus
+# from every rule, because gitleaks ORs allowlist conditions — switching off
+# the scan that had just done its job. These regexes require the header and a
+# loopback target on the SAME LINE, so a real credential sitting anywhere else
+# in the same file is still caught.
+#
+# Pinned by scripts/tests/fail-closed.mjs: a bearer token against a
+# non-loopback host must still BLOCK, and so must a stock provider key. An
+# allowlist that quietly disables a rule is worse than the false positive it
+# was written for.
+[allowlist]
+description = "curl bearer headers aimed at a fixture's own loopback server"
+regexTarget = "line"
+regexes = [
+  '''Authorization:\s*Bearer[^\n]{0,120}?(?:127\.0\.0\.1|localhost)''',
+  '''(?:127\.0\.0\.1|localhost)[^\n]{0,240}?Authorization:\s*Bearer''',
+]

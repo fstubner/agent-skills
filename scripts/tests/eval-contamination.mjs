@@ -89,5 +89,29 @@ assert.strictEqual(runEligibility(controlOther), null);
 // scored as contaminated for lack of evidence.
 assert.strictEqual(runEligibility({ ...bundle('control-legacy', 'control', {}, bare), runDir: undefined }), null);
 
+// THE REDACTION HOLE, 2026-09-08. The operator's home directory was replaced
+// with `<home>` throughout the committed transcripts, to keep a username out
+// of a public repository. That prefix is exactly what the ambient-skill guard
+// keys on, so redacting it un-flagged 30 control and policy runs that had been
+// correctly excluded: the cleanup silently repaired the evidence it cleaned.
+// Detection now recognises the redacted spelling too, in both separators —
+// transcripts nest JSON, so the backslash arrives escaped.
+const ambient = (command) => ({
+  ...bundle(`ambient-${Buffer.from(command).toString('hex').slice(0, 12)}`, 'control', {}, bare),
+  transcript: `${JSON.stringify({ type: 'custom_tool_call', input: command })}\n`,
+});
+for (const [form, command] of [
+  ['raw Windows', 'node C:\\\\Users\\\\Someone\\\\.gemini\\\\config\\\\plugins\\\\x.js'],
+  ['raw POSIX', 'node /home/someone/.codex/skills/x.js'],
+  ['redacted, forward slash', 'node <home>/.gemini/config/plugins/x.js'],
+  ['redacted, escaped backslash', 'node <home>\\\\.codex\\\\skills\\\\x.js'],
+]) {
+  assert.match(runEligibility(ambient(command)) ?? '', /ambient installed skill accessed/,
+    `a control arm reaching into an installed skill must be caught in ${form} form`);
+}
+// And the guard must not fire on a directory that merely starts the same way.
+assert.strictEqual(runEligibility(ambient('node <home>/.codexfoo/x.js')), null,
+  'the pattern requires a real separator after the skill root, not a prefix match');
+
 fs.rmSync(tmp, { recursive: true, force: true });
 console.log('eval-contamination: a suite report the fixture never had makes a control run ineligible; a plant left as planted does not');

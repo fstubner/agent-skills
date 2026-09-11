@@ -7,9 +7,11 @@ import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { harnessDiagnostics } from './lib/harness-diagnostics.mjs';
 import { hashTree, sha256 } from './lib/tree-hash.mjs';
-import { EXCLUDED_OUTPUTS, CLAUDE_ALLOWED_TOOLS } from './lib/eval-harness-policy.mjs';
+import { EXCLUDED_OUTPUTS } from './lib/eval-harness-policy.mjs';
 import { stageSkill, copyTree } from './lib/stage-skill.mjs';
 import { redactHome } from './lib/redact-home.mjs';
+import { reduceTranscript } from './lib/reduce-transcript.mjs';
+import { runHarness } from './lib/eval-harness-run.mjs';
 
 const suiteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -31,33 +33,12 @@ function parseArgs(argv) {
   return args;
 }
 
-function resolveInvocation(name, args) {
-  if (process.platform !== 'win32') return { command: name, args };
-  const found = spawnSync('where.exe', [name], { encoding: 'utf8', timeout: 10_000 });
-  const candidates = (found.stdout || '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  if (name === 'codex') {
-    const shim = candidates.find((candidate) => candidate.toLowerCase().endsWith('.cmd'));
-    if (shim) {
-      const script = path.join(path.dirname(shim), 'node_modules', '@openai', 'codex', 'bin', 'codex.js');
-      if (fs.existsSync(script)) return { command: process.execPath, args: [script, ...args] };
-    }
-  }
-  return { command: candidates.find((candidate) => candidate.toLowerCase().endsWith('.exe')) || name, args };
-}
-
-
 function cleanupTemp(tempRoot) {
   try {
     fs.rmSync(tempRoot, { recursive: true, force: true, maxRetries: 8, retryDelay: 250 });
   } catch (error) {
     console.error(`warning: temporary workspace cleanup failed: ${error.message}`);
   }
-}
-
-function commandVersion(command, args) {
-  const invocation = resolveInvocation(command, args);
-  const result = spawnSync(invocation.command, invocation.args, { encoding: 'utf8', timeout: 10_000 });
-  return (result.stdout || result.stderr || result.error?.message || `exit-${result.status}`).trim().split('\n')[0];
 }
 
 function stageConditionInputs(testCase, condition, workspace) {
@@ -90,149 +71,6 @@ function buildPrompt(testCase, condition, stagedInput) {
     sections.push(`Before implementing, read and follow every skill in this predeclared workflow bundle:\n${skillPaths.map((skillPath) => `- ${skillPath}`).join('\n')}\nLoad only references relevant to this task.`);
   }
   return sections.join('\n\n');
-}
-
-function numericValues(value, names, found = []) {
-  if (!value || typeof value !== 'object') return found;
-  for (const [key, child] of Object.entries(value)) {
-    if (names.has(key) && typeof child === 'number') found.push(child);
-    else numericValues(child, names, found);
-  }
-  return found;
-}
-
-function runHarness(harness, model, prompt, workspace, maxBudgetUsd, timeoutMs, codexExternalSandbox, codexContainer) {
-  if (harness === 'claude-code') {
-    const args = ['-p', '--safe-mode', '--disable-slash-commands', '--setting-sources', 'project', '--no-session-persistence', '--output-format', 'json', '--permission-mode', 'acceptEdits', '--allowedTools', ...CLAUDE_ALLOWED_TOOLS, '--model', model, '--max-budget-usd', String(maxBudgetUsd)];
-    args.push(prompt);
-    const invocation = resolveInvocation('claude', args);
-    const result = spawnSync(invocation.command, invocation.args, { cwd: workspace, encoding: 'utf8', timeout: timeoutMs, maxBuffer: 50 * 1024 * 1024 });
-    let parsed = null;
-    try { parsed = JSON.parse(result.stdout); } catch { /* raw output remains evidence */ }
-    const tokenValues = numericValues(parsed, new Set(['input_tokens', 'output_tokens', 'cache_creation_input_tokens', 'cache_read_input_tokens']));
-    const costValues = numericValues(parsed, new Set(['total_cost_usd', 'cost_usd']));
-    return {
-      result,
-      harnessVersion: commandVersion('claude', ['--version']),
-      totalTokens: tokenValues.length ? tokenValues.reduce((a, b) => a + b, 0) : null,
-      costUsd: costValues.length ? Math.max(...costValues) : null,
-      costCredits: null,
-    };
-  }
-  // Antigravity CLI. Added as the second cohort because codex has been over
-  // its account usage limit for ten days and a contract that cannot be
-  // satisfied measures nothing. Gemini CLI is deprecated and is not an
-  // option; agy replaced it.
-  //
-  // Learned the hard way: `-p` takes its prompt attached or it swallows the
-  // next flag; --disable-slash-commands stops skill expansion, keeping a
-  // control arm off an ambient installed skill; and --add-dir is REQUIRED,
-  // because agy ignores the spawn cwd and edits in its own scratch dir, so
-  // without it the grader scores an untouched fixture. Pinned in a test.
-  if (harness === 'antigravity') {
-    const args = [
-      '--output-format', 'json',
-      '--disable-slash-commands',
-      '--dangerously-skip-permissions',
-      '--mode', 'accept-edits', '--add-dir', workspace,
-      '--model', model,
-      `-p=${prompt}`,
-    ];
-    const invocation = resolveInvocation('agy', args);
-    const result = spawnSync(invocation.command, invocation.args, {
-      cwd: workspace, encoding: 'utf8', timeout: timeoutMs, maxBuffer: 50 * 1024 * 1024,
-    });
-    let parsed = null;
-    try { parsed = JSON.parse(result.stdout); } catch { /* raw output remains evidence */ }
-    // agy reports a failed turn as status ERROR with exit 0. Left as-is, a
-    // quota or model error would be graded as model failures — the exact
-    // shape that produced fabricated zeros on codex, so it is surfaced as a
-    // non-zero exit for the environment-failure path to catch.
-    if (parsed && parsed.status && parsed.status !== 'SUCCESS') {
-      result.status = result.status || 1;
-      result.stderr = `${result.stderr || ''}\nagy status ${parsed.status}: ${parsed.error || ''}`;
-    }
-    return {
-      result,
-      harnessVersion: `agy ${commandVersion('agy', ['--version'])}`,
-      totalTokens: typeof parsed?.usage?.total_tokens === 'number' ? parsed.usage.total_tokens : null,
-      costUsd: null,
-      costCredits: null,
-    };
-  }
-  if (harness === 'codex') {
-    const args = ['exec', '--ephemeral', '--ignore-rules', '--disable', 'plugins', '--disable', 'remote_plugin', '--disable', 'skill_search', '--skip-git-repo-check'];
-    if (codexExternalSandbox) args.push('--dangerously-bypass-approvals-and-sandbox');
-    else args.push('--sandbox', 'workspace-write');
-    args.push('--cd', workspace, '--model', model, '-c', 'model_reasoning_effort="low"', '--json');
-    args.push(prompt);
-    const isolatedProfile = path.join(path.dirname(workspace), 'isolated-user-profile');
-    const isolatedCodexHome = path.join(isolatedProfile, '.codex');
-    fs.mkdirSync(isolatedProfile, { recursive: true });
-    fs.mkdirSync(isolatedCodexHome, { recursive: true });
-    const sourceCodexHome = process.env.CODEX_HOME || path.join(os.homedir(), '.codex');
-    const sourceAuth = path.join(sourceCodexHome, 'auth.json');
-    if (fs.existsSync(sourceAuth)) fs.copyFileSync(sourceAuth, path.join(isolatedCodexHome, 'auth.json'));
-    const registry = JSON.parse(fs.readFileSync(path.join(suiteRoot, 'registry.json'), 'utf8'));
-    const skillRoots = [path.join(os.homedir(), '.agents', 'skills'), path.join(os.homedir(), '.codex', 'skills')];
-    const disabledSkills = registry.skills.flatMap(({ id }) => skillRoots.map((skillRoot) => path.join(skillRoot, id, 'SKILL.md')));
-    const tomlPath = (value) => value.replaceAll('\\', '/').replaceAll('"', '\\"');
-    const config = [
-      'approval_policy = "never"',
-      'sandbox_mode = "workspace-write"',
-      '',
-      ...disabledSkills.flatMap((skillPath) => ['[[skills.config]]', `path = "${tomlPath(skillPath)}"`, 'enabled = false', '']),
-    ].join('\n');
-    fs.writeFileSync(path.join(isolatedCodexHome, 'config.toml'), config);
-    let invocation;
-    let containerName = null;
-    if (codexContainer) {
-      const containerScript = 'npm install -g @openai/codex@0.146.0 >/tmp/npm-install.log && codex exec --ephemeral --ignore-rules --disable plugins --disable remote_plugin --disable skill_search --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --cd /workspace --model "$2" -c model_reasoning_effort="low" --json "$1"';
-      containerName = `agent-skills-eval-${crypto.randomBytes(6).toString('hex')}`;
-      invocation = {
-        command: 'docker',
-        args: ['run', '--rm', '--name', containerName, '--mount', `type=bind,source=${workspace},target=/workspace`, '--mount', `type=bind,source=${isolatedCodexHome},target=/root/.codex`, 'mcr.microsoft.com/playwright:v1.49.1-noble', 'bash', '-lc', containerScript, '_', prompt, model],
-      };
-    } else {
-      invocation = resolveInvocation('codex', args);
-    }
-    const result = spawnSync(invocation.command, invocation.args, {
-      cwd: workspace,
-      encoding: 'utf8',
-      timeout: timeoutMs,
-      maxBuffer: 50 * 1024 * 1024,
-      env: {
-        ...process.env,
-        // Codex discovers shared skills under the OS user profile independently
-        // of --ignore-user-config. Isolate that root so control/policy cells
-        // cannot see the evaluator operator's installed skills. Authentication
-        // is copied into the temporary Codex home without copying settings,
-        // plugins, skills, memory, or session history.
-        USERPROFILE: isolatedProfile,
-        HOME: isolatedProfile,
-        CODEX_HOME: isolatedCodexHome,
-      },
-    });
-    if (containerName && result.error?.code === 'ETIMEDOUT') {
-      spawnSync('docker', ['rm', '--force', containerName], { encoding: 'utf8', timeout: 15_000 });
-    }
-    const events = (result.stdout || '').split('\n').filter(Boolean).flatMap((line) => { try { return [JSON.parse(line)]; } catch { return []; } });
-    const usage = [...events].reverse().find((event) => event.type === 'turn.completed')?.usage;
-    const totalTokens = usage ? (usage.input_tokens || 0) + (usage.output_tokens || 0) : null;
-    const rates = JSON.parse(fs.readFileSync(path.join(suiteRoot, 'eval', 'evidence.json'), 'utf8')).costRates?.[`codex:${model}`];
-    const uncachedInput = usage ? Math.max(0, (usage.input_tokens || 0) - (usage.cached_input_tokens || 0)) : null;
-    const costCredits = rates && usage
-      ? (uncachedInput * rates.inputPerMillion + (usage.cached_input_tokens || 0) * rates.cachedInputPerMillion + (usage.output_tokens || 0) * rates.outputPerMillion) / 1_000_000
-      : null;
-    return {
-      result,
-      harnessVersion: codexContainer ? 'codex-cli 0.146.0 (Ubuntu container)' : commandVersion('codex', ['--version']),
-      totalTokens,
-      costUsd: null,
-      costCredits,
-    };
-  }
-  usage(`unsupported harness: ${harness}`);
 }
 
 const args = parseArgs(process.argv.slice(2));
@@ -286,10 +124,31 @@ const startedAt = new Date();
 let harnessRun;
 let gradingResult;
 try {
-  harnessRun = runHarness(args.harness, args.model, prompt, workspace,
-    Number(args['max-budget-usd'] || 2), Number(args['timeout-ms'] || 900_000),
-    Boolean(args['codex-external-sandbox']), Boolean(args['codex-container']));
-  fs.writeFileSync(path.join(runDir, 'transcript.jsonl'), redactHome(harnessRun.result.stdout || ''));
+  harnessRun = runHarness({
+    harness: args.harness,
+    model: args.model,
+    prompt,
+    workspace,
+    maxBudgetUsd: Number(args['max-budget-usd'] || 2),
+    timeoutMs: Number(args['timeout-ms'] || 900_000),
+    codexExternalSandbox: Boolean(args['codex-external-sandbox']),
+    codexContainer: Boolean(args['codex-container']),
+    suiteRoot,
+  });
+  // The bundle publishes the model's turn. The recording of the machine that
+  // produced it — working directory, the skills installed on it, the account's
+  // plan tier, whatever a command printed — stays local, under an ignored
+  // directory at the repository root.
+  //
+  // redactHome runs on both copies, not just the committed one. The raw exists
+  // so a run can be read back in full, not so a username can be; and a
+  // directory that is harmless only until someone commits it is worth not
+  // creating.
+  const fullTranscriptText = redactHome(harnessRun.result.stdout || '');
+  const rawTranscriptDir = path.join(suiteRoot, '.eval-raw-transcripts');
+  fs.mkdirSync(rawTranscriptDir, { recursive: true });
+  fs.writeFileSync(path.join(rawTranscriptDir, `${runId}.jsonl`), fullTranscriptText);
+  fs.writeFileSync(path.join(runDir, 'transcript.jsonl'), reduceTranscript(fullTranscriptText));
   fs.writeFileSync(path.join(runDir, 'stderr.txt'), redactHome(harnessRun.result.stderr || harnessRun.result.error?.stack || ''));
   gradingResult = spawnSync(process.execPath, [grader, '--root', workspace], {
     cwd: suiteRoot, encoding: 'utf8', timeout: 120_000, maxBuffer: 20 * 1024 * 1024,
@@ -383,6 +242,10 @@ const manifest = {
   costCredits: harnessRun.costCredits,
   exitCode: harnessRun.result.status ?? 124,
   artifactSha256: hashTree(outputsDir),
+  // Recorded as a time rather than a flag, so a reader can tell a bundle
+  // reduced at capture (this reads close to finishedAt) from one converted in
+  // the retroactive pass (much later than the run it describes).
+  transcriptReducedAt: new Date().toISOString(),
   files: { prompt: 'prompt.txt', transcript: 'transcript.jsonl', stderr: 'stderr.txt', grading: 'grading.json', workspace: 'outputs' },
   grading: counts,
 };

@@ -22,11 +22,18 @@ import fs from 'fs';
 import path from 'path';
 
 const root = path.resolve(import.meta.dirname, '..', '..');
-const source = fs.readFileSync(path.join(root, 'scripts', 'eval-run.mjs'), 'utf8');
+// Moved out of eval-run.mjs on 2026-09-11, when that file passed the 400-line
+// limit this repository enforces on itself and the harness dispatch was the
+// coherent thing to extract. This test found the move by crashing on its
+// anchor, which is the behaviour wanted from it — but it crashed rather than
+// failing, because it asserts with bare `assert` instead of the suite's
+// `expect`, so the runner counted zero assertions and zero failures. A module
+// that aborts reads as green to anything counting lines.
+const source = fs.readFileSync(path.join(root, 'scripts', 'lib', 'eval-harness-run.mjs'), 'utf8');
 
-// The antigravity branch, from its guard to the spawnSync that runs it.
-const start = source.indexOf("if (harness === 'antigravity')");
-assert.ok(start > 0, 'the antigravity branch has moved or been renamed');
+// The antigravity adapter, from its declaration to the spawnSync that runs it.
+const start = source.indexOf('function runAntigravity(');
+assert.ok(start > 0, 'the antigravity adapter has moved or been renamed');
 const branch = source.slice(start, source.indexOf('spawnSync', start));
 
 assert.match(branch, /'--add-dir',\s*workspace/,

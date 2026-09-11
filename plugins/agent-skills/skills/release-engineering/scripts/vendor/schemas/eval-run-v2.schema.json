@@ -196,6 +196,11 @@
       ],
       "description": "SHA-256 of the .agent-input tree staged for this condition (skill text or checker); null for control and policy, which stage nothing."
     },
+    "transcriptReducedAt": {
+      "type": "string",
+      "minLength": 20,
+      "description": "When transcript.jsonl was reduced to the shapes scripts/lib/reduce-transcript.mjs emits — tool-call commands, agent messages, and the model's final answer text. A harness transcript is a recording of a session on someone's machine, and the incidental half of it (working directory, installed skills, account tier, whatever a command printed) accumulates across hundreds of committed bundles: an audit on 2026-09-08 found a username in 1,890 places and a private host's tooling listed in 49 files. Reduction publishes the model's turn and drops the machine. A timestamp rather than a flag, because the two ways a bundle gets here are worth telling apart: reduced at capture reads close to finishedAt, while a bundle converted in the retroactive pass reads much later than the run it describes. eval-verify checks the claim rather than trusting it, so a full transcript cannot be committed under this field. Absent on bundles predating reduction, which are unreduced and say so by omission."
+    },
     "regrade": {
       "type": "object",
       "additionalProperties": false,

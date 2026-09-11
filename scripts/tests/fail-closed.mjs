@@ -92,6 +92,44 @@ import {
     expect('gitleaks-extra: documentation placeholders do not BLOCK',
       Boolean(cleanSecrets) && cleanSecrets.status === 'pass',
       cleanSecrets ? cleanSecrets.detail.slice(0, 220) : JSON.stringify(cleanRep));
+
+    // ---------- the loopback-bearer allowlist in core/gitleaks-defaults.toml ----------
+    // Eval fixtures boot a server on 127.0.0.1 inside a command line and then
+    // curl it, and a model exercising an invite API invents
+    // `Authorization: Bearer admin-...` because the endpoint sounds like it
+    // needs one. Nothing reads that header — the fixtures have no auth check —
+    // and gitleaks' stock curl-auth-header rule fires on the SHAPE without
+    // knowing the target. It blocked a commit of 1,536 reduced transcripts on
+    // 2026-09-10 over three such values.
+    //
+    // The allowlist that fixes it is the dangerous kind: one character greedier
+    // and it stops gitleaks catching real bearer tokens anywhere, while looking
+    // exactly like success. So the assertions that matter are the ones that
+    // must STILL BLOCK. The shorter version of this exemption — a `paths` entry
+    // for eval/runs/ — would have exempted the whole evidence corpus from every
+    // rule, because gitleaks ORs allowlist conditions.
+    const gitleaksConfig = path.join(root, 'core', 'gitleaks-defaults.toml');
+    const scan = (content) => {
+      const dir = fs.mkdtempSync(path.join(tmpBase, 'gitleaks-allowlist-'));
+      const file = path.join(dir, 'probe.txt');
+      fs.writeFileSync(file, `${content}\n`);
+      const run = spawnSync('gitleaks', [
+        'detect', '--no-git', '--no-banner', '--redact',
+        '--config', gitleaksConfig, '--ignore-gitleaks-allow', '--source', file,
+      ], { encoding: 'utf8' });
+      fs.rmSync(dir, { recursive: true, force: true });
+      return run.status === 1; // gitleaks exits 1 on a finding, 0 when clean
+    };
+    // Runtime-generated, never a literal: a stored high-entropy token would
+    // trip this repository's own pre-commit hook, same as above.
+    const bearerSecret = crypto.randomBytes(24).toString('base64url').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 32);
+
+    expect('gitleaks allowlist: a fixture curl at 127.0.0.1 does not BLOCK',
+      !scan(`node src/server.js & curl -sS -X POST http://127.0.0.1:3000/api/projects/roadmap/invites -H 'Authorization: Bearer admin-token-1'`));
+    expect('gitleaks allowlist: a bearer token aimed at a real host is still caught',
+      scan(`curl https://api.stripe.com/v1/charges -H "Authorization: Bearer ${bearerSecret}"`));
+    expect('gitleaks allowlist: a loopback line does not launder a secret on the next line',
+      scan(`curl http://127.0.0.1:3000/x -H 'Authorization: Bearer admin-token-1'\ncurl https://api.example.net -H "Authorization: Bearer ${bearerSecret}"`));
   }
 }
 
