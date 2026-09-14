@@ -140,6 +140,36 @@ not a replacement for it: scripts resolving is not the product working, and
    to. The checker cannot tell a confident runbook from an honest one, and
    the difference only surfaces at 3am, to someone who is not you.
 
+9. **A pull request with no template still has a required shape.** If the
+   repository has a template, it wins — fill it out rather than substituting
+   your own headings; someone chose those fields. When there is none, this
+   is the default, and it exists because the reviewer's questions are the
+   same either way:
+
+   - **Title: the one-line claim, the same register as a commit subject.**
+     What changed and what it means, not a category. Add a `feat:`/`fix:`
+     type prefix only where the repository already uses one *and something
+     consumes it* — a changelog generator, semantic-release, a merge-queue
+     rule. Check before imposing it: a convention nothing reads costs every
+     author a prefix and pays nobody, and in a repository whose subjects
+     state findings it actively deletes information.
+   - **What changed**, in the reviewer's terms rather than the diff's. The
+     diff already says which lines moved.
+   - **Why now** — the bug, the request, the constraint. A change with no
+     stated reason cannot be argued with, only accepted or blocked.
+   - **How it was verified** — the command and what it printed. "Tested
+     locally" is the claim `product-acceptance` exists to refuse, and a
+     reviewer cannot re-run a sentence.
+   - **How to roll it back**, or why that is trivial here. Rule 4 requires
+     the path to exist; this is where the reviewer finds out whether it
+     does.
+   - **`flagged: yes|no — <reason>`**, from rule 5.
+
+   Keep it proportionate: a dependency bump does not need six headings, and
+   a template that forces them teaches people to type "n/a" six times,
+   which is how a form stops being read. The floor is the title and the
+   verification.
+
 **Why this is the half the suite was missing.** Everything above rule 7
 covers getting code into production. Nothing covered it *being* in
 production — no observability, no alerting, no incident path — so the
