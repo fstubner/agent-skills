@@ -56,6 +56,68 @@ half (`OPERATIONS.md`, `check-operability`). Two skill descriptions
 rewritten after the selection harness showed them competing. Readable
 verdicts and the two-tier routing table shipped in alpha.22 are unchanged.
 
+Continued on 2026-09-14, covering the 38 commits since that reconstruction.
+Written the same way: by theme, with the measurements left in the commit
+messages.
+
+**A published repository was publishing more than it meant to.** An audit of
+the committed run bundles found the maintainer's username in 1,890 places
+and a private machine's tooling listed in 49 files. A harness transcript is
+a recording of somebody's computer — the working directory, the shell, the
+installed skills, the account's plan tier — and 1,537 of them had been
+committed whole. Deleting them was the wrong fix, because `eval-verify`
+refuses a bundle whose declared files are missing and the evidence system
+exists to provide them, so the bundle now keeps a reduced transcript built
+from an allowlist: tool-call commands, agent messages, and the model's final
+answer. A field a harness adds tomorrow cannot leak through a list of things
+nobody named. Verified on the corpus rather than a fixture — the
+ambient-skill guard reaches the same verdict on all 1,537, and the same 830
+runs stay eligible. 12.74 MB becomes 2.27 MB, and the raw recordings stay
+local under an ignored directory.
+
+**This repository's own commits are now gated the way its skills tell
+everyone else to work.** A `commit-msg` hook states the audience at every
+commit — the message is published, and unlike code it cannot be edited
+afterwards — and refuses home-directory paths, local scratch paths, IP
+addresses, and tool-attribution trailers. It also pins the commit style this
+repository already writes in, each rule measured against 215 human non-merge
+commits before it was written: a blank line after the subject (0 violations),
+no trailing period (6), a body wrapped at 80 columns (34 of 6,862 lines, with
+aligned report tables exempt). Conventional Commits is deliberately absent —
+1 of 215 commits carries a type prefix, nothing here consumes the field, and
+the subject states a finding that a `fix(eval):` would only shorten by
+deleting it. A `pre-commit` check refuses a commit whose staged `core/` edit
+leaves the three generated trees stale, which had happened twice in one
+evening and been caught both times only by the full suite.
+
+**Comment and decision discipline.** `code-smells` gains the other half of
+its comment guidance: *comment as deodorant* covered explaining confusing
+code, and the mirror case — a line whose reason cannot be recovered by
+reading it, which the next person deletes as a tidy-up — was unnamed.
+*Comment as author diary* is new, pointing dates, tickets and initials at
+version control. `systems-architecture` gains ADRs (rule 5, with a template),
+for decisions expensive to reverse; superseding one means writing a new one,
+never editing the old. `release-engineering` gains a default pull-request
+shape for repositories with no template, and this one gets a template.
+
+**The instrument, again.** The verdict parser read "DO NOT SHIP" as ship. 28
+`product-acceptance` assertions had never been satisfied by any run, and 8 of
+25 dead assertions were measuring the wrong words. Every harm-guard failure
+ever recorded turned out to be the guard misreading the report. The
+antigravity arm was grading an untouched fixture, because the adapter never
+told `agy` which directory to work in — the entire second-harness cohort, and
+nothing in the hash-binding scheme could see it, since the harness invocation
+is not an input to any of the hashes. 337 control and policy bundles were
+re-homed without spending a run.
+
+**Fixed.** A CI failure red since at least 2026-09-01, from line endings and
+an over-broad ignore rule. The npm entry for `/` that was only ever finding
+fixtures. A drift job that compared the bytes of a page instead of the page.
+Cursor's plugin and marketplace schemas drifted upstream on 2026-09-10
+(`minClientVersions` widened to accept `"never"`, `grokbot` added); reviewed,
+found to affect nothing this repository emits, and re-pinned with the review
+recorded beside the pin.
+
 ## 1.0.0-alpha.22 — 2026-08-17
 
 Two changes from a product review, both aimed at the suite being pleasant to
