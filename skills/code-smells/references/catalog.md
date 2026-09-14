@@ -15,8 +15,8 @@ this suite's own examples — not reproduced from the book.
   primitive obsession, data clumps, switch statements / repeated type checks
 - [Over-engineering](#over-engineering-built-for-a-need-that-hasnt-shown-up):
   speculative generality, refused bequest
-- [Housekeeping](#housekeeping): dead code, comment as deodorant, temporary
-  field
+- [Housekeeping](#housekeeping): dead code, comment as deodorant, comment as
+  author diary, temporary field
 
 ## Bloaters (something has grown past what it can carry)
 
@@ -141,6 +141,24 @@ rewritten to not need the explanation.
 - **Fix:** rewrite the code so the comment becomes unnecessary, then delete
   it. A comment explaining *why* (a non-obvious constraint, a workaround for
   a specific bug) is not this smell — only ones papering over unclear *what*.
+- **The absence is the mirror smell.** Code whose *why* cannot be recovered
+  by reading it — a bounds check that looks redundant, a sleep that looks
+  arbitrary, an ordering that looks incidental — reads to the next person as
+  something safe to tidy away. If deleting a line would look like a cleanup
+  and isn't, a comment is what stops that, and it has to say what breaks,
+  not what the line does. That is the one thing a comment can do that
+  clearer code cannot do for itself.
+
+### Comment as author diary
+Comments recording who changed something, when, and under which ticket —
+`// added 2026-03-14, TS`, `// per PROJ-812`, a dated changelog block at the
+top of a file.
+- **Fix:** delete it. Version control already holds all of it, more
+  accurately and without drifting, and the diary form rots silently: the
+  line it describes moves, the ticket closes, the attribution outlives a
+  rewrite that made it false. It also competes for attention with the *why*
+  the reader actually needs. Put the who, the when and the ticket in the
+  commit message, where they stay attached to the change itself.
 
 ### Temporary field
 A field that's only meaningful during certain operations and is `null` or

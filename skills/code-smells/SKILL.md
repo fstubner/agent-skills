@@ -82,6 +82,7 @@ enough to fix it well.
 | Speculative generality | Abstraction built for a future need that hasn't arrived |
 | Dead code | Reachable code nothing calls, or a flag that's always the same value now |
 | Comment as deodorant | A comment explaining code that's confusing instead of code that's clear |
+| Comment as author diary | Dates, tickets and initials in source, which version control already records |
 
 ## Rules
 
