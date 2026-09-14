@@ -72,6 +72,31 @@ doc when the system has parts, whatever the checker says.
 3. Every trust decision names an enforcement point ("server validates X at
    POST /y"), not a vibe ("we sanitize inputs").
 4. See `references/boundaries.md` for the decision procedure and patterns.
+5. **A decision that is expensive to reverse gets an ADR.**
+   `ARCHITECTURE.md` says what the system *is*. It cannot say what was true
+   when the shape was chosen — the constraint, the deadline, the thing you
+   did not know yet — and that is exactly what a later reader needs in
+   order to argue with the decision rather than inherit it. Start from
+   `assets/ADR.md`, write it in `docs/adr/`, numbered and dated.
+
+   **Not every decision.** The threshold is reversibility, not importance:
+   a choice you could undo in an afternoon does not need a file. Write one
+   when a decision moves a boundary or a trust edge, when undoing it would
+   mean a data migration or a contract change, or when you rejected an
+   alternative that a reasonable person will propose again.
+
+   **Superseding means writing a new one**, and marking the old one
+   `Superseded by ADR <n>`. Editing the original to match what you now
+   believe destroys the only record of what you believed then, which was
+   the point of writing it down.
+
+   **No checker, deliberately.** Whether a decision was made is not
+   visible in a file tree, so a check demanding ADRs exist would fire on
+   every project that never made a hard call and teach people to write
+   empty ones. A checker could verify the *shape* of the ADRs that do
+   exist — headings present, a valid status, numbering without gaps — and
+   that is worth adding once a project has enough of them to drift, not
+   before.
 
 ## Handoff
 

@@ -158,7 +158,9 @@ top of a file.
   line it describes moves, the ticket closes, the attribution outlives a
   rewrite that made it false. It also competes for attention with the *why*
   the reader actually needs. Put the who, the when and the ticket in the
-  commit message, where they stay attached to the change itself.
+  commit message, where they stay attached to the change itself — and a
+  decision that needs more than a line in an ADR (`systems-architecture`
+  rule 5), where it can be superseded rather than quietly edited.
 
 ### Temporary field
 A field that's only meaningful during certain operations and is `null` or
