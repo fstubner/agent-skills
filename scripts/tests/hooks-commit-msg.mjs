@@ -56,7 +56,7 @@ import { root, expect, tmpBase } from './harness.mjs';
   // The rule is about identifiers, not vocabulary. A message describing a run
   // that died on a quota event is describing evidence, and a hook that argued
   // with it would be trained away inside a day.
-  const prose = runHook('Codex quota is gone, so the pre-registered second harness cannot run.\n');
+  const prose = runHook('Codex quota is gone, so the pre-registered second harness cannot run\n');
   expect('commit-msg: does not argue with prose about quota or cost', prose.status === 0, prose.stderr);
 
   // There is no email clause, decided by replaying all 224 messages in this
@@ -73,6 +73,10 @@ import { root, expect, tmpBase } from './harness.mjs';
   // this project is that no commit carries a Co-Authored-By footer at all.
   for (const [what, message] of [
     ['a Co-authored-by trailer', 'Add the thing\n\nCo-authored-by: Cursor <cursoragent@cursor.com>\n'],
+    // The bare form too. No commit in this history carries it, so the clause
+    // costs nothing against the past — it exists because dropping two
+    // characters is the obvious way around the Co- rule.
+    ['a bare Authored-by trailer', 'Add the thing\n\nAuthored-by: Some Tool <tool@example.com>\n'],
     ['a generated-with footer', 'Add the thing\n\n🤖 Generated with [Some Tool](https://example.com)\n'],
   ]) {
     const blocked = runHook(message);
@@ -83,6 +87,45 @@ import { root, expect, tmpBase } from './harness.mjs';
   const squash = runHook('build(deps): bump the harness-clis group (#21)\n\nSigned-off-by: dependabot[bot] <support@github.com>\n');
   expect('commit-msg: a GitHub squash-merge sign-off is not tool attribution',
     squash.status === 0, squash.stderr);
+
+  // The shape rules. Each was measured against the 215 human non-merge commits
+  // in this history before it was added, so each refuses something this
+  // repository already avoids rather than importing a style from elsewhere.
+  for (const [what, message] of [
+    ['a subject ending in a period', 'Add the thing.\n'],
+    ['a missing blank line after the subject', 'Add the thing\nStraight into the body.\n'],
+    ['a body line past 80 columns', `Add the thing\n\n${'x'.repeat(81)}\n`],
+  ]) {
+    const blocked = runHook(message);
+    expect(`commit-msg: refuses ${what}`, blocked.status === 1, `exit ${blocked.status}: ${blocked.stderr}`);
+  }
+
+  // An ellipsis is not a sentence-ending period.
+  const ellipsis = runHook('The run stopped somewhere in the middle...\n');
+  expect('commit-msg: an ellipsis is not a trailing period', ellipsis.status === 0, ellipsis.stderr);
+
+  // Indented lines are quoted output. 11 of the 34 over-length lines in this
+  // history are eval report tables whose columns are aligned on purpose, and
+  // rewrapping them would destroy the alignment that makes them legible.
+  const table = runHook(`Report the arm\n\n${'  '}${'y'.repeat(90)}\n`);
+  expect('commit-msg: indented quoted output may exceed the column limit',
+    table.status === 0, table.stderr);
+
+  // Exactly 80 is inside the limit, not over it.
+  const exact = runHook(`Add the thing\n\n${'z'.repeat(80)}\n`);
+  expect('commit-msg: 80 columns exactly is allowed', exact.status === 0, exact.stderr);
+
+  // The subject is uncapped on purpose: 45% of recent subjects run past 72
+  // characters because the subject states a finding, not a category.
+  const longSubject = runHook(`${'A finding stated at length '.repeat(4)}\n`);
+  expect('commit-msg: a long subject is not a style failure',
+    longSubject.status === 0, longSubject.stderr);
+
+  // And Conventional Commits is not required — 1 of 215 human commits uses a
+  // type prefix. A hook demanding one would refuse this repository's history.
+  const narrative = runHook('The verdict parser read "DO NOT SHIP" as ship\n\nIt matched on the substring.\n');
+  expect('commit-msg: a narrative subject with no type prefix passes',
+    narrative.status === 0, narrative.stderr);
 
   const noRemote = fs.mkdtempSync(path.join(tmpBase, 'commit-msg-local-'));
   spawnSync('git', ['init', '-q'], { cwd: noRemote });

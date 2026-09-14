@@ -62,8 +62,12 @@ const REFUSED = [
     // GitHub on a squash merge, arrives without this hook running, and is not
     // a claim about who wrote the change. Refusing it would only ever fire on
     // a merge the author performed by hand.
-    id: 'tool attribution trailer',
-    re: /^(?:Co-authored-by:.*|(?:🤖\s*)?Generated with \[?[A-Z].*)$/gim,
+    // `Authored-by:` is refused alongside the `Co-` form. No commit in this
+    // history carries the bare form, so widening costs nothing against the
+    // past — it closes the obvious way around the rule, which is to drop two
+    // characters.
+    id: 'attribution trailer',
+    re: /^(?:(?:Co-)?Authored-by:.*|(?:🤖\s*)?Generated with \[?[A-Z].*)$/gim,
   },
 ];
 
@@ -72,6 +76,57 @@ const REFUSED = [
 // help text git itself wrote.
 function messageBody(raw) {
   return raw.split('\n').filter((line) => !line.startsWith('#')).join('\n');
+}
+
+// The shape rules, as distinct from the privacy rules above: these are not
+// about what a message may not contain, but about the form this repository
+// already writes in. Each was measured against the 215 human non-merge
+// commits in this history before it was added, and none is a convention
+// imported from outside:
+//
+//   blank line after the subject     0 violations
+//   no trailing period on subject    6 violations
+//   body wrapped at 80 columns      34 violations of 6,862 body lines
+//
+// Conventional Commits is deliberately NOT among them. One commit of the 215
+// carries a type prefix, and 45% of recent subjects run past 72 characters
+// because the subject in this repository states a finding — "The verdict
+// parser read 'DO NOT SHIP' as ship" — which a `fix(eval):` prefix would
+// only shorten by deleting the finding. Nothing here consumes the type
+// field either: no changelog generator, no semantic-release. So the subject
+// has NO length cap; capping it would fail a third of the history on style
+// grounds alone.
+const BODY_COLUMNS = 80;
+
+function conventionFailures(body) {
+  const lines = body.replace(/\r/g, '').split('\n');
+  const subject = lines[0] ?? '';
+  // Trailing blank lines are git's, not the author's.
+  while (lines.length && lines[lines.length - 1].trim() === '') lines.pop();
+  const failures = [];
+
+  if (subject.trim() === '') return failures; // git refuses this one itself.
+
+  if (/\.$/.test(subject) && !/\.\.\.$/.test(subject)) {
+    failures.push('the subject ends in a period; it is a title, not a sentence');
+  }
+
+  if (lines.length > 1 && lines[1].trim() !== '') {
+    failures.push('no blank line after the subject — git\'s own tooling '
+      + '(`--oneline`, `%s`/`%b`, every forge) splits the message there');
+  }
+
+  // Indented lines are quoted output — eval report tables whose columns are
+  // aligned on purpose. 11 of the 34 historical over-length lines are these,
+  // and rewrapping them would destroy the alignment that makes them readable.
+  // Unindented prose gets no such excuse: none of the remaining 23 contained
+  // a single unbreakable token.
+  for (const [i, line] of lines.slice(1).entries()) {
+    if (line.length > BODY_COLUMNS && !/^\s{2,}/.test(line)) {
+      failures.push(`body line ${i + 2} is ${line.length} columns; wrap at ${BODY_COLUMNS}`);
+    }
+  }
+  return failures;
 }
 
 function audience() {
@@ -101,13 +156,28 @@ for (const rule of REFUSED) {
 }
 
 const { published, where } = audience();
-if (found.length) {
-  console.error('\ncommit-msg: this message contains content that is private to this machine.\n');
-  for (const f of found) console.error(`  ${f.id}: ${f.match}`);
-  console.error(published
-    ? `\nIt would be published at ${where}, where a commit message cannot be edited afterwards.`
-    : '\nNo remote is configured, so it would stay on this machine — but it would travel with the repository.');
-  console.error('Rewrite the message, or commit with --no-verify if this is deliberate.\n');
+const shape = conventionFailures(body);
+
+// Both categories are reported together, and this is not cosmetic: a hook
+// that knows about three problems and names one costs the author a commit,
+// a refusal, a fix and another refusal for each. It also made the rules
+// unmeasurable — replaying them against this history, the privacy check
+// exited first on 6 commits and hid every shape failure behind them, so the
+// replay counted what survived to the second check rather than what the
+// rules actually refuse.
+if (found.length || shape.length) {
+  if (found.length) {
+    console.error('\ncommit-msg: this message contains content that is private to this machine.\n');
+    for (const f of found) console.error(`  ${f.id}: ${f.match}`);
+    console.error(published
+      ? `\nIt would be published at ${where}, where a commit message cannot be edited afterwards.`
+      : '\nNo remote is configured, so it would stay on this machine — but it would travel with the repository.');
+  }
+  if (shape.length) {
+    console.error('\ncommit-msg: this message does not follow this repository\'s commit style.\n');
+    for (const f of shape) console.error(`  ${f}`);
+  }
+  console.error('\nRewrite the message, or commit with --no-verify if this is deliberate.\n');
   process.exit(1);
 }
 
