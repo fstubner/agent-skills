@@ -54,6 +54,7 @@ const MODULES = [
   'hooks.mjs',            // pre-commit secret scanning (skips only when gitleaks is absent)
   'hooks-scan-set.mjs',   // the pre-commit scan set travels in a file, not argv
   'hooks-commit-msg.mjs', // and the message itself is checked against the audience it will reach
+  'hooks-generated-artifacts.mjs', // and a core/ edit may not leave the three generated trees behind
   'redact-home.mjs',      // the machine that ran an eval does not travel with the evidence
   'reduce-transcript.mjs', // and the bundle publishes the model's turn, not the session around it
   'installer.mjs',        // harnessPaths, installed-skill smoke test, clobber refusal

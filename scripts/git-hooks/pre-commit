@@ -242,6 +242,63 @@ for (const { skill, script } of SCOPED_CHECKERS) {
     for (const c of failed) console.error(`  [${c.id}] ${c.detail}`);
   }
 }
+
+// Generated artifacts must be current in the commit that changes what they
+// are generated from.
+//
+// core/ is vendored into six skills and into the plugin bundle, so editing one
+// file there silently invalidates thirteen tracked copies. The only thing
+// standing between that and a wrong commit was remembering to run the
+// generator, and on 2026-09-11 that failed twice in one session — the second
+// time hours after the caveat about it had been written down. Both times the
+// full test suite caught it, twenty-five minutes after the commit was made.
+// This moves the catch to the moment the mistake happens.
+//
+// It runs the generator FROM THE STAGED TREE, not the working tree. The
+// generator derives its root from its own location, so the copy materialized
+// under stagedRoot compares staged sources against staged outputs — which is
+// the question the commit is actually asking. Running the working-tree copy
+// would pass a commit whose staged core/ edit leaves the bundles stale, which
+// is precisely the failure being closed.
+//
+// Scoped by trigger, because a hook that runs a full generation on every
+// unrelated commit is a hook that gets switched off — the same reasoning
+// core/gitleaks-extra.toml's header sets out at length for false positives.
+const GENERATION_INPUTS = [/^core\//, /^registry\.json$/, /^VERSION$/, /^scripts\/gen-plugin-bundles\.mjs$/];
+const GENERATION_OUTPUTS = [/^plugins\//, /^skills\//, /^\.agents\/plugins\//, /^\.cursor-plugin\//, /^gemini-extension\.json$/];
+// Skill sources are top-level directories named by the registry, so the list
+// comes from the registry rather than a second copy that drifts from it.
+let stagedSkillDirs = null;
+try {
+  const registry = JSON.parse(fs.readFileSync(path.join(stagedRoot, 'registry.json'), 'utf8'));
+  const ids = (registry.skills || []).map((s) => s.id).filter((id) => /^[a-z][a-z0-9-]*$/.test(id));
+  if (ids.length > 0) stagedSkillDirs = new RegExp(`^(?:${ids.join('|')})/`);
+} catch { /* no readable registry in the staged tree: inputs and outputs still apply */ }
+
+const touchesGeneration = checkable.some((f) => GENERATION_INPUTS.some((re) => re.test(f))
+  || GENERATION_OUTPUTS.some((re) => re.test(f))
+  || (stagedSkillDirs !== null && stagedSkillDirs.test(f)));
+
+if (touchesGeneration) {
+  const generator = path.join(stagedRoot, 'scripts', 'gen-plugin-bundles.mjs');
+  // Missing generator warns rather than blocks, same tradeoff as a missing
+  // gitleaks or a missing scoped checker: this hook can be copied into a
+  // project that does not vendor it.
+  if (!fs.existsSync(generator)) {
+    console.error('pre-commit: gen-plugin-bundles.mjs is not in the staged tree — generated-artifact check skipped.');
+  } else {
+    const generated = spawnSync(process.execPath, [generator, '--check'], { encoding: 'utf8' });
+    if (generated.error) {
+      console.error(`pre-commit: generated-artifact check could not run (${generated.error.message}) — skipped.`);
+    } else if (generated.status !== 0) {
+      blocked = true;
+      console.error('pre-commit: generated artifacts are stale in this commit:');
+      const detail = (generated.stderr || generated.stdout || '').trim();
+      if (detail) console.error(detail.split('\n').map((line) => `  ${line}`).join('\n'));
+      console.error('  Regenerate with: node scripts/gen-plugin-bundles.mjs');
+    }
+  }
+}
 } finally {
   // Cleanup failure is not a scan result. On Windows this rmSync raises EPERM
   // when something still holds a handle under the temp tree — antivirus, or a
