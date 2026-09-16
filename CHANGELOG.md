@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+## 0.3.0 — 2026-09-17
+
+**Renumbered from `1.0.0-alpha.22` to `0.3.0`.** Nothing about the software
+changed; the version string was overclaiming. `1.0.0-alpha.N` says the next
+stop is 1.0, and twenty-two alphas in, that had stopped being true — while
+the README still says no efficacy claim is supported yet. `0.x` says
+"unstable, anything may change", which is what this actually is. The 0.x
+line was abandoned at `0.2.0` on 2026-07-18 and no reason for the switch to
+`1.0.0-alpha` was ever recorded anywhere; this resumes it.
+
+This is a version DOWNGRADE in semver terms and would break upgrades for
+anyone already installed. Nobody is: there are no GitHub releases and the
+tags stop at `v1.0.0-alpha.13`, so nothing has ever been distributed under
+the alpha numbering. That made now the last cheap moment to do it. The
+historical `1.0.0-alpha.N` headings below are left exactly as they are, as
+are the version strings recorded inside eval run bundles and the install
+marker incident documented in INSTALL.md — those are records of what
+happened, not statements about what the version is.
+
 Reconstructed on 2026-09-03 from the 94 commits since alpha.22, after a
 self-assessment found this section missing. Written by theme rather than by
 commit; the commit messages carry the measurements.
