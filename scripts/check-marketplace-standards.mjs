@@ -27,6 +27,12 @@ function requireValue(condition, message) {
 function validateLocalPackages() {
   const manifests = [
     ['Claude', 'plugins/agent-skills/.claude-plugin/plugin.json'],
+    // The root manifest is hand-maintained: gen-plugin-bundles.mjs writes the
+    // copy under plugins/ and never touches this one. It held 1.0.0-alpha.22
+    // through the renumbering to 0.3.0, after a full regeneration reported
+    // success and this checker passed, and only a grep found it. A file that
+    // nothing writes and nothing reads is exactly the one that goes stale.
+    ['Claude (repository root)', '.claude-plugin/plugin.json'],
     ['Codex', 'plugins/agent-skills/.codex-plugin/plugin.json'],
     ['Cursor', 'plugins/agent-skills/.cursor-plugin/plugin.json'],
     ['Gemini', 'gemini-extension.json'],

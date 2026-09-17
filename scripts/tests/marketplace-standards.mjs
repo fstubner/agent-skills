@@ -43,6 +43,32 @@ expect('generated marketplace packages share the release version and canonical r
   result.status === 0,
   `${result.stdout}${result.stderr}`.trim());
 
+// The root .claude-plugin/plugin.json is hand-maintained — gen-plugin-bundles
+// writes the copy under plugins/ and never this one — so it went stale through
+// the 1.0.0-alpha.22 -> 0.3.0 renumbering while a full regeneration reported
+// success and this very checker passed.
+//
+// Asserted against the checker's SOURCE rather than by breaking the file and
+// watching it fail, which would be the stronger test. The checker resolves its
+// own repository root and takes no --root, so a behavioural test would have to
+// mutate a committed file, and this harness's rule is that committed files are
+// copied before a checker runs, never edited in place. Parameterising the
+// checker is the change that would buy the stronger test.
+{
+  const checkerSource = fs.readFileSync(
+    path.join(root, 'scripts', 'check-marketplace-standards.mjs'), 'utf8');
+  expect('the standards checker validates the hand-maintained root manifest',
+    /\['[^']*',\s*'\.claude-plugin\/plugin\.json'\]/.test(checkerSource),
+    'check-marketplace-standards.mjs no longer lists .claude-plugin/plugin.json, '
+    + 'so the one manifest nothing generates is unchecked again');
+
+  const rootManifest = JSON.parse(
+    fs.readFileSync(path.join(root, '.claude-plugin', 'plugin.json'), 'utf8'));
+  const version = fs.readFileSync(path.join(root, 'VERSION'), 'utf8').trim();
+  expect('the root manifest carries the current VERSION',
+    rootManifest.version === version, `${rootManifest.version} != ${version}`);
+}
+
 const release = fs.readFileSync(path.join(root, '.github', 'workflows', 'release.yml'), 'utf8');
 const runtime = fs.readFileSync(path.join(root, '.github', 'workflows', 'runtime-smoke.yml'), 'utf8');
 const drift = fs.readFileSync(path.join(root, '.github', 'workflows', 'standards-drift.yml'), 'utf8');
