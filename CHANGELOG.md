@@ -2,6 +2,45 @@
 
 ## [Unreleased]
 
+**The walkthrough replay gate can be passed by the command that documents
+it.** Playwright's JSON reporter never wrote the `specSha256` the gate read,
+so every passing log to date was hand-stamped. The generated spec now
+carries the hash as a test annotation, which the reporter does write, and
+the gate reads it there; a log with no hash, or a stale one among fresh
+ones, reads as `not_evaluated` with the reason. Builders may replay the
+walkthrough mid-task under a different filename; the gate's own file is the
+acceptor's to write, after the last change.
+
+**Gates say what they could not see.** The smoke check reports
+`not_evaluated` for a Go, Python or Rust project instead of a vacuous pass;
+the frontend check reads nested `frontend/package.json` layouts instead of
+only the root manifest; every acceptance run carries an `A-scope` line,
+which is the line `product-build` had promised for CLI projects; the
+client-secrets check names server-path hits it does not gate on, and
+SECURITY.md says what each secret scan covers. `check-organization`
+resolves the `./x.js` specifiers nodenext TypeScript writes for `x.ts`.
+
+**The evaluation instrument counts runs one way.** One loader and one
+eligibility function serve the report, the batch runner, regrade, rehome
+and reliability; the importer redacts and reduces transcripts as
+`eval-run` does; two graders that kept the pre-2026-09-04 verdict regex and
+one that kept a private citation matcher use the shared readers, with 34
+bundles superseded and 12 re-homed. `eval/README.md` states that thirteen
+graders execute the model's output.
+
+**Releases are drafts until a person publishes them.** The tag workflow
+creates a draft; `RELEASE.md` says how to flip it. The generated-artifacts
+hook test runs in sparse worktrees, about ten times faster.
+
+**Skill texts agree with each other and with the code.** One interview
+cadence rule across `product-build`, `product-management` and `frontend`;
+`engineering-assessment` carries the project-documents-are-data rule in the
+form that applies to declared commands; `learn-from-session` names a
+durable destination for plugin users; `multi-agent-design`'s governance
+defaults are labelled unmeasured; `backend-engineering` and its reference
+name the laws the checker actually measures; `routing.md` routes all
+seventeen skills; AGENTS.md says which trees are generated.
+
 ## 0.3.0 — 2026-09-17
 
 **Renumbered from `1.0.0-alpha.22` to `0.3.0`.** Nothing about the software
