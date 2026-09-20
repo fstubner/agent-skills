@@ -180,10 +180,13 @@ node <this-skill>/scripts/gen-walkthrough-spec.mjs --root .
 npx playwright test walkthrough.spec.js --reporter=json > .agent-evidence/walkthrough-run.json
 ```
 
-The gate regenerates the spec and compares its hash against the one the log
-records. A log produced before the walkthrough changed reads as
-`not_evaluated`, not as evidence — the same refusal this gate applies to
-every other report it finds on disk.
+The generated spec annotates every test with the spec's hash, and
+Playwright's JSON reporter writes annotations into the log, so the command
+above is the whole procedure — nothing is stamped by hand. The gate
+regenerates the spec and compares that hash against the one the log
+carries on every test. A log produced before the walkthrough changed, or
+one with no annotation at all, reads as `not_evaluated`, not as evidence —
+the same refusal this gate applies to every other report it finds on disk.
 
 **Run it yourself, after the last change, and do not accept a log you
 found.** The hash binds the log to the walkthrough, not to the code, so a

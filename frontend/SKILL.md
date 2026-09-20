@@ -13,7 +13,6 @@ description: >-
   and artifact requirements below are for establishing or changing
   direction, not for every touch.
 compatibility: Requires Node 18+ to run the deterministic checker script.
-allowed-tools: Bash(node scripts/check-frontend.js:*) Read Write Edit Glob Grep
 ---
 
 # Frontend

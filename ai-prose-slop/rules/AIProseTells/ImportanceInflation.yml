@@ -1,6 +1,6 @@
 extends: existence
 message: "'%s' announces importance without a fact backing it — replace with what actually changed."
-link: ../../references/patterns.md
+link: https://github.com/fstubner/agent-skills/blob/main/ai-prose-slop/references/patterns.md
 level: warning
 ignorecase: true
 tokens:

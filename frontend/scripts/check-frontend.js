@@ -104,18 +104,29 @@ function run(root) {
     return checks;
   }
 
-  // One framework.
-  if (!cls.pkg) {
+  // One framework, judged per manifest. The classifier finds every
+  // package.json in the tree — backend/ plus frontend/ with no workspaces
+  // field is an ordinary layout — but this check read only the root one,
+  // so those projects reported "no package.json readable" and sat at
+  // CONDITIONAL with nothing to fix. Per manifest rather than pooled, for
+  // the same reason B-dual-orm is: a monorepo with React in one app and Vue
+  // in another is two apps, not one split.
+  const nodeManifests = cls.manifests.filter((m) => m.ecosystem === 'node');
+  if (nodeManifests.length === 0) {
     checks.push(check('F-dual-framework', 'not_evaluated', 'no package.json readable'));
   } else {
-    const found = FRAMEWORKS.filter((d) => d in cls.deps);
-    checks.push(found.length > 1
-      ? check('F-dual-framework', 'fail', `multiple frameworks in dependencies: ${found.join(', ')}`)
-      : check('F-dual-framework', 'pass', found[0] ? `framework: ${found[0]}` : 'no framework dependency'));
+    const split = nodeManifests
+      .map((m) => ({ file: m.manifestFile, found: FRAMEWORKS.filter((d) => m.depNames.has(d)) }))
+      .filter((m) => m.found.length > 1);
+    const present = [...new Set(nodeManifests.flatMap((m) => FRAMEWORKS.filter((d) => m.depNames.has(d))))];
+    checks.push(split.length > 0
+      ? check('F-dual-framework', 'fail',
+          split.map((m) => `${m.file}: multiple frameworks in dependencies: ${m.found.join(', ')}`).join('; '))
+      : check('F-dual-framework', 'pass', present.length ? `framework: ${present.join(', ')}` : 'no framework dependency'));
   }
 
-  // One icon system (deps + CDN link tags in html).
-  const iconDeps = ICON_DEPS.filter((d) => d in cls.deps);
+  // One icon system (deps across every manifest + CDN link tags in html).
+  const iconDeps = ICON_DEPS.filter((d) => nodeManifests.some((m) => m.depNames.has(d)));
   let cdnIcons = 0;
   for (let i = 0; i < cls.files.length; i++) {
     if (!cls.rel[i].endsWith('.html')) continue;

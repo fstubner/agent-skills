@@ -1,6 +1,6 @@
 extends: existence
 message: "'%s' is inflated vocabulary that reads as AI-prose slop — name the plain action or quality instead."
-link: ../../references/patterns.md
+link: https://github.com/fstubner/agent-skills/blob/main/ai-prose-slop/references/patterns.md
 level: suggestion
 ignorecase: true
 tokens:

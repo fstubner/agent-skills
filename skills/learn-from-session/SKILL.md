@@ -33,7 +33,7 @@ exactly the noise this skill exists to avoid.
 | What happened | Destination |
 |---|---|
 | A mistake with a mechanical, checkable shape (a bug a test could have caught) | A regression fixture or check, in the relevant skill |
-| A mistake or gap in how a skill instructs behavior (a rule was missing, weak, or wrong) | An edit to that skill's `SKILL.md` or `references/` |
+| A mistake or gap in how a skill instructs behavior (a rule was missing, weak, or wrong) | An edit to that skill's `SKILL.md` or `references/` — in the suite's source checkout, as a change to propose upstream. An installed copy (`~/.claude/skills/<id>/`, a marketplace plugin) is overwritten by the next install, so an edit there is lost; until the change lands upstream, record it in the project's own `CLAUDE.md`/`AGENTS.md` as a standing instruction that overrides the skill |
 | A convention specific to one project, not generalizable to the skill itself | That project's own `CLAUDE.md`/`AGENTS.md`, not this suite |
 | A non-obvious approach that just got confirmed as the right call | Worth recording specifically because it wasn't obvious — the same bar as a correction, just the opposite verdict |
 | Something genuinely one-off, unlikely to recur, already fully handled | Nowhere. Not every fix is a lesson. |

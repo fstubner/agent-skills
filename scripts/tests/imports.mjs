@@ -50,6 +50,22 @@ import {
   try { rep = JSON.parse(r.stdout); } catch { /* asserted below */ }
   expect('imports — a multi-line ESM + barrel-re-export cycle is detected',
     rep && rep.verdict === 'BLOCK', JSON.stringify(rep && rep.checks));
+
+  // The same cycle under TypeScript's nodenext resolution, where the
+  // specifier names the EMITTED file: `import './b.js'` for `b.ts`. Read
+  // literally no edge resolved, the graph was empty, and this reported "2
+  // file(s) scanned, no circular imports" on a cycle it had just walked past.
+  const nodeNext = fs.mkdtempSync(path.join(tmpBase, 'nodenext-cycle-'));
+  fs.mkdirSync(path.join(nodeNext, 'src'), { recursive: true });
+  fs.writeFileSync(path.join(nodeNext, 'src', 'a.ts'),
+    "import { bThing } from './b.js';\nexport const aThing = () => bThing();\n");
+  fs.writeFileSync(path.join(nodeNext, 'src', 'b.ts'),
+    "import { aThing } from './a.js';\nexport const bThing = () => aThing();\n");
+  const nn = runNode(ORG, ['--root', nodeNext]);
+  let nnRep = null;
+  try { nnRep = JSON.parse(nn.stdout); } catch { /* asserted below */ }
+  expect('imports — a cycle written with nodenext .js specifiers over .ts sources is detected',
+    nnRep && nnRep.verdict === 'BLOCK', JSON.stringify(nnRep && nnRep.checks));
 }
 
 // ---------- 15. --files scoping (pre-commit hook viability) ----------

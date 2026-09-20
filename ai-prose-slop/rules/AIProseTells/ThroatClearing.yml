@@ -1,6 +1,6 @@
 extends: existence
 message: "'%s' is a throat-clearing opener — delete it and start with the point."
-link: ../../references/patterns.md
+link: https://github.com/fstubner/agent-skills/blob/main/ai-prose-slop/references/patterns.md
 level: suggestion
 ignorecase: true
 tokens:

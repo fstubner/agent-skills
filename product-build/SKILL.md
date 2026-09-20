@@ -34,7 +34,11 @@ What this skill owns is the gate itself:
 
 - **Ask one question per message**, and before each one name to yourself
   which part of the design it decides. When the next question decides
-  nothing, stop asking and present. Most work needs three to six.
+  nothing, stop asking and present. Most work needs three to six. This
+  cadence is the design gate's, where each answer changes the next
+  question; the interviews `product-management` and `frontend` run for
+  their own artifacts are one batched round each, because their questions
+  are independent. Do not carry either cadence into the other.
 - **Offer approaches that differ on a stated axis** — scope, technology,
   what gets deferred. Two honest options beat three padded ones; if only
   one approach is real, say that instead of manufacturing a choice.
@@ -94,21 +98,26 @@ can't be satisfied before the artifact it depends on exists.
 ## Scope boundary: CLI tools and libraries
 
 A project with no detected frontend and no server (a CLI tool, a library, a
-script) is gated on the product contract only — `systems-architecture`,
-`frontend`, and `backend-engineering` have nothing measurable to check when
-none of their signals are present, and `product-acceptance` will correctly
-report SHIP reachable from `PRODUCT.md` alone. That is an honest, stated
-scope boundary of today's gate, not a silent gap: this suite does not yet
-have a CLI-specific checker. If you're building a CLI tool "MVP", the
-acceptance verdict carries this line verbatim:
+script) is gated on the product contract and the smoke check — do the
+commands the project declares point at things that exist — and nothing
+else. `systems-architecture`, `frontend`, and `backend-engineering` have
+nothing measurable to check when none of their signals are present. The
+smoke check reads `package.json` only; for a Go, Python or Rust tool it
+reports `not_evaluated` rather than pass, which caps the verdict at
+CONDITIONAL until the acceptor resolves the declared commands by hand. That
+is an honest, stated scope boundary of today's gate, not a silent gap: this
+suite does not yet have a CLI-specific checker.
+
+The gate says so itself. `accept-check.js` emits an `A-scope` check on every
+run, and for a CLI or library its detail opens with this line verbatim:
 
 ```
-Scope: CLI/library — architecture, frontend and backend checks not applicable.
+Scope: CLI/library — architecture, frontend and backend checks not applicable
 ```
 
-A reader can see whether that line is present. "Implying the same rigor" is
-a tone judgment nobody can settle, and a scope caveat written in prose is
-one the next reader skims past.
+A reader can see whether that line is present in the report. "Implying the
+same rigor" is a tone judgment nobody can settle, and a scope caveat written
+only in prose is one the next reader skims past.
 
 ## Stop rules
 

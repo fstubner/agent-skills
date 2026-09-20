@@ -115,19 +115,37 @@ const spec = `// GENERATED from ux-walkthrough.md — do not edit.
 // Run it, then point acceptance at the log:
 //   npx playwright test walkthrough.spec.js --reporter=json > .agent-evidence/walkthrough-run.json
 //
-// The log records the hash below. Acceptance regenerates this spec and
-// compares, so a log from before the walkthrough changed reads as stale
+// Every test carries the hash below as an annotation, and Playwright's JSON
+// reporter writes annotations into the log. Acceptance regenerates this spec
+// and compares, so a log from before the walkthrough changed reads as stale
 // rather than as evidence.
 import { test, expect } from '@playwright/test';
 
 ${body}
 `;
 
+// The hash covers the spec BEFORE the trailer that carries it, or the hash
+// would have to contain itself. --print-hash and the written file agree
+// because both derive from this same string.
 const specHash = crypto.createHash('sha256').update(spec).digest('hex');
 if (args.includes('--print-hash')) {
   console.log(specHash);
   process.exit(0);
 }
+
+// The hash has to reach the run log, and Playwright's JSON reporter carries
+// nothing from a source comment — the first version of this file recorded
+// the hash only as `// specSha256:` and the documented command could never
+// produce a log the gate accepted. A beforeEach annotation is the reporter's
+// own channel: it lands on every test as { type, description }, wherever in
+// the file the hook is declared.
+const trailer = [
+  `test.beforeEach(async ({}, testInfo) => {`,
+  `  testInfo.annotations.push({ type: 'specSha256', description: ${JSON.stringify(specHash)} });`,
+  `});`,
+  `// specSha256: ${specHash}`,
+  '',
+].join('\n');
 
 const outPath = path.resolve(valueAfter('--out') || path.join(root, 'walkthrough.spec.js'));
 // The default lands beside ux-walkthrough.md, which exists by definition. A
@@ -136,7 +154,7 @@ const outPath = path.resolve(valueAfter('--out') || path.join(root, 'walkthrough
 // and an ENOENT there reads as "the generator is broken" rather than "make
 // the folder first".
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
-fs.writeFileSync(outPath, `${spec}// specSha256: ${specHash}\n`);
+fs.writeFileSync(outPath, `${spec}${trailer}`);
 console.log(JSON.stringify({
   source: path.relative(root, source),
   spec: path.relative(root, outPath),

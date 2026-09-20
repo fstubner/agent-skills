@@ -111,11 +111,21 @@ function scanForClientSecrets(root) {
     return check('B-client-secrets', 'fail', `gitleaks did not complete normally: ${crashedPass.detail}`);
   }
   const relOf = (absFile) => path.relative(root, absFile).split(path.sep).join('/');
-  const clientLeaks = passes.flatMap((p) => p.leaks).filter((leak) => !isServerOnlyPath(relOf(leak.File)));
+  const leaks = passes.flatMap((p) => p.leaks);
+  const clientLeaks = leaks.filter((leak) => !isServerOnlyPath(relOf(leak.File)));
+  // Hits under server-only paths do not decide this check — law 3 is about
+  // what a browser can fetch, and a secret in server.js is a different
+  // failure (a committed credential, which the pre-commit hook exists for).
+  // They are still named, so a passing check never reads as "no secrets in
+  // the tree": the reader sees what the scope excluded.
+  const serverLeaks = leaks.filter((leak) => isServerOnlyPath(relOf(leak.File)));
+  const serverNote = serverLeaks.length > 0
+    ? `; ${serverLeaks.length} hit(s) in server-only paths not gated here (${serverLeaks.map((l) => relOf(l.File)).join(', ')}) — a committed credential is the pre-commit hook's finding`
+    : '';
   return clientLeaks.length > 0
     ? check('B-client-secrets', 'fail',
-        `secret(s) in client-reachable paths: ${clientLeaks.map((l) => `${relOf(l.File)} [${l.RuleID}]`).join(', ')}`)
-    : check('B-client-secrets', 'pass', 'no secrets in client-reachable paths (gitleaks)');
+        `secret(s) in client-reachable paths: ${clientLeaks.map((l) => `${relOf(l.File)} [${l.RuleID}]`).join(', ')}${serverNote}`)
+    : check('B-client-secrets', 'pass', `no secrets in client-reachable paths (gitleaks)${serverNote}`);
 }
 
 // ---------- Session-cookie flags (law 6's measurable projection) ----------

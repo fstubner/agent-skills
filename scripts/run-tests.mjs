@@ -27,6 +27,7 @@ const MODULES = [
   'schema.mjs',           // schema validator units, empty-checks fail-closed
   'fixtures-core.mjs',    // architecture / backend / frontend / acceptance fixtures
   'fixtures-quality.mjs', // code-organization, code-smells, data-modeling fixtures
+  'fixtures-replay.mjs',  // the walkthrough replay log, in Playwright's real shape and hand-stamped
   'prose.mjs',            // ai-prose-slop (skips only when vale is absent)
   'eval-assets.mjs',      // eval case + result shape validation
   'eval-v2.mjs',          // reproducible cases, graders, evidence bundles, claim quarantine

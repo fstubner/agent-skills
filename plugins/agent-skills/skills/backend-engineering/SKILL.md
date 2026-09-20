@@ -10,7 +10,6 @@ compatibility: >-
   Requires Node 18+; gitleaks (https://github.com/gitleaks/gitleaks) on PATH
   for the secret scan — degrades to not_evaluated, never a silent pass, if
   gitleaks is absent.
-allowed-tools: Bash(node scripts/check-backend.js:*) Read Glob Grep
 ---
 
 # Backend engineering
@@ -35,7 +34,9 @@ this file.) Acceptance re-runs this checker; a backend BLOCK blocks the ship.
    one plus a written migration plan.
 3. **Secrets live server-side only.** `B-client-secrets` blocks on
    key-prefixed material under client-served paths (paths are reported,
-   values never are).
+   values never are). A hit under a server-only path is named in the
+   check's detail and does not block: that is a committed credential, which
+   the pre-commit hook catches, not a client exposure.
 4. **Errors are structured** (status + machine-readable code + human
    message) and never leak stack traces or internal paths across the trust
    boundary.
@@ -50,16 +51,18 @@ this file.) Acceptance re-runs this checker; a backend BLOCK blocks the ship.
    quota, or body-size cap — on login, password reset, signup, search, and
    any endpoint that sends mail or spends money.
 
-Laws 4-7 are judgment-verified (see `references/server-laws.md`) apart from
-the cookie-flag projection of law 6 — the checker measures 1-3 and that one,
-and never claims to verify what it can't.
+The checker measures laws 2 and 3 and the cookie-flag projection of law 6
+(plus the architecture doc when the system is multi-part). Law 1, laws 4, 5
+and 7, and the ownership half of 6 are judgment-verified (see
+`references/server-laws.md`); the checker never claims to verify what it
+can't.
 
 ## Red flags — the laws under deadline
 
-Laws 1-3 have a checker, so the failure mode isn't missing them, it's
+Laws 2 and 3 have a checker, so the failure mode isn't missing them, it's
 talking yourself past them while the checker isn't looking (mid-build,
-before acceptance runs). Laws 4-5 have no checker at all and rely on this
-entirely.
+before acceptance runs). Law 1 and laws 4-7 have no checker beyond the
+cookie flags and rely on this entirely.
 
 | Thought | Reality |
 |---|---|
@@ -77,5 +80,5 @@ entirely.
 | "Rate limiting is an infrastructure concern, we'll add it at the edge later" | Login and password-reset are the endpoints attacked first and the edge config is the thing that gets forgotten. Name where the limit lives, now. |
 
 **All of these mean: fix it now, while it's one line.** The checker will
-find 1-3 and the cookie flags at acceptance; nothing will find the rest
-except you.
+find a second ORM, a client-reachable secret and a bare session cookie at
+acceptance; nothing will find the rest except you.

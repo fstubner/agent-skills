@@ -197,10 +197,22 @@ function localImportsOf(text) {
 // exist" so an unresolved import is silently excluded from the graph
 // rather than crashing the walk — a broken import path is a different
 // problem than a circular one.
+// TypeScript under `moduleResolution: nodenext` writes `import './x.js'`
+// for a file that exists as `x.ts` — the specifier names the emitted file,
+// not the source. Read literally, every such edge resolved to nothing, the
+// graph was empty, and a cycle-ridden TS project reported "N file(s)
+// scanned, no circular imports". The emitted extension maps back to the
+// source extensions that produce it, limited to the ones this walker scans.
+const EMITTED_TO_SOURCE = { '.js': ['.ts', '.tsx'], '.jsx': ['.tsx'] };
+
 function resolveSpecifier(fromFile, spec, known) {
   const base = path.resolve(path.dirname(fromFile), spec);
   const candidates = [base, ...SCAN_EXTENSIONS.map((e) => base + e),
     ...SCAN_EXTENSIONS.map((e) => path.join(base, 'index' + e))];
+  const emitted = path.extname(base);
+  for (const sourceExt of EMITTED_TO_SOURCE[emitted] || []) {
+    candidates.push(base.slice(0, -emitted.length) + sourceExt);
+  }
   for (const c of candidates) {
     if (known.has(c)) return c;
   }
@@ -249,7 +261,7 @@ function check(id, status, detail) {
   return { id, status, detail };
 }
 
-function makeReport(checks) {
+function makeReport(checks, root) {
   const verdict = checks.some((c) => c.status === 'fail') ? 'BLOCK'
     : checks.some((c) => c.status === 'not_evaluated') ? 'CONDITIONAL'
     : 'SHIP';
@@ -257,7 +269,7 @@ function makeReport(checks) {
     schemaVersion: 1,
     skill: 'code-organization',
     generatedAt: new Date().toISOString(),
-    root: process.cwd(),
+    root: path.resolve(root),
     verdict,
     checks,
   };
@@ -347,7 +359,7 @@ function run(root, opts = {}) {
 }
 
 function finish(checks, args, exitCode) {
-  const report = makeReport(checks);
+  const report = makeReport(checks, args.root);
   const json = JSON.stringify(report, null, 2);
   if (args.reportPath) fs.writeFileSync(args.reportPath, json + '\n');
   console.log(json);

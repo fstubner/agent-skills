@@ -91,11 +91,13 @@ checker script — `check-frontend` only verifies token contrast. Without a
 stated consequence they are advice, and advice is what gets skipped at the
 end of a long build.
 
-So: **each law above is a `ux-walkthrough.md` line or a BLOCK.** The
+So: **each law above is a `ux-walkthrough.md` line or a finding.** The
 walkthrough records, per view, the narrowest viewport it was verified at
 and that focus, keyboard, labels, non-color status, alt text and reduced
-motion were checked. `product-acceptance` treats a view with no such line
-the way it treats any undocumented state — unbuilt, not assumed-fine.
+motion were checked. No checker reads those lines; the acceptor does, from
+item B of `product-acceptance`'s adversarial checklist, and a view with no
+such line is reported there the way any undocumented state is — unbuilt,
+not assumed-fine.
 
 That is a deliberately cheap bar. It does not prove the laws were followed;
 it makes the claim explicit and attributable rather than silent, which is

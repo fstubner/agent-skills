@@ -16,6 +16,10 @@ make the app fail, not to confirm it works.
       claims to support (or 375px if it doesn't say) — not just the width
       it was designed at.
 - [ ] Complete the primary job with keyboard only.
+- [ ] Each view in the walkthrough names the viewport it was verified at
+      and says focus, keyboard, labels, non-colour status, alt text and
+      reduced motion were checked (`frontend/references/design-principles.md`
+      asks for that line). A view with no such line is a finding, not a pass.
 - [ ] Reload mid-flow at the two worst moments; state must land sensibly.
 
 ## C — Empty, error, loading, garbage

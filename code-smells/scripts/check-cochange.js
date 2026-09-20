@@ -167,8 +167,10 @@ module.exports = { run, findShotgunSurgery };
 if (require.main === module) {
   runCli({
     skill: 'code-smells',
-    reportFile: registry.artifacts.find((a) => a.id === 'cochange-report')?.file
-      || 'cochange-report.json',
+    // basename, as every sibling passes it: runCli joins evidenceDir itself,
+    // and the full registry path here produced .agent-evidence/.agent-evidence/.
+    reportFile: path.basename(registry.artifacts.find((a) => a.id === 'cochange-report')?.file
+      || 'cochange-report.json'),
     runFn: run,
     argv: process.argv.slice(2),
     parseArgs,

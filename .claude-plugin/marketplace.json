@@ -9,7 +9,7 @@
     {
       "name": "agent-skills",
       "source": "./plugins/agent-skills",
-      "description": "Composable Agent Skills for product UI work: evidence-gated shipping, builder/acceptor separation, and a registry-first contract across 17 skills."
+      "description": "Composable, evidence-gated skills for product and software delivery: builder/acceptor separation and a registry-first contract across 17 skills."
     },
     {
       "name": "concise-style",

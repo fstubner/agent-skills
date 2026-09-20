@@ -1,0 +1,44 @@
+{
+  "config": { "rootDir": "/project", "version": "1.49.1" },
+  "suites": [
+    {
+      "title": "walkthrough.spec.js",
+      "file": "walkthrough.spec.js",
+      "specs": [],
+      "suites": [
+        {
+          "title": "walkthrough",
+          "file": "walkthrough.spec.js",
+          "specs": [
+            {
+              "title": "walkthrough step 1",
+              "ok": true,
+              "tests": [
+                {
+                  "expectedStatus": "passed",
+                  "annotations": [{ "type": "specSha256", "description": "7abddd5e9ee8be9f27fcf5fc5f62c0d5064182e1d8bddd79bc6befdbd1426dbf" }],
+                  "status": "expected",
+                  "results": [{ "status": "passed", "duration": 412 }]
+                }
+              ]
+            },
+            {
+              "title": "walkthrough step 2",
+              "ok": true,
+              "tests": [
+                {
+                  "expectedStatus": "passed",
+                  "annotations": [{ "type": "specSha256", "description": "7abddd5e9ee8be9f27fcf5fc5f62c0d5064182e1d8bddd79bc6befdbd1426dbf" }],
+                  "status": "expected",
+                  "results": [{ "status": "passed", "duration": 380 }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": { "startTime": "2026-09-20T12:00:00.000Z", "duration": 1204, "expected": 2, "skipped": 0, "unexpected": 0, "flaky": 0 }
+}

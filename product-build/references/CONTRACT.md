@@ -2,7 +2,7 @@
 
 # Suite contract
 
-This file is generated from [`registry.json`](../../registry.json), the single
+This file is generated from [`registry.json`](https://github.com/fstubner/agent-skills/blob/main/registry.json), the single
 machine-readable source of truth for everything that crosses a skill
 boundary.
 

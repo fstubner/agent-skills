@@ -128,6 +128,13 @@ assertFixture('backend-block-insecure-cookie (session cookie without Secure/Same
 // script target that no longer resolves and the tests that no longer exist.
 assertFixture('smoke-ship (scripts resolve, tests exist)', 'smoke-ship', SMOKE, [], 'SHIP',
   [['R-script-targets', 'pass'], ['R-entry-points', 'pass'], ['R-test-command', 'pass'], ['R-tests-present', 'pass']]);
+// A project with no package.json and a go.mod used to pass R-scope outright:
+// a gate required `always` cleared by every non-npm project without one
+// thing checked. The classifier already knows the other manifests, so the
+// checker can say what it did not read instead of calling it clean.
+assertFixture('smoke-go-only (go.mod, no package.json: unread commands are not a pass)',
+  'smoke-go-only', SMOKE, [], 'CONDITIONAL',
+  [['R-scope', 'not_evaluated']]);
 assertFixture('smoke-block-broken-scripts (test script points at a missing dir)',
   'smoke-block-broken-scripts', SMOKE, [], 'BLOCK',
   [['R-script-targets', 'fail'], ['R-tests-present', 'fail'], ['R-entry-points', 'pass']]);
@@ -172,6 +179,27 @@ assertFixture('multipart-python-frontend (B-arch-doc fail, same fixture as the s
 
 assertFixture('frontend-ship', 'frontend-ship', FRONTEND, [], 'SHIP',
   [['F-dual-framework', 'pass'], ['F-tokens-contrast', 'pass']]);
+// frontend/package.json + backend/package.json, no workspaces field. The
+// classifier has found nested manifests since 2026-09; this checker kept
+// reading the root one, so the layout reported "no package.json readable"
+// and could never leave CONDITIONAL. The fail half is a mutation of the same
+// fixture: a second framework added to the NESTED manifest must be seen.
+assertFixture('frontend-nested-manifests (frontend/ and backend/ package.json, no root one)',
+  'frontend-nested-manifests', FRONTEND, [], 'SHIP',
+  [['F-dual-framework', 'pass'], ['F-dual-icons', 'pass']]);
+{
+  const dir = fs.mkdtempSync(path.join(tmpBase, 'nested-split-'));
+  fs.cpSync(path.join(root, 'fixtures', 'frontend-nested-manifests'), dir, { recursive: true });
+  const manifest = path.join(dir, 'frontend', 'package.json');
+  const pkg = JSON.parse(read(manifest));
+  pkg.dependencies.vue = '^3.0.0';
+  fs.writeFileSync(manifest, JSON.stringify(pkg));
+  const r = runNode(path.join(root, ...FRONTEND.split('/')), ['--root', dir, '--no-write']);
+  let split = null;
+  try { split = JSON.parse(r.stdout).checks.find((c) => c.id === 'F-dual-framework'); } catch { /* asserted */ }
+  expect('frontend-nested-manifests: a split inside the nested manifest still fails, naming the file',
+    split?.status === 'fail' && /frontend\/package\.json/.test(split.detail), JSON.stringify(split));
+}
 assertFixture('frontend-block-dual-framework', 'frontend-block-dual-framework', FRONTEND, [], 'BLOCK',
   [['F-dual-framework', 'fail']]);
 assertFixture('frontend-block-dual-icons', 'frontend-block-dual-icons', FRONTEND, [], 'BLOCK',
@@ -193,8 +221,26 @@ assertFixture('frontend-no-package-json (F-dual-framework not_evaluated)', 'fron
 // block the ship.
 assertFixture('accept-ship (separate context)', 'accept-ship', ACCEPT,
   ['--acceptor-context', 'separate', '--runtime-verified'], 'SHIP',
-  [['A-independent', 'pass'], ['A-runtime', 'pass'], ['A-product-contract', 'pass'],
+  [['A-independent', 'pass'], ['A-runtime', 'pass'], ['A-product-contract', 'pass'], ['A-scope', 'pass'],
    ['D-systems-architecture', 'pass'], ['D-frontend', 'pass'], ['D-backend-engineering', 'pass']]);
+// product-build tells readers the verdict carries a verbatim scope line for a
+// CLI or library. It did not, for three weeks. A contract-only project is the
+// case that line exists for.
+{
+  const dir = fs.mkdtempSync(path.join(tmpBase, 'cli-scope-'));
+  fs.writeFileSync(path.join(dir, 'PRODUCT.md'), [
+    '# Product', '', '> Provenance: stated-by-human', '',
+    '## Purpose', 'A command-line tool.', '', '## Users', '- **Primary:** developers', '',
+    '## Success', '- a developer can run it', '', '## MVP', '- parse', '- print', '- exit codes', '',
+    '## Constraints', '- Node 18', '',
+  ].join('\n'));
+  const r = runNode(path.join(root, ...ACCEPT.split('/')), ['--root', dir, '--no-write']);
+  let scope = null;
+  try { scope = JSON.parse(r.stdout).checks.find((c) => c.id === 'A-scope'); } catch { /* asserted */ }
+  expect('A-scope: a project with no frontend and no server carries the CLI/library line product-build promises',
+    scope?.status === 'pass' && scope.detail.startsWith('Scope: CLI/library — architecture, frontend and backend checks not applicable'),
+    JSON.stringify(scope));
+}
 assertFixture('accept-ship (same context caps at CONDITIONAL)', 'accept-ship', ACCEPT,
   [], 'CONDITIONAL', [['A-independent', 'not_evaluated'], ['A-runtime', 'not_evaluated']]);
 assertFixture('accept-block-backend (backend BLOCK blocks the ship)', 'accept-block-backend', ACCEPT,
@@ -336,41 +382,3 @@ assertFixture('operability-block (empty runbook sections, no health route, conso
    ['O-section-alerts', 'pass']]);
 assertFixture('backend-no-server: nothing to operate, gate not required',
   'backend-no-server', OPERABILITY, [], 'SHIP', [['O-scope', 'pass']]);
-
-// A-runtime-replay: the half of "I ran it" a machine can hold. replay-ship
-// and replay-stale are byte-identical apart from the hash recorded in the
-// run log, so the difference in verdict can only come from freshness.
-assertFixture('replay-ship (walkthrough run log matches the current walkthrough)',
-  'replay-ship', ACCEPT, ['--acceptor-context', 'separate', '--runtime-verified'], 'SHIP',
-  [['A-runtime-replay', 'pass']]);
-assertFixture('replay-stale (log came from a different walkthrough)',
-  'replay-stale', ACCEPT, ['--acceptor-context', 'separate', '--runtime-verified'], 'CONDITIONAL',
-  [['A-runtime-replay', 'not_evaluated']]);
-// Opting in is what creates the obligation: a walkthrough with no replay
-// block must not be capped for declining to automate a judgment walk.
-assertFixture('accept-ship declares no replay block and still ships',
-  'accept-ship', ACCEPT, ['--acceptor-context', 'separate', '--runtime-verified'], 'SHIP',
-  [['A-runtime-replay', 'pass']]);
-
-// The generator is deterministic and refuses what it cannot honestly emit.
-{
-  const gen = path.join(root, 'product-acceptance', 'scripts', 'gen-walkthrough-spec.mjs');
-  const hashOf = (fixture) => runNode(gen, ['--root', path.join(root, 'fixtures', fixture), '--print-hash']);
-  const first = hashOf('replay-ship');
-  const second = hashOf('replay-ship');
-  expect('walkthrough spec generation is deterministic',
-    first.status === 0 && first.stdout.trim() === second.stdout.trim(), first.stdout);
-  expect('a walkthrough with no replay block exits 3 rather than emitting an empty spec',
-    hashOf('accept-ship').status === 3, `exit ${hashOf('accept-ship').status}`);
-
-  const emitted = runNode(gen, ['--root', path.join(root, 'fixtures', 'replay-ship'),
-    '--out', path.join(tmpBase, 'walkthrough.spec.js')]);
-  const spec = read(path.join(tmpBase, 'walkthrough.spec.js'));
-  expect('generated spec drives the browser from the declared steps',
-    emitted.status === 0 && spec.includes('page.goto("/")') && spec.includes('page.fill("#staffId", "nurse-a")'),
-    spec.slice(0, 200));
-  expect('generated spec asserts the declared expectations',
-    spec.includes('getByText("No notes for this shift yet")'), spec.slice(0, 300));
-  expect('generated spec records its own hash so a stale run log is detectable',
-    /specSha256: [0-9a-f]{64}/.test(spec));
-}

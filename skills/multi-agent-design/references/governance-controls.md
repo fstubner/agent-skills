@@ -7,13 +7,17 @@ and audit policies in multi-agent systems.
 
 ## Baseline Limits
 
-These defaults provide a safe starting point. Adjust based on task complexity
-and risk tolerance, but never remove limits entirely.
+These defaults are starting points chosen by judgment, not measured
+limits: no run in this suite's evaluation programme has tested any of the
+numbers below, and the rationale column says what each is meant to prevent,
+not what it was observed to prevent. Treat them as the first values to
+write down and then adjust from your own runs. Adjust based on task
+complexity and risk tolerance, but never remove limits entirely.
 
 | Control                | Default | Rationale                                          |
 |------------------------|---------|----------------------------------------------------|
 | Max concurrent agents  | 5       | Prevents resource exhaustion and makes debugging tractable. Most tasks decompose into fewer than 5 parallel subtasks. |
-| Max delegation depth   | 3       | Prevents runaway recursion. Three levels (root → sub-manager → worker) handle the vast majority of problems. Deeper hierarchies usually signal over-decomposition. |
+| Max delegation depth   | 3       | Prevents runaway recursion. Three levels (root → sub-manager → worker) is the deepest shape the coordination patterns here describe; deeper hierarchies are a sign to check whether the decomposition is real. An unmeasured default. |
 | Total token budget     | 200,000 | Caps cost at a predictable level. Sized for a substantial multi-agent task without risking runaway spending. Adjust proportionally to task scope. |
 | Per-agent token budget | 50,000  | Prevents any single agent from consuming a disproportionate share of the total budget. Set to 25% of total budget as a starting point. |
 | Wall-clock timeout     | 300s    | Five minutes is generous for most agent tasks. Longer timeouts risk user-abandoned sessions and wasted compute. |

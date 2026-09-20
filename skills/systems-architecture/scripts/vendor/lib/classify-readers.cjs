@@ -23,19 +23,6 @@ function readFileIfExists(p) {
   }
 }
 
-function readNode(root) {
-  const text = readFileIfExists(path.join(root, 'package.json'));
-  if (text === null) return null;
-  let pkg;
-  try {
-    pkg = JSON.parse(text);
-  } catch {
-    return null;
-  }
-  const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
-  return { manifestFile: 'package.json', depNames: new Set(Object.keys(deps).map((d) => d.toLowerCase())), pkg };
-}
-
 // Finds every package.json in the tree, not just the root one. A common
 // non-monorepo-tool layout — backend/package.json + frontend/package.json,
 // no npm/yarn `workspaces` field tying them together — previously read as
@@ -311,7 +298,6 @@ function readPhp(root) {
 }
 
 const ECOSYSTEM_READERS = {
-  node: readNode,
   python: readPython,
   go: readGo,
   ruby: readRuby,

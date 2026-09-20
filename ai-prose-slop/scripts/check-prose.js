@@ -6,13 +6,17 @@
 // Deliberately self-contained (no core/lib dependency) so the skill and its
 // Vale style stay copy-anywhere, but it emits the suite's unified report
 // shape: { schemaVersion, skill, generatedAt, root, verdict, checks }.
-// Alert mapping: vale error => fail (BLOCK); warning/suggestion =>
-// not_evaluated (CONDITIONAL — advisory findings need a human judgment
-// pass, they are never auto-SHIP and never auto-BLOCK).
+// Alert mapping: every Vale hit is a `fail`, whatever severity Vale gave it
+// — severity rides in the detail. See the note above the mapping below for
+// why the earlier error/warning/suggestion split was wrong; this header
+// described that split for two weeks after the code stopped doing it.
 //
-// Usage: node check-prose.js <file-or-dir...> [--strict] [--report <path>]
-// Exit codes: 0 clean (or advisory findings without --strict), 1 error-level
-// findings or --strict with findings or vale errored, 2 vale not installed.
+// Usage: node check-prose.js <file-or-dir...> [--report <path>]
+// (--strict is still accepted so older callers do not break; since every hit
+// already exits 1 it changes nothing.)
+// Exit codes: 0 no hits, 1 any hit or vale errored, 2 vale not installed.
+// This skill gates nothing in the acceptance suite, so exit 1 is a prompt to
+// look, not a stop.
 
 const { spawnSync } = require('child_process');
 const fs = require('fs');

@@ -100,7 +100,11 @@ ${registry.artifacts.map(artifactRow).join('\n')}
 // generated file, which is the kind of thing nobody edits and nobody
 // notices. Rewritten rather than made absolute: it has to resolve both in a
 // checkout and in an installed skill directory, and ../../ does.
-const installedDoc = doc.replaceAll('](../registry.json)', '](../../registry.json)');
+// Not a relative link at all in the installed copy: a plugin bundle holds
+// registry.json at its root, an install.mjs install vendors it under each
+// skill's scripts/vendor/, and product-build has no scripts/ to vendor into.
+// One target that resolves everywhere is the published file.
+const installedDoc = doc.replaceAll('](../registry.json)', '](https://github.com/fstubner/agent-skills/blob/main/registry.json)');
 
 if (process.argv.includes('--check')) {
   const existing = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8').replace(/\r\n/g, '\n') : null;

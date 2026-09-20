@@ -29,6 +29,10 @@ first. If you read no further, read these.
 | where code should live, module boundaries | `agent-skills:code-organization` |
 | a CLI tool or script's flags, exit codes, output | `agent-skills:cli-tooling` |
 | a cause that isn't obvious, "what am I missing" | `agent-skills:mental-models` |
+| no or thin `PRODUCT.md`, "what are we building" | `agent-skills:product-management` (product-build usually gets there first) |
+| what to test, at which level, a flaky or slow suite | `agent-skills:testing-strategy` |
+| a correction just landed and the same mistake could recur | `agent-skills:learn-from-session` |
+| "should this be several agents", orchestration, subagent topology | `agent-skills:multi-agent-design` (its first answer is usually no) |
 
 Not every request needs one. A one-line tweak in a locked codebase, a
 question about someone else's error message, a shell command — just answer.

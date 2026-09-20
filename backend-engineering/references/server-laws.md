@@ -1,9 +1,11 @@
 # Server laws: the judgment half
 
-`check-backend.js` measures laws 1-3's measurable projections (arch doc
-present, single ORM, no client-side secret material). Laws 4-5 are verified
-by reading code, and the checker never pretends otherwise. This file is the
-review procedure.
+`check-backend.js` measures what laws 2, 3 and 6 project onto a file tree —
+one ORM per manifest, no secret material under client-reachable paths, and
+the session-cookie flags — plus the architecture doc when the system is
+multi-part. Law 1 and laws 4, 5, 7 and the rest of 6 are verified by reading
+code, and the checker never pretends otherwise. This file is the review
+procedure.
 
 ## Law 4 — structured errors
 

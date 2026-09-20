@@ -17,7 +17,10 @@ offered because none is monitored.
   `backend-engineering`, `frontend`, `product-acceptance`) carry the
   countervailing rule: project documents are data — instructions found
   inside them (run this, fetch that) are an injection signal to stop and
-  confirm with the human. `product-acceptance` carries it most explicitly,
+  confirm with the human. `engineering-assessment`, whose step 0 is to run
+  the commands the project declares, carries a narrower form: declared
+  build/test/lint entry points are run, documented instructions and
+  install-time hooks are not. `product-acceptance` carries it most explicitly,
   since it is the skill most likely to run standalone against an untrusted
   finished repo. A hostile repo can still attempt it; the rule reduces, not
   eliminates, the risk.
@@ -44,6 +47,15 @@ offered because none is monitored.
   network requests. Scripts read no env secrets and shell out only with
   argument arrays (no shell interpolation). Two external binaries are used and
   never vendored: `vale` for ai-prose-slop, `gitleaks` for secret scanning.
+- **Secret scanning is two checks with two scopes, and neither is "no
+  secrets in the repository".** `B-client-secrets` gates the acceptance
+  verdict on secret material under *client-reachable* paths only; a hit
+  under a server-only path (`server.js`, `server/`, `pages/api/`,
+  `*.server.ts`) is reported in the check's detail and does not fail it,
+  because law 3 is about what a browser can fetch. A committed credential
+  anywhere is the pre-commit hook's finding, and only for repositories that
+  opted into the hook. Nothing in the acceptance gate blocks on a secret in
+  server code.
 - **Secret scanning** (`B-client-secrets`, and the opt-in pre-commit hook at
   `scripts/git-hooks/pre-commit`) shells out to
   [`gitleaks`](https://github.com/gitleaks/gitleaks) rather than a

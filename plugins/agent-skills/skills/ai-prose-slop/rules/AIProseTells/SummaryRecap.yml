@@ -1,6 +1,6 @@
 extends: existence
 message: "'%s' restates what the reader just read — end on the last concrete point instead."
-link: ../../references/patterns.md
+link: https://github.com/fstubner/agent-skills/blob/main/ai-prose-slop/references/patterns.md
 level: suggestion
 scope: paragraph
 ignorecase: false

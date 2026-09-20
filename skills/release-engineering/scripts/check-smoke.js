@@ -24,6 +24,7 @@ const { corePaths } = require('./resolve-core.cjs');
 const core = corePaths();
 const { parseArgs } = require(path.join(core.lib, 'args.cjs'));
 const { check, runCli } = require(path.join(core.lib, 'report.cjs'));
+const { classify } = require(path.join(core.lib, 'classify.cjs'));
 const registry = require(core.registry);
 
 // npm's own `npm init` placeholder. A project carrying it has no test
@@ -117,7 +118,20 @@ function run(root, opts = {}) {
   const checks = [];
 
   if (!pkg) {
-    checks.push(check('R-scope', 'pass', 'no readable package.json; script and entry-point checks not applicable'));
+    // Only npm's manifest is read here. A Go, Python, Rust, Ruby, Java or PHP
+    // project declares its commands somewhere this checker does not look, and
+    // reporting that as a pass let every non-npm project clear a gate that is
+    // required `always` without one thing being checked. The classifier
+    // already knows those manifests, so the honest answer is available: the
+    // project has declared commands and this checker cannot read them.
+    const cls = classify(root, { evidenceDir: registry.evidenceDir });
+    const foreign = cls.manifests.filter((m) => m.ecosystem !== 'node').map((m) => m.manifestFile);
+    if (foreign.length > 0) {
+      checks.push(check('R-scope', 'not_evaluated',
+        `no package.json; declared commands live in ${foreign.join(', ')}, which this checker does not read — resolve them by hand`));
+      return checks;
+    }
+    checks.push(check('R-scope', 'pass', 'no dependency manifest of any kind; there are no declared commands to resolve'));
     return checks;
   }
 

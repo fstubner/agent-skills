@@ -192,7 +192,7 @@ function check(id, status, detail) {
   return { id, status, detail };
 }
 
-function makeReport(checks) {
+function makeReport(checks, root) {
   const verdict = checks.some((c) => c.status === 'fail') ? 'BLOCK'
     : checks.some((c) => c.status === 'not_evaluated') ? 'CONDITIONAL'
     : 'SHIP';
@@ -200,7 +200,7 @@ function makeReport(checks) {
     schemaVersion: 1,
     skill: 'code-smells',
     generatedAt: new Date().toISOString(),
-    root: process.cwd(),
+    root: path.resolve(root),
     verdict,
     checks,
   };
@@ -316,7 +316,7 @@ function run(root, opts = {}) {
 }
 
 function finish(checks, args, exitCode) {
-  const report = makeReport(checks);
+  const report = makeReport(checks, args.root);
   const json = JSON.stringify(report, null, 2);
   if (args.reportPath) fs.writeFileSync(args.reportPath, json + '\n');
   console.log(json);

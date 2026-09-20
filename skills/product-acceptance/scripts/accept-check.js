@@ -176,13 +176,39 @@ function checkReportArtifact(root, artifact, checks) {
 // exactly the stale-JSON-on-disk this gate refuses everywhere else, so the
 // spec is regenerated here and its hash compared with the one the log
 // recorded. No match, no evidence.
+// Where the log says which spec it ran. Playwright's JSON reporter has no
+// top-level field for this; the generated spec pushes the hash into each
+// test's annotations, and the reporter writes those out under
+// suites[].specs[].tests[].annotations (suites nest). A top-level specSha256
+// is also read, so a log stamped by hand — the shape the fixtures use — still
+// counts. Every hash found is returned, so a mixed log is visible.
+function recordedSpecHashes(log) {
+  const found = [];
+  if (typeof log.specSha256 === 'string') found.push(log.specSha256);
+  const visit = (suite) => {
+    for (const spec of suite.specs || []) {
+      for (const test of spec.tests || []) {
+        for (const note of test.annotations || []) {
+          if (note.type === 'specSha256' && typeof note.description === 'string') found.push(note.description);
+        }
+      }
+    }
+    for (const child of suite.suites || []) visit(child);
+  };
+  for (const suite of log.suites || []) visit(suite);
+  return found;
+}
+
 function walkthroughReplayCheck(root) {
   const walkthrough = path.join(root, 'ux-walkthrough.md');
   if (!fs.existsSync(walkthrough)) {
     return check('A-runtime-replay', 'not_evaluated', 'no ux-walkthrough.md');
   }
   const generator = path.join(__dirname, 'gen-walkthrough-spec.mjs');
-  const generated = spawnSync(process.execPath, [generator, '--root', root, '--print-hash'], { encoding: 'utf8' });
+  // Bounded like every producer spawn above: a generator that hangs must
+  // read as "could not generate", never stall the whole gate.
+  const generated = spawnSync(process.execPath, [generator, '--root', root, '--print-hash'],
+    { encoding: 'utf8', timeout: PRODUCER_TIMEOUT_MS, killSignal: 'SIGKILL' });
   // No replay block is not a deficiency: some walks are entirely judgment,
   // and plenty of products have no browser to drive. Opting in is what
   // creates the obligation — declare steps automatable and the gate will ask
@@ -209,9 +235,18 @@ function walkthroughReplayCheck(root) {
   } catch {
     return check('A-runtime-replay', 'fail', 'walkthrough-run.json is not readable JSON');
   }
-  if (log.specSha256 !== expectedHash) {
+  const recorded = recordedSpecHashes(log);
+  if (recorded.length === 0) {
     return check('A-runtime-replay', 'not_evaluated',
-      `walkthrough-run.json was produced from a different walkthrough (log ${String(log.specSha256).slice(0, 12)}, current ${expectedHash.slice(0, 12)}) — re-run it`);
+      'walkthrough-run.json carries no specSha256 — it was not produced from a spec this generator wrote; regenerate the spec and re-run it');
+  }
+  // Every test in the log must have been generated from the current
+  // walkthrough. One stale annotation among fresh ones is a log assembled
+  // from two runs, and that is not evidence either.
+  const stale = recorded.find((hash) => hash !== expectedHash);
+  if (stale !== undefined) {
+    return check('A-runtime-replay', 'not_evaluated',
+      `walkthrough-run.json was produced from a different walkthrough (log ${String(stale).slice(0, 12)}, current ${expectedHash.slice(0, 12)}) — re-run it`);
   }
 
   // Playwright's JSON reporter shape, kept to the two fields that matter.
@@ -227,9 +262,27 @@ function walkthroughReplayCheck(root) {
   return check('A-runtime-replay', 'pass', `${passed} walkthrough step(s) replayed against the running product`);
 }
 
+// What the gate could see. product-build promised readers a verbatim
+// "Scope: CLI/library" line in the verdict for a project with no frontend
+// and no server; for three weeks nothing emitted it and the promise was
+// prose. Stated as a check so it is in the report the reader has, and as a
+// pass, because scope is information rather than a defect.
+function scopeCheck(cls) {
+  if (!cls.frontendPresent && !cls.serverPresent && !cls.multiPart) {
+    return check('A-scope', 'pass',
+      'Scope: CLI/library — architecture, frontend and backend checks not applicable; the product contract and the smoke check are the whole gate');
+  }
+  const parts = [
+    cls.multiPart ? 'multi-part' : 'single-part',
+    cls.frontendPresent ? 'frontend present' : 'no frontend',
+    cls.serverPresent ? 'server present' : 'no server',
+  ];
+  return check('A-scope', 'pass', `Scope: ${parts.join(', ')}`);
+}
+
 function run(root, args) {
   const cls = classify(root, { evidenceDir: registry.evidenceDir });
-  const checks = [];
+  const checks = [scopeCheck(cls)];
 
   // Builder != acceptor.
   const ctx = args['acceptor-context'] || 'same';

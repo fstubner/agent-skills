@@ -347,7 +347,8 @@ These rules apply to every multi-agent design regardless of context:
 2. **Never allow unbounded fan-out.** Every manager must have a hard cap on
    the number of workers it can create.
 3. **Never allow recursive delegation without depth limits.** Every system
-   must have a maximum delegation depth. The default is 3 levels.
+   must have a maximum delegation depth. Start at 3 levels — a chosen
+   starting point, not a measured one; see `references/governance-controls.md`.
 4. **Every agent must have explicit success and failure criteria** in its
    delegation contract. No exceptions.
 5. **Human approval gates for irreversible actions.** No agent may perform
