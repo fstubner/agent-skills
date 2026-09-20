@@ -34,7 +34,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { spawnSync } from 'child_process';
 import { hashTree, sha256 } from './lib/tree-hash.mjs';
-import { runEligibility } from './lib/eval-eligibility.mjs';
+import { loadRun, runEligibility } from './lib/eval-eligibility.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const args = process.argv.slice(2);
@@ -102,14 +102,7 @@ function refusal(dir, manifest, entry) {
     return 'outputs/ was archived without the .agent-evidence the fixture plants; re-scoring would read the filter, not the run';
   }
 
-  const transcriptPath = path.join(dir, 'transcript.jsonl');
-  const ineligible = runEligibility({
-    runDir: dir,
-    fixtureDir: fixtureDir ?? undefined,
-    testCase: entry.value,
-    manifest,
-    transcript: fs.existsSync(transcriptPath) ? fs.readFileSync(transcriptPath, 'utf8') : '',
-  });
+  const ineligible = runEligibility(loadRun(dir, new Map([[entry.value.id, entry.value]]), root));
   if (ineligible) return `ineligible: ${ineligible}`;
   return null;
 }

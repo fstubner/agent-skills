@@ -427,3 +427,38 @@ so the contamination rule was excluding its control and policy arms; once
 the plant was back, more bundles were counted. Re-scored old-grader against
 new-grader on the same bundle set, those fifteen vanish. Recorded because a
 proof that needed a second look is worth more than one that did not.
+
+## 2026-09-20 — the two verdict readers the sweep missed, and the last private citation matcher
+
+27 runs across two cases, moved whole: 6 of `zero-count-export-acceptance`,
+21 of `engineering-assessment-cited-risks`.
+
+The 2026-09-04 verdict reader replaced a line-anchored regex in eleven
+graders and reported "one file rather than thirteen". Two of the thirteen
+kept the old regex: `stale-pass-review` (no runs bound at the time) and
+`zero-count-export-acceptance`. Re-scored over its 42 archived bundles, the
+old regex saw a BLOCK in 0 of 12 control, 0 of 12 policy and 7 of 15 skill
+runs; the shared reader sees 11, 10 and 14. Reviews wrote "# Release
+Verdict: BLOCK" and the regex wanted the line to open with BLOCK.
+
+`engineering-assessment-cited-risks` kept the last private copy of the
+citation matcher, without the `#L25` URL-fragment form; its sibling
+`-hidden-risks` had moved to the shared library. Over 45 archived bundles,
+`path-traversal-cited` moves from 7 to 10 of 12 on policy and from 15 to 21
+of 21 on skill.
+
+Both are measurement corrections in the direction the 2026-09-04 write-up
+predicted, and both cost the arm that cites and declares most. Control and
+policy bundles are re-homed by `eval-rehome`; skill bundles stay here, as
+that tool's header explains.
+
+## 2026-09-20 — two checker edits with no verdict change
+
+7 runs, moved whole: 4 of `postgres-required-handle`, 3 of
+`ai-prose-voice-edit`. Neither case's grader changed. `checkerSha256` did:
+`check-migrations.js` now reports the `--root` it was given instead of the
+caller's working directory, and `check-prose.js` had its header comment
+corrected to describe the exit codes the script actually uses. Neither edit
+touches a check, so re-scoring would produce the same verdicts, and the
+bundles are here rather than re-homed because `eval-rehome` undoes grader
+changes only and these are not one. They read exactly as they did.

@@ -40,12 +40,21 @@ function bundle(name, exitCode, grading, extra = {}) {
     model,
     exitCode,
     graderSha256: sha256(fs.readFileSync(path.join(root, testCase.grader))),
+    // The report has always refused a run with no token or cost figure; the
+    // batch runner's private mirror never asked. Now that both call one
+    // function, a synthetic trial has to carry what a real one carries.
+    totalTokens: 1000,
+    costUsd: 0.01,
     grading,
     ...extra,
   }));
 }
 // One usable trial, and the two kinds of bundle that are not one.
 bundle(`${caseId}-${harness}-control-real`, 0, { passed: 2, failed: 3, notEvaluated: 0, total: 5 });
+// A run whose cost never landed. The report drops it; the runner used to
+// count it, which is the fourth way the two disagreed.
+bundle(`${caseId}-${harness}-control-costless`, 0, { passed: 2, failed: 3, notEvaluated: 0, total: 5 },
+  { totalTokens: null, costUsd: null, costCredits: null });
 // The 429 shape: nothing evaluated, no model turn.
 bundle(`${caseId}-${harness}-control-empty`, 1, { passed: 0, failed: 0, notEvaluated: 5, total: 5 });
 // The truncation shape, and the harder of the two to spot: a full grading off

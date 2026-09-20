@@ -18,7 +18,10 @@
 // eval harness's temporary workspaces, both of which invoke skills for reasons
 // that are not ordinary work.
 //
-// usage: node scripts/skill-outcomes.mjs [--json] [--registry <path>]
+// usage: node scripts/skill-outcomes.mjs [--json] [--registry <path>] [--strip <regex>]
+//   --strip  a pattern removed from the start of each project directory name
+//            before it is printed, e.g. '^h--projects-private-'; the encoded
+//            path prefix is whatever ~/.claude/projects uses on your machine
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -27,6 +30,8 @@ const argv = process.argv.slice(2);
 const asJson = argv.includes('--json');
 const registryArg = argv.indexOf('--registry');
 const registryPath = registryArg >= 0 ? argv[registryArg + 1] : path.join(import.meta.dirname, '..', 'registry.json');
+const stripArg = argv.indexOf('--strip');
+const STRIP = stripArg >= 0 ? new RegExp(argv[stripArg + 1], 'i') : null;
 const SUITE = new Set(JSON.parse(fs.readFileSync(registryPath, 'utf8')).skills.map((s) => s.id));
 const PROJECTS = path.join(os.homedir(), '.claude', 'projects');
 const EXCLUDED_PROJECT = /needs-work-agent-skills|Temp-claude|Temp-eval/i;
@@ -123,7 +128,7 @@ for (const dir of fs.readdirSync(PROJECTS)) {
   if (EXCLUDED_PROJECT.test(dir)) continue;
   const full = path.join(PROJECTS, dir);
   if (!fs.statSync(full).isDirectory()) continue;
-  const project = dir.replace(/^.*needs-work-|^.*eventwall-|^h--projects-private-/i, '').replace(/--claude-worktrees-/, '/');
+  const project = (STRIP ? dir.replace(STRIP, '') : dir).replace(/--claude-worktrees-/, '/');
   for (const f of fs.readdirSync(full).filter((x) => x.endsWith('.jsonl'))) {
     try { rows.push(...invocationsIn(path.join(full, f), project)); } catch { /* unreadable session */ }
   }

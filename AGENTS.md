@@ -49,6 +49,12 @@ need them skip cleanly when absent rather than failing.
 | Every on-disk skill is in `registry.json`, and vice versa | same |
 | `VERSION` == `plugin.json` version, and valid semver | same |
 | `docs/CONTRACT.md` is generated, never hand-edited | `scripts/gen-contract.mjs --check` |
+| `skills/`, `plugins/`, `.agents/plugins/`, `.cursor-plugin/` and `gemini-extension.json` are generated from the top-level skill directories, `core/`, `registry.json` and `VERSION` — edit the source, then `node scripts/gen-plugin-bundles.mjs` | `scripts/gen-plugin-bundles.mjs --check`, the pre-commit hook, `scripts/tests/plugin-bundles.mjs` |
+
+The generated trees carry a `.generated-by-agent-skills` marker and nothing
+else announces them. An edit made under `skills/<id>/` looks like it took and
+is silently overwritten by the next regeneration; it happened in this
+repository on 2026-09-20 and the change was gone ninety seconds later.
 
 `scripts/`, `references/`, `assets/` follow Anthropic's skill convention:
 executable code, docs read for context, files used in output. One documented

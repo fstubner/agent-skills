@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import { harnessDiagnostics } from './lib/harness-diagnostics.mjs';
 import { hashTree, sha256 } from './lib/tree-hash.mjs';
 import { EXCLUDED_OUTPUTS } from './lib/eval-harness-policy.mjs';
+import { AMBIENT_SKILL_PATH } from './lib/eval-eligibility.mjs';
 import { stageSkill, copyTree } from './lib/stage-skill.mjs';
 import { redactHome } from './lib/redact-home.mjs';
 import { reduceTranscript } from './lib/reduce-transcript.mjs';
@@ -180,9 +181,13 @@ const noModelTurn = harnessRun.result.status !== 0
 // Contamination is the opposite case: it lives in what the model DID — its
 // tool calls and commands — so this one reads the full transcript on
 // purpose, and must not be narrowed to harness diagnostics.
+// The pattern is the one eval-eligibility applies at report time, imported
+// rather than restated: this file's own copy lacked `.gemini` and the
+// redacted `<home>` form, so a run could be recorded clean here and refused
+// there, which is the report-versus-runner disagreement in a fourth costume.
 const fullTranscript = `${harnessRun.result.stdout || ''}\n${harnessRun.result.stderr || ''}`;
 const ambientSkillAccess = ['control', 'policy'].includes(args.condition)
-  && /(?:[A-Z]:\\\\Users\\\\[^\s"']+\\\\(?:\.agents|\.codex)\\\\skills\\\\|\/(?:home|Users)\/[^\s"']+\/(?:\.agents|\.codex)\/skills\/)/i.exec(fullTranscript);
+  && AMBIENT_SKILL_PATH.exec(fullTranscript);
 if (environmentFailure || noModelTurn || ambientSkillAccess) {
   let failure;
   if (environmentFailure) failure = `harness environment failure: ${environmentFailure[0]}`;

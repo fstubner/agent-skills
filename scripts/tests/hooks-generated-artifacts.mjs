@@ -31,11 +31,30 @@ import { root, expect, tmpBase, spawnRetry, spawnFailure } from './harness.mjs';
   // when someone is about to commit it — not the copy frozen at HEAD.
   const hookSource = path.join(root, 'scripts', 'git-hooks', 'pre-commit');
 
+  // A sparse worktree, holding only what generation reads and writes. A full
+  // checkout is 25k files, most of them under eval/ and fixtures/, and three
+  // of them made this module the whole suite's slowest by a wide margin —
+  // 270 seconds measured on 2026-09-20 against about 30 with the sparse set.
+  // The hook's own checkout-index respects skip-worktree bits, so it
+  // materialises the same sparse set rather than the full index.
+  //
+  // Cone mode takes directories, so the list is the generation inputs and
+  // outputs plus every registered skill directory, read from the registry
+  // rather than restated. Root-level files (VERSION, registry.json) are
+  // always included in cone mode.
+  const registry = JSON.parse(fs.readFileSync(path.join(root, 'registry.json'), 'utf8'));
+  const sparseDirs = ['core', 'scripts', 'docs', 'hooks', 'routing', 'concise-style',
+    'plugins', 'skills', '.agents', '.cursor-plugin', ...registry.skills.map((s) => s.id)];
+
   function scratchTree(name) {
     const dir = path.join(tmpBase, `gen-gate-${name}-${Math.random().toString(36).slice(2, 8)}`);
-    const add = git(['worktree', 'add', '--detach', '--quiet', dir, head.stdout.trim()]);
+    const add = git(['worktree', 'add', '--no-checkout', '--detach', '--quiet', dir, head.stdout.trim()]);
     if (add.status !== 0) return { dir: null, error: (add.stderr || '').slice(0, 200) };
     worktrees.push(dir);
+    const sparse = git(['sparse-checkout', 'set', '--cone', ...sparseDirs], dir);
+    if (sparse.status !== 0) return { dir: null, error: (sparse.stderr || '').slice(0, 200) };
+    const checkout = git(['checkout', '--quiet', '--detach', head.stdout.trim()], dir);
+    if (checkout.status !== 0) return { dir: null, error: (checkout.stderr || '').slice(0, 200) };
     fs.copyFileSync(hookSource, path.join(dir, 'scripts', 'git-hooks', 'pre-commit'));
     return { dir, error: null };
   }

@@ -27,24 +27,50 @@
 import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
+import { loadRun, runEligibility } from './lib/eval-eligibility.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 
-export function collectRuns(runsDir) {
+// Manifests of the runs eval-report would count, and no others. The first
+// version read every run.json under the directory with no eligibility at
+// all, so the 158 quota-empty bundles of 2026-09-02 — exit 1, nothing
+// evaluated — each counted as an unsolved trial against whichever arm the
+// limit happened to hit. `cases` is the id -> case map the eligibility
+// clause needs; a caller with no cases (a synthetic runs directory in a test)
+// gets the manifest-only clauses and skips the ambient-skill one.
+export function collectRuns(runsDir, cases = new Map(), suiteRoot = root) {
   const out = [];
   const walk = (dir) => {
     let entries = [];
     try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
     for (const e of entries) {
+      if (!e.isDirectory()) continue;
       const p = path.join(dir, e.name);
-      if (e.isDirectory()) walk(p);
-      else if (e.name === 'run.json') {
-        try { out.push(JSON.parse(fs.readFileSync(p, 'utf8'))); } catch { /* skip unreadable */ }
-      }
+      const run = loadRun(p, cases, suiteRoot);
+      if (!run) { walk(p); continue; }
+      const reason = cases.size ? runEligibility(run) : manifestOnlyIneligibility(run.manifest);
+      if (!reason) out.push(run.manifest);
     }
   };
   walk(runsDir);
   return out;
+}
+
+// The two clauses a manifest can answer on its own, for callers without a
+// case map. Kept as a named subset of runEligibility rather than a rewrite.
+function manifestOnlyIneligibility(manifest) {
+  if (manifest.exitCode !== 0) return `harness exit ${manifest.exitCode}`;
+  if (manifest.grading.notEvaluated !== 0) return `${manifest.grading.notEvaluated} assertions not evaluated`;
+  return null;
+}
+
+export function loadCases(evalRoot = path.join(root, 'eval')) {
+  const dir = path.join(evalRoot, 'cases-v2');
+  if (!fs.existsSync(dir)) return new Map();
+  return new Map(fs.readdirSync(dir).filter((n) => n.endsWith('.json')).map((n) => {
+    const value = JSON.parse(fs.readFileSync(path.join(dir, n), 'utf8'));
+    return [value.id, value];
+  }));
 }
 
 // A trial solves its case only when nothing in the rubric failed and nothing
@@ -101,7 +127,7 @@ function pct(x) { return x === null ? '  n/a' : `${(x * 100).toFixed(0).padStart
 function main() {
   const argv = process.argv.slice(2);
   const minTrials = Number(argv.includes('--min-trials') ? argv[argv.indexOf('--min-trials') + 1] : 3);
-  const runs = collectRuns(path.join(root, 'eval', 'runs'));
+  const runs = collectRuns(path.join(root, 'eval', 'runs'), loadCases());
   const cells = buildCells(runs);
   const report = reliability(cells, minTrials);
 

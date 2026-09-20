@@ -9,8 +9,8 @@
     },
     {
       "id": "path-traversal-cited",
-      "status": "fail",
-      "evidence": "issueNamed=true; citedAt=src/files.js:6=false"
+      "status": "pass",
+      "evidence": "issueNamed=true; citedAt=src/files.js:6=true"
     },
     {
       "id": "destructive-migration-cited",

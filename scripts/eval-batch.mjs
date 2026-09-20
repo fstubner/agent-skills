@@ -17,7 +17,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { spawnSync } from 'child_process';
 import { currentSkillDigest } from './lib/eval-versions.mjs';
-import { suiteReportsProducedIn } from './lib/eval-eligibility.mjs';
+import { loadRun, runEligibility } from './lib/eval-eligibility.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const argv = process.argv.slice(2);
@@ -42,7 +42,7 @@ const cases = fs.readdirSync(path.join(root, 'eval', 'cases-v2'))
 
 const sha256 = (buf) => crypto.createHash('sha256').update(buf).digest('hex');
 const caseGrader = new Map(cases.map((c) => [c.id, path.join(root, c.grader)]));
-const caseFixture = new Map(cases.map((c) => [c.id, path.join(root, ...c.fixture.split("/"))]));
+const caseById = new Map(cases.map((c) => [c.id, c]));
 // The digest of the skill text a skill-arm run would stage today, per case,
 // computed the same way eval-report does so the two cannot drift.
 const caseSkillDigest = new Map(cases.map((c) => [c.id, currentSkillDigest(root, c.skills || [c.skill])]));
@@ -55,32 +55,16 @@ const runsDir = opt('runs-dir', null) ? path.resolve(opt('runs-dir', null)) : pa
 for (const entry of fs.existsSync(runsDir) ? fs.readdirSync(runsDir) : []) {
   // In-progress or abandoned staging directories are not trials.
   if (entry.startsWith('.')) continue;
-  const manifest = path.join(runsDir, entry, 'run.json');
-  if (!fs.existsSync(manifest)) continue;
-  let m = null;
-  try { m = JSON.parse(fs.readFileSync(manifest, 'utf8')); } catch { continue; }
-  if (!m.grading) continue;
-  // A trial counts only if eval-report can USE it. The two must agree, and
-  // twice they have not:
-  //
-  //   - 2026-09-02: the session limit tripped mid-batch and 158 runs returned
-  //     "429 session limit" in about three seconds each with nothing
-  //     evaluated. This counted them, reported "completed 100, failed 0"
-  //     three times, then reported the arm complete with 0 outstanding.
-  //   - 2026-09-03: with that fixed and the arm reporting 0 outstanding,
-  //     eval-report still had two cases at 14 of 15 trials. A run truncated by
-  //     "API Error: Server error mid-response" exits non-zero with tokens
-  //     billed and a full grading — 2 passed, 9 failed — off incomplete
-  //     output. Grading a truncated answer is not a measurement, so the
-  //     report excludes it and this counted it.
-  //
-  // Mirrors runEligibility() in eval-report.mjs on the two conditions a
-  // manifest can carry. The rest of that function needs the transcript.
-  if (m.exitCode !== 0) continue;
-  if (m.grading.notEvaluated !== 0) continue;
-  // A control or policy workspace holding a suite checker report ran an
-  // installed copy of the skill. eval-report refuses it; so must this.
-  if (["control", "policy"].includes(m.condition) && suiteReportsProducedIn(path.join(runsDir, entry), caseFixture.get(m.caseId)).length) continue;
+  const run = loadRun(path.join(runsDir, entry), caseById, root);
+  if (!run) continue;
+  const m = run.manifest;
+  // A trial counts only if eval-report can USE it. This used to mirror
+  // runEligibility() clause by clause, and the pair disagreed four times —
+  // 158 quota-empty runs counted as trials, truncated runs counted, and twice
+  // more — each time because a clause landed on one side and not the other.
+  // Now it is the same function on the same object, and there is no second
+  // copy to drift.
+  if (runEligibility(run)) continue;
   // A skill-arm run staged from a SKILL.md that has since been edited measures
   // a version nobody ships. eval-report says so — "the skill arm measures a
   // superseded version" — and drops the case from completedCaseCount, so

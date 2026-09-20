@@ -27,7 +27,13 @@ manifest used by the CLI harness.
 
 Each run starts from a copied fixture in a temporary workspace, captures the
 exact prompt and raw harness output, snapshots deliverables, invokes an
-outcome grader, records timing/token/cost metadata where available, and hashes
+outcome grader — and for thirteen of the cases that grader **executes the
+model's output** on the machine running the eval, unsandboxed: it imports
+the written `server.js` in-process, starts it on a loopback port, or runs
+`npm test` in the workspace. That is the only way to grade whether a
+refund endpoint refuses a cross-account request, and it means a run is
+trusted with the same access as the person who launched it. The graders
+that read prose only never execute anything, records timing/token/cost metadata where available, and hashes
 the case and output tree. A case must compare `control`, `policy`, and `skill`;
 checker-backed cases also compare `checker`. Promotion requires at least three
 completed fresh cases per skill, three trials per condition, and every

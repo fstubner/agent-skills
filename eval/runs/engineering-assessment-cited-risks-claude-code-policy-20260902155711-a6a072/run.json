@@ -5,7 +5,7 @@
   "caseRevision": 1,
   "caseSha256": "e659759028e721205af4e24823e2cf155b255a0840fb3b9516a6f5df18068dd1",
   "fixtureSha256": "04d2fc520b8180e50db7b5a36ddc5251d2ab65ce9001d4114155e9177d92bf78",
-  "graderSha256": "0828aa2292107087de66e7276b14bd4bda0eb3259a6c29c2de7bda37f00bd665",
+  "graderSha256": "29bbb1caf3ad088535dd5fbd81214d9deea47d322352df4ccc1f6133dc6ed6b3",
   "checkerSha256": null,
   "stagedInputSha256": null,
   "condition": "policy",
@@ -33,5 +33,11 @@
     "notEvaluated": 0,
     "total": 7
   },
-  "transcriptReducedAt": "2026-09-10T15:22:35.352Z"
+  "transcriptReducedAt": "2026-09-10T15:22:35.352Z",
+  "regrade": {
+    "at": "2026-09-20T13:00:44.824Z",
+    "tool": "scripts/eval-rehome.mjs",
+    "fromGraderSha256": "0828aa2292107087de66e7276b14bd4bda0eb3259a6c29c2de7bda37f00bd665",
+    "condition": "policy"
+  }
 }

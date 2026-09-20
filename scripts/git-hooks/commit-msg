@@ -10,9 +10,10 @@
 // the register in which private detail arrives by accident.
 //
 // It ANSWERS rather than ASKS. A prompt on every commit is answered
-// reflexively within a week, and it cannot run at all in the commits
-// eval-batch.mjs makes on its own after a verify pass — a hook that blocks on
-// stdin would hang a four-hour measurement run at the first bundle. So the
+// reflexively within a week, and a hook that blocks on stdin would hang any
+// scripted commit — the batch chains that once committed run bundles after a
+// verify pass ran for hours unattended, and a prompt at the first bundle
+// would have stalled the lot. So the
 // audience is stated from the configured remote, every time, and the classes
 // of private content that can be recognised mechanically are refused rather
 // than left to a human's judgment at the moment they are least likely to

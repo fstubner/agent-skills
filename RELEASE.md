@@ -9,9 +9,11 @@ documented headless plugin loader, so public or team-Marketplace loading remains
 a manual release check.
 
 The workflow builds one archive from the tagged Git object, records its
-SHA-256, publishes those exact bytes, downloads them again, verifies the
-checksum, and executes a packaged checker. It never rebuilds in the publish
-job.
+SHA-256, attaches those exact bytes to a **draft** release, downloads them
+again, verifies the checksum, and executes a packaged checker. It never
+rebuilds in the publish job, and it never makes the release public: that is
+a person's decision, taken after reading the generated notes against the
+tested archive.
 
 ## Cut a release
 
@@ -19,6 +21,15 @@ job.
 2. Run `node scripts/gen-plugin-bundles.mjs`.
 3. Run `node scripts/run-tests.mjs` and review the generated diff.
 4. Commit, create an annotated `v<version>` tag, and push the tag.
+5. Wait for the workflow, review the draft, then publish it yourself:
+
+   ```bash
+   gh release edit v<version> --draft=false
+   ```
+
+A draft the workflow produced is the review gate, not debris. Nothing
+public happens until step 5, so a mistaken tag push costs a draft, not a
+release.
 
 ## Roll back
 

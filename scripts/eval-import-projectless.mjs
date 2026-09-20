@@ -4,6 +4,8 @@ import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { redactHome } from './lib/redact-home.mjs';
+import { reduceTranscript } from './lib/reduce-transcript.mjs';
 
 const suiteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const EXCLUDED = new Set(['.git', '.codex', '.claude', '.agent-input', '.fixture-ready', 'node_modules', 'outputs', 'work']);
@@ -92,18 +94,28 @@ if (fs.existsSync(runDir)) usage(`run already exists: ${runId}`);
 const outputsDir = path.join(runDir, 'outputs');
 fs.mkdirSync(runDir, { recursive: true });
 copyTree(source, outputsDir);
-fs.writeFileSync(path.join(runDir, 'prompt.txt'), prompt + '\n');
-fs.copyFileSync(transcript, path.join(runDir, 'transcript.jsonl'));
-fs.writeFileSync(path.join(runDir, 'stderr.txt'), `Imported from a Codex ${origin} task. Harness shell failures, if any, are preserved in transcript.jsonl.\n`);
+fs.writeFileSync(path.join(runDir, 'prompt.txt'), redactHome(prompt) + '\n');
+// The same two passes eval-run.mjs applies, for the same reason: a desktop
+// rollout is a recording of the operator's machine, and this importer copied
+// it verbatim into the bundle for a month after eval-run stopped doing so.
+// The raw file keeps its full form beside the other raw transcripts, under
+// the ignored directory at the repository root; the bundle gets the reduced,
+// redacted one, and says so in the manifest so eval-verify holds it to that.
+const fullTranscriptText = redactHome(transcriptRaw);
+const rawTranscriptDir = path.join(suiteRoot, '.eval-raw-transcripts');
+fs.mkdirSync(rawTranscriptDir, { recursive: true });
+fs.writeFileSync(path.join(rawTranscriptDir, `${runId}.jsonl`), fullTranscriptText);
+fs.writeFileSync(path.join(runDir, 'transcript.jsonl'), reduceTranscript(fullTranscriptText));
+fs.writeFileSync(path.join(runDir, 'stderr.txt'), `Imported from a Codex ${origin} task. Harness shell failures, if any, are preserved in the raw transcript under .eval-raw-transcripts/.\n`);
 
 const grader = path.join(suiteRoot, ...testCase.grader.split('/'));
 const gradingRun = spawnSync(process.execPath, [grader, '--root', source], { cwd: suiteRoot, encoding: 'utf8', timeout: 120_000, maxBuffer: 20 * 1024 * 1024 });
-fs.writeFileSync(path.join(runDir, 'grader-raw.txt'), gradingRun.stdout || '');
-fs.writeFileSync(path.join(runDir, 'grader-stderr.txt'), gradingRun.stderr || '');
+fs.writeFileSync(path.join(runDir, 'grader-raw.txt'), redactHome(gradingRun.stdout || ''));
+fs.writeFileSync(path.join(runDir, 'grader-stderr.txt'), redactHome(gradingRun.stderr || ''));
 let grading;
 try { grading = JSON.parse(gradingRun.stdout); }
 catch { grading = { schemaVersion: 2, caseId: testCase.id, assertions: testCase.assertions.map((assertion) => ({ id: assertion.id, status: 'not_evaluated', evidence: 'grader emitted invalid JSON' })) }; }
-fs.writeFileSync(path.join(runDir, 'grading.json'), JSON.stringify(grading, null, 2) + '\n');
+fs.writeFileSync(path.join(runDir, 'grading.json'), redactHome(JSON.stringify(grading, null, 2)) + '\n');
 const counts = {
   passed: grading.assertions.filter((assertion) => assertion.status === 'pass').length,
   failed: grading.assertions.filter((assertion) => assertion.status === 'fail').length,
@@ -116,6 +128,15 @@ const manifest = {
   caseId: testCase.id,
   caseRevision: testCase.revision,
   caseSha256: sha256(caseRaw),
+  // The same bindings eval-run.mjs records. Without graderSha256 the batch
+  // runner refuses to count an imported run toward a cell, and without the
+  // fixture and checker digests a later edit to either would not retire it.
+  fixtureSha256: hashTree(path.join(suiteRoot, ...testCase.fixture.split('/'))),
+  graderSha256: sha256(fs.readFileSync(grader)),
+  checkerSha256: testCase.checker
+    ? sha256(fs.readFileSync(path.join(suiteRoot, ...testCase.checker.split('/'))))
+    : null,
+  stagedInputSha256: null,
   condition: args.condition,
   harness: 'codex',
   harnessVersion: `${origin === 'harness-router' ? 'codex-cli' : 'codex-desktop'} ${meta?.cli_version || 'unknown'}`,
@@ -128,6 +149,7 @@ const manifest = {
   costCredits,
   exitCode: 0,
   artifactSha256: hashTree(outputsDir),
+  transcriptReducedAt: new Date().toISOString(),
   files: { prompt: 'prompt.txt', transcript: 'transcript.jsonl', stderr: 'stderr.txt', grading: 'grading.json', workspace: 'outputs' },
   grading: counts,
 };

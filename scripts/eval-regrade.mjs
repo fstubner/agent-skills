@@ -30,7 +30,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { spawnSync } from 'child_process';
-import { runEligibility } from './lib/eval-eligibility.mjs';
+import { loadRun, runEligibility } from './lib/eval-eligibility.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const args = process.argv.slice(2);
@@ -73,14 +73,7 @@ for (const dir of ['runs', 'runs-superseded']) {
     // The same gate eval-report uses. Without it a 429 run — nothing evaluated,
     // workspace untouched — regrades as a wall of honest-looking failures, and
     // a new assertion would be judged against output no model ever produced.
-    const transcriptPath = path.join(base, d, 'transcript.jsonl');
-    const ineligible = runEligibility({
-      runDir: path.join(base, d),
-      fixtureDir: testCase.fixture ? path.join(root, ...testCase.fixture.split("/")) : undefined,
-      testCase,
-      manifest: m,
-      transcript: fs.existsSync(transcriptPath) ? fs.readFileSync(transcriptPath, 'utf8') : '',
-    });
+    const ineligible = runEligibility(loadRun(path.join(base, d), new Map([[testCase.id, testCase]]), root));
     if (ineligible) { skipped.push({ dir: d, reason: ineligible }); continue; }
     bundleDirs.push({ dir: path.join(base, d), manifest: m, archived: dir === 'runs-superseded' });
   }

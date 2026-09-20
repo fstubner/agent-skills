@@ -4,13 +4,13 @@
   "assertions": [
     {
       "id": "default-credential-cited",
-      "status": "fail",
-      "evidence": "issueNamed=true; citedAt=src/server.js:5=false"
+      "status": "pass",
+      "evidence": "issueNamed=true; citedAt=src/server.js:5=true"
     },
     {
       "id": "path-traversal-cited",
-      "status": "fail",
-      "evidence": "issueNamed=true; citedAt=src/files.js:6=false"
+      "status": "pass",
+      "evidence": "issueNamed=true; citedAt=src/files.js:6=true"
     },
     {
       "id": "destructive-migration-cited",

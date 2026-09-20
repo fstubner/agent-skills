@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
+import { citationMatchers } from './lib/citations.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i >= 0 ? path.resolve(process.argv[i + 1]) : null;
@@ -21,13 +22,14 @@ const citations = [
   ['path-traversal-cited', 'src/files.js', lineOf('src/files.js', 'path.join'), /(path traversal|containment|outside|escape)/i],
   ['destructive-migration-cited', 'migrations/003_remove_audit.sql', 1, /(drop|destructive|data loss)/i]
 ];
+// The shared citation matcher, which reads every form real reports write,
+// including the `#L25` URL-fragment form 33 of 99 antigravity reports used.
+// This grader kept the last private copy, one form short of the library its
+// sibling -hidden-risks already used.
+const { citesAt } = citationMatchers(report, root);
 for (const [assertionId, file, line, issue] of citations) {
   const issueNamed = issue.test(report);
-  // The connector set is the one tested in scripts/tests/eval-citation-forms.mjs.
-  // A narrower version read "`src/x.js`, lines 25-27" as no citation at all.
-  const escaped = file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const located = new RegExp(escaped + '(?:[\\s`:,\\-–—.()]|\\blines?\\b|\\bat\\b|\\bL)*' + line + '\\b', 'i').test(report)
-    || new RegExp('\\b(?:lines?|L)\\s*' + line + '\\b[^\\n]{0,40}?' + escaped, 'i').test(report);
+  const located = line > 0 && citesAt(file, line);
   record(assertionId, issueNamed && located, `issueNamed=${issueNamed}; citedAt=${file}:${line}=${located}`);
 }
 

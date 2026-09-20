@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { assertionDiagnostics, discriminatingRate } from './lib/eval-diagnostics.mjs';
 import { applyInterimCohort } from './lib/eval-interim.mjs';
-import { runEligibility } from './lib/eval-eligibility.mjs';
+import { loadRun, runEligibility } from './lib/eval-eligibility.mjs';
 import { inProgramme } from './lib/eval-programme.mjs';
 import { currentSkillDigest, latestExperiments, skillCurrencyReasons, supersededReason } from './lib/eval-versions.mjs';
 
@@ -27,15 +27,8 @@ const runs = [];
 const runsDir = path.join(evalRoot, 'runs');
 if (fs.existsSync(runsDir)) {
   for (const entry of fs.readdirSync(runsDir, { withFileTypes: true }).filter((item) => item.isDirectory())) {
-    const runDir = path.join(runsDir, entry.name);
-    const manifestPath = path.join(runDir, 'run.json');
-    if (!fs.existsSync(manifestPath)) continue;
-    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-    const grading = JSON.parse(fs.readFileSync(path.join(runDir, manifest.files.grading), 'utf8'));
-    const transcriptPath = manifest.files.transcript ? path.join(runDir, manifest.files.transcript) : null;
-    const transcript = transcriptPath && fs.existsSync(transcriptPath) ? fs.readFileSync(transcriptPath, 'utf8') : '';
-    const testCase = cases.get(manifest.caseId);
-    runs.push({ runDir, fixtureDir: testCase?.fixture ? path.join(root, ...testCase.fixture.split("/")) : undefined, manifest, grading, transcript, testCase });
+    const run = loadRun(path.join(runsDir, entry.name), cases, root);
+    if (run && run.grading) runs.push(run);
   }
 }
 

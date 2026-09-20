@@ -25,6 +25,9 @@ import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
+// The shim resolver eval-run uses, imported rather than copied: each judge
+// script carried its own, and the claude path did not resolve at all.
+import { resolveInvocation } from './lib/eval-harness-run.mjs';
 
 const suiteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -163,7 +166,7 @@ function runJudge() {
       '--skip-git-repo-check', '--sandbox', 'read-only',
       '--model', judgeModel, '-c', 'model_reasoning_effort="low"', '--json', prompt,
     ];
-    const invocation = resolveCodex(codexArgs);
+    const invocation = resolveInvocation('codex', codexArgs);
     const out = spawnSync(invocation.command, invocation.args, {
       cwd: suiteRoot, encoding: 'utf8', timeout: 300_000, maxBuffer: 20 * 1024 * 1024,
     });
@@ -176,26 +179,13 @@ function runJudge() {
       .find((event) => event.type === 'item.completed' && event.item?.type === 'agent_message');
     return { failed: null, text: message?.item?.text || '' };
   }
-  const out = spawnSync('claude', ['-p', '--output-format', 'json', '--model', judgeModel, prompt], {
+  const claude = resolveInvocation('claude', ['-p', '--output-format', 'json', '--model', judgeModel, prompt]);
+  const out = spawnSync(claude.command, claude.args, {
     cwd: suiteRoot, encoding: 'utf8', timeout: 300_000, maxBuffer: 20 * 1024 * 1024,
   });
   if (out.error || out.status !== 0) return { failed: out, text: '' };
   try { return { failed: null, text: JSON.parse(out.stdout).result || '' }; }
   catch { return { failed: null, text: '' }; }
-}
-
-// Windows ships codex as a .cmd shim that spawnSync cannot exec directly; the
-// same resolution eval-run uses.
-function resolveCodex(codexArgs) {
-  if (process.platform !== 'win32') return { command: 'codex', args: codexArgs };
-  const found = spawnSync('where.exe', ['codex'], { encoding: 'utf8', timeout: 10_000 });
-  const candidates = (found.stdout || '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  const shim = candidates.find((candidate) => candidate.toLowerCase().endsWith('.cmd'));
-  if (shim) {
-    const script = path.join(path.dirname(shim), 'node_modules', '@openai', 'codex', 'bin', 'codex.js');
-    if (fs.existsSync(script)) return { command: process.execPath, args: [script, ...codexArgs] };
-  }
-  return { command: candidates.find((c) => c.toLowerCase().endsWith('.exe')) || 'codex', args: codexArgs };
 }
 
 const judged = runJudge();

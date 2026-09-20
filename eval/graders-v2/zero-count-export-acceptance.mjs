@@ -4,6 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { citationMatchers } from './lib/citations.mjs';
+import { declaredVerdict } from './lib/verdict.mjs';
 
 const i = process.argv.indexOf('--root');
 const root = i < 0 ? null : path.resolve(process.argv[i + 1] || '');
@@ -17,12 +18,13 @@ const review = read('REVIEW.md');
 const assertions = [];
 const add = (id, pass, evidence) => assertions.push({ id, status: pass ? 'pass' : 'fail', evidence });
 
-const block = /^\s*(?:#+\s*)?(?:verdict\s*:\s*)?BLOCK\b/im.test(review)
-  && !/^\s*(?:#+\s*)?(?:verdict\s*:\s*)?SHIP\b/im.test(review);
-// Evidence must never be empty: the schema requires it, and a run that wrote
-// no REVIEW.md produced an empty slice here, so a real result failed
-// verification for a reporting bug rather than anything about the run.
-add('verdict-is-block', block, review.trim() ? review.slice(0, 240) : 'no review document was written');
+// The shared verdict reader, in place of the line-anchored regex the
+// 2026-09-04 sweep replaced in eleven graders and missed here. Evidence must
+// never be empty: the schema requires it, and a run that wrote no REVIEW.md
+// once produced an empty slice, so the reader's line is always quoted.
+const { verdict: declared, line: verdictLine } = declaredVerdict(review);
+add('verdict-is-block', declared === 'block',
+  review.trim() ? `verdict line: ${verdictLine ?? 'none found'} -> ${declared ?? 'no verdict declared'}` : 'no review document was written');
 
 // The citation matcher is shared: eval/graders-v2/lib/citations.mjs. Twenty-
 // three private copies needed four separate repairs; this grader keeps only

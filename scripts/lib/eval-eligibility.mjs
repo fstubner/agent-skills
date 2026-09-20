@@ -55,7 +55,33 @@ export const COSTLESS_HARNESSES = new Set(['antigravity']);
 // Detection must therefore recognise the redacted spelling as well as the raw
 // one. Both separators appear in the archive: 768 occurrences carry a forward
 // slash and 279 a JSON-escaped backslash, because transcripts nest JSON.
-const AMBIENT_SKILL_PATH = /(?:[A-Z]:\\\\Users\\\\[^\s"']+\\\\(?:\.agents|\.codex|\.gemini)\\\\|\/(?:home|Users)\/[^\s"']+\/(?:\.agents|\.codex|\.gemini)\/|<home>(?:\\{1,4}|\/)(?:\.agents|\.codex|\.gemini)(?:\\{1,4}|\/))/i;
+export const AMBIENT_SKILL_PATH = /(?:[A-Z]:\\\\Users\\\\[^\s"']+\\\\(?:\.agents|\.codex|\.gemini)\\\\|\/(?:home|Users)\/[^\s"']+\/(?:\.agents|\.codex|\.gemini)\/|<home>(?:\\{1,4}|\/)(?:\.agents|\.codex|\.gemini)(?:\\{1,4}|\/))/i;
+
+// One bundle, in the shape runEligibility reads. Four scripts built this
+// object by hand — the report, the batch runner, regrade, rehome — and the
+// batch runner "mirrored" the clauses instead of calling them, which is how
+// the pair disagreed four times. A fifth, eval-reliability, applied no
+// eligibility at all and counted quota-empty runs as failed trials. Reading
+// the bundle once, here, is what makes calling the real function cheap
+// enough that nobody needs a mirror.
+export function loadRun(runDir, cases, root) {
+  const manifestPath = path.join(runDir, 'run.json');
+  if (!fs.existsSync(manifestPath)) return null;
+  let manifest;
+  try { manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')); } catch { return null; }
+  if (!manifest.grading) return null;
+  const gradingPath = path.join(runDir, manifest.files?.grading || 'grading.json');
+  let grading = null;
+  try { grading = JSON.parse(fs.readFileSync(gradingPath, 'utf8')); } catch { /* the caller decides */ }
+  const transcriptPath = manifest.files?.transcript ? path.join(runDir, manifest.files.transcript) : null;
+  const transcript = transcriptPath && fs.existsSync(transcriptPath) ? fs.readFileSync(transcriptPath, 'utf8') : '';
+  const testCase = cases.get(manifest.caseId);
+  // resolve, not join-of-split: a synthetic case under a test's temp root
+  // names its fixture with the host's own separators, and eval-rehome always
+  // resolved it that way.
+  const fixtureDir = testCase?.fixture ? path.resolve(root, testCase.fixture) : undefined;
+  return { runDir, fixtureDir, manifest, grading, transcript, testCase };
+}
 
 function accessedAmbientSkill(transcript) {
   return transcript.split(/\r?\n/).filter(Boolean).some((line) => {

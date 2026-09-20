@@ -72,14 +72,23 @@ jobs:
           sha256sum --check SHA256SUMS
           PRERELEASE=()
           if [[ "$GITHUB_REF_NAME" == *-* ]]; then PRERELEASE=(--prerelease); fi
-          gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes "${PRERELEASE[@]}" ./*
+          # A draft, on purpose. A tag push is one keystroke away from a
+          # mistake, and this used to make that mistake public in the same
+          # minute. The draft is the review gate: a person reads the notes
+          # against the tested archive and flips it with
+          #   gh release edit <tag> --draft=false
+          # RELEASE.md says the same. The verify job below reads the draft's
+          # assets, which is what makes the flip safe.
+          gh release create "$GITHUB_REF_NAME" --verify-tag --draft --generate-notes "${PRERELEASE[@]}" ./*
 
   verify-published:
     needs: publish
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      contents: read
+      # write, not read: the release is a draft at this point and the GitHub
+      # API hides drafts from a read-only token. This job only downloads.
+      contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

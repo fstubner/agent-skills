@@ -7,6 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { declaredVerdict } from './lib/verdict.mjs';
 
 const i = process.argv.indexOf('--root'),
   r = i < 0 ? null : path.resolve(process.argv[i + 1] || '');
@@ -18,9 +19,13 @@ const f = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^
   a = [],
   add = (id, p, e) => a.push({ id, status: p ? 'pass' : 'fail', evidence: e });
 
-add('verdict-is-block',
-  /^\s*(?:#+\s*)?(?:verdict\s*:\s*)?BLOCK\b/im.test(review) && !/^\s*(?:#+\s*)?(?:verdict\s*:\s*)?SHIP\b/im.test(review),
-  review.slice(0, 300));
+// The shared verdict reader. This grader kept a line-anchored regex that the
+// 2026-09-04 write-up found could not see the verdict in 131 of 246 reviews
+// — "# Release Verdict: BLOCK" opens with a word it did not allow — and the
+// sweep that replaced eleven copies missed this one and one other.
+const { verdict: declared, line: verdictLine } = declaredVerdict(review);
+add('verdict-is-block', declared === 'block',
+  `verdict line: ${verdictLine ?? 'none found'} -> ${declared ?? 'no verdict declared'}`);
 
 const reportText = read('.agent-evidence/acceptance-report.json');
 let report;
