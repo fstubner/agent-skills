@@ -76,7 +76,7 @@ see the caveat after it for words that were deliberately left out:
 Stock phrases that delay the point instead of starting with it (generated
 from `rules/AIProseTells/ThroatClearing.yml`; matching is case-insensitive so
 the tokens below are lowercase):
-<!-- gen-patterns:tokens ThroatClearing.yml -->*here's the thing, let me be clear, i'll be honest, to be honest, simply put, at its core, it's worth noting that, it is worth noting that, it's important to note that, it is important to note that, needless to say, the truth is.*<!-- /gen-patterns -->
+<!-- gen-patterns:tokens ThroatClearing.yml -->*here's the thing, let me be clear, i'll be honest, to be honest, simply put, at its core, worth noting that, worth saying that, worth mentioning that, worth pointing out that, it's important to note that, it is important to note that, needless to say, the truth is.*<!-- /gen-patterns -->
 
 - **Why it reads as slop:** these add a beat of narration before the actual
   content, a tic that's rare in edited human prose but common in model output
