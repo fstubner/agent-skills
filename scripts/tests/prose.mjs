@@ -40,6 +40,17 @@ import {
     expect('ai-prose-slop: "robust" is caught by InflatedVocabulary (doc/rule drift regression)',
       flaggedTokens.includes('robust'), flaggedTokens.join(', '));
 
+    // Regression: ThroatClearing listed "it's worth noting that" and "it is
+    // worth noting that" and nothing else in that family, so "Worth saying
+    // that X" — the same opener with the subject dropped — passed a clean run
+    // and had to be caught by a human reader instead.
+    const throatTokens = slopReport.checks
+      .filter((c) => c.id === 'AIProseTells.ThroatClearing')
+      .map((c) => (c.detail.match(/'([^']+)'/) || [])[1]);
+    expect('ai-prose-slop: "worth saying that" is caught by ThroatClearing (variant-escape regression)',
+      throatTokens.some((t) => t?.toLowerCase() === 'worth saying that'),
+      throatTokens.join(', '));
+
     // The following were verified by hand once and never captured as a
     // regression test — automating exactly what was manually exercised.
     const strictClean = runNode(script, [path.join(root, 'fixtures', 'ai-prose-slop-clean', 'doc.md'), '--strict']);
