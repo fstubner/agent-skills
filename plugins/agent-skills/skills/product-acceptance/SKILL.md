@@ -185,6 +185,14 @@ records. A log produced before the walkthrough changed reads as
 `not_evaluated`, not as evidence — the same refusal this gate applies to
 every other report it finds on disk.
 
+**Run it yourself, after the last change, and do not accept a log you
+found.** The hash binds the log to the walkthrough, not to the code, so a
+run from earlier in the build still validates against a tree that has moved
+under it. `frontend` tells builders to replay continuously while they work
+and to keep those runs out of `.agent-evidence/` for exactly this reason. A
+log already sitting at that path when you arrive is one you did not
+produce; regenerate and re-run rather than reading it.
+
 Declaring a replay block is opting in. A walkthrough without one is not
 deficient: some walks are entirely judgment and some products have no
 browser to drive, so the check passes and `A-runtime` carries the claim

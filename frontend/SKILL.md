@@ -74,6 +74,33 @@ empty, error, and success look like at each step. Falsifiable steps —
 "click New, type a name, press Enter, row appears" — not narrative. See
 `references/ux-states.md`.
 
+## Replay it while you build, not once at the end
+
+A ```walkthrough``` block in that file is runnable. Generate the spec and
+run it against the product you are changing, as often as you would run a
+test — the point is to close your own loop rather than hand someone a diff
+and wait to be told it does not work:
+
+```bash
+node <product-acceptance>/scripts/gen-walkthrough-spec.mjs --root . \
+  --out .agent-evidence/walkthrough-loop.spec.js
+npx playwright test .agent-evidence/walkthrough-loop.spec.js
+```
+
+Exit code 3 from the generator means the walkthrough declares no replay
+block, which is not an error — plenty of walks are judgment, and plenty of
+products have no browser to drive.
+
+**Never write `.agent-evidence/walkthrough-run.json`.** That one filename
+is the acceptance gate's, and a builder's log placed there would quietly
+break it: the log is bound to the sha256 of the SPEC, which comes from the
+walkthrough, and not to the code. A run saved early in a task keeps
+validating through every change made after it, so the gate would read a
+genuine pass that predates the work it is accepting. Any other name in that
+directory is free — `walkthrough-loop` above is only a convention — because
+the gate reads one path and ignores the rest. Your run closes your loop;
+the acceptor runs it again, last, for the gate.
+
 ## Handoff
 
 product-acceptance requires `design-direction.md` and `ux-walkthrough.md`

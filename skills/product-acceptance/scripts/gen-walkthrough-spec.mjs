@@ -130,6 +130,12 @@ if (args.includes('--print-hash')) {
 }
 
 const outPath = path.resolve(valueAfter('--out') || path.join(root, 'walkthrough.spec.js'));
+// The default lands beside ux-walkthrough.md, which exists by definition. A
+// --out into a directory that does not exist yet is the normal case for a
+// builder replaying mid-task, before anything has written an evidence dir,
+// and an ENOENT there reads as "the generator is broken" rather than "make
+// the folder first".
+fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, `${spec}// specSha256: ${specHash}\n`);
 console.log(JSON.stringify({
   source: path.relative(root, source),
