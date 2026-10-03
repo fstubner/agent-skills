@@ -1,9 +1,5 @@
 # agent-skills v2
 
-> **EVIDENCE STATUS: UNVALIDATED.** The deterministic checkers have fixture
-> tests. No behavioural efficacy claim currently meets this repository's v2
-> evidence standard.
-
 **Version:** [VERSION](./VERSION) · **Changelog:** [CHANGELOG.md](./CHANGELOG.md) · **License:** MIT
 
 Agent Skills suite for product and software delivery (Claude Code / Codex /
@@ -20,6 +16,18 @@ around three ideas:
   single machine-readable source for skills and artifacts;
   [`docs/CONTRACT.md`](./docs/CONTRACT.md) is generated from it and CI fails
   on drift.
+
+**Where the evidence stands.** These skills are in daily use here and the
+author finds them useful. That is anecdote, and it is labelled as such
+rather than dressed up: what would turn it into a result is a comparison
+against a control, and that comparison is not finished.
+[`eval/`](./eval/) is where it is being done — 808 recorded runs and 49
+write-ups, each run bound to the digests of the case, fixture, grader and
+skill text it used, so editing any input supersedes the runs that depended
+on it. Nothing in it clears the bar this repository set for itself yet. The
+next section says which claims are supported and which are not, and the one
+mistake to avoid is reading "the checkers are tested" as "the skills change
+agent behaviour".
 
 ## What this claims (and doesn't)
 
