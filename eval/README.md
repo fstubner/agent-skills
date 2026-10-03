@@ -1,9 +1,9 @@
 # Eval
 
-> **EVIDENCE STATUS: UNVALIDATED.** Files under `results/` are quarantined
-> legacy observations. They do not support efficacy claims because the set
-> contains undefined cases, incomplete provenance, little replication, and no
-> complete raw transcript/output/cost bundles.
+Files under `results/` are quarantined legacy observations. They do not
+support efficacy claims because the set contains undefined cases, incomplete
+provenance, little replication, and no complete raw transcript/output/cost
+bundles.
 
 The v2 system is the only evidence path going forward:
 

@@ -1,4 +1,4 @@
-# agent-skills v2
+# agent-skills
 
 **Version:** [VERSION](./VERSION) · **Changelog:** [CHANGELOG.md](./CHANGELOG.md) · **License:** MIT
 
@@ -17,17 +17,15 @@ around three ideas:
   [`docs/CONTRACT.md`](./docs/CONTRACT.md) is generated from it and CI fails
   on drift.
 
-**Where the evidence stands.** These skills are in daily use here and the
-author finds them useful. That is anecdote, and it is labelled as such
-rather than dressed up: what would turn it into a result is a comparison
-against a control, and that comparison is not finished.
-[`eval/`](./eval/) is where it is being done — 808 recorded runs and 49
-write-ups, each run bound to the digests of the case, fixture, grader and
-skill text it used, so editing any input supersedes the runs that depended
-on it. Nothing in it clears the bar this repository set for itself yet. The
-next section says which claims are supported and which are not, and the one
-mistake to avoid is reading "the checkers are tested" as "the skills change
-agent behaviour".
+**Where the evidence stands.** I use these skills every day and find them
+useful, but that's anecdotal and they aren't formally validated yet. Turning
+it into a result needs a comparison against running without them, and that
+work is in [`eval/`](./eval/). It holds 808 recorded runs and 49 write-ups.
+Each run is tied to the exact case, fixture, grader and skill text it used,
+so changing any of those retires the runs that depended on it. Nothing there
+clears the bar I set for this repository yet. The next section says which
+claims are supported and which aren't. The checkers being tested doesn't mean
+the skills change agent behaviour.
 
 ## What this claims (and doesn't)
 

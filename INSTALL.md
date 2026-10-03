@@ -1,9 +1,5 @@
 # Install
 
-> **EVIDENCE STATUS: UNVALIDATED.** Installation is supported and the
-> deterministic checkers are fixture-tested. Behavioural efficacy is not yet
-> established under the repository's v2 evaluation standard.
-
 ## Requirements
 
 Node 18+. No npm install, no network — the installer only copies files.

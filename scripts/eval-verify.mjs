@@ -225,10 +225,16 @@ if (evidence) {
   }
 }
 
+// The files a reader takes claims from must not claim efficacy the evidence
+// does not support. Until 2026-10-03 this also required each of them to open
+// with an all-caps "EVIDENCE STATUS: UNVALIDATED" banner. That was dropped:
+// a CI rule dictating the first line of public documents put a warning label
+// where a reader expects a description, and how a page states its evidence is
+// an editorial decision, not an invariant. What IS an invariant stays below —
+// an unsupported efficacy claim in any of these files fails the check.
 const claimFiles = ['README.md', 'INSTALL.md', 'eval/README.md'];
 for (const relative of claimFiles) {
   const body = fs.readFileSync(path.join(root, relative), 'utf8');
-  if (!/EVIDENCE STATUS:\s*UNVALIDATED/i.test(body)) fail(`${relative}: missing unvalidated evidence banner`);
   for (const forbidden of [/content earns its place/i, /efficacy[^\n]{0,80}measured well/i, /forced evidence for all 17 skills/i]) {
     if (forbidden.test(body)) fail(`${relative}: contains unsupported efficacy claim ${forbidden}`);
   }
