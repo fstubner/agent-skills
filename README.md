@@ -28,11 +28,12 @@ paths are in [INSTALL.md](./INSTALL.md).
 
 - **The checkers are tested.** Every gate has fixtures it must pass and
   fixtures it must block, run in CI on Ubuntu and Windows.
-- **Agents pick the skills up in interactive sessions.** Over a month of my
-  own Claude Code work across 15 projects, the skills were used 89 times. I
-  typed a skill's name 27 times; the model chose one itself 62 times, 21 of
-  them from a prompt that named no activity at all. The acceptance gate
-  returned BLOCK 11 times, CONDITIONAL 5 times and SHIP twice
+- **Agents pick the skills up in interactive sessions.** From 4 to 30 August
+  2026, across 15 projects of my own Claude Code work, the skills were used
+  89 times (a few resumed sessions count twice). I typed a skill's name 27
+  times; the model chose one itself 62 times, 21 of them from a prompt that
+  named no activity at all. Of 26 acceptance runs, 11 returned BLOCK, 5
+  CONDITIONAL, 2 SHIP and 8 no verdict
   ([field-outcomes-2026-09-02.md](./eval/results/field-outcomes-2026-09-02.md)).
 - **In non-interactive runs they don't get picked up.** In `claude -p`
   sessions and subagents, no skill was invoked, even on a prompt that matched
