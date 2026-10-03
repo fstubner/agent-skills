@@ -1,82 +1,53 @@
-# agent-skills v2
+# agent-skills
 
-> **EVIDENCE STATUS: UNVALIDATED.** The deterministic checkers have fixture
-> tests. No behavioural efficacy claim currently meets this repository's v2
-> evidence standard.
+Skills for coding agents (Claude Code, Codex, Cursor, Antigravity and Gemini
+CLI) that cover the parts of building a product agents tend to skip: agreeing
+what the product is before building it, deciding how the parts fit together,
+and checking the work properly before calling it done.
+
+Each skill is a `SKILL.md` the agent reads when a task matches it. Most come
+with a deterministic checker: a script that inspects the project and returns
+SHIP, CONDITIONAL or BLOCK. The acceptance skill re-runs those checkers itself
+rather than trusting a report the builder left behind, and its verdict stops
+at CONDITIONAL unless the run is by an agent that did not write the code.
 
 **Version:** [VERSION](./VERSION) · **Changelog:** [CHANGELOG.md](./CHANGELOG.md) · **License:** MIT
 
-Agent Skills suite for product and software delivery (Claude Code / Codex /
-Cursor / Antigravity), built
-around three ideas:
+## Quick start
 
-- **Evidence-gated shipping** — deterministic checkers emit unified reports;
-  the acceptance gate **re-runs them fresh** and never trusts JSON on disk.
-- **Builder ≠ acceptor** — the gate caps at CONDITIONAL unless the acceptor
-  asserts independence. Enforced by discipline, not mechanism: the flags are
-  claims a builder could make falsely, which is exactly what the skill's
-  red-flag table is for.
-- **Registry-first contract** — [`registry.json`](./registry.json) is the
-  single machine-readable source for skills and artifacts;
-  [`docs/CONTRACT.md`](./docs/CONTRACT.md) is generated from it and CI fails
-  on drift.
+```bash
+node scripts/install.mjs --harness claude     # or cursor | codex | all
+```
 
-## What we claim (and don't)
+Then build or review as usual. Plugin marketplace installs and per-harness
+paths are in [INSTALL.md](./INSTALL.md).
 
-The **checkers are tested**: every gate has ship + block fixtures asserting
-the specific blocker, run in CI on Ubuntu **and Windows**.
+## Does it work?
 
-The behavioural claim splits into two questions that have to be measured
-separately, and conflating them is the easiest way to be wrong about this
-suite ([eval/results/](./eval/results/)):
+**Evidence status: unvalidated.** What is measured so far:
 
-**Does a skill get used unprompted? It depends on whether a human is in the
-session.** Non-interactive: essentially never. In both
-a Task-tool subagent and a genuine top-level `claude -p` session, with all
-of the skills in the then-current tagged release installed, neither run invoked a single
-skill on a prompt matching `product-build`'s own stated trigger almost
-verbatim. No `PRODUCT.md`, no `ARCHITECTURE.md`, no design question, and
-the builder self-certified "done" in the same turn it built. A competing
-plugin's far more aggressive mechanism — injecting a whole skill's text
-into every session via a `SessionStart` hook — didn't reliably fire
-either, so this is not simply a matter of weaker wording.
+- **The checkers are tested.** Every gate has fixtures it must pass and
+  fixtures it must block, run in CI on Ubuntu and Windows.
+- **Agents pick the skills up in interactive sessions.** Over a month of my
+  own Claude Code work across 15 projects, the skills were used 89 times. I
+  typed a skill's name 27 times; the model chose one itself 62 times, 21 of
+  them from a prompt that named no activity at all. The acceptance gate
+  returned BLOCK 11 times, CONDITIONAL 5 times and SHIP twice
+  ([field-outcomes-2026-09-02.md](./eval/results/field-outcomes-2026-09-02.md)).
+- **In non-interactive runs they don't get picked up.** In `claude -p`
+  sessions and subagents, no skill was invoked, even on a prompt that matched
+  `product-build`'s trigger almost word for word.
+- **Whether following a skill produces better software is not measured
+  yet.** Earlier forced runs lack the transcripts, costs and replication a fair
+  comparison needs, so they are kept as observations only. The new evaluation
+  compares no guidance, a short policy, the checkers alone and the full
+  skills, graded on outcomes: [eval/README.md](./eval/README.md).
 
-Set against that, passive telemetry over twelve days of ordinary work
-records **19 invocations of these skills across 8 unrelated projects**, and
-none of the competing plugin
-([field-telemetry-2026-08-16.md](./eval/results/field-telemetry-2026-08-16.md)).
-The two are not in conflict: the hook cannot tell whether the human typed
-the skill's name or the model chose it, so field usage says the skills get
-reached for, and says nothing yet about who reaches.
-
-Reading the session transcripts themselves answers who reaches
-([field-outcomes-2026-09-02.md](./eval/results/field-outcomes-2026-09-02.md)).
-Over a month of interactive Claude Code work across 15 projects: 89
-invocations, 27 typed by the human, **62 chosen by the model — 21 of them
-from a prompt that named no activity at all**. The acceptance gate returned
-BLOCK 11 times, CONDITIONAL 5, SHIP 2, and a BLOCK was followed by a
-specific fix instruction in 5 of 11 cases. So interactive delivery works,
-`-p` delivery does not, and the difference is the setting rather than the
-wording. The user in that data is the suite's author, who knows the skills
-exist; it is delivery evidence, not efficacy evidence. Codex shows a
-handful of real sessions, Antigravity two, Cursor none.
-
-**Does the guidance help once followed? Unknown.** The historical forced
-runs lack the raw transcripts, output bundles, cost data, replication, and
-case provenance required for a defensible comparison. They are retained as
-legacy observations, not efficacy evidence. New runs use isolated control,
-concise-policy, checker, and skill conditions with outcome graders; see
-[`eval/README.md`](./eval/README.md).
-
-Where a rule can be enforced instead of suggested,
-`scripts/git-hooks/pre-commit` runs deterministic checkers on staged files.
-Whether the prose skills add value beyond a concise policy or those checkers
-remains an open experimental question. See
-[INSTALL.md](./INSTALL.md#installing-is-not-the-same-as-invoking).
-That section also documents the `CLAUDE.md` directive that did reliably change
-behaviour here.
-Do not read "the checkers are tested" as "the skills change agent
-behaviour."
+I wrote the suite and know the skills exist, so the usage numbers show the
+skills get reached for, not that they help. Where a rule can be enforced
+rather than suggested, `scripts/git-hooks/pre-commit` runs the checkers on
+staged files, and [INSTALL.md](./INSTALL.md#installing-is-not-the-same-as-invoking)
+covers the `CLAUDE.md` line that did reliably change behaviour.
 
 ## Skills
 
