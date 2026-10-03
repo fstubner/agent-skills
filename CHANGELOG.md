@@ -66,8 +66,14 @@ changed; the version string was overclaiming. `1.0.0-alpha.N` says the next
 stop is 1.0, and twenty-two alphas in, that had stopped being true — while
 the README still says no efficacy claim is supported yet. `0.x` says
 "unstable, anything may change", which is what this actually is. The 0.x
-line was abandoned at `0.2.0` on 2026-07-18 and no reason for the switch to
+line was abandoned on 2026-07-18 and no reason for the switch to
 `1.0.0-alpha` was ever recorded anywhere; this resumes it.
+
+*Corrected 2026-10-03.* This paragraph first said the 0.x line was
+abandoned at `0.2.0`. It was abandoned at `0.4.0`: `v0.2.0`, `v0.3.0` and
+`v0.4.0` were all tagged on 2026-07-18, so the renumbering reused `0.3.0`, a
+number already tagged on July code two months older than this release, and
+landed below a `0.4.0` tag that still existed.
 
 This is a version DOWNGRADE in semver terms and would break upgrades for
 anyone already installed. Nobody is: there are no GitHub releases and the
