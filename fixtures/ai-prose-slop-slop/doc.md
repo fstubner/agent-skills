@@ -4,4 +4,6 @@ Studies show that experts agree this is a game-changer. It stands as a testament
 
 This is undeniably the clearest example, and it is guaranteed to work every time — it is proven across the industry, and it is the best way to do it, full stop. Today's quick support becomes tomorrow's disaster if nobody tracks it.
 
+Worth saying that the rollout window is short.
+
 In conclusion, this document underscores the importance of shipping fast.

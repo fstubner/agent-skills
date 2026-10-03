@@ -10,8 +10,17 @@ tokens:
   - to be honest
   - simply put
   - at its core
-  - it's worth noting that
-  - it is worth noting that
+  # Stemmed, rather than the two spellings "it's worth noting that" and "it is
+  # worth noting that" that this rule used to carry. The habit does not stop at
+  # those: "Worth saying that X" is the same move with the subject dropped, and
+  # it walked past a clean run of this style in September 2026 on a draft that
+  # had already been through two editing passes. A human reader caught it. The
+  # lesson is that a variant one word away from a listed token is not a
+  # different habit, so match from "worth" and cover the whole family.
+  - worth noting that
+  - worth saying that
+  - worth mentioning that
+  - worth pointing out that
   - it's important to note that
   - it is important to note that
   - needless to say
