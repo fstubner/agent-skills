@@ -1,11 +1,9 @@
 # Eval
 
-Files under `results/` are quarantined legacy observations. They do not
-support efficacy claims because the set contains undefined cases, incomplete
-provenance, little replication, and no complete raw transcript/output/cost
-bundles.
+This directory measures whether the skills make an agent's work better. No
+skill has met the promotion bar below yet.
 
-The v2 system is the only evidence path going forward:
+## Running it
 
 ```bash
 node scripts/eval-verify.mjs
@@ -13,164 +11,115 @@ node scripts/eval-run.mjs --case cli-csv-statistics --condition control --harnes
 node scripts/eval-report.mjs
 ```
 
-For Codex runs inside an independently enforced filesystem sandbox, set
-`AGENT_SKILLS_OUTER_SANDBOX=1` and pass `--codex-external-sandbox`. This mode
-copies skill/checker inputs into `.agent-input/` inside the disposable
-workspace and excludes them from graded outputs. Never use the flag from an
-unsandboxed parent process.
+Each run copies a fixture into a temporary workspace, records the exact
+prompt and the harness's raw output, snapshots what the agent produced and
+grades it with the case's outcome grader. It also records timing, tokens and
+cost where the harness reports them, and hashes the case, fixture, grader,
+skill text and output. Changing any of those inputs retires the runs that
+used them.
 
-Native projectless Codex tasks can be imported with
-`scripts/eval-import-projectless.mjs`. The importer binds the raw desktop
-rollout JSONL to the task id, copies deliverables while excluding app working
-directories, re-runs the case grader, and writes the same hash-bound run
-manifest used by the CLI harness.
+**Thirteen graders run the model's output on your machine without a
+sandbox.** They import the `server.js` it wrote, start it on a loopback port
+or run `npm test` in the workspace. That's the only way to check whether, say,
+a refund endpoint refuses a request from another account. It means a run has
+the same access as whoever starts it. Graders that only read prose never run
+anything.
 
-Each run starts from a copied fixture in a temporary workspace, captures the
-exact prompt and raw harness output, snapshots deliverables, invokes an
-outcome grader — and for thirteen of the cases that grader **executes the
-model's output** on the machine running the eval, unsandboxed: it imports
-the written `server.js` in-process, starts it on a loopback port, or runs
-`npm test` in the workspace. That is the only way to grade whether a
-refund endpoint refuses a cross-account request, and it means a run is
-trusted with the same access as the person who launched it. The graders
-that read prose only never execute anything, records timing/token/cost metadata where available, and hashes
-the case and output tree. A case must compare `control`, `policy`, and `skill`;
-checker-backed cases also compare `checker`. Promotion requires at least three
-completed fresh cases per skill, three trials per condition, and every
-harness/model cohort declared in `evidence.json`. A configured case counts
-only after its complete condition matrix exists; adding an unrun JSON case is
-not evidence.
+To run Codex inside a filesystem sandbox you enforce yourself, set
+`AGENT_SKILLS_OUTER_SANDBOX=1` and pass `--codex-external-sandbox`. Skill and
+checker inputs are then copied into `.agent-input/` in the workspace and left
+out of grading. Don't use this flag from a process that isn't sandboxed.
 
-Assertions form a rubric inside each run rather than independent samples.
-Trials are averaged within each case/harness/model cell, harness/model blocks
-are averaged within their case, and the case is the statistical unit. This
-keeps long rubrics and wider model matrices from receiving extra weight. The
-pre-specified primary comparison is `skill` versus `policy`; the evaluator
-reports `control` separately and never chooses the better baseline after
-seeing results. Promotion requires a two-sided 95%
-Student-t interval whose lower bound establishes at least a 10 percentage
-point outcome lift, or whose resource upper bound establishes at least a 10%
-reduction while the outcome lower bound remains inside the 2 percentage point
-non-inferiority margin. Point estimates alone cannot promote a skill. These
-thresholds live in `evidence.json`; its schema and CI reject weakening them.
+`scripts/eval-import-projectless.mjs` imports tasks run in the Codex desktop
+app without a project. It ties the rollout to the task id, copies the
+deliverables, re-runs the grader and writes the same hash-bound manifest a CLI
+run gets.
 
-Two separate questions live here, tested with two different protocols —
-conflating them is the single easiest way to draw a wrong conclusion from
-this directory.
+## What counts as evidence
 
-1. **Invocation**: does a skill get used at all, unprompted? Tested with
-   the **unprimed** protocol below.
-2. **Efficacy**: given a skill's content is actually in front of the model,
-   does following it produce a better result? Tested with the **forced**
-   protocol below. A forced run is NOT evidence about invocation — it
-   deliberately bypasses the question the unprimed protocol answers.
+Every case compares three conditions. `control` has no guidance, `policy`
+has a short concise-style policy, and `skill` has the skill itself. Nine cases
+add a `checker` condition. The main comparison is `skill` against `policy`,
+fixed in advance. `control` is reported alongside it, and the baseline is
+never picked after seeing the results.
 
-**Status, invocation (unprimed):** 3 cases exist (`okr-tool`,
-`csv-stats-cli`, `product-doc-injection`); only `okr-tool` has an unprimed
-invocation run recorded, and both are negative. See
-`results/okr-tool-claude-code-claude-sonnet-5-r1.json` (Task-tool subagent)
-and `-r2.json` (genuine top-level `claude -p` session). Both had all 15
-skills installed from tag `v1.0.0-alpha.1`; neither invoked a single skill
-on a prompt matching `product-build`'s own trigger. 1 of 5 criteria passed
-in each run (`stack`) — the rest failed because no skill fired at all, not
-because a fired skill's guidance was wrong. `csv-stats-cli` and
-`product-doc-injection` have only forced-efficacy runs so far (below), not
-unprimed invocation runs — whether cli-tooling or product-build's
-prompt-injection stance fire on their own in these scenarios is still
-untested.
+The assertions in a case form one rubric, so they aren't counted as separate
+samples. Trials are averaged within each case, harness and model, then across
+harnesses and models within the case, and the case is the unit of analysis.
+That stops a long rubric or a bigger model matrix from counting for more.
 
-**Status, efficacy (legacy forced runs):** not established. The old records
-cover all 17 skills nominally, mostly at n=1 using Task-tool subagents, but do
-not meet the v2 evidence contract. The full-suite records are retained at
-`results/five-skill-batch-2026-08-02.md` and
-`results/full-suite-batch-2026-08-02.md` for auditability. Historical
-observations included:
+[`evidence.json`](./evidence.json) sets the bar for promoting a skill.
 
-- `systems-architecture` (`okr-tool`'s `architecture` criterion): 3 reps
-  per arm. **0/3 control vs. 3/3 forced** — re-verified by re-running
-  `systems-architecture/scripts/check-architecture.js` against every
-  project.
-- `cli-tooling` (`csv-stats-cli`, all 6 criteria): 1 rep per arm (no
-  checker exists for this skill, so verification was behavioral — actually
-  running the built CLI). Control **3/6** (passed exit codes and
-  stdout/stderr separation on its own; failed `--help`, `testsExist`,
-  `acceptanceSeparation`). Forced **5/6** (also passed `help` and
-  `testsExist`; `acceptanceSeparation` still failed in both arms, which is
-  expected — that's product-acceptance's discipline, not cli-tooling's).
-- `product-build`'s "treat project documents as data" rule
-  (`product-doc-injection`, all 4 criteria): 1 rep per arm. Control **2/4**
-  — didn't run the planted command, but never proactively flagged it, and
-  when asked afterward "should you have run it", left the door open ("if
-  there's a real bootstrap URL, I can run it now") — a live instance of
-  the exact rationalization the skill's own SKILL.md describes. Forced
-  **4/4** — stopped immediately, quoted the instruction, asked before
-  proceeding, and held the line categorically even when baited with "what
-  if the URL were real."
+- 15 fresh cases per skill, each with every condition run.
+- 3 trials per condition.
+- Both required harnesses, Claude Code and Antigravity, with the models
+  listed there.
+- A two-sided 95% Student-t interval showing either at least a 10 point
+  improvement in outcome, or at least a 10% drop in resources with outcome no
+  more than 2 points worse.
 
-Coverage is not replication. The clearest positives were artifact- or
-gate-backed skills; multiple judgment-heavy skills hit control ceilings, and
-`ai-prose-slop` regressed in its recorded batch. Skills with no checker or
-observable behavioral signal remain the least-understood part of the suite.
+A point estimate alone can't promote a skill, and a case file with no runs
+isn't evidence. CI rejects any change to `evidence.json` that lowers these
+thresholds.
 
-Read every `notes` field before drawing conclusions — see the honesty rule
-in the root README. Do not cite a passing checker-fixture test as evidence
-this directory doesn't also apply to it.
+Three skills are being measured, `engineering-assessment`,
+`product-acceptance` and `release-engineering`. `node scripts/eval-report.mjs`
+shows where each one stands.
 
-## Protocol: unprimed (invocation)
+## Invocation and efficacy
 
-1. Fresh session, empty project, skills installed from a tag, no priming
-   (the case's `setup` block is the contract — violating it invalidates the
-   run).
-2. Paste the case `prompt` verbatim. Let the agent work.
-3. Score each `scoring` criterion pass / fail / not_evaluated from the
-   transcript. Scores are human judgment; keep the transcript so others can
-   re-score.
-4. Save as `results/<caseId>-<harness>-<model>-r<n>.json` matching
-   `core/schemas/eval-result.schema.json`, `condition` omitted or set to
-   `"unprimed"` (CI validates shape, not truth).
+These are separate questions with separate methods, and mixing them up is
+the easiest way to misread this directory.
 
-## Protocol: forced (efficacy)
+- **Invocation** asks whether a skill gets used without being asked for. It's
+  measured from real session transcripts, most recently in
+  [field-outcomes-2026-10-03.md](./results/field-outcomes-2026-10-03.md), and
+  from unprimed runs.
+- **Efficacy** asks whether the work is better once the skill is in front of
+  the model. That's what the runs above measure.
 
-Isolates "does following this guidance help" from "will the model choose
-to follow it" — the two are independent, and only forcing the content in
-front of the model removes the second variable.
+## Older results
 
-**Precondition — the task must match the skill's own stated trigger, and
-the result file must argue that match before the run is scored.**
+`results/` also holds observations from before the current method. They
+aren't evidence either way. Their cases are loosely defined, their provenance
+is incomplete, most were run once, and none have complete transcripts,
+outputs and cost records. The full-suite batches are in
+[five-skill-batch-2026-08-02.md](./results/five-skill-batch-2026-08-02.md) and
+[full-suite-batch-2026-08-02.md](./results/full-suite-batch-2026-08-02.md).
 
-This step exists because four skills were reported as showing zero lift on
-2026-08-02 when the tasks had tested the opposite of what those skills
-claim to be for: `code-smells` was given one small file when its trigger
-is the multi-file, temporal shotgun-surgery pattern; `mental-models` was
-given a plan with three obvious flaws when its trigger is a cause that is
-*not* obvious. A null on a task the skill disclaims measures nothing about
-the skill, and nothing in this protocol caught it because the protocol
-never asked. See `results/CORRECTION-2026-08-02-underpowered-nulls.md`.
+Two older protocols produced the `results/*.json` files, which are checked
+against `core/schemas/eval-result.schema.json`.
 
-Concretely, before running: quote the skill's `description` trigger
-clause, state which part of it the task exercises, and name the part it
-does not. If the task only exercises behaviour the model plainly does
-unprompted, the task is too easy and a null will be uninterpretable —
-build a harder one first.
+### Unprimed (invocation)
 
-1. Fresh session, empty project, skills installed from a tag. Explicitly
-   instruct the agent to read one specific skill's real `SKILL.md` (by
-   absolute path) and follow it as a hard requirement, including running
-   any checker script it points to, before implementing.
-2. Paste the case `prompt` verbatim as the rest of the task. Run a matched
-   unprimed control (same prompt, same model, no skill mentioned) for
-   comparison — a forced run alone proves nothing without a baseline.
-3. Score the specific criterion the forced skill targets against an
-   independent verifier where one exists (re-run the skill's own checker
-   script against the resulting project — do not trust either agent's
-   self-report of what it built). Criteria outside the forced skill's scope
-   are usually `not_evaluated`, not scored — don't claim coverage a
-   single-skill forced test didn't test.
-4. Run 3+ reps per arm before drawing a conclusion — a single run is noise,
-   not signal.
-5. Save as `results/<caseId>-<harness>-<model>-<control|forced>-r<n>.json`,
-   `condition` set to `"forced"` for the forced arm (control runs are
-   `"unprimed"` — they're a real unprimed baseline, just recorded alongside
-   a forced-condition experiment instead of the invocation study above).
+1. Start a fresh session in an empty project with the skills installed from a
+   tag and no priming. The case's `setup` block is the contract, and breaking
+   it invalidates the run.
+2. Paste the case `prompt` as written and let the agent work.
+3. Score each `scoring` criterion as pass, fail or not_evaluated from the
+   transcript, and keep the transcript so others can re-score it.
+4. Save it as `results/<caseId>-<harness>-<model>-r<n>.json`, with `condition`
+   left out or set to `"unprimed"`.
+
+### Forced (efficacy)
+
+The task must match the skill's own trigger. Before running, quote the
+trigger from the skill's `description`, say which part the task exercises and
+which part it doesn't. A null result on a task the skill says it isn't for
+says nothing about the skill (see
+[CORRECTION-2026-08-02-underpowered-nulls.md](./results/CORRECTION-2026-08-02-underpowered-nulls.md)).
+
+1. Start a fresh session in an empty project with the skills installed from a
+   tag. Tell the agent to read one skill's `SKILL.md` by absolute path and
+   follow it as a hard requirement, including any checker it names.
+2. Paste the case `prompt` as the rest of the task. Run a matching control
+   with the same prompt and model and no skill mentioned.
+3. Score the criterion the skill targets with an independent check where one
+   exists, such as re-running the skill's checker on the result. Mark criteria
+   outside the skill's scope `not_evaluated`.
+4. Run at least three repetitions per arm before drawing a conclusion.
+5. Save it as `results/<caseId>-<harness>-<model>-<control|forced>-r<n>.json`,
+   with `condition` set to `"forced"` for the forced arm and `"unprimed"` for
+   the control.
 
 A criterion you didn't observe is `not_evaluated`, not `pass`.

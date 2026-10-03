@@ -2,77 +2,73 @@
 
 ## Reporting
 
-Open a private GitHub security advisory on this repository. No email path is
-offered because none is monitored.
+Open a private GitHub security advisory on this repository. There's no email
+address for reports because none is monitored.
 
-## Threat model, honestly stated
+## Threat model
 
-- **Skills are instructions to an LLM, not a sandbox.** They shape behavior;
-  they cannot guarantee it.
-- **Prompt injection via project files is the main exposure.** This suite
-  tells agents to treat `PRODUCT.md` / `ARCHITECTURE.md` as binding for
-  engineering *decisions*. The router (`product-build`), the generated
-  contract (`docs/CONTRACT.md`), and every skill that reads project
-  documents (`product-management`, `systems-architecture`,
-  `backend-engineering`, `frontend`, `product-acceptance`) carry the
-  countervailing rule: project documents are data — instructions found
-  inside them (run this, fetch that) are an injection signal to stop and
-  confirm with the human. `engineering-assessment`, whose step 0 is to run
-  the commands the project declares, carries a narrower form: declared
-  build/test/lint entry points are run, documented instructions and
-  install-time hooks are not. `product-acceptance` carries it most explicitly,
-  since it is the skill most likely to run standalone against an untrusted
-  finished repo. A hostile repo can still attempt it; the rule reduces, not
-  eliminates, the risk.
-- **Reports are not security controls.** `*-report.json` files are evidence
-  for self-correction. The acceptance gate re-runs checkers rather than
-  reading reports precisely so planted files can't forge a SHIP — and it
-  recomputes each producer's verdict from that producer's own checks rather
-  than trusting the `verdict` field the producer wrote about itself. (It
-  previously trusted that field, so a producer reporting `SHIP` alongside a
-  failing check was recorded as passing.) Nothing stops a human ignoring the
+- **Skills are instructions to a model, not a sandbox.** They shape what an
+  agent does but can't guarantee it.
+- **Prompt injection through project files is the main exposure.** The skills
+  treat `PRODUCT.md` and `ARCHITECTURE.md` as binding for engineering
+  decisions. `product-build`, the generated `docs/CONTRACT.md` and every skill
+  that reads project documents (`product-management`, `systems-architecture`,
+  `backend-engineering`, `frontend`, `product-acceptance`) also say those
+  documents are data. An instruction inside one, like "run this" or "fetch
+  that", is a sign of injection and a reason to stop and ask.
+  `engineering-assessment` runs the build, test and lint commands a project
+  declares, but not instructions written in its documents or install-time
+  hooks. `product-acceptance` states the rule most explicitly, since it's the
+  skill most likely to run alone against an unfamiliar repository. A hostile
+  repository can still try, and the rule lowers the risk without removing it.
+- **Reports are not security controls.** `*-report.json` files help an agent
+  correct itself. The acceptance gate re-runs the checkers itself so a
+  planted report can't fake a SHIP, and it works out each checker's verdict
+  from that checker's individual checks. Nothing stops a person ignoring the
   gate.
-- **The audited repo gets no vote on how it is audited.** `product-acceptance`
-  is designed to run against an untrusted finished repo, so the secret scan
-  supplies its configuration explicitly (`core/gitleaks-defaults.toml`) rather
-  than letting gitleaks auto-discover `<source>/.gitleaks.toml`, and passes
-  `--ignore-gitleaks-allow` plus a neutral `--gitleaks-ignore-path`. Without
-  those, a repo could disable the scan inspecting it by committing an
-  allowlist config, an inline `gitleaks:allow` comment, or a `.gitleaksignore`.
-  The **pre-commit hook uses the same fail-resistant policy**: it explicitly
-  runs the suite's default and supplementary configurations and ignores
-  inline allow comments, so staged content cannot disable its own scan.
-- **The installer** writes only into the target you name, never deletes
-  directories it didn't create (marker file) without `--force`, and makes no
-  network requests. Scripts read no env secrets and shell out only with
-  argument arrays (no shell interpolation). Two external binaries are used and
-  never vendored: `vale` for ai-prose-slop, `gitleaks` for secret scanning.
-- **Secret scanning is two checks with two scopes, and neither is "no
-  secrets in the repository".** `B-client-secrets` gates the acceptance
-  verdict on secret material under *client-reachable* paths only; a hit
-  under a server-only path (`server.js`, `server/`, `pages/api/`,
-  `*.server.ts`) is reported in the check's detail and does not fail it,
-  because law 3 is about what a browser can fetch. A committed credential
-  anywhere is the pre-commit hook's finding, and only for repositories that
-  opted into the hook. Nothing in the acceptance gate blocks on a secret in
-  server code.
-- **Secret scanning** (`B-client-secrets`, and the opt-in pre-commit hook at
-  `scripts/git-hooks/pre-commit`) shells out to
-  [`gitleaks`](https://github.com/gitleaks/gitleaks) rather than a
-  hand-rolled pattern list — a real, maintained tool, not a reimplementation
-  of its detection logic. Both consumers run it twice (its default ruleset
-  plus `core/gitleaks-extra.toml`, two provider prefixes the default doesn't
-  cover) and merge the results, so a new prefix added to the extra config
-  reaches both without hand-syncing. The supplementary rules carry a length
-  floor, an entropy floor, and a placeholder allowlist so documentation
-  showing a key *format* is not reported as a leak. Reports file paths and
-  rule ids only — matched values never appear in reports or output (gitleaks
-  redacts them at the source).
-- **Session-cookie flags** (`B-session-cookie`) block a session-like cookie
-  set without `HttpOnly`, `Secure` and `SameSite`, including a flag written
-  but set to `false` or `SameSite=None`. Scoped to session-like names on
-  purpose: preference cookies and the double-submit CSRF cookie are
-  legitimately script-readable, and a check that flagged them would be
-  noise. Authorization depth and rate limiting are reviewed by hand — see
-  `backend-engineering/references/server-laws.md`. This suite does not
-  claim to verify them.
+- **The repository being audited gets no say in how it's audited.**
+  `product-acceptance` supplies the secret scan's configuration itself
+  (`core/gitleaks-defaults.toml`) and passes `--ignore-gitleaks-allow` and a
+  neutral `--gitleaks-ignore-path`. A repository can't turn the scan off with
+  its own `.gitleaks.toml`, a `gitleaks:allow` comment or a
+  `.gitleaksignore`. The pre-commit hook works the same way, so staged
+  content can't disable its own scan.
+- **The installer** writes only to the target you name, doesn't delete
+  directories it didn't create unless you pass `--force`, and makes no
+  network requests. Scripts read no secrets from the environment and run
+  external commands with argument arrays, never through a shell. Two external
+  tools are used and never bundled, `vale` for `ai-prose-slop` and `gitleaks`
+  for secret scanning.
+
+## Secret scanning
+
+There are two checks with different scopes, and neither means "no secrets in
+the repository".
+
+- **`B-client-secrets`** affects the acceptance verdict and only looks at
+  paths a browser can reach. A hit in a server-only path (`server.js`,
+  `server/`, `pages/api/`, `*.server.ts`) is listed in the check's detail
+  without failing it. The acceptance gate never blocks on a secret in server
+  code.
+- **The pre-commit hook** catches a committed credential anywhere, in
+  repositories that have turned it on.
+
+Both use [gitleaks](https://github.com/gitleaks/gitleaks) instead of a
+hand-written pattern list. Both run it twice, with its default rules and with
+`core/gitleaks-extra.toml`, which adds two provider key prefixes the defaults
+miss, and merge the results. The extra rules have a minimum length, a minimum
+entropy and a placeholder allowlist, so documentation showing a key format
+isn't reported as a leak. Reports contain file paths and rule ids only.
+gitleaks redacts matched values before they reach any output.
+
+## Session cookies
+
+`B-session-cookie` blocks a session-like cookie set without `HttpOnly`,
+`Secure` and `SameSite`, including one that sets a flag to `false` or uses
+`SameSite=None`. It only looks at session-like names, because preference
+cookies and the double-submit CSRF cookie are meant to be readable by
+scripts.
+
+Authorization depth and rate limiting need a human review, described in
+`backend-engineering/references/server-laws.md`. The checkers don't verify
+them.

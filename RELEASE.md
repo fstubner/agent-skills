@@ -1,43 +1,44 @@
 # Release
 
-Tags are the only publication trigger. The release workflow rejects a tag
-unless it is `v<VERSION>`, points at the workflow commit, has a matching
-changelog heading, passes the full Windows/Ubuntu suite, and passes native
-Claude, Codex, Gemini, and Antigravity install smokes. Cursor's documented
-local package layout is checked automatically; Cursor currently exposes no
-documented headless plugin loader, so public or team-Marketplace loading remains
-a manual release check.
+Pushing a tag is the only thing that starts a release. The release workflow
+rejects a tag unless it is `v<VERSION>`, points at the workflow commit and has
+a matching changelog heading. It then needs the full suite to pass on Windows
+and Ubuntu, and native install smoke tests to pass for Claude, Codex, Gemini
+and Antigravity. Cursor's local package layout is checked automatically.
+Cursor has no documented headless plugin loader, so loading through its
+public or team marketplace is a manual check.
 
-The workflow builds one archive from the tagged Git object, records its
-SHA-256, attaches those exact bytes to a **draft** release, downloads them
-again, verifies the checksum, and executes a packaged checker. It never
-rebuilds in the publish job, and it never makes the release public: that is
-a person's decision, taken after reading the generated notes against the
-tested archive.
+The workflow builds one archive from the tagged commit, records its SHA-256
+and attaches those exact bytes to a **draft** release. It then downloads them
+again, verifies the checksum and runs a packaged checker. The publish job
+never rebuilds anything, and the workflow never makes a release public. A
+person does that after reading the notes.
+
+A tag runs the release workflow as it exists at the tagged commit. Tagging an
+older commit runs that commit's release rules, which may be older than the
+current ones.
 
 ## Cut a release
 
 1. Update `VERSION` and add `## <version>` to `CHANGELOG.md`.
 2. Run `node scripts/gen-plugin-bundles.mjs`.
 3. Run `node scripts/run-tests.mjs` and review the generated diff.
-4. Commit, create an annotated `v<version>` tag, and push the tag.
-5. Wait for the workflow, review the draft, then publish it yourself:
+4. Commit, create an annotated `v<version>` tag and push the tag.
+5. Wait for the workflow, review the draft and publish it yourself.
 
    ```bash
    gh release edit v<version> --draft=false
    ```
 
-A draft the workflow produced is the review gate, not debris. Nothing
-public happens until step 5, so a mistaken tag push costs a draft, not a
-release.
+Nothing becomes public until step 5, so a tag pushed by mistake only costs a
+draft.
 
 ## Roll back
 
-Treat published artifacts and tags as immutable repository policy: the
-workflow creates a release once and never updates or deletes it, but GitHub
-administrators can still replace assets or move tags unless repository
-rulesets prohibit that. Mark a bad release as withdrawn, then issue a new patch
-from the last good tag:
+Treat published releases and tags as permanent. The workflow creates a
+release once and never updates or deletes it. GitHub administrators can still
+replace assets or move tags unless repository rulesets prevent it. Mark a bad
+release as withdrawn, then ship a patch from the last good tag.
 
 ```bash
 gh release edit <bad-tag> --title "[WITHDRAWN] <bad-tag>" --notes-file WITHDRAWN.md
@@ -48,10 +49,10 @@ git tag -a v<new-patch> -m "v<new-patch>"
 git push origin v<new-patch>
 ```
 
-Consumers should pin `<last-good-tag>` or its release archive until the patch
-is available. Never force-move or delete a published tag as a rollback.
+Users should pin `<last-good-tag>` or its release archive until the patch is
+out. Don't move or delete a published tag as a rollback.
 
-If post-publication verification fails, immediately run the withdrawal command
-above; the workflow intentionally cannot delete or rewrite a release. Configure
-GitHub tag-protection/rulesets and immutable releases in repository settings if
-administrative enforcement is required in addition to this workflow policy.
+If verification fails after publishing, run the withdrawal command straight
+away, since the workflow can't delete or rewrite a release. Turn on tag
+protection rulesets and immutable releases in the repository settings if you
+want GitHub to enforce this too.

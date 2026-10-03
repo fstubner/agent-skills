@@ -3,51 +3,48 @@
 ## Before any PR
 
 ```bash
-node scripts/run-tests.mjs                        # must pass — same command CI runs (Ubuntu + Windows)
+node scripts/run-tests.mjs                        # must pass, same command CI runs (Ubuntu and Windows)
 node scripts/gen-contract.mjs                      # after any registry.json change
 node ai-prose-slop/scripts/gen-patterns.mjs        # after any rules/AIProseTells/*.yml change
 ```
 
-The repo ships `.gitattributes` (LF-normalized), and the test runner
-normalizes CRLF — a fresh Windows clone passes out of the box. If it
-doesn't, that's a bug; file it.
+The repository normalises line endings to LF and the test runner handles
+CRLF, so a fresh Windows clone should pass. If it doesn't, please open an
+issue.
 
 ## Adding or changing a skill
 
-Follow the generated checklist in [docs/CONTRACT.md](./docs/CONTRACT.md#adding-a-skill).
-The short version: directory + SKILL.md, `registry.json` entry, regenerate
-the contract, ship + block fixtures pinning the specific blocker id. The
-test runner cross-checks the registry against the filesystem, so a skipped
-step fails loudly.
+Follow the checklist in [docs/CONTRACT.md](./docs/CONTRACT.md#adding-a-skill).
+In short, add the directory and `SKILL.md`, add the `registry.json` entry,
+regenerate the contract, and add ship and block fixtures that pin the
+specific blocker id. The test runner checks the registry against the
+filesystem, so a missed step fails.
 
 ## Editing ai-prose-slop's Vale rules
 
-`rules/AIProseTells/*.yml` is the single source of truth for every checkable
-word/phrase/threshold. Never hand-edit the word lists inside
-`ai-prose-slop/references/patterns.md` — the spans between
+`rules/AIProseTells/*.yml` is the source for every word, phrase and threshold
+the checker uses. Don't edit the word lists in
+`ai-prose-slop/references/patterns.md` by hand. The parts between
 `<!-- gen-patterns:... -->` markers are generated from the `.yml` files and
-overwritten on every run. After adding, removing, or changing a token in a
-rule file (or adding a new rule file), run:
+overwritten each run. After changing a rule file or adding one, run this.
 
 ```bash
 node ai-prose-slop/scripts/gen-patterns.mjs
 ```
 
-`run-tests.mjs` runs this in `--check` mode and fails if `patterns.md` is
-stale, or if a rule `.yml` has no `<!-- gen-patterns -->` marker pointing to
-it — a new or edited rule can't silently go undocumented, and patterns.md
-can't silently claim a word is checkable when it isn't (or vice versa).
+The test runner runs it in `--check` mode and fails if `patterns.md` is out
+of date or a rule file has no marker pointing at it.
 
 ## Checker rules
 
-- Every check: `{ id, status: pass|fail|not_evaluated, detail }`. Missing
-  evidence is `not_evaluated`, never `pass`. A crashed sub-tool is `fail`,
-  never silence.
-- Heuristics need boundaries: anchored regexes, paths relative to `--root`.
-  If a legitimate project could trip it, it needs a regression fixture
-  proving it doesn't (see `backend-ship`'s "task-management" file).
-- Shared logic goes in `core/lib/` — the only intentionally duplicated file
-  is `resolve-core.cjs`.
+- Every check returns `{ id, status: pass|fail|not_evaluated, detail }`.
+  Missing evidence is `not_evaluated`, never `pass`. A sub-tool that crashes
+  is `fail`, never silence.
+- Heuristics need boundaries, meaning anchored regexes and paths relative to
+  `--root`. If a legitimate project could trip one, add a regression fixture
+  that proves it doesn't (see the "task-management" file in `backend-ship`).
+- Shared logic goes in `core/lib/`. The only file duplicated on purpose is
+  `resolve-core.cjs`.
 
 ## Pre-commit secret scanning (opt-in)
 
@@ -55,33 +52,28 @@ can't silently claim a word is checkable when it isn't (or vice versa).
 git config core.hooksPath scripts/git-hooks
 ```
 
-Blocks a commit whose staged content contains a secret, via
-[`gitleaks`](https://github.com/gitleaks/gitleaks) — a real, maintained
-secret-detection tool, the same "shell out to the real tool" choice this
-suite already makes for `vale` in `ai-prose-slop`. Requires `gitleaks` on
-PATH (`winget install Gitleaks.Gitleaks`, `brew install gitleaks`, or the
-release tarball); if it's missing, the hook **warns and allows the
-commit** rather than hard-blocking a contributor's whole workflow over an
-opt-in convenience tool — contrast with `backend-engineering`'s
-`B-client-secrets` check, which correctly treats a missing `gitleaks` as
-`not_evaluated` rather than a silent pass, because that's a ship-readiness
-report, not a local git hook. Both that check and this hook run gitleaks
-twice — its own default ruleset, plus `core/gitleaks-extra.toml` for two
-provider prefixes (Anthropic, OpenAI project keys) the default doesn't
-cover as of gitleaks 8.30.1 — and merge the results. Per-clone opt-in —
-`git config` isn't committed, so this never activates for a contributor
-who hasn't run it. Reports file paths and rule ids only, never the matched
-value (gitleaks redacts it). A genuine false positive: commit with
+This blocks a commit whose staged content contains a secret, using
+[gitleaks](https://github.com/gitleaks/gitleaks). Install gitleaks with
+`winget install Gitleaks.Gitleaks`, `brew install gitleaks` or the release
+tarball. If it's missing, the hook warns and lets the commit through.
+`backend-engineering`'s `B-client-secrets` check behaves differently and
+reports `not_evaluated`, because it feeds a ship verdict.
+
+Both run gitleaks twice, once with its default rules and once with
+`core/gitleaks-extra.toml`, which adds Anthropic and OpenAI project key
+prefixes the defaults miss as of gitleaks 8.30.1. They report file paths and
+rule ids only, never the matched value.
+
+The hook only runs in clones where you've set `core.hooksPath`, since git
+config isn't committed. For a genuine false positive, commit with
 `--no-verify` and open an issue.
 
 ## Releases
 
-1. Bump `VERSION` and add a matching `## <version>` heading to
-   `CHANGELOG.md` (the test runner enforces the pair).
-2. Tag; consumers install from tags.
+See [RELEASE.md](./RELEASE.md).
 
 ## Eval results
 
-Recorded runs (see [eval/README.md](./eval/README.md)) are welcome —
-transcript required. Claims wording in the root README only strengthens
-when real runs land.
+Recorded runs are welcome, with transcripts (see
+[eval/README.md](./eval/README.md)). The README's claims only get stronger
+when real runs support them.

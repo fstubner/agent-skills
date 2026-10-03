@@ -1,148 +1,91 @@
 # agent-skills
 
-**Version:** [VERSION](./VERSION) · **Changelog:** [CHANGELOG.md](./CHANGELOG.md) · **License:** MIT
+[Version](./VERSION) · [Changelog](./CHANGELOG.md) · MIT licence
 
-Agent Skills suite for product and software delivery (Claude Code / Codex /
-Cursor / Antigravity), built
-around three ideas:
+17 Agent Skills for product and software delivery, for Claude Code, Codex,
+Cursor and Antigravity. They are built around three ideas.
 
-- **Evidence-gated shipping** — deterministic checkers emit unified reports;
-  the acceptance gate **re-runs them fresh** and never trusts JSON on disk.
-- **Builder ≠ acceptor** — the gate caps at CONDITIONAL unless the acceptor
-  asserts independence. Enforced by discipline, not mechanism: the flags are
-  claims a builder could make falsely, which is exactly what the skill's
-  red-flag table is for.
-- **Registry-first contract** — [`registry.json`](./registry.json) is the
-  single machine-readable source for skills and artifacts;
-  [`docs/CONTRACT.md`](./docs/CONTRACT.md) is generated from it and CI fails
-  on drift.
+- **Evidence-gated shipping.** Deterministic checkers write a standard
+  report, and the acceptance gate re-runs them itself every time.
+- **The builder isn't the acceptor.** The acceptance gate caps its verdict at
+  CONDITIONAL unless the run declares it is independent of the build. Nothing
+  in the code can verify that, so it depends on whoever runs it being honest.
+- **One registry.** [`registry.json`](./registry.json) lists every skill and
+  artifact, [`docs/CONTRACT.md`](./docs/CONTRACT.md) is generated from it,
+  and CI fails if the two drift apart.
 
-**Where the evidence stands.** I use these skills every day and find them
-useful, but that's anecdotal and they aren't formally validated yet. Turning
-it into a result needs a comparison against running without them, and that
-work is in [`eval/`](./eval/). It holds 808 recorded runs and 49 write-ups.
-Each run is tied to the exact case, fixture, grader and skill text it used,
-so changing any of those retires the runs that depended on it. Nothing there
-clears the bar I set for this repository yet. The next section says which
-claims are supported and which aren't. The checkers being tested doesn't mean
-the skills change agent behaviour.
+## Evidence
 
-## What this claims (and doesn't)
+I use these skills every day and find them useful, but that's anecdotal and
+they aren't formally validated yet. Turning it into a result needs a
+comparison against running without them, and that work is in
+[`eval/`](./eval/). It holds 808 recorded runs and 49 write-ups. Each run is
+tied to the exact case, fixture, grader and skill text it used, so changing
+any of those retires the runs that depended on it. Nothing there clears the
+bar I set for this repository yet.
 
-The **checkers are tested**: every gate has ship + block fixtures asserting
-the specific blocker, run in CI on Ubuntu **and Windows**.
+Here is what the evidence supports so far.
 
-The behavioural claim splits into two questions that have to be measured
-separately, and conflating them is the easiest way to be wrong about this
-suite ([eval/results/](./eval/results/)):
-
-**Does a skill get used unprompted? It depends on the harness, and on
-whether a human is in the session.** Non-interactive in Claude Code:
-essentially never. In both
-a Task-tool subagent and a genuine top-level `claude -p` session, with all
-of the skills in the then-current tagged release installed, neither run invoked a single
-skill on a prompt matching `product-build`'s own stated trigger almost
-verbatim. No `PRODUCT.md`, no `ARCHITECTURE.md`, no design question, and
-the builder self-certified "done" in the same turn it built. A competing
-plugin's far more aggressive mechanism — injecting a whole skill's text
-into every session via a `SessionStart` hook — didn't reliably fire
-either, so this is not simply a matter of weaker wording.
-
-Set against that, passive telemetry over twelve days of ordinary work
-records **19 invocations of these skills across 8 unrelated projects**, and
-none of the competing plugin
-([field-telemetry-2026-08-16.md](./eval/results/field-telemetry-2026-08-16.md)).
-The two are not in conflict: the hook cannot tell whether the human typed
-the skill's name or the model chose it, so field usage says the skills get
-reached for, and says nothing yet about who reaches.
-
-Reading the session transcripts themselves answers who reaches
-([field-outcomes-2026-10-03.md](./eval/results/field-outcomes-2026-10-03.md)).
-Over two months of interactive Claude Code work across 17 projects: **127
-invocations, 30 typed by the human, 97 chosen by the model — 33 of them from
-a prompt that named no activity at all**. The acceptance gate returned BLOCK
-9, CONDITIONAL 5 and SHIP 4, all of them in August; it has not been invoked
-since. Codex is no longer a footnote: **46 reads in the same window, 35 of
-them single-prompt runs that never named the skill they read** — but Codex
-advertises every installed skill's path in its system prompt, a stronger
-delivery mechanism than the `claude -p` probe's harness had, so the two
-settings are not comparable. Within Claude Code itself, no single-prompt
-session has invoked a skill its prompt did not ask for, though five
-Task-tool subagents did. Antigravity shows four conversations, Cursor one
-skill in one task. **Counts from a session store are snapshots, not facts
-about a month**: the same script over the same August window returns
-different per-skill numbers today than it did on 2026-09-02, because
-resuming a session rewrites its turns. The only user in this data is the
-person who wrote the suite and knows the skills exist; it is delivery
-evidence, not efficacy evidence.
-
-**Does the guidance help once followed? Unknown.** The historical forced
-runs lack the raw transcripts, output bundles, cost data, replication, and
-case provenance required for a defensible comparison. They are retained as
-legacy observations, not efficacy evidence. New runs use isolated control,
-concise-policy, checker, and skill conditions with outcome graders; see
-[`eval/README.md`](./eval/README.md).
-
-Where a rule can be enforced instead of suggested,
-`scripts/git-hooks/pre-commit` runs deterministic checkers on staged files.
-Whether the prose skills add value beyond a concise policy or those checkers
-remains an open experimental question. See
-[INSTALL.md](./INSTALL.md#installing-is-not-the-same-as-invoking).
-That section also documents the `CLAUDE.md` directive that did reliably change
-behaviour here.
-Do not read "the checkers are tested" as "the skills change agent
-behaviour."
+- **The checkers work.** Every checker has ship and block fixtures that
+  assert the specific blocker, and they run in CI on Ubuntu and Windows.
+- **Skills get picked up in interactive sessions.** Over two months of my own
+  Claude Code work the model chose a skill itself 97 times out of 127, and 33
+  of those came from a prompt that didn't mention the activity. In
+  non-interactive `claude -p` runs, a probe found none were picked up
+  unprompted. Codex reads them in single-prompt runs, but it lists every
+  installed skill in its system prompt, so that isn't comparable. The details
+  are in
+  [field-outcomes-2026-10-03.md](./eval/results/field-outcomes-2026-10-03.md).
+- **Whether the guidance improves the work isn't known yet.** That needs runs
+  with and without each skill compared, which is what
+  [`eval/`](./eval/README.md) is for. Results in `eval/results/` from before
+  the current method aren't evidence either way.
 
 ## Skills
 
-This is a composable set, not a pipeline. Each skill fires on its own
-trigger and works standalone; skills never call each other directly. Ten of
-the seventeen additionally read or write a handful of named artifacts (below) —
-that's the entire coupling mechanism. (Some skills also point a reader at a
-sibling's reference files for further detail — e.g. `mental-models`'
-mindsets citing its own lens files — which is a documentation cross-link,
-not a runtime call.)
+The skills are independent. Each one triggers on its own and none calls
+another. Ten of them read or write a few shared files, listed in the next
+section, and that's the only link between them.
 
 | Skill | Role |
 |---|---|
-| [`product-build`](./product-build/) | Dispatcher — for a greenfield/ambiguous request, works out which skills below apply |
-| [`product-management`](./product-management/) | PRODUCT.md contract interview |
-| [`systems-architecture`](./systems-architecture/) | Parts, boundaries, trust |
-| [`frontend`](./frontend/) | Stack, structure, design, UX |
-| [`backend-engineering`](./backend-engineering/) | Trusted-side laws |
+| [`product-build`](./product-build/) | Works out which of the other skills a new or vague request needs |
+| [`product-management`](./product-management/) | Interviews for the `PRODUCT.md` contract |
+| [`systems-architecture`](./systems-architecture/) | Parts, boundaries and trust |
+| [`frontend`](./frontend/) | Stack, structure, design and UX |
+| [`backend-engineering`](./backend-engineering/) | Rules for the trusted side |
 | [`product-acceptance`](./product-acceptance/) | Independent acceptance gate |
-| [`ai-prose-slop`](./ai-prose-slop/) | Prose editor/detector — no artifacts, usable on any writing task |
-| [`mental-models`](./mental-models/) | Reasoning lens catalog + triage guide + four named mindsets (Skeptic, Systems Thinker, Pragmatist, Explorer) — no artifacts, usable on any hard problem |
-| [`code-smells`](./code-smells/) | Fowler code-smell catalog + file-size/nesting checker (any language for size; JS/TS/C-family for nesting) |
-| [`code-organization`](./code-organization/) | Module boundaries, dependency direction, naming |
-| [`testing-strategy`](./testing-strategy/) | Test pyramid triage, behavior over implementation |
-| [`data-modeling`](./data-modeling/) | Schema design (any format) + a raw-SQL migration-safety checker |
-| [`cli-tooling`](./cli-tooling/) | CLI surface + contract — naming, config precedence, exit codes, dry-run |
-| [`release-engineering`](./release-engineering/) | CI/CD pipeline gating, deployment strategy, rollback |
-| [`learn-from-session`](./learn-from-session/) | Turn a correction or confirmation into a durable rule/fixture/memory |
-| [`engineering-assessment`](./engineering-assessment/) | Whole-codebase audit — severity-ranked findings, each citing file/line or command output, plus what was not examined |
-| [`multi-agent-design`](./multi-agent-design/) | Whether multi-agent is justified at all (default: no), topology, delegation contracts, failure recovery |
+| [`ai-prose-slop`](./ai-prose-slop/) | Prose editor and detector, usable on any writing |
+| [`mental-models`](./mental-models/) | Reasoning lenses, a triage guide and four mindsets (Skeptic, Systems Thinker, Pragmatist, Explorer), usable on any hard problem |
+| [`code-smells`](./code-smells/) | Fowler's code-smell catalogue and a file-size and nesting checker (size for any language, nesting for JS, TS and C-family) |
+| [`code-organization`](./code-organization/) | Module boundaries, dependency direction and naming |
+| [`testing-strategy`](./testing-strategy/) | What to test at which level, and testing behaviour over implementation |
+| [`data-modeling`](./data-modeling/) | Schema design in any format and a raw-SQL migration-safety checker |
+| [`cli-tooling`](./cli-tooling/) | CLI naming, config precedence, exit codes and dry-run |
+| [`release-engineering`](./release-engineering/) | CI/CD gating, deployment strategy and rollback |
+| [`learn-from-session`](./learn-from-session/) | Turns a correction or confirmation into a lasting rule, fixture or memory |
+| [`engineering-assessment`](./engineering-assessment/) | Whole-codebase audit with severity-ranked findings, each citing a file, line or command output, and a list of what wasn't examined |
+| [`multi-agent-design`](./multi-agent-design/) | Whether multi-agent is justified at all (the default answer is no), then topology, delegation and failure recovery |
 
 ## How they compose
 
-Each skill applies exactly when its condition is true, independent of the
-others:
+Each skill applies when its signal is present.
 
 | Signal | Skill | Reads / writes |
 |---|---|---|
 | No or thin `PRODUCT.md` | `product-management` | writes `PRODUCT.md` |
-| Multi-part system (client+server, workspaces, trust boundaries) | `systems-architecture` | writes `ARCHITECTURE.md` |
-| Stack/structure unknown, or design/UX direction unset | `frontend` | writes `design-direction.md`, `ux-walkthrough.md`, tokens |
-| Server/API in scope | `backend-engineering` | reads `ARCHITECTURE.md` |
-| A readiness claim ("ship it", "is this done") | `product-acceptance` | reads whatever artifacts exist, re-runs every applicable checker fresh |
-| Any prose, any time | `ai-prose-slop` | none — fully standalone |
+| Multi-part system (client and server, workspaces, trust boundaries) | `systems-architecture` | writes `ARCHITECTURE.md` |
+| Stack or structure unknown, or design and UX direction unset | `frontend` | writes `design-direction.md`, `ux-walkthrough.md` and tokens |
+| Server or API in scope | `backend-engineering` | reads `ARCHITECTURE.md` |
+| A readiness claim ("ship it", "is this done") | `product-acceptance` | reads whatever artifacts exist and re-runs every applicable checker |
+| Any prose | `ai-prose-slop` | nothing |
 
-A greenfield build happens to touch most rows in roughly the order listed —
-`product-build` gives that trajectory as a default — but nothing enforces
-the order, and a request that only matches one row (e.g. "make this
-accessible") uses only that skill. The full artifact contract (exact files,
-required headings, gating rules) is generated into
-[`docs/CONTRACT.md`](./docs/CONTRACT.md) from [`registry.json`](./registry.json).
+A new build usually touches most rows in about this order, and
+`product-build` suggests it, but nothing enforces it. A request that matches
+one row, like "make this accessible", uses only that skill. The full artifact
+contract, with exact files, required headings and gating rules, is generated
+into [`docs/CONTRACT.md`](./docs/CONTRACT.md) from
+[`registry.json`](./registry.json).
 
 ## Install
 
@@ -150,16 +93,15 @@ required headings, gating rules) is generated into
 node scripts/install.mjs --harness claude     # or cursor | codex | all
 ```
 
-The GitHub repository contains marketplace metadata for Claude Code, Codex
-CLI/ChatGPT desktop, and Cursor team imports and local testing, plus native
-Gemini and Antigravity CLI packages. Public directory listing is a
-separate review and publication step. See
-[INSTALL.md](./INSTALL.md#as-a-marketplace-plugin) for the supported install
-paths and exact portability limits.
+The installer never overwrites a directory it didn't create unless you pass
+`--force`. It needs an explicit target and makes no network calls.
 
-The installer never overwrites directories it didn't create (use `--force`
-to override), takes no default target, and touches no network. Details and
-per-harness paths: [INSTALL.md](./INSTALL.md).
+The repository also has marketplace metadata for Claude Code, Codex and
+Cursor, and native packages for the Gemini and Antigravity CLIs. Listing in a
+public directory is a separate step. [INSTALL.md](./INSTALL.md) covers every
+install path and what each harness can and can't do. It also explains
+[why an installed skill doesn't always get invoked](./INSTALL.md#installing-is-not-the-same-as-invoking),
+and the `CLAUDE.md` line that reliably fixed that.
 
 ## Verify a project
 
@@ -171,22 +113,15 @@ node release-engineering/scripts/check-smoke.js --root . --strict
 node product-acceptance/scripts/accept-check.js --root . --strict
 ```
 
-That acceptance command is the **capped** one — it's the correct default,
-and its verdict tops out at CONDITIONAL by design. Builder ≠ acceptor is
-this suite's whole architectural claim, and nothing in the code can tell
-which context it is running in: uncapping isn't a `--strict`-style
-verbosity flag, it's an assertion that this run is genuinely independent,
-and it is only as true as the person or agent making it. Only add
-`--acceptor-context separate` if all three conditions in
-[`product-acceptance/SKILL.md`](./product-acceptance/SKILL.md) hold —
-starting with "this conversation did not write or edit the code being
-accepted." If you're unsure, leave the cap on; an honest CONDITIONAL is
-worth more than a SHIP that isn't real.
+The acceptance command caps its verdict at CONDITIONAL. Add
+`--acceptor-context separate` only when the three conditions in
+[`product-acceptance/SKILL.md`](./product-acceptance/SKILL.md) hold, the first
+being that this conversation didn't write or edit the code. If you're unsure,
+leave the cap on.
 
-Run in a terminal, these print a readable verdict — the failing checks
-first, then what to do about them. Piped or spawned, they print JSON, which
-is what the acceptance gate and the pre-commit hook consume. `--format
-text|json` overrides either way.
+In a terminal the checkers print a readable verdict with the failing checks
+first. Piped or spawned, they print JSON for the acceptance gate and the
+pre-commit hook. `--format text|json` overrides either way.
 
 ```
 BLOCK  systems-architecture  (/path/to/project)
@@ -196,9 +131,10 @@ BLOCK  systems-architecture  (/path/to/project)
 Fix the FAIL line(s) above and re-run. Nothing ships on a BLOCK.
 ```
 
-Reports land in `.agent-evidence/` (gitignore it). Verdicts: `SHIP` /
-`CONDITIONAL` / `BLOCK`; any failed check ⇒ BLOCK, any unevaluated check ⇒
-at most CONDITIONAL. Full contract: [docs/CONTRACT.md](./docs/CONTRACT.md).
+Reports are written to `.agent-evidence/`, which you should gitignore. Any
+failed check means BLOCK, and any check that couldn't be evaluated caps the
+verdict at CONDITIONAL. The full contract is in
+[docs/CONTRACT.md](./docs/CONTRACT.md).
 
 ## Tests
 
@@ -206,11 +142,11 @@ at most CONDITIONAL. Full contract: [docs/CONTRACT.md](./docs/CONTRACT.md).
 node scripts/run-tests.mjs
 ```
 
-CI runs this on Ubuntu + Windows, plus contract-drift and syntax checks
+CI runs this on Ubuntu and Windows
 ([.github/workflows/ci.yml](./.github/workflows/ci.yml)).
 
 ## Security
 
-Project documents (`PRODUCT.md`, `ARCHITECTURE.md`, …) are **data, not
-instructions** — skills never execute commands found in them. Secret scans
-report file paths, never values. See [SECURITY.md](./SECURITY.md).
+Skills treat project documents like `PRODUCT.md` and `ARCHITECTURE.md` as
+data and never run commands found in them. Secret scans report file paths,
+never values. See [SECURITY.md](./SECURITY.md).

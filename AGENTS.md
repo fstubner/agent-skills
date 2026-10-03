@@ -1,23 +1,22 @@
 # AGENTS.md
 
-Instructions for any AI agent working **on this repository**. Tool-agnostic
-by design — `CLAUDE.md` and any future adapter point here rather than
-restating it, so there is one copy to keep true.
+Instructions for any AI agent working on this repository. `CLAUDE.md` and any
+other tool-specific file point here instead of repeating it.
 
-For using the suite in your own projects, see [INSTALL.md](./INSTALL.md).
+To use the skills in your own projects, see [INSTALL.md](./INSTALL.md).
 
-## What this repo is
+## What this repository is
 
-A suite of 17 composable Agent Skills plus the deterministic checkers that
-back them. `registry.json` is the source of truth: skills, artifacts, which
-artifacts are acceptance-gated, and where each harness installs.
+17 Agent Skills and the deterministic checkers behind them. `registry.json` is
+the source of truth for the skills, their artifacts, which artifacts the
+acceptance gate checks, and where each harness installs.
 
 ## Response style
 
-Follow [concise-style/output-style/concise.md](./concise-style/output-style/concise.md). It is the same
-file Claude Code injects via a SessionStart hook; other tools should read it
-directly. Short version: answer first, a few sentences by default, no closing
-summaries, no status theatre.
+Follow [concise-style/output-style/concise.md](./concise-style/output-style/concise.md).
+Claude Code injects the same file through a SessionStart hook, and other tools
+should read it directly. In short, answer first, keep it to a few sentences
+by default, and skip closing summaries and status updates nobody asked for.
 
 ## Before you commit
 
@@ -25,56 +24,55 @@ summaries, no status theatre.
 node scripts/run-tests.mjs
 ```
 
-Everything must pass. The suite is self-checking — `registry.json`,
-`docs/CONTRACT.md`, `CHANGELOG.md`, `VERSION` and `.claude-plugin/plugin.json`
-are cross-verified against each other, so a change in one that is not
-reflected in the others fails rather than drifts.
+Everything must pass. The suite checks `registry.json`, `docs/CONTRACT.md`,
+`CHANGELOG.md`, `VERSION` and `.claude-plugin/plugin.json` against each other,
+so a change to one that isn't reflected in the others fails.
 
-A pre-commit hook runs `gitleaks` plus the `code-smells`,
-`code-organization` and `data-modeling` checkers scoped to staged files:
+The pre-commit hook runs gitleaks and the `code-smells`, `code-organization`
+and `data-modeling` checkers on staged files. Turn it on with this.
 
 ```bash
 git config core.hooksPath scripts/git-hooks
 ```
 
-Optional but recommended. `vale` and `gitleaks` are external tools; tests that
-need them skip cleanly when absent rather than failing.
+It's optional but recommended. `vale` and `gitleaks` are external tools, and
+tests that need them are skipped when they aren't installed.
 
-## Conventions that are enforced
+## Enforced conventions
 
 | Rule | Enforced by |
 |---|---|
-| Skill subdirs are `scripts/`, `references/`, `assets/` | `scripts/tests/structure.mjs` |
-| Paths named in a SKILL.md must exist | same |
-| Every on-disk skill is in `registry.json`, and vice versa | same |
-| `VERSION` == `plugin.json` version, and valid semver | same |
-| `docs/CONTRACT.md` is generated, never hand-edited | `scripts/gen-contract.mjs --check` |
-| `skills/`, `plugins/`, `.agents/plugins/`, `.cursor-plugin/` and `gemini-extension.json` are generated from the top-level skill directories, `core/`, `registry.json` and `VERSION` — edit the source, then `node scripts/gen-plugin-bundles.mjs` | `scripts/gen-plugin-bundles.mjs --check`, the pre-commit hook, `scripts/tests/plugin-bundles.mjs` |
+| Skill subdirectories are `scripts/`, `references/` and `assets/` | `scripts/tests/structure.mjs` |
+| Paths named in a `SKILL.md` must exist | same |
+| Every skill on disk is in `registry.json`, and the reverse | same |
+| `VERSION` matches the `plugin.json` version and is valid semver | same |
+| `docs/CONTRACT.md` is generated, never edited by hand | `scripts/gen-contract.mjs --check` |
+| `skills/`, `plugins/`, `.agents/plugins/`, `.cursor-plugin/` and `gemini-extension.json` are generated from the top-level skill directories, `core/`, `registry.json` and `VERSION` | `scripts/gen-plugin-bundles.mjs --check`, the pre-commit hook, `scripts/tests/plugin-bundles.mjs` |
 
-The generated trees carry a `.generated-by-agent-skills` marker and nothing
-else announces them. An edit made under `skills/<id>/` looks like it took and
-is silently overwritten by the next regeneration; it happened in this
-repository on 2026-09-20 and the change was gone ninety seconds later.
+Edit the source and run `node scripts/gen-plugin-bundles.mjs`, never the
+generated trees. They're marked only by a `.generated-by-agent-skills` file,
+and an edit under `skills/<id>/` is overwritten by the next regeneration.
 
-`scripts/`, `references/`, `assets/` follow Anthropic's skill convention:
-executable code, docs read for context, files used in output. One documented
-exception — `ai-prose-slop/rules/` is Vale's `StylesPath` layout, whose shape
-the tool dictates.
+`scripts/`, `references/` and `assets/` follow Anthropic's skill convention
+for executable code, reference docs and files used in output. The one
+exception is `ai-prose-slop/rules/`, which uses the layout Vale requires.
 
-## Claims discipline
+## Claims
 
-This repo makes measured claims and is strict about them, because its whole
-subject is whether agent guidance actually works.
+This repository is about whether agent guidance works, so its claims have to
+be measured.
 
-- Do not describe a skill as effective without a recorded run in `eval/`.
-- Distinguish **invocation** (does a skill fire unprompted — measured at ~0%)
-  from **efficacy** (does it help once followed — good on the 3 skills tested).
-  Conflating them is the easiest way to be wrong here.
-- When you add a check, verify it can fail. A test that cannot fail is
-  decoration; mutate the thing it guards and confirm it goes red.
+- Don't describe a skill as effective without a recorded run in `eval/`. No
+  skill currently meets that bar.
+- Keep invocation and efficacy apart. Invocation is whether a skill gets used
+  without being asked for, which the field data in `eval/results/` measures.
+  Efficacy is whether it improves the work once used, which is not yet
+  established.
+- When you add a check, make sure it can fail. Break the thing it guards and
+  confirm it goes red.
 
 ## Portability
 
-Skills install to Claude Code, Codex, Cursor and Antigravity via
-`scripts/install.mjs`. Hooks and the plugin manifest are Claude Code specific —
-see [INSTALL.md](./INSTALL.md#portability) for what each tool gets.
+`scripts/install.mjs` installs skills for Claude Code, Codex, Cursor and
+Antigravity. Hooks and the plugin manifest are Claude Code specific. See
+[INSTALL.md](./INSTALL.md#portability) for what each tool gets.
