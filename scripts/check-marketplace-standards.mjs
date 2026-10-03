@@ -3,7 +3,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { documentText } from './lib/doc-text.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -22,6 +22,23 @@ function readJson(relative) {
 
 function requireValue(condition, message) {
   if (!condition) failures.push(message);
+}
+
+// The destination of an HTML meta-refresh, absolute, or '' when the page is
+// not one. Only a redirect to somewhere else counts: a page may legitimately
+// refresh to itself, and reporting that as a move would be a permanent
+// failure nobody can fix.
+//
+// Exported so the test can feed it the stub Antigravity actually served,
+// rather than asserting against this file's source text.
+export function metaRefreshTarget(html, from) {
+  const tag = /<meta[^>]+http-equiv\s*=\s*["']?refresh["']?[^>]*>/i.exec(html);
+  if (!tag) return '';
+  const content = /content\s*=\s*["']([^"']+)["']/i.exec(tag[0]);
+  const target = content && /url\s*=\s*(.+)$/i.exec(content[1].trim());
+  if (!target) return '';
+  const absolute = new URL(target[1].trim(), from).toString();
+  return absolute === new URL(from).toString() ? '' : absolute;
 }
 
 function validateLocalPackages() {
@@ -67,7 +84,19 @@ async function validateCanonicalSources() {
     const response = await fetch(document.url, { redirect: 'follow' });
     requireValue(response.ok, `${document.id}: canonical documentation returned HTTP ${response.status}`);
     if (!response.ok) continue;
-    const text = documentText(await response.text());
+    const html = await response.text();
+    // A vendor that moves a page with an HTML meta-refresh answers 200 and
+    // serves a stub, so `redirect: follow` has nothing to follow and the
+    // length check below reports a client-rendered page. Antigravity did
+    // exactly this to /docs/cli/plugins, and the job was red for five days
+    // saying "98 characters of readable text; too little to check" when the
+    // actionable fact was the new URL sitting in the stub. Say where it went.
+    const moved = metaRefreshTarget(html, document.url);
+    requireValue(!moved,
+      `${document.id}: canonical documentation has moved to ${moved}; update core/marketplace-standards.json`);
+    if (moved) continue;
+
+    const text = documentText(html);
     // A page that renders its body client-side hands us navigation and
     // nothing else. That is not evidence the vendor dropped anything, so it
     // is reported as its own failure rather than as drift in every phrase.
@@ -82,11 +111,15 @@ async function validateCanonicalSources() {
   }
 }
 
-validateLocalPackages();
-if (!offline) await validateCanonicalSources();
+// Guarded so the test can import metaRefreshTarget without running the whole
+// check — which would hit the network and call process.exit inside the suite.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  validateLocalPackages();
+  if (!offline) await validateCanonicalSources();
 
-if (failures.length) {
-  console.error(failures.map((failure) => `FAIL ${failure}`).join('\n'));
-  process.exit(1);
+  if (failures.length) {
+    console.error(failures.map((failure) => `FAIL ${failure}`).join('\n'));
+    process.exit(1);
+  }
+  console.log(`Marketplace standards check passed (${offline ? 'offline package invariants' : 'package invariants and canonical-source drift'}).`);
 }
-console.log(`Marketplace standards check passed (${offline ? 'offline package invariants' : 'package invariants and canonical-source drift'}).`);

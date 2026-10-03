@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { expect, root, tmpBase } from './harness.mjs';
+import { expect, root, tmpBase, pathToFileUrl } from './harness.mjs';
 import { documentText } from '../lib/doc-text.mjs';
 
 // A real code block from https://antigravity.google/docs/cli/plugins, copied
@@ -33,6 +33,36 @@ expect('documentText still reports text that is genuinely absent',
 expect('documentText does not leave attribute fragments behind as text',
   documentText('<a title="a > b">documentation</a>') === 'documentation',
   documentText('<a title="a > b">documentation</a>'));
+
+// The stub antigravity.google served at /docs/cli/plugins, copied verbatim on
+// 2026-10-03. It answers HTTP 200 and redirects with an HTML meta-refresh, so
+// `redirect: follow` has nothing to follow: the drift job read 98 characters of
+// readable text and was red for five days reporting a client-rendered page,
+// while the one actionable fact — the new URL — sat in the markup it had.
+const META_REFRESH_STUB = '<!doctype html><title>Redirecting to: /docs/plugins?tab=cli</title>'
+  + '<meta http-equiv="refresh" content="0;url=/docs/plugins?tab=cli">'
+  + '<meta name="robots" content="noindex">'
+  + '<link rel="canonical" href="https://antigravity.google/docs/plugins?tab=cli">'
+  + '<body><a href="/docs/plugins?tab=cli">Redirecting from <code>/docs/cli/plugins/</code>'
+  + ' to <code>/docs/plugins?tab=cli</code></a></body>';
+{
+  const { metaRefreshTarget } = await import(
+    pathToFileUrl(path.join(root, 'scripts', 'check-marketplace-standards.mjs')));
+  expect('the specimen is why the length check fired: it carries almost no readable text',
+    documentText(META_REFRESH_STUB).length < 2000,
+    String(documentText(META_REFRESH_STUB).length));
+  expect('a meta-refresh stub reports where the page moved to',
+    metaRefreshTarget(META_REFRESH_STUB, 'https://antigravity.google/docs/cli/plugins')
+      === 'https://antigravity.google/docs/plugins?tab=cli',
+    metaRefreshTarget(META_REFRESH_STUB, 'https://antigravity.google/docs/cli/plugins'));
+  // A page allowed to refresh to itself would otherwise be a permanent
+  // failure nobody could clear by editing the manifest.
+  expect('a page refreshing to itself is not a move',
+    metaRefreshTarget('<meta http-equiv="refresh" content="30;url=/docs/x">',
+      'https://example.test/docs/x') === '');
+  expect('an ordinary documentation page is not a move',
+    metaRefreshTarget(SHIKI_CODE_BLOCK, 'https://example.test/docs/x') === '');
+}
 
 const result = spawnSync(process.execPath, [
   path.join(root, 'scripts', 'check-marketplace-standards.mjs'),
