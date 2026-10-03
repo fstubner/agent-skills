@@ -57,7 +57,13 @@ const FROM = flag('--from', '');
 const TO = flag('--to', '');
 const SUITE = new Set(JSON.parse(fs.readFileSync(registryPath, 'utf8')).skills.map((s) => s.id));
 const PROJECTS = flag('--projects', path.join(os.homedir(), '.claude', 'projects'));
-const EXCLUDED_PROJECT = /needs-work-agent-skills|Temp-claude|Temp-eval/i;
+// Claude Code names a project's session directory after its path, with every
+// non-alphanumeric character turned into "-". Derived from where this checkout
+// actually is, so the exclusion holds on any machine; a prefix match also
+// covers this repository's worktrees, whose directories extend the name.
+const SELF_PROJECT = path.resolve(import.meta.dirname, '..').replace(/[^A-Za-z0-9]/g, '-').toLowerCase();
+const EXCLUDED_ELSEWHERE = /Temp-claude|Temp-eval/i;
+const isExcluded = (dir) => dir.toLowerCase().startsWith(SELF_PROJECT) || EXCLUDED_ELSEWHERE.test(dir);
 
 const textOf = (content) => {
   if (typeof content === 'string') return content;
@@ -163,7 +169,7 @@ function invocationsIn(file, project) {
 
 const found = [];
 for (const dir of fs.readdirSync(PROJECTS)) {
-  if (EXCLUDED_PROJECT.test(dir)) continue;
+  if (isExcluded(dir)) continue;
   const full = path.join(PROJECTS, dir);
   if (!fs.statSync(full).isDirectory()) continue;
   const project = (STRIP ? dir.replace(STRIP, '') : dir).replace(/--claude-worktrees-/, '/');

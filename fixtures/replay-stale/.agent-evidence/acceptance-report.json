@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "skill": "product-acceptance",
   "generatedAt": "2026-08-13T14:09:44.789Z",
-  "root": "H:\\projects\\private\\needs-work\\agent-skills\\fixtures\\accept-ship",
+  "root": "/project",
   "verdict": "SHIP",
   "checks": [
     {

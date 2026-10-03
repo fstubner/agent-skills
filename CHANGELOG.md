@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+**The documentation describes the project instead of its history.** README,
+INSTALL, CONTRIBUTING, SECURITY, RELEASE, AGENTS and `eval/README.md` were
+rewritten without the incident stories and justifications, which live in this
+changelog and in `eval/results/`. Three of them were wrong. AGENTS.md
+described invocation as about 0% and efficacy as good on three skills.
+`eval/README.md` gave the promotion bar as three cases per skill when
+`evidence.json` requires fifteen. INSTALL.md linked an Antigravity page that
+has moved. `eval-verify` no longer requires an "EVIDENCE STATUS: UNVALIDATED"
+banner at the top of public documents, and still fails any unsupported
+efficacy claim in them. The README title drops the internal "v2" name.
+
+**The weekly standards drift job is green again.** Every scheduled run had
+failed since 2026-09-07. Antigravity moved its plugin page with an HTML meta-refresh, which
+the check read as an empty page, and it now reports where a page moved. The
+Claude plugin schema gained optional properties, which were reviewed and
+re-pinned.
+
+**Machine-specific paths are gone from committed files.** Two fixture reports
+carried a local checkout path, and `skill-outcomes.mjs` excluded this
+repository's sessions by a hardcoded directory name. It now works the name out
+from where the checkout is.
+
 **A field-delivery count says which day it was taken on.**
 `scripts/skill-outcomes.mjs` now takes `--from`/`--to`, de-duplicates on the
 `Skill` tool-call id, prints how many duplicates it removed, and breaks the
