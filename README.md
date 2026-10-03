@@ -21,7 +21,7 @@ around three ideas:
   [`docs/CONTRACT.md`](./docs/CONTRACT.md) is generated from it and CI fails
   on drift.
 
-## What we claim (and don't)
+## What this claims (and doesn't)
 
 The **checkers are tested**: every gate has ship + block fixtures asserting
 the specific blocker, run in CI on Ubuntu **and Windows**.
@@ -30,8 +30,9 @@ The behavioural claim splits into two questions that have to be measured
 separately, and conflating them is the easiest way to be wrong about this
 suite ([eval/results/](./eval/results/)):
 
-**Does a skill get used unprompted? It depends on whether a human is in the
-session.** Non-interactive: essentially never. In both
+**Does a skill get used unprompted? It depends on the harness, and on
+whether a human is in the session.** Non-interactive in Claude Code:
+essentially never. In both
 a Task-tool subagent and a genuine top-level `claude -p` session, with all
 of the skills in the then-current tagged release installed, neither run invoked a single
 skill on a prompt matching `product-build`'s own stated trigger almost
@@ -50,16 +51,24 @@ the skill's name or the model chose it, so field usage says the skills get
 reached for, and says nothing yet about who reaches.
 
 Reading the session transcripts themselves answers who reaches
-([field-outcomes-2026-09-02.md](./eval/results/field-outcomes-2026-09-02.md)).
-Over a month of interactive Claude Code work across 15 projects: 89
-invocations, 27 typed by the human, **62 chosen by the model — 21 of them
-from a prompt that named no activity at all**. The acceptance gate returned
-BLOCK 11 times, CONDITIONAL 5, SHIP 2, and a BLOCK was followed by a
-specific fix instruction in 5 of 11 cases. So interactive delivery works,
-`-p` delivery does not, and the difference is the setting rather than the
-wording. The user in that data is the suite's author, who knows the skills
-exist; it is delivery evidence, not efficacy evidence. Codex shows a
-handful of real sessions, Antigravity two, Cursor none.
+([field-outcomes-2026-10-03.md](./eval/results/field-outcomes-2026-10-03.md)).
+Over two months of interactive Claude Code work across 17 projects: **127
+invocations, 30 typed by the human, 97 chosen by the model — 33 of them from
+a prompt that named no activity at all**. The acceptance gate returned BLOCK
+9, CONDITIONAL 5 and SHIP 4, all of them in August; it has not been invoked
+since. Codex is no longer a footnote: **46 reads in the same window, 35 of
+them single-prompt runs that never named the skill they read** — but Codex
+advertises every installed skill's path in its system prompt, a stronger
+delivery mechanism than the `claude -p` probe's harness had, so the two
+settings are not comparable. Within Claude Code itself, no single-prompt
+session has invoked a skill its prompt did not ask for, though five
+Task-tool subagents did. Antigravity shows four conversations, Cursor one
+skill in one task. **Counts from a session store are snapshots, not facts
+about a month**: the same script over the same August window returns
+different per-skill numbers today than it did on 2026-09-02, because
+resuming a session rewrites its turns. The only user in this data is the
+person who wrote the suite and knows the skills exist; it is delivery
+evidence, not efficacy evidence.
 
 **Does the guidance help once followed? Unknown.** The historical forced
 runs lack the raw transcripts, output bundles, cost data, replication, and

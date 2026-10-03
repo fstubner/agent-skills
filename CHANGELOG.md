@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+**A field-delivery count says which day it was taken on.**
+`scripts/skill-outcomes.mjs` now takes `--from`/`--to`, de-duplicates on the
+`Skill` tool-call id, prints how many duplicates it removed, and breaks the
+totals down by month; its trigger rule counts a skill named in backticks or
+quotes as human-typed, and no longer reads a prompt naming `frontend-design`
+as naming `frontend`. The script had no test and now has one.
+[field-outcomes-2026-10-03.md](./eval/results/field-outcomes-2026-10-03.md)
+re-runs the 2026-09-02 report over 2026-08-04..2026-10-03 and reports that
+the published August table does not reproduce — the session store is mutable,
+so resuming a session rewrites its turns. Codex, Antigravity and Cursor now
+advertise every installed skill's path in the system prompt, which broke the
+previous report's grep method for those three. The README's delivery
+paragraph is restated from the new numbers.
+[block-softened-into-prose-2026-09-08.md](./eval/results/block-softened-into-prose-2026-09-08.md)
+writes up twenty-one bundles that were committed on 2026-09-08 and left
+unreported; they promote nothing, and the case turns out to measure citation
+discipline rather than the verdict softening it is named for.
+
 **The walkthrough replay gate can be passed by the command that documents
 it.** Playwright's JSON reporter never wrote the `specSha256` the gate read,
 so every passing log to date was hand-stamped. The generated spec now
