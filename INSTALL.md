@@ -58,7 +58,7 @@ lists the skill ids.
 
 The repository has marketplace metadata for Claude Code, Codex (CLI and the
 ChatGPT desktop app) and Cursor. All three point at the same generated package
-in `plugins/agent-skills`, which holds the 17 skills and their checkers.
+in `plugins/agent-skills`, which holds the 18 skills and their checkers.
 Installing the plugin doesn't turn on telemetry or the concise response
 style.
 
@@ -103,7 +103,7 @@ is separate and needs OpenAI's publication process. See
   members then install it from **Customize**.
 - **Local testing.** Copy or link `plugins/agent-skills` to
   `~/.cursor/plugins/local/agent-skills`, then restart Cursor or run
-  **Developer: Reload Window**.
+  `Developer: Reload Window`.
 
 See [Cursor's plugin documentation](https://cursor.com/docs/plugins).
 
@@ -208,7 +208,7 @@ harness-specific.
 
 | Component | Claude Code | Codex | Cursor | Antigravity |
 |---|---|---|---|---|
-| 17 skills (`SKILL.md`, `references/`, `scripts/`, `assets/`) | ✓ | ✓ | ✓ | ✓ |
+| 18 skills (`SKILL.md`, `references/`, `scripts/`, `assets/`) | ✓ | ✓ | ✓ | ✓ |
 | Checker scripts (plain Node) | ✓ | ✓ | ✓ | ✓ |
 | Pre-commit hook (git) | ✓ | ✓ | ✓ | ✓ |
 | `AGENTS.md` in your project | ✓ | ✓ | ✓ | ✓ |

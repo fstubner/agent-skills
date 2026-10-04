@@ -57,6 +57,7 @@ const MODULES = [
   'hooks-commit-msg.mjs', // and the message itself is checked against the audience it will reach
   'hooks-generated-artifacts.mjs', // and a core/ edit may not leave the three generated trees behind
   'skill-outcomes.mjs',   // the field-delivery numbers: de-duplication, window, who triggered
+  'docs.mjs',             // repo-docs: voice and structure of repository documents
   'redact-home.mjs',      // the machine that ran an eval does not travel with the evidence
   'reduce-transcript.mjs', // and the bundle publishes the model's turn, not the session around it
   'installer.mjs',        // harnessPaths, installed-skill smoke test, clobber refusal

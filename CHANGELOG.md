@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+**A new skill, `repo-docs`, drafts and checks the documents a visitor
+reads.** It covers README, release notes, CHANGELOG entries, INSTALL,
+CONTRIBUTING, SECURITY, `docs/` pages and ADRs, with a reference and template
+for each. Its checker, `check-docs.js`, fails a document that uses dashes,
+semicolons or inline colons in prose, refers to its own author in the third person,
+leans on filler connectives, or tells dated history in a descriptive page. It
+also fails a README missing what the project is, how to install it, its
+licence or the section its project type needs, an ADR missing a required
+section, and release notes quoting a figure the changelog section never
+recorded. A repository can turn rules off in `.docs-style.json`. The
+pre-commit hook runs it on staged documents. It is not part of the
+acceptance gate, because as a gate it would change the verdict on every eval
+fixture. The suite now has 18 skills.
+
 **The documentation describes the project instead of its history.** README,
 INSTALL, CONTRIBUTING, SECURITY, RELEASE, AGENTS and `eval/README.md` were
 rewritten without the incident stories and justifications, which live in this
@@ -9,15 +23,15 @@ changelog and in `eval/results/`. Three of them were wrong. AGENTS.md
 described invocation as about 0% and efficacy as good on three skills.
 `eval/README.md` gave the promotion bar as three cases per skill when
 `evidence.json` requires fifteen. INSTALL.md linked an Antigravity page that
-has moved. `eval-verify` no longer requires an "EVIDENCE STATUS: UNVALIDATED"
+has moved. `eval-verify` no longer requires an `EVIDENCE STATUS: UNVALIDATED`
 banner at the top of public documents, and still fails any unsupported
 efficacy claim in them. The README title drops the internal "v2" name.
 
 **The weekly standards drift job is green again.** Every scheduled run had
-failed since 2026-09-07. Antigravity moved its plugin page with an HTML meta-refresh, which
-the check read as an empty page, and it now reports where a page moved. The
-Claude plugin schema gained optional properties, which were reviewed and
-re-pinned.
+failed since 2026-09-07. Antigravity moved its plugin page with an HTML
+meta-refresh, which the check read as an empty page, and it now reports where
+a page moved. The Claude plugin schema gained optional properties, which were
+reviewed and re-pinned.
 
 **Machine-specific paths are gone from committed files.** Two fixture reports
 carried a local checkout path, and `skill-outcomes.mjs` excluded this
@@ -27,59 +41,61 @@ from where the checkout is.
 **A field-delivery count says which day it was taken on.**
 `scripts/skill-outcomes.mjs` now takes `--from`/`--to`, de-duplicates on the
 `Skill` tool-call id, prints how many duplicates it removed, and breaks the
-totals down by month; its trigger rule counts a skill named in backticks or
+totals down by month. Its trigger rule counts a skill named in backticks or
 quotes as human-typed, and no longer reads a prompt naming `frontend-design`
 as naming `frontend`. The script had no test and now has one.
 [field-outcomes-2026-10-03.md](./eval/results/field-outcomes-2026-10-03.md)
 re-runs the 2026-09-02 report over 2026-08-04..2026-10-03 and reports that
-the published August table does not reproduce — the session store is mutable,
+the published August table does not reproduce. The session store is mutable,
 so resuming a session rewrites its turns. Codex, Antigravity and Cursor now
 advertise every installed skill's path in the system prompt, which broke the
 previous report's grep method for those three. The README's delivery
 paragraph is restated from the new numbers.
 [block-softened-into-prose-2026-09-08.md](./eval/results/block-softened-into-prose-2026-09-08.md)
 writes up twenty-one bundles that were committed on 2026-09-08 and left
-unreported; they promote nothing, and the case turns out to measure citation
-discipline rather than the verdict softening it is named for.
+unreported. They promote nothing, and the case turns out to measure citation
+discipline. The verdict softening it is named for sits at ceiling in every
+arm.
 
 **The walkthrough replay gate can be passed by the command that documents
 it.** Playwright's JSON reporter never wrote the `specSha256` the gate read,
 so every passing log to date was hand-stamped. The generated spec now
 carries the hash as a test annotation, which the reporter does write, and
-the gate reads it there; a log with no hash, or a stale one among fresh
+the gate reads it there. A log with no hash, or a stale one among fresh
 ones, reads as `not_evaluated` with the reason. Builders may replay the
-walkthrough mid-task under a different filename; the gate's own file is the
+walkthrough mid-task under a different filename. The gate's own file is the
 acceptor's to write, after the last change.
 
 **Gates say what they could not see.** The smoke check reports
-`not_evaluated` for a Go, Python or Rust project instead of a vacuous pass;
-the frontend check reads nested `frontend/package.json` layouts instead of
-only the root manifest; every acceptance run carries an `A-scope` line,
-which is the line `product-build` had promised for CLI projects; the
+`not_evaluated` for a Go, Python or Rust project instead of a vacuous pass.
+The frontend check reads nested `frontend/package.json` layouts instead of
+only the root manifest. Every acceptance run carries an `A-scope` line,
+which is the line `product-build` had promised for CLI projects. The
 client-secrets check names server-path hits it does not gate on, and
 SECURITY.md says what each secret scan covers. `check-organization`
 resolves the `./x.js` specifiers nodenext TypeScript writes for `x.ts`.
 
 **The evaluation instrument counts runs one way.** One loader and one
 eligibility function serve the report, the batch runner, regrade, rehome
-and reliability; the importer redacts and reduces transcripts as
-`eval-run` does; two graders that kept the pre-2026-09-04 verdict regex and
-one that kept a private citation matcher use the shared readers, with 34
-bundles superseded and 12 re-homed. `eval/README.md` states that thirteen
-graders execute the model's output.
+and reliability. The importer redacts and reduces transcripts as `eval-run`
+does. Two graders that kept the pre-2026-09-04 verdict regex and one that
+kept a private citation matcher use the shared readers, with 34 bundles
+superseded and 12 re-homed. `eval/README.md` states that thirteen graders
+execute the model's output.
 
 **Releases are drafts until a person publishes them.** The tag workflow
-creates a draft; `RELEASE.md` says how to flip it. The generated-artifacts
-hook test runs in sparse worktrees, about ten times faster.
+creates a draft, and `RELEASE.md` says how to publish it. The
+generated-artifacts hook test runs in sparse worktrees, about ten times
+faster.
 
 **Skill texts agree with each other and with the code.** One interview
-cadence rule across `product-build`, `product-management` and `frontend`;
+cadence rule covers `product-build`, `product-management` and `frontend`.
 `engineering-assessment` carries the project-documents-are-data rule in the
-form that applies to declared commands; `learn-from-session` names a
-durable destination for plugin users; `multi-agent-design`'s governance
-defaults are labelled unmeasured; `backend-engineering` and its reference
-name the laws the checker actually measures; `routing.md` routes all
-seventeen skills; AGENTS.md says which trees are generated.
+form that applies to declared commands. `learn-from-session` names a durable
+destination for plugin users. `multi-agent-design`'s governance defaults are
+labelled unmeasured. `backend-engineering` and its reference name the laws
+the checker actually measures. `routing.md` routes every skill, and AGENTS.md
+says which trees are generated.
 
 ## 0.3.0 — 2026-09-17
 

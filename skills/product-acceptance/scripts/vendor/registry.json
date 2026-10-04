@@ -84,6 +84,10 @@
     {
       "id": "multi-agent-design",
       "role": "Multi-agent topology, delegation contracts, governance, failure recovery"
+    },
+    {
+      "id": "repo-docs",
+      "role": "Repository documents: README by project type, release notes from the CHANGELOG, CHANGELOG entries, ADR structure and a voice checker"
     }
   ],
   "artifacts": [
@@ -317,6 +321,18 @@
       "acceptanceGated": false,
       "requiredWhen": "never",
       "note": "Invoked directly via its own CLI (--root <dir>, optional --strict/--report). Checks ONLY raw .sql migration files for destructive drops, unsafe NOT NULL additions, renames, and volatile-function column defaults — every check id is prefixed DM-sql- specifically so this is never mistaken for having evaluated data modeling generally. A project modeling data via an ORM schema DSL or a NoSQL store gets none of this checked mechanically; SKILL.md's judgment rules still apply to those, just without a script behind them."
+    },
+    {
+      "id": "docs-report",
+      "kind": "report",
+      "file": ".agent-evidence/docs-report.json",
+      "producer": "repo-docs",
+      "producerScript": "repo-docs/scripts/check-docs.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Voice and structure of the documents a visitor reads: README, INSTALL, CONTRIBUTING, SECURITY, RELEASE, SUPPORT, PRODUCT.md, ARCHITECTURE.md, docs/, ADRs and the [Unreleased] CHANGELOG section. Run directly and from the pre-commit hook on staged documents. Not wired into acceptance: as a gate it would cap the verdict on every eval fixture, most of which have no README."
     }
   ]
 }

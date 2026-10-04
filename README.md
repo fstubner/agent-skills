@@ -2,7 +2,7 @@
 
 [Version](./VERSION) · [Changelog](./CHANGELOG.md) · MIT licence
 
-17 Agent Skills for product and software delivery, for Claude Code, Codex,
+18 Agent Skills for product and software delivery, for Claude Code, Codex,
 Cursor and Antigravity. They are built around three ideas.
 
 - **Evidence-gated shipping.** Deterministic checkers write a standard
@@ -44,7 +44,7 @@ Here is what the evidence supports so far.
 ## Skills
 
 The skills are independent. Each one triggers on its own and none calls
-another. Ten of them read or write a few shared files, listed in the next
+another. Eleven of them read or write a few shared files, listed in the next
 section, and that's the only link between them.
 
 | Skill | Role |
@@ -56,6 +56,7 @@ section, and that's the only link between them.
 | [`backend-engineering`](./backend-engineering/) | Rules for the trusted side |
 | [`product-acceptance`](./product-acceptance/) | Independent acceptance gate |
 | [`ai-prose-slop`](./ai-prose-slop/) | Prose editor and detector, usable on any writing |
+| [`repo-docs`](./repo-docs/) | Drafts and checks README, release notes, CHANGELOG entries and ADRs, with a checker for voice and structure |
 | [`mental-models`](./mental-models/) | Reasoning lenses, a triage guide and four mindsets (Skeptic, Systems Thinker, Pragmatist, Explorer), usable on any hard problem |
 | [`code-smells`](./code-smells/) | Fowler's code-smell catalogue and a file-size and nesting checker (size for any language, nesting for JS, TS and C-family) |
 | [`code-organization`](./code-organization/) | Module boundaries, dependency direction and naming |

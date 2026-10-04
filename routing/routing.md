@@ -12,7 +12,7 @@ first. If you read no further, read these.
 | When the request is… | Use |
 |---|---|
 | a whole-codebase audit, "how bad is this", a health check | `agent-skills:engineering-assessment` |
-| any prose that will be read by a human — docs, a README, a post | `agent-skills:ai-prose-slop` |
+| any other prose a person will read, like a post, an email or a comment | `agent-skills:ai-prose-slop` |
 | "is this done", "can we ship", any readiness claim | `agent-skills:product-acceptance`, in a separate turn from the build |
 | UI work: components, styling, layout, "make it look better" | `agent-skills:frontend` |
 | CI/CD, deploys, rollback, "does this project even run" | `agent-skills:release-engineering` |
@@ -33,11 +33,12 @@ first. If you read no further, read these.
 | what to test, at which level, a flaky or slow suite | `agent-skills:testing-strategy` |
 | a correction just landed and the same mistake could recur | `agent-skills:learn-from-session` |
 | "should this be several agents", orchestration, subagent topology | `agent-skills:multi-agent-design` (its first answer is usually no) |
+| a README, release notes, a CHANGELOG entry, an ADR, INSTALL or CONTRIBUTING | `agent-skills:repo-docs` |
 
 Not every request needs one. A one-line tweak in a locked codebase, a
 question about someone else's error message, a shell command — just answer.
 
-**Why two tiers.** Seventeen skills competing in one flat list is seventeen
+**Why two tiers.** Eighteen skills competing in one flat list is eighteen
 things to weigh on every request, and a list that long is skimmed rather
 than read. The split is empirical, not a ranking of quality: the top five
 are the ones actually reached for in real work, and a skill moves between

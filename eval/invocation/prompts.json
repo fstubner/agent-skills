@@ -483,6 +483,22 @@
    "prompt": "Summarise what the reduce call in this function is doing.",
    "expected": [],
    "origin": "hand-written distractor: a plausible dev request no installed skill claims"
+  },
+  {
+   "id": "repo-docs-readme",
+   "prompt": "Write a README for this repository. It should say what the project does, how to install it and how to use it.",
+   "expected": [
+    "repo-docs"
+   ],
+   "origin": "repo-docs, added 2026-10-04"
+  },
+  {
+   "id": "repo-docs-release-notes",
+   "prompt": "Draft the release notes for 1.4.0 from the changelog so I can publish the release.",
+   "expected": [
+    "repo-docs"
+   ],
+   "origin": "repo-docs, added 2026-10-04"
   }
  ]
 }

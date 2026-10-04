@@ -57,6 +57,7 @@ through direct calls.
 | `learn-from-session` (no shared artifacts) | Turn a correction or confirmation into a durable rule/fixture/memory |
 | `engineering-assessment` (no shared artifacts) | Evidence-first codebase audit — severity-ranked findings, coverage gaps stated |
 | `multi-agent-design` (no shared artifacts) | Multi-agent topology, delegation contracts, governance, failure recovery |
+| `repo-docs` | Repository documents: README by project type, release notes from the CHANGELOG, CHANGELOG entries, ADR structure and a voice checker |
 
 Suggested starting point for a greenfield/ambiguous request: `product-build`.
 Not a required entry point — every skill above also fires directly on its own trigger.
@@ -86,6 +87,7 @@ documentation of who else reads the artifact, not a gating signal).
 | — (CLI-invoked, no fixed path) | report | code-organization | — | no | never | `code-organization/scripts/check-organization.js` | `core/schemas/check-report.schema.json` |
 | — (CLI-invoked, no fixed path) | report | code-smells | — | no | never | `code-smells/scripts/check-smells.js` | `core/schemas/check-report.schema.json` |
 | — (CLI-invoked, no fixed path) | report | data-modeling | — | no | never | `data-modeling/scripts/check-migrations.js` | `core/schemas/check-report.schema.json` |
+| `.agent-evidence/docs-report.json` | report | repo-docs | — | no | never | `repo-docs/scripts/check-docs.js` | `core/schemas/check-report.schema.json` |
 
 ## Adding a skill
 

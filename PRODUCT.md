@@ -17,7 +17,7 @@ Help software teams give coding agents reusable, portable guidance backed by det
 
 ## MVP
 
-- Maintain 17 independently triggered skills in the registry-first contract.
+- Maintain 18 independently triggered skills in the registry-first contract.
 - Install any selected subset into Claude Code, Codex, Cursor, or Antigravity without network access or unowned-directory replacement.
 - Provide deterministic checkers and schema-valid reports for rules that can be mechanically enforced.
 - Re-run applicable domain checks through an acceptance gate that does not trust stale report files and does not let builders self-certify.
@@ -34,9 +34,9 @@ Help software teams give coding agents reusable, portable guidance backed by det
 
 - `registry.json` is the machine-readable source of truth for skills, artifacts, acceptance gates, and harness installation paths.
 - Installation requires Node.js 18 or newer, performs no network access, and must preserve directories the installer does not own.
-- The suite remains portable across Claude Code, Codex, Cursor, and Antigravity; harness-specific hooks must be identified as such.
-- Invocation and efficacy are measured and reported separately; unsupported behavioural claims are prohibited.
-- Acceptance is independent: the context that built a change cannot issue an uncapped SHIP verdict for it.
+- The suite remains portable across Claude Code, Codex, Cursor, and Antigravity. Harness-specific hooks must be identified as such.
+- Invocation and efficacy are measured and reported separately, and unsupported behavioural claims are prohibited.
+- Acceptance is independent. The context that built a change cannot issue an uncapped SHIP verdict for it.
 
 ## Acceptance
 

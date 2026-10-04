@@ -7,7 +7,7 @@ To use the skills in your own projects, see [INSTALL.md](./INSTALL.md).
 
 ## What this repository is
 
-17 Agent Skills and the deterministic checkers behind them. `registry.json` is
+18 Agent Skills and the deterministic checkers behind them. `registry.json` is
 the source of truth for the skills, their artifacts, which artifacts the
 acceptance gate checks, and where each harness installs.
 

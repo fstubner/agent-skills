@@ -1,0 +1,5 @@
+{
+  "name": "ship-it",
+  "version": "1.0.0",
+  "bin": { "ship-it": "cli.js" }
+}
