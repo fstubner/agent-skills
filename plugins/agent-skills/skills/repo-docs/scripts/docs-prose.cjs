@@ -14,8 +14,11 @@
 
 const FENCE = /^\s*(```|~~~)/;
 
-function proseLines(text) {
+// keepBreaks marks every line that is not prose with text: null, so a caller
+// can tell where one paragraph or list item ends and the next begins.
+function proseLines(text, { keepBreaks = false } = {}) {
   const out = [];
+  const brk = (i) => { if (keepBreaks) out.push({ n: i + 1, text: null }); };
   const lines = text.replace(/\r\n/g, '\n').split('\n');
   let inFence = false;
   let inComment = false;
@@ -24,10 +27,11 @@ function proseLines(text) {
     let line = lines[i];
     if (inFrontMatter) {
       if (i > 0 && line === '---') inFrontMatter = false;
+      brk(i);
       continue;
     }
-    if (FENCE.test(line)) { inFence = !inFence; continue; }
-    if (inFence) continue;
+    if (FENCE.test(line)) { inFence = !inFence; brk(i); continue; }
+    if (inFence) { brk(i); continue; }
 
     // Comments can open and close anywhere, and span lines.
     let kept = '';
@@ -48,14 +52,17 @@ function proseLines(text) {
     }
     line = kept;
 
-    if (/^\s*\|/.test(line)) continue;
+    if (/^\s*\|/.test(line)) { brk(i); continue; }
+    // Inline code becomes one placeholder word rather than nothing. It is a
+    // word to a reader, so it counts toward sentence length, and a sentence
+    // that starts with it still reads as starting a new sentence.
     line = line
-      .replace(/``[^`]*``/g, ' ')
-      .replace(/`[^`]*`/g, ' ')
+      .replace(/``[^`]*``/g, 'Code')
+      .replace(/`[^`]*`/g, 'Code')
       .replace(/\]\([^)]*\)/g, ']')
       .replace(/<https?:[^>]*>/g, ' ')
       .replace(/\bhttps?:\/\/\S+/g, ' ');
-    if (line.trim() === '') continue;
+    if (line.trim() === '') { brk(i); continue; }
     out.push({ n: i + 1, text: line });
   }
   return out;
@@ -104,4 +111,44 @@ function changelogSection(text, name) {
   return start === -1 ? null : lines.slice(start).join('\n');
 }
 
-module.exports = { proseLines, headings, openingParagraph, changelogSection };
+// Paragraphs and list items, each as one unit of prose with the line it
+// starts on. A list item never runs into the next one, which a plain join of
+// lines does whenever an item has no full stop. A numbered item is a step.
+const LIST_ITEM = /^\s*(?:([-*+])|(\d+)[.)])\s+/;
+
+function proseBlocks(text) {
+  const blocks = [];
+  let current = null;
+  const close = () => { if (current) blocks.push(current); current = null; };
+  for (const line of proseLines(text, { keepBreaks: true })) {
+    if (line.text === null) { close(); continue; }
+    if (/^\s*#{1,6}\s/.test(line.text)) { close(); continue; }
+    const item = LIST_ITEM.exec(line.text);
+    if (item) {
+      close();
+      current = { n: line.n, kind: item[2] ? 'step' : 'item', text: line.text.slice(item[0].length) };
+    } else if (current) {
+      current.text += ` ${line.text.trim()}`;
+    } else {
+      current = { n: line.n, kind: 'prose', text: line.text.trim() };
+    }
+  }
+  close();
+  return blocks;
+}
+
+// Sentences in a block. A full stop ends a sentence only when the next word
+// starts with a capital, a digit, a quote or markup, so "e.g. the" and "v0.3.0"
+// stay whole.
+function sentences(text) {
+  return text.replace(/\s+/g, ' ').trim()
+    // Closing emphasis or a quote may follow the full stop, as in a bold
+    // lead sentence ("**Reports are evidence.** The gate…").
+    .split(/(?<=[.!?][*_"')\]]*)\s+(?=[A-Z0-9"'*\[(])/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+const wordCount = (sentence) => sentence.split(/\s+/).filter((w) => /[A-Za-z0-9]/.test(w)).length;
+
+module.exports = { proseLines, proseBlocks, sentences, wordCount, headings, openingParagraph, changelogSection };

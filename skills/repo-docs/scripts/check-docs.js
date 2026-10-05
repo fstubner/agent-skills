@@ -29,7 +29,7 @@ const { parseArgs } = require(path.join(core.lib, 'args.cjs'));
 const { check, runCli, readText, sectionHasContent } = require(path.join(core.lib, 'report.cjs'));
 const { classify } = require(path.join(core.lib, 'classify.cjs'));
 const registry = require(core.registry);
-const { proseLines, headings, openingParagraph, changelogSection } = require('./docs-prose.cjs');
+const { proseLines, proseBlocks, sentences, wordCount, headings, openingParagraph, changelogSection } = require('./docs-prose.cjs');
 
 // Documents a visitor reads. Code of conduct files are left out: they are
 // usually adopted verbatim from a standard text the repository doesn't own.
@@ -220,26 +220,88 @@ function releaseNumbers(root, args, checks) {
     : check('D-release-numbers', 'fail', `figures not in the "${name}" changelog section: ${invented.join(', ')}`));
 }
 
-function disabledRules(root) {
+function styleConfig(root) {
   const file = path.join(root, '.docs-style.json');
-  if (!fs.existsSync(file)) return new Set();
-  const config = JSON.parse(readText(file));
-  return new Set(Array.isArray(config.disable) ? config.disable : []);
+  return fs.existsSync(file) ? JSON.parse(readText(file)) : {};
+}
+
+// Sentence length follows ASD-STE100 Simplified Technical English: 20 words
+// for a step in a procedure, 25 for a descriptive sentence. Plain-language
+// guidance generally agrees, so it is on for every repository.
+const STEP_WORDS = 20;
+const PROSE_WORDS = 25;
+// The rest of STE is opt-in with { "profile": "ste" }, because it trades a
+// writer's voice for a controlled one, which not every project wants.
+const PARAGRAPH_SENTENCES = 6;
+const PASSIVE = /\b(?:is|are|was|were|be|been|being)\s+(?:\w+ly\s+)?(\w+ed|built|done|made|given|kept|known|shown|written|run|set|sent|taken|found)\b/i;
+
+function blockScan(docs, root, test) {
+  const hits = [];
+  for (const rel of docs) {
+    const text = readDoc(root, rel);
+    if (text === null) continue;
+    for (const block of proseBlocks(text)) {
+      const found = test(block, rel);
+      if (found) hits.push(`${rel}:${block.n} ${found}`);
+    }
+  }
+  return hits;
+}
+
+function longSentence(block) {
+  const limit = block.kind === 'step' ? STEP_WORDS : PROSE_WORDS;
+  const over = sentences(block.text).map(wordCount).filter((n) => n > limit);
+  if (over.length === 0) return null;
+  return `${Math.max(...over)} words (limit ${limit}${block.kind === 'step' ? ' for a step' : ''})`;
+}
+
+function longParagraph(block) {
+  if (block.kind !== 'prose') return null;
+  const count = sentences(block.text).length;
+  return count > PARAGRAPH_SENTENCES ? `${count} sentences (limit ${PARAGRAPH_SENTENCES})` : null;
+}
+
+// Words ending in -ed that are not participles, which the pattern would
+// otherwise read as passive ("it is red", "is a need").
+const NOT_PARTICIPLES = new Set(['red', 'need', 'speed', 'seed', 'feed', 'bed', 'shed', 'indeed', 'embed', 'exceed', 'proceed']);
+const passive = (text) => {
+  const m = PASSIVE.exec(text);
+  return m && !NOT_PARTICIPLES.has(m[1].toLowerCase()) ? `"${m[0]}"` : null;
+};
+
+// A dictionary the owner supplies: one unapproved word per line, optionally
+// with its approved replacement after "=>". The STE dictionary itself is free
+// to obtain but not to redistribute, so none is bundled.
+function vocabulary(root, file) {
+  const escape = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const words = readText(path.resolve(root, file)).split(/\r?\n/)
+    .map((l) => l.replace(/#.*/, '').trim()).filter(Boolean)
+    .map((l) => {
+      const [word, use] = l.split('=>').map((x) => x.trim());
+      return { word, use, re: new RegExp(`\\b${escape(word)}\\b`, 'i') };
+    });
+  return (text) => {
+    const hit = words.find((w) => w.re.test(text));
+    if (!hit) return null;
+    return hit.use ? `"${hit.word}" (use "${hit.use}")` : `"${hit.word}"`;
+  };
+}
+
+// The documents named by --files or --files-from. An unreadable list scans
+// nothing: it is the caller's list, and a missing one is not a document with
+// problems.
+function namedFiles(args) {
+  if (!args['files-from']) return String(args.files).split(',');
+  try { return readText(path.resolve(args['files-from'])).split(/\r?\n/); } catch { return []; }
 }
 
 function run(root, args = {}) {
-  const disabled = disabledRules(root);
+  const config = styleConfig(root);
+  const disabled = new Set(Array.isArray(config.disable) ? config.disable : []);
   let docs = docSet(root);
   const scoped = args.files || args['files-from'];
   if (scoped) {
-    // An unreadable list scans nothing. It is the caller's list, and a
-    // missing one is not a document with problems.
-    let listText = '';
-    if (args['files-from']) {
-      try { listText = readText(path.resolve(args['files-from'])); } catch { listText = ''; }
-    }
-    const listed = args['files-from'] ? listText.split(/\r?\n/) : String(args.files).split(',');
-    const wanted = new Set(listed.map((s) => s.trim().replace(/\\/g, '/')).filter(Boolean));
+    const wanted = new Set(namedFiles(args).map((s) => s.trim().replace(/\\/g, '/')).filter(Boolean));
     docs = docs.filter((d) => wanted.has(d));
   }
 
@@ -248,6 +310,14 @@ function run(root, args = {}) {
   checks.push(verdictFor('D-person', scan(docs, root, person), 'references to the author in the third person'));
   checks.push(verdictFor('D-connectives', scan(docs, root, connective), 'filler connectives'));
   checks.push(verdictFor('D-history', scan(docs, root, history), 'dated history in descriptive documents'));
+  checks.push(verdictFor('D-sentence-length', blockScan(docs, root, longSentence), 'sentences over the word limit'));
+  if (config.profile === 'ste') {
+    checks.push(verdictFor('D-paragraph-length', blockScan(docs, root, longParagraph), 'paragraphs over six sentences'));
+    checks.push(verdictFor('D-passive', scan(docs, root, passive), 'passive constructions'));
+    if (config.dictionary) {
+      checks.push(verdictFor('D-vocabulary', scan(docs, root, vocabulary(root, config.dictionary)), 'words outside the approved vocabulary'));
+    }
+  }
   if (!scoped || docs.includes('README.md')) readmeChecks(root, checks);
   adrChecks(root, docs, checks);
   if (args['release-notes']) releaseNumbers(root, args, checks);
@@ -255,7 +325,7 @@ function run(root, args = {}) {
   return checks.map((c) => (disabled.has(c.id) ? check(c.id, 'pass', `disabled in .docs-style.json`) : c));
 }
 
-module.exports = { run, punctuation, connective, history, projectType, ADR_SECTIONS };
+module.exports = { run, punctuation, connective, history, projectType, longSentence, longParagraph, passive, ADR_SECTIONS };
 
 if (require.main === module) {
   const artifact = registry.artifacts.find((a) => a.id === 'docs-report');

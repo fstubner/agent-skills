@@ -5,13 +5,15 @@
 **A new skill, `repo-docs`, drafts and checks the documents a visitor
 reads.** It covers README, release notes, CHANGELOG entries, INSTALL,
 CONTRIBUTING, SECURITY, `docs/` pages and ADRs, with a reference and template
-for each. Its checker, `check-docs.js`, fails a document that uses dashes,
-semicolons or inline colons in prose, refers to its own author in the third person,
-leans on filler connectives, or tells dated history in a descriptive page. It
-also fails a README missing what the project is, how to install it, its
-licence or the section its project type needs, an ADR missing a required
-section, and release notes quoting a figure the changelog section never
-recorded. A repository can turn rules off in `.docs-style.json`. The
+for each. Its checker, `check-docs.js`, fails prose that uses dashes,
+semicolons or inline colons. It also fails an author describing themselves
+in the third person, filler connectives, and dated history in a descriptive
+page. Sentences over 25 words fail, or over 20 in a numbered step, following
+ASD-STE100 Simplified Technical English. The rest of STE is an opt-in profile.
+A README fails when it's missing what the project is, how to install it, its
+licence or the section its project type needs. An ADR fails when it's
+missing a required section. Release notes fail when they quote a figure the
+changelog section never recorded. A repository can turn rules off in `.docs-style.json`. The
 pre-commit hook runs it on staged documents. It is not part of the
 acceptance gate, because as a gate it would change the verdict on every eval
 fixture. The suite now has 18 skills.
@@ -79,7 +81,7 @@ resolves the `./x.js` specifiers nodenext TypeScript writes for `x.ts`.
 eligibility function serve the report, the batch runner, regrade, rehome
 and reliability. The importer redacts and reduces transcripts as `eval-run`
 does. Two graders that kept the pre-2026-09-04 verdict regex and one that
-kept a private citation matcher use the shared readers, with 34 bundles
+kept a private citation matcher now use the shared readers. 34 bundles were
 superseded and 12 re-homed. `eval/README.md` states that thirteen graders
 execute the model's output.
 

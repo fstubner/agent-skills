@@ -7,7 +7,8 @@ description: >-
   from the project's own sources of truth, never from memory, and is not done
   until check-docs passes: no dashes, semicolons or inline colons in prose,
   no third-person references to the author, no filler connectives, no dated
-  history in descriptive docs, a README shaped for its project type, ADRs with
+  history in descriptive docs, sentences within the ASD-STE100 length limits,
+  a README shaped for its project type, ADRs with
   every required section, and release notes that only quote figures the
   changelog recorded. Triggers on "write the README", "draft release notes",
   "update the changelog", "write an ADR", "clean up the docs", or before a
@@ -64,11 +65,27 @@ These hold for every document the checker reads.
    scanning a list of items with names, like checks or files. A list of
    changes reads better as plain sentences.
 
-Rules 5 to 7 are judgment. The checker catches 1 to 4. Read the draft once
-more for the rest, and run `ai-prose-slop` on it for general prose habits.
+8. **Short sentences.** At most 25 words in prose and 20 in a numbered step,
+   the limits from ASD-STE100 Simplified Technical English. Split a long
+   sentence where it changes subject.
+
+The checker catches rules 1 to 4 and 8. Rules 5 to 7 are judgment. Read the
+draft once more for those, and run `ai-prose-slop` on it for general prose
+habits.
 
 A repository can turn individual checks off with `.docs-style.json`
 (`{ "disable": ["D-connectives"] }`). Do that only when the owner asks.
+
+### Simplified Technical English
+
+For documentation that has to be read quickly or by non-native speakers,
+`{ "profile": "ste" }` adds more of ASD-STE100. Paragraphs are limited to six
+sentences and passive constructions are flagged. With
+`"dictionary": "<file>"`, words the owner lists as unapproved are flagged too,
+one per line as `unapproved => approved`. The STE dictionary is free to
+request from asd-ste100.org but may not be redistributed, so none ships here.
+The profile trades a writer's voice for a controlled one, so it's off unless
+a repository asks for it.
 
 ## The documents
 
