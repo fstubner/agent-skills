@@ -55,7 +55,8 @@ and an edit under `skills/<id>/` is overwritten by the next regeneration.
 
 `scripts/`, `references/` and `assets/` follow Anthropic's skill convention
 for executable code, reference docs and files used in output. The one
-exception is `ai-prose-slop/rules/`, which uses the layout Vale requires.
+exception is `rules/` in `ai-prose-slop` and `repo-docs`, which uses the layout
+Vale requires.
 
 ## Claims
 

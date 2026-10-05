@@ -5,9 +5,9 @@
 Node 18 or later. There is no npm install and no network access, because the
 installer only copies files.
 
-Two skills use an external CLI for their deterministic checks.
-`ai-prose-slop` uses [Vale](https://vale.sh), and `backend-engineering` and
-the optional pre-commit hook use
+Three skills use an external CLI for their deterministic checks.
+`ai-prose-slop` and `repo-docs` use [Vale](https://vale.sh), and
+`backend-engineering` and the optional pre-commit hook use
 [gitleaks](https://github.com/gitleaks/gitleaks). Without the CLI, those
 checks report `not_evaluated` instead of passing.
 

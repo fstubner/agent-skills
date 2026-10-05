@@ -332,7 +332,7 @@
       "consumers": [],
       "acceptanceGated": false,
       "requiredWhen": "never",
-      "note": "Voice and structure of the documents a visitor reads: README, INSTALL, CONTRIBUTING, SECURITY, RELEASE, SUPPORT, PRODUCT.md, ARCHITECTURE.md, docs/, ADRs and the [Unreleased] CHANGELOG section. Run directly and from the pre-commit hook on staged documents. Not wired into acceptance: as a gate it would cap the verdict on every eval fixture, most of which have no README."
+      "note": "Voice, ASD-STE100 sentence limits and structure of the documents a visitor reads. The voice and STE rules are Vale styles in repo-docs/rules, run through Vale; structure, release-note figures and the numbered-step limit are checked in Node. Documents read: README, INSTALL, CONTRIBUTING, SECURITY, RELEASE, SUPPORT, PRODUCT.md, ARCHITECTURE.md, docs/, ADRs and the [Unreleased] CHANGELOG section. Run directly and from the pre-commit hook on staged documents. Not wired into acceptance: as a gate it would cap the verdict on every eval fixture, most of which have no README."
     }
   ]
 }

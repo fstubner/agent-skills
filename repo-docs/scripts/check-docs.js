@@ -3,26 +3,29 @@
 // Does this repository's documentation read as professional, and is it
 // shaped the way a reader expects?
 //
-// Built because a prose linter was not enough. Vale passed every draft of one
-// set of release notes and one README that a person then rejected line by line
-// for the same handful of habits: dashes and semicolons used as rhythm, inline
-// colons, "plus" as a connective, the author named in the third person, and
-// the history of each rule told inside the document that states the rule.
-// Every one of those can be counted, so they are, here.
+// The voice and ASD-STE100 rules are Vale styles in ../rules, run through
+// vale-docs.cjs, so an editor with the Vale extension shows the same findings
+// while the document is written. A prose linter alone was not enough before:
+// Vale passed every draft of one set of release notes and one README that a
+// person then rejected line by line, because no style had rules for those
+// habits. These styles do.
 //
-// Structure is the other half: a README missing what the project is or how to
-// install it, the sections its project type needs, ADRs missing the headings
-// a decision record needs, and release notes quoting a number the changelog
-// never recorded.
+// What Vale cannot express stays here: whether a README says what the project
+// is and has the sections its type needs, whether ADRs carry every required
+// section, whether release notes quote only figures the changelog recorded,
+// and the stricter word limit for a numbered step, which needs to tell an
+// ordered list from a bullet.
 //
 // Usage: node check-docs.js --root <dir> [--files a.md,b.md | --files-from <list>]
 //                           [--release-notes <file> [--section <name>] [--changelog <file>]]
 //                           [--strict] [--out <file>] [--no-write] [--format text|json]
 //
-// A repository turns rules off with .docs-style.json: { "disable": ["D-connectives"] }.
+// .docs-style.json turns rules off ({ "disable": ["D-connectives"] }) and the
+// opt-in STE profile on ({ "profile": "ste", "dictionary": "<file>" }).
 
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const { corePaths } = require('./resolve-core.cjs');
 const core = corePaths();
 const { parseArgs } = require(path.join(core.lib, 'args.cjs'));
@@ -30,18 +33,39 @@ const { check, runCli, readText, sectionHasContent } = require(path.join(core.li
 const { classify } = require(path.join(core.lib, 'classify.cjs'));
 const registry = require(core.registry);
 const { proseLines, proseBlocks, sentences, wordCount, headings, openingParagraph, changelogSection } = require('./docs-prose.cjs');
+const { runVale, valeAvailable, installHint } = require('./vale-docs.cjs');
 
-// Documents a visitor reads. Code of conduct files are left out: they are
-// usually adopted verbatim from a standard text the repository doesn't own.
+// Documents a visitor reads. Code of conduct files are left out because they
+// are usually adopted verbatim from a standard text the repository doesn't own.
 const ROOT_DOCS = ['README.md', 'INSTALL.md', 'CONTRIBUTING.md', 'SECURITY.md', 'RELEASE.md', 'SUPPORT.md', 'PRODUCT.md', 'ARCHITECTURE.md'];
 const ADR_DIRS = ['docs/adr', 'docs/adrs', 'docs/decisions', 'doc/adr', 'adr', 'decisions'];
-// Documents whose owning templates use bold field labels ("**Status:**").
-const LABELLED = /^(PRODUCT\.md|ARCHITECTURE\.md)$|^(docs\/adrs?|docs\/decisions|doc\/adr|adrs?|decisions)\//;
-// Where dates are the content rather than history told in passing.
-const DATED = /^(CHANGELOG\.md)$|^(docs\/adrs?|docs\/decisions|doc\/adr|adrs?|decisions)\//;
 const ADR_SECTIONS = ['Context', 'Decision', 'Consequences', 'Alternatives rejected'];
-const CONNECTIVES = ['plus', 'additionally', 'furthermore', 'moreover', 'rather than', 'as well as', 'along with'];
+// ASD-STE100 allows 20 words in a procedural sentence. RepoDocs.SentenceLength
+// holds the 25-word limit for every other sentence.
+const STEP_WORDS = 20;
 const MAX_LISTED = 8;
+
+const VALE_CHECKS = [
+  ['D-punctuation', 'dashes, semicolons or inline colons in prose'],
+  ['D-person', 'references to the author in the third person'],
+  ['D-connectives', 'filler connectives'],
+  ['D-history', 'dated history in descriptive documents'],
+  ['D-sentence-length', 'sentences over the word limit'],
+];
+// How a finding reads in the report. Rules not listed here show the text
+// Vale matched, which is the useful part for words and phrases.
+const LABEL = {
+  'RepoDocs.Dashes': 'dash',
+  'RepoDocs.Semicolons': 'semicolon',
+  'RepoDocs.InlineColons': 'inline colon',
+  'RepoDocs.InlineColonsInParagraphs': 'inline colon',
+  'RepoDocs.SentenceLength': 'over 25 words',
+  'STE.ParagraphLength': 'over six sentences',
+};
+const STE_CHECKS = [
+  ['D-paragraph-length', 'paragraphs over six sentences'],
+  ['D-passive', 'passive constructions'],
+];
 
 function docSet(root) {
   const out = ROOT_DOCS.filter((f) => fs.existsSync(path.join(root, f)));
@@ -61,34 +85,17 @@ function docSet(root) {
 }
 
 const isAdr = (rel) => ADR_DIRS.some((d) => rel.startsWith(`${d}/`)) && !/(^|\/)(README|index|template)\.md$/i.test(rel);
+const isGenerated = (root, rel) => /^\s*<!--\s*GENERATED/i.test(readText(path.join(root, rel)));
 
-// The text a rule reads. Generated files are skipped whole, and only the
-// unreleased part of a changelog is current prose. Older entries are history.
-function readDoc(root, rel) {
-  let text = readText(path.join(root, rel));
-  if (/^\s*<!--\s*GENERATED/i.test(text)) return null;
-  if (rel === 'CHANGELOG.md') {
-    // Padded back to its place in the file, so reported line numbers are the
-    // file's own and not the section's.
-    const section = changelogSection(text, 'Unreleased');
-    if (section === null) return '';
-    const before = text.replace(/\r\n/g, '\n').indexOf(section);
-    text = '\n'.repeat(text.slice(0, before).split('\n').length - 1) + section;
-  }
-  return text;
-}
-
-function scan(docs, root, test) {
-  const hits = [];
-  for (const rel of docs) {
-    const text = readDoc(root, rel);
-    if (text === null) continue;
-    for (const line of proseLines(text)) {
-      const found = test(line.text, rel);
-      if (found) hits.push(`${rel}:${line.n} ${found}`);
-    }
-  }
-  return hits;
+// Only the unreleased part of a changelog is current prose. Older entries are
+// history. The section is padded back to its place in the file, so reported
+// line numbers are the file's own.
+function unreleased(root) {
+  const text = readText(path.join(root, 'CHANGELOG.md'));
+  const section = changelogSection(text, 'Unreleased');
+  if (section === null) return '';
+  const before = text.replace(/\r\n/g, '\n').indexOf(section);
+  return '\n'.repeat(text.slice(0, before).split('\n').length - 1) + section;
 }
 
 function verdictFor(id, hits, what) {
@@ -97,37 +104,68 @@ function verdictFor(id, hits, what) {
   return check(id, 'fail', `${hits.length} ${what}: ${hits.slice(0, MAX_LISTED).join(' | ')}${more}`);
 }
 
-function punctuation(text, rel) {
-  let line = text.replace(/&#?\w+;/g, ' ');
-  if (LABELLED.test(rel)) line = line.replace(/^\s*(?:[-*]\s+)?\*\*[^*]+:\*\*/, ' ');
-  const found = [];
-  if (/[–—]/.test(line)) found.push('dash');
-  if (line.includes(';')) found.push('semicolon');
-  // Mid-line only: a colon ending a line that introduces a list or code
-  // block is a different construction. Times and ratios are not prose colons.
-  // Closing emphasis may sit between the colon and the space, as in a bold
-  // label like "**Note:** text", which is the most common form of the habit.
-  if (/(?<!\d):(?!\d)[*_]*\s+\S/.test(line.trimEnd())) found.push('inline colon');
-  return found.length ? found.join(', ') : null;
+// A numbered step over the procedural limit. Vale can't tell an ordered list
+// from a bullet, so this one limit is counted here.
+function longStep(block) {
+  if (block.kind !== 'step') return null;
+  const over = sentences(block.text).map(wordCount).filter((n) => n > STEP_WORDS);
+  return over.length ? `${Math.max(...over)} words (limit ${STEP_WORDS} for a step)` : null;
 }
 
-const person = (text) => (/\bthe\s+(?:author|maintainer)s?\b/i.exec(text) || [null])[0];
-
-function connective(text) {
-  for (const word of CONNECTIVES) {
-    const m = new RegExp(`\\b${word.replace(' ', '\\s+')}\\b`, 'i').exec(text);
-    if (m) return `"${m[0]}"`;
+function stepHits(root, files) {
+  const hits = [];
+  for (const { rel, text } of files) {
+    for (const block of proseBlocks(text)) {
+      const found = longStep(block);
+      if (found) hits.push(`${rel}:${block.n} ${found}`);
+    }
   }
-  return null;
+  return hits;
 }
 
-function history(text, rel) {
-  if (DATED.test(rel)) return null;
-  // A date inside a filename (field-outcomes-2026-10-03.md) is a name.
-  const date = /(?<![\w-])\d{4}-\d{2}-\d{2}(?![\w-]|\.\w)/.exec(text);
-  if (date) return `date ${date[0]}`;
-  const audit = /\b(an audit found|found by (?:an )?audit)\b/i.exec(text);
-  return audit ? `"${audit[0]}"` : null;
+// Vale reads each document from disk, except the changelog, which goes in as
+// its unreleased section written to a scratch file.
+function valeChecks(root, docs, config, checks) {
+  const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'repo-docs-'));
+  try {
+    const files = [];
+    for (const rel of docs) {
+      if (isGenerated(root, rel)) continue;
+      if (rel === 'CHANGELOG.md') {
+        const abs = path.join(scratch, 'CHANGELOG.md');
+        fs.writeFileSync(abs, unreleased(root));
+        files.push({ rel, arg: abs, text: readText(abs) });
+      } else {
+        files.push({ rel, arg: rel, text: readText(path.join(root, rel)) });
+      }
+    }
+    const ste = config.profile === 'ste';
+    const wanted = [...VALE_CHECKS, ...(ste ? STE_CHECKS : []),
+      ...(ste && config.dictionary ? [['D-vocabulary', 'words outside the approved vocabulary']] : [])];
+
+    if (!valeAvailable()) {
+      for (const [id] of wanted) {
+        checks.push(check(id, 'not_evaluated', `vale is not on PATH, and these rules run in Vale. Install it with: ${installHint()}`));
+      }
+      return;
+    }
+    const dictionary = ste && config.dictionary ? readText(path.resolve(root, config.dictionary)) : null;
+    const result = runVale(root, files.map((f) => f.arg), { ste, dictionary });
+    if (!result.ok) {
+      for (const [id] of wanted) checks.push(check(id, 'fail', result.reason));
+      return;
+    }
+    const relOf = new Map(files.map((f) => [path.resolve(root, f.arg), f.rel]));
+    const hits = Object.fromEntries(wanted.map(([id]) => [id, []]));
+    for (const a of result.alerts) {
+      const rel = relOf.get(path.resolve(root, a.file)) || a.file.replace(/\\/g, '/');
+      (hits[a.check] || (hits[a.check] = [])).push(`${rel}:${a.line} ${LABEL[a.rule] || `"${a.match.trim()}"`}`);
+    }
+    hits['D-sentence-length'].push(...stepHits(root, files));
+    for (const [id, what] of wanted) checks.push(verdictFor(id, hits[id], what));
+  } finally {
+    fs.rmSync(scratch, { recursive: true, force: true });
+  }
 }
 
 // What kind of project the README describes decides which sections it needs.
@@ -225,71 +263,9 @@ function styleConfig(root) {
   return fs.existsSync(file) ? JSON.parse(readText(file)) : {};
 }
 
-// Sentence length follows ASD-STE100 Simplified Technical English: 20 words
-// for a step in a procedure, 25 for a descriptive sentence. Plain-language
-// guidance generally agrees, so it is on for every repository.
-const STEP_WORDS = 20;
-const PROSE_WORDS = 25;
-// The rest of STE is opt-in with { "profile": "ste" }, because it trades a
-// writer's voice for a controlled one, which not every project wants.
-const PARAGRAPH_SENTENCES = 6;
-const PASSIVE = /\b(?:is|are|was|were|be|been|being)\s+(?:\w+ly\s+)?(\w+ed|built|done|made|given|kept|known|shown|written|run|set|sent|taken|found)\b/i;
-
-function blockScan(docs, root, test) {
-  const hits = [];
-  for (const rel of docs) {
-    const text = readDoc(root, rel);
-    if (text === null) continue;
-    for (const block of proseBlocks(text)) {
-      const found = test(block, rel);
-      if (found) hits.push(`${rel}:${block.n} ${found}`);
-    }
-  }
-  return hits;
-}
-
-function longSentence(block) {
-  const limit = block.kind === 'step' ? STEP_WORDS : PROSE_WORDS;
-  const over = sentences(block.text).map(wordCount).filter((n) => n > limit);
-  if (over.length === 0) return null;
-  return `${Math.max(...over)} words (limit ${limit}${block.kind === 'step' ? ' for a step' : ''})`;
-}
-
-function longParagraph(block) {
-  if (block.kind !== 'prose') return null;
-  const count = sentences(block.text).length;
-  return count > PARAGRAPH_SENTENCES ? `${count} sentences (limit ${PARAGRAPH_SENTENCES})` : null;
-}
-
-// Words ending in -ed that are not participles, which the pattern would
-// otherwise read as passive ("it is red", "is a need").
-const NOT_PARTICIPLES = new Set(['red', 'need', 'speed', 'seed', 'feed', 'bed', 'shed', 'indeed', 'embed', 'exceed', 'proceed']);
-const passive = (text) => {
-  const m = PASSIVE.exec(text);
-  return m && !NOT_PARTICIPLES.has(m[1].toLowerCase()) ? `"${m[0]}"` : null;
-};
-
-// A dictionary the owner supplies: one unapproved word per line, optionally
-// with its approved replacement after "=>". The STE dictionary itself is free
-// to obtain but not to redistribute, so none is bundled.
-function vocabulary(root, file) {
-  const escape = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const words = readText(path.resolve(root, file)).split(/\r?\n/)
-    .map((l) => l.replace(/#.*/, '').trim()).filter(Boolean)
-    .map((l) => {
-      const [word, use] = l.split('=>').map((x) => x.trim());
-      return { word, use, re: new RegExp(`\\b${escape(word)}\\b`, 'i') };
-    });
-  return (text) => {
-    const hit = words.find((w) => w.re.test(text));
-    if (!hit) return null;
-    return hit.use ? `"${hit.word}" (use "${hit.use}")` : `"${hit.word}"`;
-  };
-}
-
 // The documents named by --files or --files-from. An unreadable list scans
-// nothing: it is the caller's list, and a missing one is not a document with
-// problems.
+// nothing, because it is the caller's list, and a missing one is not a
+// document with problems.
 function namedFiles(args) {
   if (!args['files-from']) return String(args.files).split(',');
   try { return readText(path.resolve(args['files-from'])).split(/\r?\n/); } catch { return []; }
@@ -306,26 +282,15 @@ function run(root, args = {}) {
   }
 
   const checks = [];
-  checks.push(verdictFor('D-punctuation', scan(docs, root, punctuation), 'dashes, semicolons or inline colons in prose'));
-  checks.push(verdictFor('D-person', scan(docs, root, person), 'references to the author in the third person'));
-  checks.push(verdictFor('D-connectives', scan(docs, root, connective), 'filler connectives'));
-  checks.push(verdictFor('D-history', scan(docs, root, history), 'dated history in descriptive documents'));
-  checks.push(verdictFor('D-sentence-length', blockScan(docs, root, longSentence), 'sentences over the word limit'));
-  if (config.profile === 'ste') {
-    checks.push(verdictFor('D-paragraph-length', blockScan(docs, root, longParagraph), 'paragraphs over six sentences'));
-    checks.push(verdictFor('D-passive', scan(docs, root, passive), 'passive constructions'));
-    if (config.dictionary) {
-      checks.push(verdictFor('D-vocabulary', scan(docs, root, vocabulary(root, config.dictionary)), 'words outside the approved vocabulary'));
-    }
-  }
+  valeChecks(root, docs, config, checks);
   if (!scoped || docs.includes('README.md')) readmeChecks(root, checks);
   adrChecks(root, docs, checks);
   if (args['release-notes']) releaseNumbers(root, args, checks);
 
-  return checks.map((c) => (disabled.has(c.id) ? check(c.id, 'pass', `disabled in .docs-style.json`) : c));
+  return checks.map((c) => (disabled.has(c.id) ? check(c.id, 'pass', 'disabled in .docs-style.json') : c));
 }
 
-module.exports = { run, punctuation, connective, history, projectType, longSentence, longParagraph, passive, ADR_SECTIONS };
+module.exports = { run, projectType, longStep, ADR_SECTIONS, STEP_WORDS };
 
 if (require.main === module) {
   const artifact = registry.artifacts.find((a) => a.id === 'docs-report');

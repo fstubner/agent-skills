@@ -1,0 +1,8 @@
+extends: existence
+message: "'%s' names the author in the third person. Write 'I' or 'we'."
+link: https://github.com/fstubner/agent-skills/blob/main/repo-docs/SKILL.md#voice
+level: error
+ignorecase: true
+tokens:
+  - the author
+  - the maintainers?

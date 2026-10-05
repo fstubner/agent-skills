@@ -249,10 +249,10 @@ expect('frontmatter validator rejects non-canonical names and unknown fields',
     expect(`${skill}: uses assets/ not templates/`, !fs.existsSync(path.join(root, skill, 'templates')),
       'templates/ present — canonical name is assets/');
     // Guard against a fourth convention appearing by accident. One documented
-    // exception: ai-prose-slop/rules/ is Vale's StylesPath layout, whose shape
-    // the tool dictates — renaming it to assets/ would simply stop Vale
-    // finding the styles.
-    const EXCEPTIONS = { 'ai-prose-slop': ['rules'] };
+    // exception: rules/ is Vale's StylesPath layout, whose shape the tool
+    // dictates — renaming it to assets/ would simply stop Vale finding the
+    // styles. ai-prose-slop and repo-docs both ship Vale styles.
+    const EXCEPTIONS = { 'ai-prose-slop': ['rules'], 'repo-docs': ['rules'] };
     const allowed = SUBDIRS.concat(EXCEPTIONS[skill] || []);
     for (const e of fs.readdirSync(path.join(root, skill), { withFileTypes: true })) {
       if (!e.isDirectory()) continue;

@@ -13,8 +13,10 @@ ASD-STE100 Simplified Technical English. The rest of STE is an opt-in profile.
 A README fails when it's missing what the project is, how to install it, its
 licence or the section its project type needs. An ADR fails when it's
 missing a required section. Release notes fail when they quote a figure the
-changelog section never recorded. A repository can turn rules off in `.docs-style.json`. The
-pre-commit hook runs it on staged documents. It is not part of the
+changelog section never recorded. The voice and STE rules are Vale styles, run through Vale, so the
+same findings show up in an editor with the Vale extension. A repository can
+turn rules off in `.docs-style.json`. The pre-commit hook runs it on staged
+documents. It is not part of the
 acceptance gate, because as a gate it would change the verdict on every eval
 fixture. The suite now has 18 skills.
 

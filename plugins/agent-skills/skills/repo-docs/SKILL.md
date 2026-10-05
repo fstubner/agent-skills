@@ -8,14 +8,14 @@ description: >-
   until check-docs passes: no dashes, semicolons or inline colons in prose,
   no third-person references to the author, no filler connectives, no dated
   history in descriptive docs, sentences within the ASD-STE100 length limits,
-  a README shaped for its project type, ADRs with
-  every required section, and release notes that only quote figures the
-  changelog recorded. Triggers on "write the README", "draft release notes",
+  a README shaped for its project type, ADRs with every required section, and
+  release notes that only quote figures the changelog recorded. The voice
+  rules are Vale styles, so they also show up in an editor. Triggers on "write the README", "draft release notes",
   "update the changelog", "write an ADR", "clean up the docs", or before a
   release. Not for judging general prose quality (ai-prose-slop), deciding
   what the architecture or product is (systems-architecture,
   product-management), or code comments.
-compatibility: Requires Node 18+ to run the deterministic checker script.
+compatibility: Requires Node 18+ and Vale (vale.sh). Without Vale the voice rules report not_evaluated and only the structure checks run.
 ---
 
 # Repository documentation
@@ -32,6 +32,15 @@ ARCHITECTURE.md, everything under `docs/`, ADRs, and the `[Unreleased]`
 section of CHANGELOG.md. Fix every FAIL line and re-run. A draft that reads
 well to you but fails the checker is not done, and a draft that passes is
 still yours to read once more for the judgment rules below.
+
+The voice and STE rules are Vale styles in `rules/RepoDocs` and `rules/STE`,
+and the checker runs them through Vale. To see the same findings while
+writing, copy those folders and `rules/.vale.ini` into the project and use the
+Vale extension for your editor. The checker itself keeps only what Vale can't
+express, which is README shape, ADR sections, release-note figures and the
+word limit for numbered steps. If Vale isn't installed, offer to install it
+(`winget install errata-ai.Vale`, `brew install vale`) instead of skipping the
+voice rules.
 
 ## Write from sources, not memory
 
@@ -79,8 +88,9 @@ A repository can turn individual checks off with `.docs-style.json`
 ### Simplified Technical English
 
 For documentation that has to be read quickly or by non-native speakers,
-`{ "profile": "ste" }` adds more of ASD-STE100. Paragraphs are limited to six
-sentences and passive constructions are flagged. With
+`{ "profile": "ste" }` adds the `STE` Vale style. Paragraphs are limited to
+six sentences and passive constructions are flagged, using Vale's
+part-of-speech tagging. With
 `"dictionary": "<file>"`, words the owner lists as unapproved are flagged too,
 one per line as `unapproved => approved`. The STE dictionary is free to
 request from asd-ste100.org but may not be redistributed, so none ships here.
