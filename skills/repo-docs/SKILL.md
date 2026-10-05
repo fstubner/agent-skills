@@ -42,6 +42,10 @@ word limit for numbered steps. If Vale isn't installed, offer to install it
 (`winget install errata-ai.Vale`, `brew install vale`) instead of skipping the
 voice rules.
 
+Each rule's edge cases are in `rules/tests`. After changing a rule, run
+`vale test --coverage tests RepoDocs STE` from the `rules` folder. It needs
+Vale 3.24 or later, and it fails any rule that no case makes fire.
+
 ## Write from sources, not memory
 
 Before drafting, read what the document describes. For a README that is the
