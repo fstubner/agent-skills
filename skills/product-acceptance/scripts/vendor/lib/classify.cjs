@@ -19,6 +19,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { ARTIFACT_DIRS } = require('./artifact-path.cjs');
 
 // An agent tool's own working directory is not part of the project it is
 // working on. `.claude/worktrees/<branch>/` in particular holds a FULL COPY
@@ -50,12 +51,8 @@ const MAX_FILES = 50000;
 
 // Shared arch-doc candidate list — previously duplicated and drifted between
 // checkers, producing contradictory verdicts on case-sensitive filesystems.
-const ARCH_DOC_CANDIDATES = [
-  'ARCHITECTURE.md',
-  'architecture.md',
-  path.join('docs', 'ARCHITECTURE.md'),
-  path.join('docs', 'architecture.md'),
-];
+const ARCH_DOC_CANDIDATES = ARTIFACT_DIRS.flatMap((dir) =>
+  ['ARCHITECTURE.md', 'architecture.md'].map((name) => (dir ? path.join(...dir.split('/'), name) : name)));
 
 // The per-ecosystem manifest readers live in classify-readers.cjs; this file
 // keeps the classification itself.

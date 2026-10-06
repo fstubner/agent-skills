@@ -29,21 +29,22 @@ const { parseArgs } = require(path.join(core.lib, 'args.cjs'));
 const { classify, conditionMet } = require(path.join(core.lib, 'classify.cjs'));
 const { readText, sectionHasContent, check, runCli, computeVerdict } = require(path.join(core.lib, 'report.cjs'));
 const { validate } = require(path.join(core.lib, 'schema.cjs'));
+const { resolveArtifactFile } = require(path.join(core.lib, 'artifact-path.cjs'));
 const registry = require(core.registry);
 
 const PRODUCER_TIMEOUT_MS = 60_000;
 
 function checkDocumentArtifact(root, artifact, checks) {
-  const p = path.join(root, artifact.file);
-  if (!fs.existsSync(p)) {
-    checks.push(check(`A-${artifact.id}`, 'fail', `required document ${artifact.file} is missing`));
+  const found = resolveArtifactFile(root, artifact.file);
+  if (!found) {
+    checks.push(check(`A-${artifact.id}`, 'fail', `required document ${artifact.file} is missing (looked in the root, docs/ and docs/design/)`));
     return;
   }
-  const text = readText(p);
+  const text = readText(found.abs);
   const missing = (artifact.requiredHeadings || []).filter((h) => !sectionHasContent(text, h));
   checks.push(missing.length > 0
-    ? check(`A-${artifact.id}`, 'fail', `${artifact.file} missing heading(s): ${missing.join(', ')}`)
-    : check(`A-${artifact.id}`, 'pass', `${artifact.file}${provenanceSuffix(text)}`));
+    ? check(`A-${artifact.id}`, 'fail', `${found.rel} missing heading(s): ${missing.join(', ')}`)
+    : check(`A-${artifact.id}`, 'pass', `${found.rel}${provenanceSuffix(text)}`));
 }
 
 // A document reconstructed from the implementation cannot be evidence about
@@ -200,8 +201,7 @@ function recordedSpecHashes(log) {
 }
 
 function walkthroughReplayCheck(root) {
-  const walkthrough = path.join(root, 'ux-walkthrough.md');
-  if (!fs.existsSync(walkthrough)) {
+  if (!resolveArtifactFile(root, 'ux-walkthrough.md')) {
     return check('A-runtime-replay', 'not_evaluated', 'no ux-walkthrough.md');
   }
   const generator = path.join(__dirname, 'gen-walkthrough-spec.mjs');
@@ -309,13 +309,13 @@ function run(root, args) {
   // not_evaluated, which caps the verdict at CONDITIONAL, rather than a
   // failure: nothing here is wrong, it is unverifiable from inside.
   const contract = registry.artifacts.find((a) => a.id === 'product-contract');
-  const contractPath = contract ? path.join(root, contract.file) : null;
-  if (contractPath && fs.existsSync(contractPath)) {
-    const declared = provenanceOf(readText(contractPath));
+  const contractFound = contract ? resolveArtifactFile(root, contract.file) : null;
+  if (contractFound) {
+    const declared = provenanceOf(readText(contractFound.abs));
     checks.push(HUMAN_ANCHORED.has(declared)
-      ? check('A-intent-anchored', 'pass', `${contract.file} provenance: ${declared}`)
+      ? check('A-intent-anchored', 'pass', `${contractFound.rel} provenance: ${declared}`)
       : check('A-intent-anchored', 'not_evaluated',
-          `${contract.file} provenance is "${declared}" — intent is not anchored outside the implementation, so this verdict covers consistency and build quality, not whether it is the right product`));
+          `${contractFound.rel} provenance is "${declared}" — intent is not anchored outside the implementation, so this verdict covers consistency and build quality, not whether it is the right product`));
   }
 
   for (const artifact of registry.artifacts) {

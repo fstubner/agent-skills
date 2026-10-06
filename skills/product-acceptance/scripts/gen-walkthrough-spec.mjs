@@ -18,6 +18,7 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
+import { createRequire } from 'module';
 
 const args = process.argv.slice(2);
 const valueAfter = (flag) => {
@@ -26,11 +27,16 @@ const valueAfter = (flag) => {
 };
 
 const root = path.resolve(valueAfter('--root') || '.');
-const source = path.join(root, 'ux-walkthrough.md');
-if (!fs.existsSync(source)) {
-  console.error(`no ux-walkthrough.md at ${root}`);
+// Same lookup as every other consumer: the root, then docs/, then docs/design/.
+const require = createRequire(import.meta.url);
+const { corePaths } = require('./resolve-core.cjs');
+const { resolveArtifactFile } = require(path.join(corePaths().lib, 'artifact-path.cjs'));
+const found = resolveArtifactFile(root, 'ux-walkthrough.md');
+if (!found) {
+  console.error(`no ux-walkthrough.md at ${root} (looked in the root, docs/ and docs/design/)`);
   process.exit(2);
 }
+const source = found.abs;
 
 // The Replay block is a fenced ```walkthrough section. Each step is one
 // `- do: ...` with an optional `expect:`. Deliberately a tiny grammar: an

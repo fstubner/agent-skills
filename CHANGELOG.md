@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+**The checkers find project documents under `docs/` and `docs/design/`.**
+`PRODUCT.md`, `ARCHITECTURE.md`, `design-direction.md`, `ux-walkthrough.md`,
+`design-tokens.json` and `stack-decision.md` were looked for only at the
+project root, so a project that kept them in `docs/` was reported as missing
+them. Every checker now looks at the root, then `docs/`, then `docs/design/`,
+through one helper (`core/lib/artifact-path.cjs`), and pass messages name the
+path found. Producers still write to the root.
+
 **A new skill, `repo-docs`, drafts and checks the documents a visitor
 reads.** It covers README, release notes, CHANGELOG entries, INSTALL,
 CONTRIBUTING, SECURITY, `docs/` pages and ADRs, with a reference and template
