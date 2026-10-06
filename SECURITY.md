@@ -23,8 +23,8 @@ address for reports because none is monitored.
   repository can still try, and the rule lowers the risk without removing it.
 - **Reports are not security controls.** `*-report.json` files help an agent
   correct itself. The acceptance gate re-runs the checkers itself so a
-  planted report can't fake a SHIP, and it works out each checker's verdict
-  from that checker's individual checks. Nothing stops a person ignoring the
+  planted report can't fake a SHIP. It works out each checker's verdict from
+  that checker's individual checks. Nothing stops a person ignoring the
   gate.
 - **The repository being audited gets no say in how it's audited.**
   `product-acceptance` supplies the secret scan's configuration itself

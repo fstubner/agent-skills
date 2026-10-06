@@ -148,6 +148,7 @@ const SCOPED_CHECKERS = [
   { skill: 'code-smells', script: path.join(repoRoot, 'code-smells', 'scripts', 'check-smells.js') },
   { skill: 'code-organization', script: path.join(repoRoot, 'code-organization', 'scripts', 'check-organization.js') },
   { skill: 'data-modeling', script: path.join(repoRoot, 'data-modeling', 'scripts', 'check-migrations.js') },
+  { skill: 'repo-docs', script: path.join(repoRoot, 'repo-docs', 'scripts', 'check-docs.js') },
 ];
 
 function stagedFiles() {

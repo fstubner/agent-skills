@@ -7,7 +7,7 @@ To use the skills in your own projects, see [INSTALL.md](./INSTALL.md).
 
 ## What this repository is
 
-17 Agent Skills and the deterministic checkers behind them. `registry.json` is
+18 Agent Skills and the deterministic checkers behind them. `registry.json` is
 the source of truth for the skills, their artifacts, which artifacts the
 acceptance gate checks, and where each harness installs.
 
@@ -55,7 +55,8 @@ and an edit under `skills/<id>/` is overwritten by the next regeneration.
 
 `scripts/`, `references/` and `assets/` follow Anthropic's skill convention
 for executable code, reference docs and files used in output. The one
-exception is `ai-prose-slop/rules/`, which uses the layout Vale requires.
+exception is `rules/` in `ai-prose-slop` and `repo-docs`, which uses the layout
+Vale requires.
 
 ## Claims
 

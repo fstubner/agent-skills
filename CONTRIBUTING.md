@@ -15,8 +15,8 @@ issue.
 ## Adding or changing a skill
 
 Follow the checklist in [docs/CONTRACT.md](./docs/CONTRACT.md#adding-a-skill).
-In short, add the directory and `SKILL.md`, add the `registry.json` entry,
-regenerate the contract, and add ship and block fixtures that pin the
+In short, add the directory and `SKILL.md`, add the `registry.json` entry and
+regenerate the contract. Then add ship and block fixtures that pin the
 specific blocker id. The test runner checks the registry against the
 filesystem, so a missed step fails.
 
@@ -32,7 +32,7 @@ overwritten each run. After changing a rule file or adding one, run this.
 node ai-prose-slop/scripts/gen-patterns.mjs
 ```
 
-The test runner runs it in `--check` mode and fails if `patterns.md` is out
+The test runner runs it in `--check` mode. It fails if `patterns.md` is out
 of date or a rule file has no marker pointing at it.
 
 ## Checker rules
@@ -60,8 +60,8 @@ tarball. If it's missing, the hook warns and lets the commit through.
 reports `not_evaluated`, because it feeds a ship verdict.
 
 Both run gitleaks twice, once with its default rules and once with
-`core/gitleaks-extra.toml`, which adds Anthropic and OpenAI project key
-prefixes the defaults miss as of gitleaks 8.30.1. They report file paths and
+`core/gitleaks-extra.toml`. That file adds the Anthropic and OpenAI project
+key prefixes the defaults miss as of gitleaks 8.30.1. They report file paths and
 rule ids only, never the matched value.
 
 The hook only runs in clones where you've set `core.hooksPath`, since git

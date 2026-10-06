@@ -5,9 +5,9 @@
 Node 18 or later. There is no npm install and no network access, because the
 installer only copies files.
 
-Two skills use an external CLI for their deterministic checks.
-`ai-prose-slop` uses [Vale](https://vale.sh), and `backend-engineering` and
-the optional pre-commit hook use
+Three skills use an external CLI for their deterministic checks.
+`ai-prose-slop` and `repo-docs` use [Vale](https://vale.sh), and
+`backend-engineering` and the optional pre-commit hook use
 [gitleaks](https://github.com/gitleaks/gitleaks). Without the CLI, those
 checks report `not_evaluated` instead of passing.
 
@@ -58,7 +58,7 @@ lists the skill ids.
 
 The repository has marketplace metadata for Claude Code, Codex (CLI and the
 ChatGPT desktop app) and Cursor. All three point at the same generated package
-in `plugins/agent-skills`, which holds the 17 skills and their checkers.
+in `plugins/agent-skills`, which holds the 18 skills and their checkers.
 Installing the plugin doesn't turn on telemetry or the concise response
 style.
 
@@ -84,9 +84,9 @@ the default above.
 codex plugin marketplace add fstubner/agent-skills --ref main
 ```
 
-This adds the catalogue source. To install, restart the ChatGPT desktop app,
-open the Plugins Directory in Work mode or Codex, select **Felix Stubner Agent
-Skills** as the marketplace and install `agent-skills`. A repository
+This adds the catalogue source. To install, restart the ChatGPT desktop app
+and open the Plugins Directory in Work mode or Codex. Select **Felix Stubner
+Agent Skills** as the marketplace and install `agent-skills`. A repository
 marketplace is for testing and team distribution. The public Plugins Directory
 is separate and needs OpenAI's publication process. See
 [OpenAI's plugin documentation](https://developers.openai.com/plugins/build/plugins).
@@ -103,7 +103,7 @@ is separate and needs OpenAI's publication process. See
   members then install it from **Customize**.
 - **Local testing.** Copy or link `plugins/agent-skills` to
   `~/.cursor/plugins/local/agent-skills`, then restart Cursor or run
-  **Developer: Reload Window**.
+  `Developer: Reload Window`.
 
 See [Cursor's plugin documentation](https://cursor.com/docs/plugins).
 
@@ -146,9 +146,9 @@ CLI after installing or updating. See the
 ## Installing is not the same as invoking
 
 An installed skill is offered to the model as a name and a one-line
-description, and the model decides whether to use it. In two unprimed runs
-with a prompt that closely matched `product-build`'s trigger, one in a Task
-subagent and one in a top-level session, no skill was used.
+description, and the model decides whether to use it. I ran two unprimed tests with
+a prompt that closely matched `product-build`'s trigger, one in a Task
+subagent and one in a top-level session. Neither used a skill.
 
 The one thing I've seen reliably change that is a line in `CLAUDE.md`, which
 goes into every session verbatim. To make a skill fire, add something like
@@ -208,7 +208,7 @@ harness-specific.
 
 | Component | Claude Code | Codex | Cursor | Antigravity |
 |---|---|---|---|---|
-| 17 skills (`SKILL.md`, `references/`, `scripts/`, `assets/`) | ✓ | ✓ | ✓ | ✓ |
+| 18 skills (`SKILL.md`, `references/`, `scripts/`, `assets/`) | ✓ | ✓ | ✓ | ✓ |
 | Checker scripts (plain Node) | ✓ | ✓ | ✓ | ✓ |
 | Pre-commit hook (git) | ✓ | ✓ | ✓ | ✓ |
 | `AGENTS.md` in your project | ✓ | ✓ | ✓ | ✓ |
@@ -224,16 +224,17 @@ injection only exists in the Claude plugin.
 
 Other tools can still use the response style.
 `concise-style/output-style/concise.md` is plain markdown. Point your tool's
-always-on context file at it, which is `AGENTS.md` for Codex and most agent
-CLIs and `.cursorrules` for Cursor, so there's only one copy to maintain.
+always-on context file at it, so there's only one copy to maintain. That
+file is `AGENTS.md` for Codex and most agent CLIs, and `.cursorrules` for
+Cursor.
 
 ```markdown
 ## Response style
 Follow the rules in `.agents/concise-style/output-style/concise.md`.
 ```
 
-Use `AGENTS.md` where your tool supports it, and make any tool-specific file
-like `CLAUDE.md` or `.cursorrules` a pointer to it, the way this repository's
+Use `AGENTS.md` where your tool supports it. Make any tool-specific file like
+`CLAUDE.md` or `.cursorrules` a pointer to it, the way this repository's
 `CLAUDE.md` is. Two copies of the same guidance drift apart.
 
 ## Claude Desktop (cloud)
@@ -264,6 +265,6 @@ it came from in `.agent-skills-install.json`.
 commit you meant to install. `gitDescribe` gives the same answer in readable
 form and ends in `-dirty` if the source tree had uncommitted changes.
 
-The two git fields are left out when the source has no git history, such as
-an extracted tarball or a copy vendored into another repository. `version`
+The two git fields are left out when the source has no git history. That
+happens with an extracted tarball or a copy vendored into another repository. `version`
 and `suite` are always present.

@@ -1,0 +1,12 @@
+extends: existence
+message: "Inline colon in prose. Rewrite it as a sentence, or put a literal string in backticks."
+link: https://github.com/fstubner/agent-skills/blob/main/repo-docs/SKILL.md#voice
+level: error
+nonword: true
+raw:
+  - '[\p{L}\p{N})\]"''’]:[ \t]+\S'
+# The same rule, limited to paragraphs. Used in place of InlineColons for
+# PRODUCT.md, ARCHITECTURE.md and ADRs, whose templates belong to other skills
+# and use field labels ("**Status:** Accepted") in lists and a colon in the
+# ADR title. Their prose paragraphs are still checked.
+scope: paragraph

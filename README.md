@@ -2,7 +2,7 @@
 
 [Version](./VERSION) · [Changelog](./CHANGELOG.md) · MIT licence
 
-17 Agent Skills for product and software delivery, for Claude Code, Codex,
+18 Agent Skills for product and software delivery, for Claude Code, Codex,
 Cursor and Antigravity. They are built around three ideas.
 
 - **Evidence-gated shipping.** Deterministic checkers write a standard
@@ -19,9 +19,8 @@ Cursor and Antigravity. They are built around three ideas.
 I use these skills every day and find them useful, but that's anecdotal and
 they aren't formally validated yet. Turning it into a result needs a
 comparison against running without them, and that work is in
-[`eval/`](./eval/). It holds 808 recorded runs and 49 write-ups. Each run is
-tied to the exact case, fixture, grader and skill text it used, so changing
-any of those retires the runs that depended on it. Nothing there clears the
+[`eval/`](./eval/). It holds 808 recorded runs and 49 write-ups. Each run is tied to the exact case, fixture, grader and skill text it used.
+Changing any of those retires the runs that depended on it. Nothing there clears the
 bar I set for this repository yet.
 
 Here is what the evidence supports so far.
@@ -29,8 +28,8 @@ Here is what the evidence supports so far.
 - **The checkers work.** Every checker has ship and block fixtures that
   assert the specific blocker, and they run in CI on Ubuntu and Windows.
 - **Skills get picked up in interactive sessions.** Over two months of my own
-  Claude Code work the model chose a skill itself 97 times out of 127, and 33
-  of those came from a prompt that didn't mention the activity. In
+  Claude Code work, the model chose a skill itself 97 times out of 127. In 33
+  of those, the prompt didn't mention the activity. In
   non-interactive `claude -p` runs, a probe found none were picked up
   unprompted. Codex reads them in single-prompt runs, but it lists every
   installed skill in its system prompt, so that isn't comparable. The details
@@ -44,7 +43,7 @@ Here is what the evidence supports so far.
 ## Skills
 
 The skills are independent. Each one triggers on its own and none calls
-another. Ten of them read or write a few shared files, listed in the next
+another. Eleven of them read or write a few shared files, listed in the next
 section, and that's the only link between them.
 
 | Skill | Role |
@@ -56,6 +55,7 @@ section, and that's the only link between them.
 | [`backend-engineering`](./backend-engineering/) | Rules for the trusted side |
 | [`product-acceptance`](./product-acceptance/) | Independent acceptance gate |
 | [`ai-prose-slop`](./ai-prose-slop/) | Prose editor and detector, usable on any writing |
+| [`repo-docs`](./repo-docs/) | Drafts and checks README, release notes, CHANGELOG entries and ADRs, with a checker for voice and structure |
 | [`mental-models`](./mental-models/) | Reasoning lenses, a triage guide and four mindsets (Skeptic, Systems Thinker, Pragmatist, Explorer), usable on any hard problem |
 | [`code-smells`](./code-smells/) | Fowler's code-smell catalogue and a file-size and nesting checker (size for any language, nesting for JS, TS and C-family) |
 | [`code-organization`](./code-organization/) | Module boundaries, dependency direction and naming |

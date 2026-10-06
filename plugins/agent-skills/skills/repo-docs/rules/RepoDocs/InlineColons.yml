@@ -1,0 +1,7 @@
+extends: existence
+message: "Inline colon in prose. Rewrite it as a sentence, or put a literal string in backticks."
+link: https://github.com/fstubner/agent-skills/blob/main/repo-docs/SKILL.md#voice
+level: error
+nonword: true
+raw:
+  - '[\p{L}\p{N})\]"''’]:[ \t]+\S'
