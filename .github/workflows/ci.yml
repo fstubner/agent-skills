@@ -33,7 +33,7 @@ jobs:
           if [ "$RUNNER_OS" = "Windows" ]; then
             ASSET="vale_${VALE_VERSION}_Windows_64-bit.zip"
             curl --fail --show-error --location "https://github.com/errata-ai/vale/releases/download/v${VALE_VERSION}/${ASSET}" -o "/tmp/${ASSET}"
-            echo "3395fca0ddfb10a9b6caa28e091d5df709b1d6b6579afb7dece852cad89b94f3  /tmp/${ASSET}" | sha256sum --check
+            echo "3a8884774973b6f2826877e1c6388a5feae4704ef88a9a9c912c77ce186990f3  /tmp/${ASSET}" | sha256sum --check
             unzip -o "/tmp/${ASSET}" -d "$HOME/.local/bin" vale.exe
             # GITHUB_PATH entries on Windows must be Windows-style
             # (C:\...) — a bash-native POSIX path like /c/Users/... is
@@ -46,7 +46,7 @@ jobs:
           else
             ASSET="vale_${VALE_VERSION}_Linux_64-bit.tar.gz"
             curl --fail --show-error --location "https://github.com/errata-ai/vale/releases/download/v${VALE_VERSION}/${ASSET}" -o "/tmp/${ASSET}"
-            echo "c024d9c157874fb043d4f24a055d60050d1bb18755251f590593eed5bace1857  /tmp/${ASSET}" | sha256sum --check
+            echo "867534ddb678abca7f214bc4706ead0922bd5252ffe8035fc227013f66c8b214  /tmp/${ASSET}" | sha256sum --check
             tar -xzf "/tmp/${ASSET}" -C "$HOME/.local/bin" vale
             echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           fi
