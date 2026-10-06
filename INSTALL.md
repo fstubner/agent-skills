@@ -248,8 +248,12 @@ node scripts/install-workflow-guard.mjs
 
 It copies the hook to `~/.agent-skills/workflow/` and adds one entry to
 `~/.claude/settings.json`, keeping your other hooks. Remove it with
-`node scripts/install-workflow-guard.mjs --remove`. It applies only to
-repositories with an `origin` remote.
+`node scripts/install-workflow-guard.mjs --remove`.
+
+The hook applies only to your own repositories, meaning those whose `origin`
+remote belongs to the GitHub login `gh` is signed in as. Shared and work
+repositories keep their own conventions. To cover more accounts, such as an
+organisation of your own, pass each one with `--owner <login>`.
 
 To set branch protection on a repository, run this with the repository's
 name. It prints the settings and changes nothing until you add `--apply`.

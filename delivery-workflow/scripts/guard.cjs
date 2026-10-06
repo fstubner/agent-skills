@@ -9,20 +9,28 @@
 //   - deleting a branch or tag on a remote
 //   - a release that isn't a draft, publishing a draft, or a second release
 //     on the same day
-//   - an attribution trailer in a commit message
+//   - a commit subject that isn't a Conventional Commit, or an attribution
+//     trailer in a commit message
 //   - merging a pull request with --admin, which skips branch protection
 //
-// The rules apply only in a repository with an origin remote, because a
-// local-only repository has no pull request to go through. Exit code 2 tells
-// Claude Code to block the call and show the reason to the agent.
+// The rules apply only to the owner's own repositories, meaning those whose
+// origin remote belongs to an account listed in the config file. A shared or
+// work repository keeps its own conventions, and a repository with no remote
+// has no pull request to go through. Exit code 2 tells Claude Code to block
+// the call and show the reason to the agent.
 //
 // Install it with scripts/install-workflow-guard.mjs from the agent-skills
-// repository.
+// repository, which writes the config file with the owner's GitHub login.
+// `node guard.cjs --status` says whether the current repository is covered.
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { spawnSync } = require('child_process');
+const { subjectProblem } = require('./conventional.cjs');
 
+const CONFIG = process.env.AGENT_SKILLS_WORKFLOW_CONFIG
+  || path.join(os.homedir(), '.agent-skills', 'workflow', 'config.json');
 const ATTRIBUTION = /^(?:(?:Co-)?Authored-by:.*|(?:🤖\s*)?Generated with \[?[A-Z].*)$/im;
 
 // Splits a shell command line into simple commands, each a list of words.
@@ -63,10 +71,19 @@ function git(dir, args) {
   return r.status === 0 ? r.stdout.trim() : null;
 }
 
-// The default branch of the repository at `dir`, or null when it has no
-// origin remote and the rules don't apply.
-function defaultBranch(dir) {
-  if (!git(dir, ['remote', 'get-url', 'origin'])) return null;
+// The account a GitHub remote URL or owner/name belongs to.
+function ownerOf(remote) {
+  const m = /github\.com[:/]([^/]+)\//i.exec(remote || '') || /^([^/\s:]+)\/[^/\s]+$/.exec(remote || '');
+  return m ? m[1].toLowerCase() : null;
+}
+
+const owns = (env, remote) => env.owners.includes(ownerOf(remote));
+
+// The default branch of the repository at `dir`, or null when the rules
+// don't apply because it has no origin remote or isn't the owner's.
+function defaultBranch(dir, env) {
+  const remote = git(dir, ['remote', 'get-url', 'origin']);
+  if (!remote || !owns(env, remote)) return null;
   const head = git(dir, ['symbolic-ref', '--short', 'refs/remotes/origin/HEAD']);
   if (head) return head.replace(/^origin\//, '');
   for (const name of ['main', 'master']) {
@@ -86,29 +103,38 @@ function gitSubcommand(words, cwd) {
   return { dir, sub: words[i], args: words.slice(i + 1) };
 }
 
-function commitReasons(dir, args) {
+// The message a commit command gives, with each -m as its own paragraph as
+// git joins them, or null when it gives none.
+function commitMessage(dir, args) {
+  const parts = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '-m' || args[i] === '--message') parts.push(args[i + 1] || '');
+    else if (args[i].startsWith('--message=')) parts.push(args[i].slice(10));
+    else if (args[i] === '-F' || args[i] === '--file') {
+      try { parts.push(fs.readFileSync(path.resolve(dir, args[i + 1]), 'utf8')); } catch { /* git reports it */ }
+    }
+  }
+  return parts.length ? parts.join('\n\n') : null;
+}
+
+function commitReasons(dir, args, env) {
+  const main = defaultBranch(dir, env);
+  if (!main) return [];
   const reasons = [];
-  const main = defaultBranch(dir);
-  if (main && git(dir, ['branch', '--show-current']) === main) {
+  if (git(dir, ['branch', '--show-current']) === main) {
     reasons.push(`this commits straight to ${main}. Create a branch first, and the work reaches ${main} through a pull request`);
   }
-  for (let i = 0; i < args.length; i++) {
-    let text = null;
-    if (args[i] === '-m' || args[i] === '--message') text = args[i + 1];
-    else if (args[i].startsWith('--message=')) text = args[i].slice(10);
-    else if (args[i] === '-F' || args[i] === '--file') {
-      try { text = fs.readFileSync(path.resolve(dir, args[i + 1]), 'utf8'); } catch { text = null; }
-    }
-    if (text && ATTRIBUTION.test(text)) {
-      reasons.push('the commit message has an attribution trailer. Remove the Co-Authored-By or "Generated with" line');
-      break;
-    }
+  const message = commitMessage(dir, args);
+  if (message !== null) {
+    const problem = subjectProblem(message);
+    if (problem) reasons.push(problem);
+    if (ATTRIBUTION.test(message)) reasons.push('the commit message has an attribution trailer. Remove the Co-Authored-By or "Generated with" line');
   }
   return reasons;
 }
 
-function pushReasons(dir, args) {
-  const main = defaultBranch(dir);
+function pushReasons(dir, args, env) {
+  const main = defaultBranch(dir, env);
   if (!main) return [];
   const reasons = [];
   const flags = args.filter((a) => a.startsWith('-'));
@@ -170,6 +196,8 @@ function releaseCreateReasons(words, cwd, env) {
 }
 
 function ghReasons(words, cwd, env) {
+  const repo = ghRepoArgs(words)[1] || git(cwd, ['remote', 'get-url', 'origin']);
+  if (!repo || !owns(env, repo)) return [];
   const [, a, b] = words;
   if (a === 'release' && b === 'create') return releaseCreateReasons(words, cwd, env);
   if (a === 'release' && b === 'edit') {
@@ -189,7 +217,18 @@ function ghReasons(words, cwd, env) {
   return [];
 }
 
+// The accounts whose repositories the rules cover. No config file means no
+// covered repositories, so an unconfigured install never blocks work on
+// someone else's code.
+function configuredOwners() {
+  try {
+    const owners = JSON.parse(fs.readFileSync(CONFIG, 'utf8')).owners;
+    return Array.isArray(owners) ? owners.map((o) => String(o).toLowerCase()) : [];
+  } catch { return []; }
+}
+
 const defaultEnv = {
+  owners: configuredOwners(),
   now: () => new Date(),
   gh: (args, cwd) => spawnSync('gh', args, { cwd, encoding: 'utf8', timeout: 15000 }),
 };
@@ -204,8 +243,8 @@ function evaluate(line, cwd, env = defaultEnv) {
     if (words[0] === 'cd') { dir = path.resolve(dir, words[1] || '.'); continue; }
     if (words[0] === 'git') {
       const { dir: repo, sub, args } = gitSubcommand(words, dir);
-      if (sub === 'commit') reasons.push(...commitReasons(repo, args));
-      if (sub === 'push') reasons.push(...pushReasons(repo, args));
+      if (sub === 'commit') reasons.push(...commitReasons(repo, args, env));
+      if (sub === 'push') reasons.push(...pushReasons(repo, args, env));
     } else if (words[0] === 'gh') {
       reasons.push(...ghReasons(words, dir, env));
     }
@@ -213,9 +252,16 @@ function evaluate(line, cwd, env = defaultEnv) {
   return [...new Set(reasons)];
 }
 
-module.exports = { evaluate, splitCommands };
+module.exports = { evaluate, splitCommands, ownerOf };
 
-if (require.main === module) {
+if (require.main === module && process.argv[2] === '--status') {
+  const remote = git(process.cwd(), ['remote', 'get-url', 'origin']);
+  const main = defaultBranch(process.cwd(), defaultEnv);
+  if (main) console.log(`covered: ${ownerOf(remote)} is a configured owner, and the default branch is ${main}`);
+  else if (!remote) console.log('not covered: this repository has no origin remote');
+  else if (!defaultEnv.owners.length) console.log(`not covered: no owners are configured in ${CONFIG}. Run install-workflow-guard.mjs`);
+  else console.log(`not covered: ${ownerOf(remote) || remote} is not a configured owner, so follow this repository's own conventions`);
+} else if (require.main === module) {
   let input;
   try { input = JSON.parse(fs.readFileSync(0, 'utf8')); } catch { process.exit(0); }
   const command = input?.tool_input?.command;

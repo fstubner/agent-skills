@@ -58,7 +58,7 @@ through direct calls.
 | `engineering-assessment` (no shared artifacts) | Evidence-first codebase audit — severity-ranked findings, coverage gaps stated |
 | `multi-agent-design` (no shared artifacts) | Multi-agent topology, delegation contracts, governance, failure recovery |
 | `repo-docs` | Repository documents: README by project type, release notes from the CHANGELOG, CHANGELOG entries, ADR structure and a voice checker |
-| `delivery-workflow` | Branch, pull request, merge and draft-release workflow, with a guard hook, branch protection and a pull request checker |
+| `delivery-workflow` | Branch, pull request, merge and draft-release workflow for the owner's own repositories, with Conventional Commits, semantic versions from them, a guard hook, branch protection and a pull request checker |
 
 Suggested starting point for a greenfield/ambiguous request: `product-build`.
 Not a required entry point — every skill above also fires directly on its own trigger.

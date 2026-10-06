@@ -91,7 +91,7 @@
     },
     {
       "id": "delivery-workflow",
-      "role": "Branch, pull request, merge and draft-release workflow, with a guard hook, branch protection and a pull request checker"
+      "role": "Branch, pull request, merge and draft-release workflow for the owner's own repositories, with Conventional Commits, semantic versions from them, a guard hook, branch protection and a pull request checker"
     }
   ],
   "artifacts": [

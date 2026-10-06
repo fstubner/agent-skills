@@ -57,7 +57,7 @@ with the voice rules from `repo-docs` when both are installed.
 | [`product-acceptance`](./product-acceptance/) | Independent acceptance gate |
 | [`ai-prose-slop`](./ai-prose-slop/) | Prose editor and detector, usable on any writing |
 | [`repo-docs`](./repo-docs/) | Drafts and checks README, release notes, CHANGELOG entries and ADRs, with a checker for voice and structure |
-| [`delivery-workflow`](./delivery-workflow/) | Gets work merged through branches and pull requests, with draft-only releases, a guard hook and branch protection |
+| [`delivery-workflow`](./delivery-workflow/) | Gets work merged through branches and pull requests, versions releases from Conventional Commits and keeps them drafts, with a guard hook and branch protection |
 | [`mental-models`](./mental-models/) | Reasoning lenses, a triage guide and four mindsets (Skeptic, Systems Thinker, Pragmatist, Explorer), usable on any hard problem |
 | [`code-smells`](./code-smells/) | Fowler's code-smell catalogue and a file-size and nesting checker (size for any language, nesting for JS, TS and C-family) |
 | [`code-organization`](./code-organization/) | Module boundaries, dependency direction and naming |

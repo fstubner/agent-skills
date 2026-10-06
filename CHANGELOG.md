@@ -5,16 +5,23 @@
 **A new skill, `delivery-workflow`, gets work merged through branches and
 pull requests.** The agent commits on a branch, verifies with the full suite
 and opens a pull request. It merges when the owner says so, and releases
-stay drafts, at most one a day. `check-pr.js` fails a description without
+stay drafts, at most one a day. Commit subjects are Conventional Commits, and
+`next-version.cjs` reads them since the last tag to give the next semantic
+version. Below 1.0.0 a breaking change bumps the minor number. Untyped
+commits are listed for the owner to decide. The workflow applies only to the
+owner's own repositories, so shared and work repositories keep their own
+conventions. `check-pr.js` fails a description without
 What changed, How it was verified and Left out on purpose sections, with
 attribution lines, or failing the `repo-docs` voice rules. A Claude Code
 hook, installed for every project with `scripts/install-workflow-guard.mjs`,
-refuses commits and pushes to the default branch and force pushes. It also
+refuses commits and pushes to the default branch, untyped commit subjects
+and force pushes. It also
 refuses remote deletions, releases that aren't drafts, a second release in
 a day, attribution trailers and `gh pr merge --admin`.
 `protect-branch.cjs` prints GitHub branch protection for the default branch
 and sets it with `--apply`. The plan for the rest of this work is in
-`docs/plans`. The suite now has 19 skills.
+`docs/plans`. This repository's commit-msg hook now requires a type too.
+The suite now has 19 skills.
 
 **A new skill, `repo-docs`, drafts and checks the documents a visitor
 reads.** It covers README, release notes, CHANGELOG entries, INSTALL,

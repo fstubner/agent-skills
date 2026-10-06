@@ -28,7 +28,7 @@ import { root, expect, tmpBase } from './harness.mjs';
     return spawnSync(process.execPath, [hookPath, msgFile], { cwd, encoding: 'utf8' });
   };
 
-  const clean = runHook('The drift job read the bytes of a page instead of the page\n\nTags collapse to a space now.\n');
+  const clean = runHook('fix: the drift job read the bytes of a page instead of the page\n\nTags collapse to a space now.\n');
   expect('commit-msg: a clean message passes', clean.status === 0, clean.stderr);
   expect('commit-msg: and is told where it will be published',
     /will be published at https:\/\/github\.com\/fstubner\/agent-skills/.test(clean.stderr), clean.stderr);
@@ -50,13 +50,13 @@ import { root, expect, tmpBase } from './harness.mjs';
 
   // Git's own commentary is stripped before the message is stored, so scanning
   // it would refuse commits over the help text git wrote itself.
-  const commented = runHook('Subject line\n\n# Please enter the commit message for your changes.\n# On branch main, e.g. /home/runner/work is only in this comment.\n');
+  const commented = runHook('chore: subject line\n\n# Please enter the commit message for your changes.\n# On branch main, e.g. /home/runner/work is only in this comment.\n');
   expect('commit-msg: ignores git\'s own comment lines', commented.status === 0, commented.stderr);
 
   // The rule is about identifiers, not vocabulary. A message describing a run
   // that died on a quota event is describing evidence, and a hook that argued
   // with it would be trained away inside a day.
-  const prose = runHook('Codex quota is gone, so the pre-registered second harness cannot run\n');
+  const prose = runHook('docs: Codex quota is gone, so the pre-registered second harness cannot run\n');
   expect('commit-msg: does not argue with prose about quota or cost', prose.status === 0, prose.stderr);
 
   // There is no email clause, decided by replaying all 224 messages in this
@@ -101,35 +101,39 @@ import { root, expect, tmpBase } from './harness.mjs';
   }
 
   // An ellipsis is not a sentence-ending period.
-  const ellipsis = runHook('The run stopped somewhere in the middle...\n');
+  const ellipsis = runHook('fix: the run stopped somewhere in the middle...\n');
   expect('commit-msg: an ellipsis is not a trailing period', ellipsis.status === 0, ellipsis.stderr);
 
   // Indented lines are quoted output. 11 of the 34 over-length lines in this
   // history are eval report tables whose columns are aligned on purpose, and
   // rewrapping them would destroy the alignment that makes them legible.
-  const table = runHook(`Report the arm\n\n${'  '}${'y'.repeat(90)}\n`);
+  const table = runHook(`docs: report the arm\n\n${'  '}${'y'.repeat(90)}\n`);
   expect('commit-msg: indented quoted output may exceed the column limit',
     table.status === 0, table.stderr);
 
   // Exactly 80 is inside the limit, not over it.
-  const exact = runHook(`Add the thing\n\n${'z'.repeat(80)}\n`);
+  const exact = runHook(`feat: add the thing\n\n${'z'.repeat(80)}\n`);
   expect('commit-msg: 80 columns exactly is allowed', exact.status === 0, exact.stderr);
 
   // The subject is uncapped on purpose: 45% of recent subjects run past 72
   // characters because the subject states a finding, not a category.
-  const longSubject = runHook(`${'A finding stated at length '.repeat(4)}\n`);
+  const longSubject = runHook(`fix: ${'a finding stated at length '.repeat(4)}\n`);
   expect('commit-msg: a long subject is not a style failure',
     longSubject.status === 0, longSubject.stderr);
 
-  // And Conventional Commits is not required — 1 of 215 human commits uses a
-  // type prefix. A hook demanding one would refuse this repository's history.
+  // The subject is a Conventional Commit, since next-version.cjs reads the
+  // type. The description after it still states the finding.
   const narrative = runHook('The verdict parser read "DO NOT SHIP" as ship\n\nIt matched on the substring.\n');
-  expect('commit-msg: a narrative subject with no type prefix passes',
-    narrative.status === 0, narrative.stderr);
+  expect('commit-msg: a subject without a type is refused, and the refusal names the types',
+    narrative.status === 1 && /needs a type/.test(narrative.stderr), narrative.stderr);
+  const typed = runHook('fix(eval)!: the verdict parser read "DO NOT SHIP" as ship\n\nIt matched on the substring.\n');
+  expect('commit-msg: a typed subject with a scope and a breaking mark passes', typed.status === 0, typed.stderr);
+  const merge = runHook('Merge pull request #30 from fstubner/repo-docs\n');
+  expect('commit-msg: a merge commit git wrote needs no type', merge.status === 0, merge.stderr);
 
   const noRemote = fs.mkdtempSync(path.join(tmpBase, 'commit-msg-local-'));
   spawnSync('git', ['init', '-q'], { cwd: noRemote });
-  const local = runHook('A clean message\n', noRemote);
+  const local = runHook('chore: a clean message\n', noRemote);
   expect('commit-msg: says so when there is no remote to publish to',
     local.status === 0 && /stays on this machine/.test(local.stderr), local.stderr);
 }
