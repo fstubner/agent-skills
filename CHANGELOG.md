@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+**A new skill, `delivery-workflow`, gets work merged through branches and
+pull requests.** The agent commits on a branch, verifies with the full suite
+and opens a pull request. It merges when the owner says so, and releases
+stay drafts, at most one a day. `check-pr.js` fails a description without
+What changed, How it was verified and Left out on purpose sections, with
+attribution lines, or failing the `repo-docs` voice rules. A Claude Code
+hook, installed for every project with `scripts/install-workflow-guard.mjs`,
+refuses commits and pushes to the default branch and force pushes. It also
+refuses remote deletions, releases that aren't drafts, a second release in
+a day, attribution trailers and `gh pr merge --admin`.
+`protect-branch.cjs` prints GitHub branch protection for the default branch
+and sets it with `--apply`. The plan for the rest of this work is in
+`docs/plans`. The suite now has 19 skills.
+
 **A new skill, `repo-docs`, drafts and checks the documents a visitor
 reads.** It covers README, release notes, CHANGELOG entries, INSTALL,
 CONTRIBUTING, SECURITY, `docs/` pages and ADRs, with a reference and template
@@ -20,7 +34,7 @@ fire. CI now installs Vale 3.24.0. A repository can
 turn rules off in `.docs-style.json`. The pre-commit hook runs it on staged
 documents. It is not part of the
 acceptance gate, because as a gate it would change the verdict on every eval
-fixture. The suite now has 18 skills.
+fixture.
 
 **The documentation describes the project instead of its history.** README,
 INSTALL, CONTRIBUTING, SECURITY, RELEASE, AGENTS and `eval/README.md` were

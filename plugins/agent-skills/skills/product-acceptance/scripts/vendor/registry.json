@@ -88,6 +88,10 @@
     {
       "id": "repo-docs",
       "role": "Repository documents: README by project type, release notes from the CHANGELOG, CHANGELOG entries, ADR structure and a voice checker"
+    },
+    {
+      "id": "delivery-workflow",
+      "role": "Branch, pull request, merge and draft-release workflow, with a guard hook, branch protection and a pull request checker"
     }
   ],
   "artifacts": [
@@ -333,6 +337,18 @@
       "acceptanceGated": false,
       "requiredWhen": "never",
       "note": "Voice, ASD-STE100 sentence limits and structure of the documents a visitor reads. The voice and STE rules are Vale styles in repo-docs/rules, run through Vale; structure, release-note figures and the numbered-step limit are checked in Node. Documents read: README, INSTALL, CONTRIBUTING, SECURITY, RELEASE, SUPPORT, PRODUCT.md, ARCHITECTURE.md, docs/, ADRs and the [Unreleased] CHANGELOG section. Run directly and from the pre-commit hook on staged documents. Not wired into acceptance: as a gate it would cap the verdict on every eval fixture, most of which have no README."
+    },
+    {
+      "id": "pr-report",
+      "kind": "report",
+      "file": ".agent-evidence/pr-report.json",
+      "producer": "delivery-workflow",
+      "producerScript": "delivery-workflow/scripts/check-pr.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Whether a pull request description has What changed, How it was verified and Left out on purpose sections with content, passes the RepoDocs Vale voice rules from repo-docs (dated history allowed) and carries no attribution lines. Run before opening a pull request and on the live description. Not wired into acceptance, because it judges a pull request, not the product."
     }
   ]
 }

@@ -26,6 +26,7 @@
     "./skills/learn-from-session",
     "./skills/engineering-assessment",
     "./skills/multi-agent-design",
-    "./skills/repo-docs"
+    "./skills/repo-docs",
+    "./skills/delivery-workflow"
   ]
 }

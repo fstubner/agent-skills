@@ -499,6 +499,22 @@
     "repo-docs"
    ],
    "origin": "repo-docs, added 2026-10-04"
+  },
+  {
+   "id": "delivery-workflow-pr",
+   "prompt": "The fix is done and the tests pass. Commit it and open a pull request.",
+   "expected": [
+    "delivery-workflow"
+   ],
+   "origin": "delivery-workflow, added 2026-10-06"
+  },
+  {
+   "id": "delivery-workflow-release",
+   "prompt": "Cut a release with everything that has landed on main this week.",
+   "expected": [
+    "delivery-workflow"
+   ],
+   "origin": "delivery-workflow, added 2026-10-06"
   }
  ]
 }

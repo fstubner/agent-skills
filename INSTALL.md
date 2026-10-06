@@ -58,7 +58,7 @@ lists the skill ids.
 
 The repository has marketplace metadata for Claude Code, Codex (CLI and the
 ChatGPT desktop app) and Cursor. All three point at the same generated package
-in `plugins/agent-skills`, which holds the 18 skills and their checkers.
+in `plugins/agent-skills`, which holds the 19 skills and their checkers.
 Installing the plugin doesn't turn on telemetry or the concise response
 style.
 
@@ -208,7 +208,7 @@ harness-specific.
 
 | Component | Claude Code | Codex | Cursor | Antigravity |
 |---|---|---|---|---|
-| 18 skills (`SKILL.md`, `references/`, `scripts/`, `assets/`) | ✓ | ✓ | ✓ | ✓ |
+| 19 skills (`SKILL.md`, `references/`, `scripts/`, `assets/`) | ✓ | ✓ | ✓ | ✓ |
 | Checker scripts (plain Node) | ✓ | ✓ | ✓ | ✓ |
 | Pre-commit hook (git) | ✓ | ✓ | ✓ | ✓ |
 | `AGENTS.md` in your project | ✓ | ✓ | ✓ | ✓ |
@@ -236,6 +236,27 @@ Follow the rules in `.agents/concise-style/output-style/concise.md`.
 Use `AGENTS.md` where your tool supports it. Make any tool-specific file like
 `CLAUDE.md` or `.cursorrules` a pointer to it, the way this repository's
 `CLAUDE.md` is. Two copies of the same guidance drift apart.
+
+## Delivery workflow guard
+
+`delivery-workflow` comes with a Claude Code hook that refuses the git and
+GitHub commands the workflow forbids, in every project. Install it once.
+
+```bash
+node scripts/install-workflow-guard.mjs
+```
+
+It copies the hook to `~/.agent-skills/workflow/` and adds one entry to
+`~/.claude/settings.json`, keeping your other hooks. Remove it with
+`node scripts/install-workflow-guard.mjs --remove`. It applies only to
+repositories with an `origin` remote.
+
+To set branch protection on a repository, run this with the repository's
+name. It prints the settings and changes nothing until you add `--apply`.
+
+```bash
+node delivery-workflow/scripts/protect-branch.cjs --repo owner/name
+```
 
 ## Claude Desktop (cloud)
 
