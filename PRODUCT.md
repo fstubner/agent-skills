@@ -17,7 +17,7 @@ Help software teams give coding agents reusable, portable guidance backed by det
 
 ## MVP
 
-- Maintain 18 independently triggered skills in the registry-first contract.
+- Maintain 19 independently triggered skills in the registry-first contract.
 - Install any selected subset into Claude Code, Codex, Cursor, or Antigravity without network access or unowned-directory replacement.
 - Provide deterministic checkers and schema-valid reports for rules that can be mechanically enforced.
 - Re-run applicable domain checks through an acceptance gate that does not trust stale report files and does not let builders self-certify.

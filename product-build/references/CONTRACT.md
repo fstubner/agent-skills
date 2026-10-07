@@ -58,6 +58,7 @@ through direct calls.
 | `engineering-assessment` (no shared artifacts) | Evidence-first codebase audit — severity-ranked findings, coverage gaps stated |
 | `multi-agent-design` (no shared artifacts) | Multi-agent topology, delegation contracts, governance, failure recovery |
 | `repo-docs` | Repository documents: README by project type, release notes from the CHANGELOG, CHANGELOG entries, ADR structure and a voice checker |
+| `delivery-workflow` | Branch, pull request, merge and draft-release workflow for the owner's own repositories, with Conventional Commits, semantic versions from them, a guard hook, branch protection and a pull request checker |
 
 Suggested starting point for a greenfield/ambiguous request: `product-build`.
 Not a required entry point — every skill above also fires directly on its own trigger.
@@ -88,6 +89,7 @@ documentation of who else reads the artifact, not a gating signal).
 | — (CLI-invoked, no fixed path) | report | code-smells | — | no | never | `code-smells/scripts/check-smells.js` | `core/schemas/check-report.schema.json` |
 | — (CLI-invoked, no fixed path) | report | data-modeling | — | no | never | `data-modeling/scripts/check-migrations.js` | `core/schemas/check-report.schema.json` |
 | `.agent-evidence/docs-report.json` | report | repo-docs | — | no | never | `repo-docs/scripts/check-docs.js` | `core/schemas/check-report.schema.json` |
+| `.agent-evidence/pr-report.json` | report | delivery-workflow | — | no | never | `delivery-workflow/scripts/check-pr.js` | `core/schemas/check-report.schema.json` |
 
 ## Adding a skill
 

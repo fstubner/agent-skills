@@ -29,6 +29,8 @@
 
 const { spawnSync } = require('child_process');
 const fs = require('fs');
+const path = require('path');
+const { subjectProblem } = require(path.join(__dirname, '..', '..', 'delivery-workflow', 'scripts', 'conventional.cjs'));
 
 const REFUSED = [
   {
@@ -89,14 +91,13 @@ function messageBody(raw) {
 //   no trailing period on subject    6 violations
 //   body wrapped at 80 columns      34 violations of 6,862 body lines
 //
-// Conventional Commits is deliberately NOT among them. One commit of the 215
-// carries a type prefix, and 45% of recent subjects run past 72 characters
-// because the subject in this repository states a finding — "The verdict
-// parser read 'DO NOT SHIP' as ship" — which a `fix(eval):` prefix would
-// only shorten by deleting the finding. Nothing here consumes the type
-// field either: no changelog generator, no semantic-release. So the subject
-// has NO length cap; capping it would fail a third of the history on style
-// grounds alone.
+// The subject is a Conventional Commit, because next-version.cjs in
+// delivery-workflow reads the types to decide the next version. The rule is
+// shared with the delivery-workflow guard through conventional.cjs. The
+// description after the type still states a finding, as in "fix: the
+// verdict parser read 'DO NOT SHIP' as ship". Commits from before the rule
+// have no type. 45% of recent subjects run past 72 characters because they state
+// a finding, so the subject has NO length cap.
 const BODY_COLUMNS = 80;
 
 function conventionFailures(body) {
@@ -107,6 +108,9 @@ function conventionFailures(body) {
   const failures = [];
 
   if (subject.trim() === '') return failures; // git refuses this one itself.
+
+  const typeProblem = subjectProblem(body);
+  if (typeProblem) failures.push(typeProblem);
 
   if (/\.$/.test(subject) && !/\.\.\.$/.test(subject)) {
     failures.push('the subject ends in a period; it is a title, not a sentence');

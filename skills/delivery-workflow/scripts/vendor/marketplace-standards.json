@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "schemas": [
+    {
+      "id": "claude-plugin",
+      "url": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+      "sha256": "b86168a7ad264150c713476e2693fa2399ad90e4f7ec29ee038644c2c950e799",
+      "reviewed": {
+        "date": "2026-10-03",
+        "upstream": "schemastore claude-code-plugin-manifest.json, fetched 2026-10-03",
+        "change": "optional properties added for newer Claude Code features: channels, monitors, lspServers, themes, userConfig, settings",
+        "effect": "none on what this repository emits — required is still [name] alone, and all eight keys this repository's manifests set are still declared properties"
+      }
+    },
+    {
+      "id": "cursor-plugin",
+      "url": "https://raw.githubusercontent.com/cursor/plugins/main/schemas/plugin.schema.json",
+      "sha256": "31db124b1c7e43c22abb13ebf7e7c74556482e480fd492b80638d815c85b96b1",
+      "reviewed": {
+        "date": "2026-09-14",
+        "upstream": "cursor/plugins 5229aad7, 2026-09-10",
+        "change": "minClientVersions only: cursor widened from semver to semver-or-\"never\", grokbot added, sand added as a deprecated alias for grokbot",
+        "effect": "none on what this repository emits — no manifest here sets minClientVersions, and every required field is still present"
+      }
+    },
+    {
+      "id": "cursor-marketplace",
+      "url": "https://raw.githubusercontent.com/cursor/plugins/main/schemas/marketplace.schema.json",
+      "sha256": "50c85058bf329588401fd2fc93180a574fa64abbb6c2606400febfb6f4d094e8",
+      "reviewed": {
+        "date": "2026-09-14",
+        "upstream": "cursor/plugins 5229aad7, 2026-09-10",
+        "change": "the same minClientVersions widening, applied to the marketplace schema's copy of the definition",
+        "effect": "none on what this repository emits — required fields name and plugins are both still present and set"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "codex-plugins",
+      "url": "https://developers.openai.com/plugins/build/plugins",
+      "requiredText": [".agents/plugins/marketplace.json", ".codex-plugin/plugin.json"]
+    },
+    {
+      "id": "gemini-extensions",
+      "url": "https://geminicli.com/docs/extensions/reference/",
+      "requiredText": ["gemini-extension.json", "gemini extensions install"]
+    },
+    {
+      "id": "antigravity-plugins",
+      "url": "https://antigravity.google/docs/plugins?tab=cli",
+      "requiredText": ["plugin.json", "agy plugin install"],
+      "reviewed": {
+        "date": "2026-10-03",
+        "upstream": "antigravity.google, fetched 2026-10-03",
+        "change": "/docs/cli/plugins now answers 200 with an HTML meta-refresh to /docs/plugins?tab=cli; the old URL serves a 98-character stub, so the check read it as a client-rendered page",
+        "effect": "none on what this repository emits — both required phrases are present on the relocated page, which reads 9757 characters"
+      }
+    }
+  ]
+}

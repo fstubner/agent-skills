@@ -34,11 +34,12 @@ first. If you read no further, read these.
 | a correction just landed and the same mistake could recur | `agent-skills:learn-from-session` |
 | "should this be several agents", orchestration, subagent topology | `agent-skills:multi-agent-design` (its first answer is usually no) |
 | a README, release notes, a CHANGELOG entry, an ADR, INSTALL or CONTRIBUTING | `agent-skills:repo-docs` |
+| committing, pushing, opening or merging a pull request, cutting a release | `agent-skills:delivery-workflow` |
 
 Not every request needs one. A one-line tweak in a locked codebase, a
 question about someone else's error message, a shell command — just answer.
 
-**Why two tiers.** Eighteen skills competing in one flat list is eighteen
+**Why two tiers.** Nineteen skills competing in one flat list is nineteen
 things to weigh on every request, and a list that long is skimmed rather
 than read. The split is empirical, not a ranking of quality: the top five
 are the ones actually reached for in real work, and a skill moves between
