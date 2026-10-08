@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+**`ai-prose-slop` and `repo-docs` now name editorial framing.** A README
+rewrite passed every existing check and still read as machine-written. The
+cause was sentences that introduce, characterise or justify instead of
+stating a fact. `ai-prose-slop` adds an "Editorial framing" entry to its
+judgment-only catalog, with a one-line test and real before and after pairs.
+A new Vale rule, `AIProseTells.EditorialFraming`, flags the stock phrases
+that are cheap to match. Examples are "most users", "out of the box", "the
+one exception" and "worth knowing". "Most people" and "most users" used to be
+on the list of phrases the style deliberately ignored. `repo-docs` gains voice
+rule 9. Every sentence states a fact or tells the reader what to do. The rule
+points at the catalog entry.
+
 **A new skill, `delivery-workflow`, gets work merged through branches and
 pull requests.** The agent commits on a branch, verifies with the full suite
 and opens a pull request. It merges when the owner says so, and releases

@@ -1,0 +1,22 @@
+extends: existence
+message: "'%s' frames or characterises instead of stating a fact. State the fact, or tell the reader what to do."
+link: https://github.com/fstubner/agent-skills/blob/main/ai-prose-slop/references/patterns.md#editorial-framing
+level: warning
+ignorecase: true
+# Only the stock phrases that are cheap to match. The pattern itself, a
+# sentence that introduces, characterises or justifies, is judgment-only and
+# is described in patterns.md. "end up with", "nowhere else to go", "in
+# practice" and "measured and lost" were considered and left out: the first
+# and third are ordinary technical phrasing, the others are too narrow to
+# generalise.
+tokens:
+  - most people
+  - most users
+  - most developers
+  - most teams
+  - most of us
+  - out of the box
+  - the one exception
+  - there are (?:two|three|four|several|a few) ways
+  - worth knowing
+  - the rest of the (?:file|document|page|config) is yours
