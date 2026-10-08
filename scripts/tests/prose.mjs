@@ -51,6 +51,24 @@ import {
       throatTokens.some((t) => t?.toLowerCase() === 'worth saying that'),
       throatTokens.join(', '));
 
+    // EditorialFraming: sentences from a README the owner rejected on
+    // 2026-10-07, after the first rewrite had passed every other rule. Each
+    // stock phrase must fire, and the accepted rewrites must come back SHIP.
+    const framingRejected = runNode(script, [path.join(root, 'fixtures', 'ai-prose-slop-framing-rejected', 'doc.md')]);
+    const framingReport = JSON.parse(framingRejected.stdout);
+    const framingTokens = framingReport.checks
+      .filter((c) => c.id === 'AIProseTells.EditorialFraming')
+      .map((c) => (c.detail.match(/'([^']+)'/) || [])[1]?.toLowerCase());
+    const framingExpected = ['there are two ways', 'most people', 'the one exception', 'out of the box',
+      'the rest of the file is yours', 'most users', 'worth knowing'];
+    expect('ai-prose-slop: EditorialFraming flags every rejected README phrase',
+      framingExpected.every((t) => framingTokens.includes(t)) && framingTokens.length === framingExpected.length,
+      framingTokens.join(', '));
+    const framingAccepted = runNode(script, [path.join(root, 'fixtures', 'ai-prose-slop-framing-accepted', 'doc.md')]);
+    const framingAcceptedReport = JSON.parse(framingAccepted.stdout);
+    expect('ai-prose-slop: EditorialFraming leaves the accepted rewrites alone (verdict SHIP)',
+      framingAcceptedReport.verdict === 'SHIP', JSON.stringify(framingAcceptedReport.checks));
+
     // The following were verified by hand once and never captured as a
     // regression test — automating exactly what was manually exercised.
     const strictClean = runNode(script, [path.join(root, 'fixtures', 'ai-prose-slop-clean', 'doc.md'), '--strict']);

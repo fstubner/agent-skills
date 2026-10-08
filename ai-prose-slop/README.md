@@ -22,6 +22,7 @@ with rationale, examples, and false-positive caveats. Short version:
 | Importance inflation (*"marks a pivotal moment"*) | Vale |
 | Summary-recap endings (*"In conclusion,"*) | Vale |
 | Em-dash overuse | Vale |
+| Editorial framing in usage docs, stock phrases only (*"most users," "out of the box"*) | Vale, plus judgment for the rest |
 | Binary-contrast framing, colon-reveal drama, synonym cycling, robotic rhythm | Judgment only — see `SKILL.md` |
 <!-- vale on -->
 

@@ -37,6 +37,8 @@ checker, since they are fixed by changing their source.
 ## Across all of them
 
 - Keep history out. A rule's origin goes in the CHANGELOG or commit message.
+- Keep framing and rationale out. A sentence either states a fact or tells
+  the reader what to do. The reason a design is the way it is goes in an ADR.
 - Link to the single place a fact lives instead of repeating it, so there is
   one copy to keep true.
 - Commands go in code blocks, literal strings in backticks.

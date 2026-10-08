@@ -81,10 +81,19 @@ These hold for every document the checker reads.
 8. **Short sentences.** At most 25 words in prose and 20 in a numbered step,
    the limits from ASD-STE100 Simplified Technical English. Split a long
    sentence where it changes subject.
+9. **Every sentence states a fact or tells the reader what to do.** In a
+   README, install guide or docs page, cut the sentence that introduces what
+   follows, describes what users usually do, or explains why the project is
+   built the way it is. Say the fact. If the reader needs the reason in order
+   to act, keep it. Otherwise it goes in an ADR or a design doc. Delete the
+   sentence and see whether the reader loses anything. The catalog entry
+   "Editorial framing" in `ai-prose-slop/references/patterns.md` has the
+   test and real before and after pairs.
 
-The checker catches rules 1 to 4 and 8. Rules 5 to 7 are judgment. Read the
-draft once more for those, and run `ai-prose-slop` on it for general prose
-habits.
+The checker catches rules 1 to 4 and 8. Rules 5 to 7 and 9 are judgment. Read
+the draft once more for those, and run `ai-prose-slop` on it for general prose
+habits. Its `EditorialFraming` rule flags a few stock phrases from rule 9, such
+as "most users" and "out of the box".
 
 A repository can turn individual checks off with `.docs-style.json`
 (`{ "disable": ["D-connectives"] }`). Do that only when the owner asks.

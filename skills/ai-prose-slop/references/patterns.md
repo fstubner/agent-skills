@@ -13,6 +13,7 @@ never Vale's to catch anyway.
 <!-- vale AIProseTells.SummaryRecap = NO -->
 <!-- vale AIProseTells.UnsupportedSuperlative = NO -->
 <!-- vale AIProseTells.ParallelFlourish = NO -->
+<!-- vale AIProseTells.EditorialFraming = NO -->
 
 # Pattern catalog
 
@@ -39,7 +40,7 @@ Patterns are split by how reliably they can be caught by a regex:
   listiness, figurative geography/ecology words, binary-contrast framing,
   faux-insight setups, colon-reveal drama, synonym cycling, fake-strong
   verbs over "is"/"has", negative listing, robotic rhythm, rhetorical
-  self-answered questions
+  self-answered questions, editorial framing
 - [Sources of inspiration](#sources-of-inspiration)
 
 ## Vale-checkable
@@ -145,10 +146,11 @@ without being able to defend it if someone pushes back (generated from
 - **Fix:** ask "is it true, can I defend it" before keeping the claim. If
   not, name the specific fact instead of the superlative wrapped around it.
 - **Caveat:** narrower than it looks on purpose — bare "always"/"never"/
-  "everyone"/"most people" are NOT included here; they're common enough in
+  "everyone" are NOT included here; they're common enough in
   ordinary technical writing ("always validate at the boundary") that
   Vale-checking them would be noise, not signal. See the judgment-only
-  "Unhedged universal claims" pattern below for those instead.
+  "Unhedged universal claims" pattern below for those instead. "Most people"
+  and "most users" are checked, but by the editorial-framing rule.
 
 ### Parallel-construction flourish
 Symmetric "today's X becomes tomorrow's Y" framing used as manufactured
@@ -170,7 +172,7 @@ drama rather than an earned observation (generated from
 *"We always...", "Users never...", "Everyone knows...", "Most people
 think...", "Most of us have experienced..."* Deliberately kept out of the
 Vale-checkable "Unsupported superlatives" rule above: "always"/"never"/
-"everyone"/"most people" are extremely common in ordinary technical writing
+"everyone" are extremely common in ordinary technical writing
 ("always validate at the boundary" is a perfectly fine sentence), so
 existence-checking them would flag nearly every paragraph and stop being
 useful signal. The real tell isn't the word, it's whether the claim is
@@ -178,7 +180,9 @@ grounded — "most of the problems *I have dealt with*" is a hedge to a stated
 personal sample; "most problems are not that shape," stated two sentences
 earlier with nothing behind it, is not. Read the sentence right before and
 after: is this generalizing from something the writer actually knows, or
-just reaching for a word that sounds like evidence?
+just reaching for a word that sounds like evidence? ("Most people" and
+"most users" are the exception. In usage docs they are a claim about users
+that nobody measured, so the Vale rule for editorial framing flags them.)
 
 ### Fabricated or invented examples
 Inventing a plausible-sounding illustration — a made-up code comment, a
@@ -250,6 +254,52 @@ by a human ear, not by a regex on any one sentence.
 ### Rhetorical self-answered questions
 *"What if I told you...", "Think about it:", "Plot twist:"* — staged questions
 the writer immediately answers. Drop the staging, make the point.
+
+### Editorial framing
+Sentences that introduce, characterise or justify instead of stating a fact
+about the product or telling the reader what to do. In usage docs (README,
+install guide, docs pages) every sentence should do one of those two things.
+The test is one line. Delete the sentence. If the reader loses no fact and no
+instruction, it was framing.
+
+The forms it takes:
+
+- A sentence that announces what follows, or counts the options before
+  listing them.
+- A claim about what users typically do, with no data behind it.
+- A tagline that describes the product by effect instead of by what it does.
+- A rationale aside that the reader does not need in order to act.
+- A label or a wry remark standing in for a plain statement.
+
+Real rewrites from a README that passed every Vale check and still read as
+machine-written:
+
+| Framing | Fact or instruction |
+|---|---|
+| There are two ways in, and most people end up using both. | Install xtctx as a plugin, set it up per project, or both. |
+| xtctx lets one AI coding agent pick up where another left off. | xtctx indexes the transcripts that AI coding agents write on your machine and serves them over MCP. |
+| Everything stays on your machine. The one exception is cloud sync, which… | Transcripts stay on your machine unless a project turns on cloud sync or a remote embedding endpoint. |
+| xtctx searches by keyword out of the box. | Search matches keywords by default. |
+| Merging releases nothing. | Releases are manual. |
+| The rest of the file is yours. | …and leaves the rest of the file unchanged. |
+
+- **Why it reads as slop:** the sentence sounds like documentation without
+  adding any. It also carries claims nobody checked. In the example above,
+  "most people" had no data behind it and "the one exception" was wrong,
+  because there were two.
+- **Fix:** state the fact, or cut the sentence. If a link covers it, link
+  instead of summarising. A rationale belongs in a design doc or an ADR.
+- **Vale slice:** a few stock phrases are cheap to match, so the rule flags
+  them (generated from `rules/AIProseTells/EditorialFraming.yml`):
+  <!-- gen-patterns:tokens EditorialFraming.yml -->*most people, most users, most developers, most teams, most of us, out of the box, the one exception, there are two/three/four/several/a few ways, worth knowing, the rest of the file/document/page/config is yours.*<!-- /gen-patterns -->
+  The rule cannot see the pattern itself. Most framing sentences use no
+  stock phrase, so a clean run says little. Read the doc sentence by sentence
+  with the test above.
+- **Caveat:** a landing-page tagline can be legitimate marketing copy, and a
+  README opener that says what the project is does not count as framing. The
+  rule targets usage docs. A reason is fine when the reader needs it in
+  order to act on an instruction. "Out of the box" and "most users" also have
+  honest uses, so a hit is a prompt to look.
 
 ## Sources of inspiration
 
