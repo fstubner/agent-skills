@@ -30,7 +30,7 @@
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { subjectProblem } = require(path.join(__dirname, '..', '..', 'delivery-workflow', 'scripts', 'conventional.cjs'));
+const { messageProblems } = require(path.join(__dirname, '..', '..', 'delivery-workflow', 'scripts', 'conventional.cjs'));
 
 const REFUSED = [
   {
@@ -81,57 +81,15 @@ function messageBody(raw) {
   return raw.split('\n').filter((line) => !line.startsWith('#')).join('\n');
 }
 
-// The shape rules, as distinct from the privacy rules above: these are not
-// about what a message may not contain, but about the form this repository
-// already writes in. Each was measured against the 215 human non-merge
-// commits in this history before it was added, and none is a convention
-// imported from outside:
-//
-//   blank line after the subject     0 violations
-//   no trailing period on subject    6 violations
-//   body wrapped at 80 columns      34 violations of 6,862 body lines
-//
-// The subject is a Conventional Commit, because next-version.cjs in
-// delivery-workflow reads the types to decide the next version. The rule is
-// shared with the delivery-workflow guard through conventional.cjs. The
-// description after the type still states a finding, as in "fix: the
-// verdict parser read 'DO NOT SHIP' as ship". Commits from before the rule
-// have no type. 45% of recent subjects run past 72 characters because they state
-// a finding, so the subject has NO length cap.
-const BODY_COLUMNS = 80;
-
+// The shape rules, as distinct from the privacy rules above, follow the
+// common industry format and live in delivery-workflow's conventional.cjs,
+// which the guard hook reads too. A Conventional Commit subject with an
+// imperative, lowercase description of at most 72 characters and no full
+// stop, a blank line, and a body wrapped at 72 that says what changed and
+// why. next-version.cjs reads the types to decide the next version. Commits
+// from before the rule follow an older house style and are left as they are.
 function conventionFailures(body) {
-  const lines = body.replace(/\r/g, '').split('\n');
-  const subject = lines[0] ?? '';
-  // Trailing blank lines are git's, not the author's.
-  while (lines.length && lines[lines.length - 1].trim() === '') lines.pop();
-  const failures = [];
-
-  if (subject.trim() === '') return failures; // git refuses this one itself.
-
-  const typeProblem = subjectProblem(body);
-  if (typeProblem) failures.push(typeProblem);
-
-  if (/\.$/.test(subject) && !/\.\.\.$/.test(subject)) {
-    failures.push('the subject ends in a period; it is a title, not a sentence');
-  }
-
-  if (lines.length > 1 && lines[1].trim() !== '') {
-    failures.push('no blank line after the subject — git\'s own tooling '
-      + '(`--oneline`, `%s`/`%b`, every forge) splits the message there');
-  }
-
-  // Indented lines are quoted output — eval report tables whose columns are
-  // aligned on purpose. 11 of the 34 historical over-length lines are these,
-  // and rewrapping them would destroy the alignment that makes them readable.
-  // Unindented prose gets no such excuse: none of the remaining 23 contained
-  // a single unbreakable token.
-  for (const [i, line] of lines.slice(1).entries()) {
-    if (line.length > BODY_COLUMNS && !/^\s{2,}/.test(line)) {
-      failures.push(`body line ${i + 2} is ${line.length} columns; wrap at ${BODY_COLUMNS}`);
-    }
-  }
-  return failures;
+  return messageProblems(body);
 }
 
 function audience() {

@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+**Commit messages and pull requests follow one format in every repository
+the guard covers.** The format is the common industry one. The subject is a
+Conventional Commit with an imperative, lowercase description of at most 72
+characters and no full stop. A blank line follows, then a body wrapped at 72
+that says what changed and why. The guard checks the whole message, where before
+it checked only the type. It now reads combined flags like `-am`, which
+skipped the checks before. It also holds `gh pr create` titles to the same
+format and refuses attribution lines in pull request bodies. It refuses `gh
+pr merge --auto`, which merges at once on a branch that requires no checks.
+`check-pr.js` fails a hard-wrapped body and, given `--title` or `--pr`, a
+title that breaks the format. This repository's commit-msg hook reads the
+same rules, so its body width moves from 80 to 72 columns.
+
 **A new skill, `delivery-workflow`, gets work merged through branches and
 pull requests.** The agent commits on a branch, verifies with the full suite
 and opens a pull request. It merges when the owner says so, and releases

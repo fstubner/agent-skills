@@ -47,6 +47,13 @@ const reasonsOf = (cmd, dir, env = noGh) => evaluate(cmd, dir, env).join(' | ');
   expect('guard: an unknown type is refused', /"fixed" is not a commit type/.test(reasonsOf('git commit -m "fixed: the parser"', onBranch)));
   expect('guard: a scope and a breaking mark are allowed', !refused('git commit -m "feat(cli)!: drop the old flag"', onBranch));
   expect('guard: the first -m is the subject', !refused('git commit -m "fix: the parser" -m "Untyped body text."', onBranch));
+  expect('guard: -am is read as -a with a message', /needs a type/.test(reasonsOf('git commit -am "Fixed the parser"', onBranch)));
+  expect('guard: an attached -m"value" is read', /needs a type/.test(reasonsOf('git commit -m"Fixed the parser"', onBranch)));
+  expect('guard: -sm is read as -s with a message', !refused('git commit -sm "fix: stop it"', onBranch) && refused('git commit -sm "Stop it"', onBranch));
+  expect('guard: a past-tense description is refused', /instruction/.test(reasonsOf('git commit -m "fix: stopped reading it as ship"', onBranch)));
+  expect('guard: merging with --auto is refused', /--auto merges at once/.test(reasonsOf('gh pr merge 4 --auto --merge', onBranch)));
+  expect('guard: a pull request title is held to the subject format',
+    /pull request title/.test(reasonsOf('gh pr create --title "Add a guard" --body x', onBranch)) && !refused('gh pr create -t "feat: add a guard" -b "x"', onBranch));
 
   expect('guard: a push to the default branch is refused', refused('git push origin main', onBranch));
   expect('guard: a push of HEAD to the default branch is refused', refused('git push origin HEAD:main', onBranch));
@@ -120,6 +127,20 @@ const reasonsOf = (cmd, dir, env = noGh) => evaluate(cmd, dir, env).join(' | ');
   expect('conventional: below 1.0.0 a breaking change bumps the minor number', nextVersion('0.3.0', ['fix!: b']).next === '0.4.0');
   expect('conventional: docs and chore leave the version alone', nextVersion('1.4.2', ['docs: a', 'chore: b']).level === null);
 
+  const { messageProblems } = await import(pathToFileUrl(path.join(scripts, 'conventional.cjs')));
+  const fine = (m) => messageProblems(m).length === 0;
+  expect('message: an imperative, lowercase subject with a wrapped body passes',
+    fine('fix(eval): stop reading DO NOT SHIP as ship\n\nThe parser matched SHIP as a substring.'));
+  expect('message: past tense, gerund and third person are refused',
+    !fine('fix: stopped it') && !fine('fix: stopping it') && !fine('fix: stops it'));
+  expect('message: a capital on a common verb is refused, a capital on a name is not',
+    !fine('fix: Stop it') && fine('docs: Codex quota note') && fine('feat: GitHub login'));
+  expect('message: a subject over 72 characters or ending in a full stop is refused',
+    !fine(`fix: ${'stop '.repeat(14)}`) && !fine('fix: stop it.'));
+  expect('message: a body line over 72 columns is refused, an indented or unbreakable one is not',
+    !fine(`fix: x\n\n${'word '.repeat(15)}`) && fine(`fix: x\n\n  ${'col '.repeat(30)}`) && fine(`fix: x\n\nhttps://example.com/${'a'.repeat(80)}`));
+  expect('message: merges and reverts git writes are left alone', fine('Merge pull request #3 from a/b') && fine('Revert "fix: x"'));
+
   const dir = repo('versions', { branch: 'main' });
   const env = { ...process.env, GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t' };
   const commit = (msg) => spawnSync('git', ['-C', dir, '-c', 'core.hooksPath=/dev/null', 'commit', '-q', '--allow-empty', '-m', msg], { env, encoding: 'utf8' });
@@ -143,11 +164,11 @@ const reasonsOf = (cmd, dir, env = noGh) => evaluate(cmd, dir, env).join(' | ');
 
 // ---------- The pull request checker ----------
 {
-  const check = (body, extraEnv = null) => {
+  const check = (body, extraEnv = null, extraArgs = []) => {
     const file = path.join(tmpBase, `pr-${Math.random().toString(36).slice(2)}.md`);
     fs.writeFileSync(file, body);
     const opts = extraEnv ? { env: { ...process.env, ...extraEnv } } : {};
-    const r = runNode(path.join(scripts, 'check-pr.js'), ['--root', tmpBase, '--body-file', file, '--no-write'], opts);
+    const r = runNode(path.join(scripts, 'check-pr.js'), ['--root', tmpBase, '--body-file', file, '--no-write', ...extraArgs], opts);
     return JSON.parse(r.stdout);
   };
   const status = (report, id) => report.checks.find((c) => c.id === id)?.status;
@@ -158,6 +179,14 @@ const reasonsOf = (cmd, dir, env = noGh) => evaluate(cmd, dir, env).join(' | ');
   expect('check-pr: a complete description passes its sections and attribution', status(ok, 'P-sections') === 'pass' && status(ok, 'P-attribution') === 'pass');
   expect('check-pr: an empty section fails', status(check(good.replace('Hooks for other harnesses.', '')), 'P-sections') === 'fail');
   expect('check-pr: an attribution line fails', status(check(`${good}\n🤖 Generated with [Claude Code](https://claude.com)\n`), 'P-attribution') === 'fail');
+  expect('check-pr: one line per paragraph and list item passes', status(ok, 'P-unwrapped') === 'pass');
+  expect('check-pr: a hard-wrapped paragraph fails',
+    status(check(good.replace('The full suite passes.', 'The full suite passes on\nWindows and Linux.')), 'P-unwrapped') === 'fail');
+  expect('check-pr: a wrapped line inside a code block is not prose',
+    status(check(`${good}\n\`\`\`\nline one\nline two\n\`\`\`\n`), 'P-unwrapped') === 'pass');
+  expect('check-pr: the title is checked when given', status(check(good, null, ['--title', 'Add the guard']), 'P-title') === 'fail'
+    && status(check(good, null, ['--title', 'feat: add the guard']), 'P-title') === 'pass');
+  expect('check-pr: with no title known, no title check is reported', status(ok, 'P-title') === undefined);
   if (hasVale) {
     expect('check-pr: a date in the description is allowed, because a pull request is history', status(ok, 'P-voice') === 'pass', JSON.stringify(ok.checks));
     expect('check-pr: the repo-docs voice rules apply', status(check(good.replace('The full suite passes.', 'The suite passes; all of it.')), 'P-voice') === 'fail');

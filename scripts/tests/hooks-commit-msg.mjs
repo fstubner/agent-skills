@@ -28,7 +28,7 @@ import { root, expect, tmpBase } from './harness.mjs';
     return spawnSync(process.execPath, [hookPath, msgFile], { cwd, encoding: 'utf8' });
   };
 
-  const clean = runHook('fix: the drift job read the bytes of a page instead of the page\n\nTags collapse to a space now.\n');
+  const clean = runHook('fix: read the page instead of its bytes in the drift job\n\nTags collapse to a space now.\n');
   expect('commit-msg: a clean message passes', clean.status === 0, clean.stderr);
   expect('commit-msg: and is told where it will be published',
     /will be published at https:\/\/github\.com\/fstubner\/agent-skills/.test(clean.stderr), clean.stderr);
@@ -56,7 +56,7 @@ import { root, expect, tmpBase } from './harness.mjs';
   // The rule is about identifiers, not vocabulary. A message describing a run
   // that died on a quota event is describing evidence, and a hook that argued
   // with it would be trained away inside a day.
-  const prose = runHook('docs: Codex quota is gone, so the pre-registered second harness cannot run\n');
+  const prose = runHook('docs: note that Codex quota is gone, so the second harness cannot run\n');
   expect('commit-msg: does not argue with prose about quota or cost', prose.status === 0, prose.stderr);
 
   // There is no email clause, decided by replaying all 224 messages in this
@@ -94,39 +94,41 @@ import { root, expect, tmpBase } from './harness.mjs';
   for (const [what, message] of [
     ['a subject ending in a period', 'Add the thing.\n'],
     ['a missing blank line after the subject', 'Add the thing\nStraight into the body.\n'],
-    ['a body line past 80 columns', `Add the thing\n\n${'x'.repeat(81)}\n`],
+    ['a body line past 72 columns', `feat: add the thing\n\n${'x '.repeat(37)}\n`],
   ]) {
     const blocked = runHook(message);
     expect(`commit-msg: refuses ${what}`, blocked.status === 1, `exit ${blocked.status}: ${blocked.stderr}`);
   }
 
   // An ellipsis is not a sentence-ending period.
-  const ellipsis = runHook('fix: the run stopped somewhere in the middle...\n');
+  const ellipsis = runHook('fix: stop the run somewhere in the middle...\n');
   expect('commit-msg: an ellipsis is not a trailing period', ellipsis.status === 0, ellipsis.stderr);
 
   // Indented lines are quoted output. 11 of the 34 over-length lines in this
   // history are eval report tables whose columns are aligned on purpose, and
   // rewrapping them would destroy the alignment that makes them legible.
-  const table = runHook(`docs: report the arm\n\n${'  '}${'y'.repeat(90)}\n`);
+  const table = runHook(`docs: report the arm\n\n${'  '}${'y '.repeat(45)}\n`);
   expect('commit-msg: indented quoted output may exceed the column limit',
     table.status === 0, table.stderr);
 
-  // Exactly 80 is inside the limit, not over it.
-  const exact = runHook(`feat: add the thing\n\n${'z'.repeat(80)}\n`);
-  expect('commit-msg: 80 columns exactly is allowed', exact.status === 0, exact.stderr);
+  // Exactly 72 is inside the limit, not over it.
+  const exact = runHook(`feat: add the thing\n\n${'z '.repeat(36).trimEnd()}\n`);
+  expect('commit-msg: 72 columns exactly is allowed', exact.status === 0, exact.stderr);
 
-  // The subject is uncapped on purpose: 45% of recent subjects run past 72
-  // characters because the subject states a finding, not a category.
-  const longSubject = runHook(`fix: ${'a finding stated at length '.repeat(4)}\n`);
-  expect('commit-msg: a long subject is not a style failure',
-    longSubject.status === 0, longSubject.stderr);
+  // The subject is a title of at most 72 characters. The detail goes in the body.
+  const longSubject = runHook(`fix: ${'stop a finding stated at length '.repeat(3)}\n`);
+  expect('commit-msg: a subject over 72 characters is refused',
+    longSubject.status === 1 && /Keep it to 72/.test(longSubject.stderr), longSubject.stderr);
+  const pastTense = runHook('fix: stopped reading DO NOT SHIP as ship\n');
+  expect('commit-msg: a description in the past tense is refused, since the format is imperative',
+    pastTense.status === 1 && /instruction/.test(pastTense.stderr), pastTense.stderr);
 
   // The subject is a Conventional Commit, since next-version.cjs reads the
   // type. The description after it still states the finding.
   const narrative = runHook('The verdict parser read "DO NOT SHIP" as ship\n\nIt matched on the substring.\n');
   expect('commit-msg: a subject without a type is refused, and the refusal names the types',
     narrative.status === 1 && /needs a type/.test(narrative.stderr), narrative.stderr);
-  const typed = runHook('fix(eval)!: the verdict parser read "DO NOT SHIP" as ship\n\nIt matched on the substring.\n');
+  const typed = runHook('fix(eval)!: stop reading "DO NOT SHIP" as ship\n\nIt matched on the substring.\n');
   expect('commit-msg: a typed subject with a scope and a breaking mark passes', typed.status === 0, typed.stderr);
   const merge = runHook('Merge pull request #30 from fstubner/repo-docs\n');
   expect('commit-msg: a merge commit git wrote needs no type', merge.status === 0, merge.stderr);
