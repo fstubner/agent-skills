@@ -9,9 +9,10 @@
 //   - deleting a branch or tag on a remote
 //   - a release that isn't a draft, publishing a draft, or a second release
 //     on the same day
-//   - a commit subject that isn't a Conventional Commit, or an attribution
-//     trailer in a commit message
-//   - merging a pull request with --admin, which skips branch protection
+//   - a commit message or pull request title that breaks the format in
+//     conventional.cjs, or an attribution line in a commit or pull request
+//   - merging a pull request with --admin, which skips branch protection, or
+//     with --auto, which merges at once when no checks are required
 //
 // The rules apply only to the owner's own repositories, meaning those whose
 // origin remote belongs to an account listed in the config file. A shared or
@@ -27,7 +28,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { spawnSync } = require('child_process');
-const { subjectProblem } = require('./conventional.cjs');
+const { messageProblems } = require('./conventional.cjs');
 
 const CONFIG = process.env.AGENT_SKILLS_WORKFLOW_CONFIG
   || path.join(os.homedir(), '.agent-skills', 'workflow', 'config.json');
@@ -105,13 +106,24 @@ function gitSubcommand(words, cwd) {
 
 // The message a commit command gives, with each -m as its own paragraph as
 // git joins them, or null when it gives none.
+// Short options can be combined (-am "x") or carry their value attached
+// (-m"x"), so a cluster is read letter by letter until it reaches m or F.
 function commitMessage(dir, args) {
   const parts = [];
+  const readFile = (f) => { try { parts.push(fs.readFileSync(path.resolve(dir, f), 'utf8')); } catch { /* git reports it */ } };
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === '-m' || args[i] === '--message') parts.push(args[i + 1] || '');
-    else if (args[i].startsWith('--message=')) parts.push(args[i].slice(10));
-    else if (args[i] === '-F' || args[i] === '--file') {
-      try { parts.push(fs.readFileSync(path.resolve(dir, args[i + 1]), 'utf8')); } catch { /* git reports it */ }
+    const a = args[i];
+    if (a === '--message' || a === '--file') {
+      if (a === '--file') readFile(args[i + 1] || ''); else parts.push(args[i + 1] || '');
+      i++;
+    } else if (a.startsWith('--message=')) parts.push(a.slice(10));
+    else if (a.startsWith('--file=')) readFile(a.slice(7));
+    else if (/^-[A-Za-z]/.test(a) && !a.startsWith('--')) {
+      const at = a.search(/[mF]/);
+      if (at < 0) continue;
+      const rest = a.slice(at + 1);
+      const value = rest || args[++i] || '';
+      if (a[at] === 'm') parts.push(value); else readFile(value);
     }
   }
   return parts.length ? parts.join('\n\n') : null;
@@ -126,8 +138,7 @@ function commitReasons(dir, args, env) {
   }
   const message = commitMessage(dir, args);
   if (message !== null) {
-    const problem = subjectProblem(message);
-    if (problem) reasons.push(problem);
+    reasons.push(...messageProblems(message));
     if (ATTRIBUTION.test(message)) reasons.push('the commit message has an attribution trailer. Remove the Co-Authored-By or "Generated with" line');
   }
   return reasons;
@@ -208,6 +219,25 @@ function ghReasons(words, cwd, env) {
   }
   if (a === 'pr' && b === 'merge' && words.includes('--admin')) {
     return ['--admin skips branch protection. Merge once the checks pass'];
+  }
+  if (a === 'pr' && b === 'merge' && words.includes('--auto')) {
+    return ['--auto merges at once when the branch requires no checks. Wait with gh pr checks --watch, then merge'];
+  }
+  if (a === 'pr' && (b === 'create' || b === 'edit')) {
+    const reasons = [];
+    const value = (flag, short) => {
+      const i = words.findIndex((w) => w === flag || w === short);
+      if (i >= 0) return words[i + 1] || '';
+      const eq = words.find((w) => w.startsWith(`${flag}=`));
+      return eq ? eq.slice(flag.length + 1) : null;
+    };
+    const title = value('--title', '-t');
+    if (title !== null) reasons.push(...messageProblems(title).map((p) => `pull request title: ${p}`));
+    let body = value('--body', '-b');
+    const file = value('--body-file', '-F');
+    if (file) { try { body = fs.readFileSync(path.resolve(cwd, file), 'utf8'); } catch { /* gh reports it */ } }
+    if (body && ATTRIBUTION.test(body)) reasons.push('the pull request body has an attribution line. Remove it');
+    return reasons;
   }
   if (a === 'api') {
     const text = words.join(' ');

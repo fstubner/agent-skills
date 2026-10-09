@@ -62,9 +62,26 @@ user of the project sees.
 
 A `!` after the type, as in `feat!:`, or a `BREAKING CHANGE:` line in the
 body marks a change that breaks existing use. It bumps the major version, or
-the minor version while the project is below 1.0.0. The description states
-what changed, as in `fix: the parser read DO NOT SHIP as ship`. If the
-repository has its own commit-msg hook, follow its other rules too.
+the minor version while the project is below 1.0.0.
+
+The message follows the common industry format.
+
+- The description is an instruction in lowercase, as in `fix: stop reading
+  DO NOT SHIP as ship` or `feat: add a dry-run flag`. Not "added", "adding"
+  or "adds".
+- The subject is at most 72 characters, with no full stop.
+- A blank line follows the subject.
+- The body says what changed and why, wrapped at 72 columns. Indented lines,
+  such as a quoted table, keep their width.
+
+```
+fix: stop reading DO NOT SHIP as ship
+
+The verdict parser matched "SHIP" as a substring, so a BLOCK verdict
+written as "DO NOT SHIP" counted as a pass.
+```
+
+If the repository has its own commit-msg hook, follow its other rules too.
 
 A repository with no remote has no pull request to go through, so commit on
 its default branch as before.
@@ -88,13 +105,21 @@ The description has three sections, each with content.
 - `## How it was verified` gives the commands run and their results.
 - `## Left out on purpose` names what was not done and why.
 
-A `## Summary` section above them is welcome. Write the body to a file and
-check it before opening the pull request or changing its description.
+A `## Summary` section above them is welcome. Each paragraph and list item
+is one line, because GitHub reflows the body and a hard-wrapped one reads as
+broken lines. Write as the author of the change, not a narrator of the
+session. The title follows the commit subject format, since it becomes the
+merge or squash commit's subject. Write the body to a file and check it with
+the title before opening the pull request or changing its description.
 
 ```bash
-node <this-skill>/scripts/check-pr.js --root . --body-file pr.md --format text
+node <this-skill>/scripts/check-pr.js --root . --body-file pr.md --title "<title>" --format text
 gh pr create --title "<title>" --body-file pr.md
 ```
+
+If `gh pr edit` fails on a GraphQL error about classic Projects, update the
+pull request through the REST API with `gh api -X PATCH
+repos/<owner>/<repo>/pulls/<number>`.
 
 After opening it, run the
 checker on the live description with `--pr <number>`. The voice rules are the
@@ -114,7 +139,8 @@ gh pr checks <number> --watch
 gh pr merge <number> --merge --delete-branch
 ```
 
-Never use `--admin`, because it skips branch protection.
+Never use `--admin`, because it skips branch protection. Never use `--auto`,
+because on a branch that requires no checks it merges at once.
 
 ## Releases
 
@@ -150,10 +176,11 @@ destructive on a remote. Everything else goes ahead without asking.
 Two layers hold the workflow when a session forgets it.
 
 - `scripts/guard.cjs` is a Claude Code hook. It refuses commits and pushes to
-  the default branch, commit subjects without a type, force pushes other than
-  `--force-with-lease` and deleting a branch or tag on a remote. It also
-  refuses a release that isn't a draft, publishing a draft, a second release
-  in a day, attribution trailers and `gh pr merge --admin`. Install it once
+  the default branch, commit messages and pull request titles that break the
+  format, force pushes other than `--force-with-lease` and deleting a branch
+  or tag on a remote. It also refuses a release that isn't a draft,
+  publishing a draft, a second release in a day, attribution lines in a
+  commit or pull request, and `gh pr merge` with `--admin` or `--auto`. Install it once
   for all projects with `node scripts/install-workflow-guard.mjs` from the
   agent-skills repository. It covers the repositories of the GitHub login
   `gh` is signed in as, or the accounts given with `--owner`.
