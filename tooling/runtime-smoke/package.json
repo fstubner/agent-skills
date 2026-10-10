@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "description": "Integrity-locked host CLIs used only by CI runtime installation smokes.",
   "dependencies": {
-    "@anthropic-ai/claude-code": "2.1.286",
-    "@google/gemini-cli": "0.62.0",
-    "@openai/codex": "0.159.2"
+    "@anthropic-ai/claude-code": "2.1.293",
+    "@google/gemini-cli": "0.63.0",
+    "@openai/codex": "0.161.0"
   }
 }
