@@ -1,0 +1,6 @@
+extends: occurrence
+message: "Paragraph of more than six sentences (ASD-STE100). Give each topic its own paragraph."
+level: error
+scope: paragraph
+max: 6
+token: '[.!?](?:\s|$)'

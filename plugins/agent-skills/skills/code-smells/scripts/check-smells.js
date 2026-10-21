@@ -52,7 +52,7 @@ const BRACE_LANGUAGE_EXTENSIONS = new Set([
   '.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs',
   '.java', '.kt', '.scala', '.c', '.h', '.cc', '.cpp', '.hpp', '.cs', '.php', '.swift',
 ]);
-const NEWLINE = String.fromCharCode(10); // line separator for --files-from
+const NEWLINE = '\n'; // line separator for --files-from
 const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'build', 'coverage', '.next', '.turbo', 'vendor', '.venv', '__pycache__', '.agent-evidence', 'fixtures', 'testdata', 'examples', '.claude', '.cursor', '.codex', '.agents', '.aider', '.worktrees']);
 const MAX_FILES = 20000;
 const MAX_FILE_BYTES = 2 * 1024 * 1024;

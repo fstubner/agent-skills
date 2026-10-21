@@ -18,7 +18,8 @@ compatibility: Requires Node 18+ to run the deterministic checker script.
 # Systems architecture
 
 Produce `ARCHITECTURE.md` at the project root (start from
-`assets/ARCHITECTURE.md`), then verify:
+`assets/ARCHITECTURE.md`; the checkers also accept it under `docs/` or
+`docs/design/`), then verify:
 
 ```bash
 node <this-skill>/scripts/check-architecture.js --root . --strict

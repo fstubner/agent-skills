@@ -3,8 +3,9 @@ name: ai-prose-slop
 description: >-
   Edit or detect AI-prose slop (inflated vocabulary, throat-clearing openers,
   weasel attribution, importance inflation, summary-recap endings, em-dash
-  overuse, and other model-writing habits) while preserving the writer's real
-  voice. Backed by a real Vale style for deterministic, evidence-based checks.
+  overuse, editorial framing, and other model-writing habits) while
+  preserving the writer's real voice. Backed by a real Vale style for
+  deterministic, evidence-based checks.
   Standalone utility skill with no shared artifacts — use it on any writing
   task regardless of whether the other skills in this suite are involved.
 compatibility: >-
@@ -77,12 +78,13 @@ scan/audit/flag a draft without rewriting it.
    downgrade to "I'll just look it over," and don't install anything without
    the user's go-ahead.
 5. **Judgment-only patterns still count.** Some real patterns (binary-contrast
-   framing, colon-reveal drama, synonym cycling, robotic rhythm) are too
-   context-dependent for a regex — see `references/patterns.md`. Walk that
-   list explicitly and report each category as either quoted hits or
-   `none found`. A category you never mention is indistinguishable from one
-   you never looked for, and these are exactly the patterns that survive a
-   pass because no tool complained about them.
+   framing, colon-reveal drama, synonym cycling, robotic rhythm, editorial
+   framing in usage docs) are too context-dependent for a regex — see
+   `references/patterns.md`. Walk that list explicitly and report each
+   category as either quoted hits or `none found`. A category you never
+   mention is indistinguishable from one you never looked for, and these are
+   exactly the patterns that survive a pass because no tool complained about
+   them.
 
 ## How to work
 

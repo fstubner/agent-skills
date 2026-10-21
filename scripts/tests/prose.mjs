@@ -14,6 +14,15 @@ import {
     console.log('skip  ai-prose-slop fixtures: vale not installed (CI installs it; install locally to run these)');
   } else {
     const script = path.join(root, 'ai-prose-slop', 'scripts', 'check-prose.js');
+    // Measured audience claims and explicit defaults need editorial judgment,
+    // not an unconditional phrase-based defect.
+    const measured = path.join(tmpBase, 'measured-audience.md');
+    fs.writeFileSync(measured, 'In the recorded trial, most users chose option A (18 of 20 participants).\n\nThe CLI supports keyword search out of the box.\n');
+    const measuredResult = runNode(script, [measured]);
+    const measuredReport = JSON.parse(measuredResult.stdout);
+    expect('ai-prose-slop: measured audience claims and defaults are not automatic framing defects',
+      measuredReport.verdict === 'SHIP', JSON.stringify(measuredReport.checks));
+
     const clean = runNode(script, [path.join(root, 'fixtures', 'ai-prose-slop-clean', 'doc.md')]);
     const cleanReport = JSON.parse(clean.stdout);
     expect('ai-prose-slop: clean doc verdict SHIP', cleanReport.verdict === 'SHIP', cleanReport.verdict);

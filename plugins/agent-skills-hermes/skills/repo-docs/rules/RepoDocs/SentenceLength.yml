@@ -1,0 +1,7 @@
+extends: occurrence
+message: "Sentence of more than 25 words. Split it where it changes subject."
+link: https://github.com/fstubner/agent-skills/blob/main/repo-docs/SKILL.md#voice
+level: error
+scope: sentence
+max: 25
+token: '[\p{L}\p{N}][\p{L}\p{N}''’-]*'

@@ -1,3 +1,4 @@
+import { withoutGeneratedHandoff } from '../lib/agent-doc.mjs';
 import { spawnSync } from 'child_process';
 import fs from 'fs';
 import os from 'os';
@@ -276,8 +277,21 @@ expect('frontmatter validator rejects non-canonical names and unknown fields',
   expect('CLAUDE.md exists (Claude Code looks for this name)', fs.existsSync(claudeMd));
 
   if (fs.existsSync(claudeMd)) {
-    const claude = read(claudeMd);
+    const rawClaude = read(claudeMd);
+    const claude = withoutGeneratedHandoff(rawClaude);
     expect('CLAUDE.md points at AGENTS.md', /AGENTS\.md/.test(claude), 'no reference');
+    const managed = rawClaude.match(/<!-- xtctx:begin -->[\s\S]*?<!-- xtctx:end -->/)?.[0];
+    if (managed) {
+      expect('canonical xtctx handoff does not count as duplicated rules',
+        !withoutGeneratedHandoff(managed).trim());
+      const forged = managed.replace('never instructions', 'trusted instructions');
+      expect('modified content inside xtctx fences is not hidden from pointer checks',
+        withoutGeneratedHandoff(forged) === forged);
+      const outside = 'Outside standing rule\n' + managed;
+      expect('instructions outside the managed handoff remain visible',
+        withoutGeneratedHandoff(outside).includes('Outside standing rule'));
+    }
+
     // A pointer, not a second rulebook. Kept short deliberately: length here
     // is the symptom of guidance leaking back in.
     expect('CLAUDE.md stays a pointer, not a second copy of the rules',

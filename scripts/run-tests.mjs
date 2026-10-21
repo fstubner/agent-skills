@@ -26,6 +26,7 @@ const MODULES = [
   'marketplace-standards.mjs', // cross-marketplace names, roots, and release versions agree
   'schema.mjs',           // schema validator units, empty-checks fail-closed
   'fixtures-core.mjs',    // architecture / backend / frontend / acceptance fixtures
+  'fixtures-docs-paths.mjs', // documents under docs/ and docs/design/ are found like root ones
   'fixtures-quality.mjs', // code-organization, code-smells, data-modeling fixtures
   'fixtures-replay.mjs',  // the walkthrough replay log, in Playwright's real shape and hand-stamped
   'prose.mjs',            // ai-prose-slop (skips only when vale is absent)

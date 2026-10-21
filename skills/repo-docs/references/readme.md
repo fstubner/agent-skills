@@ -43,6 +43,9 @@ Use this order and leave out what the project doesn't need.
 
 ## What doesn't belong
 
+- A sentence that frames instead of stating. "There are two ways in" before
+  the list, "most people use both", a tagline above the real description.
+  State the fact or the instruction. Voice rule 9 in `SKILL.md` has the test.
 - The story of a rule. "This was added after an audit found…" goes in the
   CHANGELOG or a commit message.
 - Dates, except in a link to a dated file.

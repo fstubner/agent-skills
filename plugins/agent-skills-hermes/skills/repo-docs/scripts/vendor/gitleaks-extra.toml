@@ -1,0 +1,71 @@
+# Supplementary gitleaks rules for prefixes NOT in gitleaks' own default
+# ruleset as of gitleaks 8.30.1 — verified empirically (tested both against
+# the plain default config before adding these; gitleaks caught AWS,
+# Stripe, GitHub PAT, and Slack out of the box but missed both of these).
+#
+# Deliberately a SEPARATE, custom-rules-only config, not a `[extend]
+# useDefault = true` on top of the defaults — that combination was tried
+# first and empirically did not merge (only the custom rules fired, the
+# defaults silently dropped). Every consumer of this file runs gitleaks
+# TWICE instead — once with no --config (gets the full default ruleset)
+# and once with --config core/gitleaks-extra.toml (gets just these two) —
+# and merges both result sets. See backend-engineering/scripts/
+# check-backend.js and scripts/git-hooks/pre-commit for the merge.
+#
+# PRECISION: the first version of these rules was a bare prefix match with
+# no length floor, no entropy floor, and no allowlist. It BLOCKed any repo
+# whose docs merely SHOW the key format ("keys look like
+# sk-ant-api03-YOUR-KEY-HERE"), and any URL slug that happened to start
+# with the prefix — while upstream gitleaks correctly ignored the same
+# lines. A gate that cries wolf on documentation is a gate people turn off,
+# so all three guards below are load-bearing and are pinned by tests in
+# scripts/run-tests.mjs (a runtime-generated realistic key must still be
+# caught; three placeholder forms must not fire):
+#   - {40,} length floor: real keys from both providers are ~100+ chars;
+#     every placeholder and URL slug tested was under 30.
+#   - entropy floor on the captured tail: separates random key material
+#     (~5.9) from human-readable placeholders (~3.5).
+#   - stopwords: belt-and-braces for a long-but-obviously-fake value.
+title = "agent-skills supplementary gitleaks rules"
+
+[[rules]]
+id = "anthropic-api-key"
+description = "Anthropic API Key"
+regex = '''sk-ant-(?:api\d{2}-)?([A-Za-z0-9_-]{40,})'''
+secretGroup = 1
+entropy = 4.0
+keywords = ["sk-ant-"]
+
+  [rules.allowlist]
+  regexTarget = "match"
+  stopwords = [
+    "your",
+    "example",
+    "placeholder",
+    "redacted",
+    "changeme",
+    "dummy",
+    "sample",
+    "xxxx",
+  ]
+
+[[rules]]
+id = "openai-project-key"
+description = "OpenAI Project API Key"
+regex = '''sk-proj-([A-Za-z0-9_-]{40,})'''
+secretGroup = 1
+entropy = 4.0
+keywords = ["sk-proj-"]
+
+  [rules.allowlist]
+  regexTarget = "match"
+  stopwords = [
+    "your",
+    "example",
+    "placeholder",
+    "redacted",
+    "changeme",
+    "dummy",
+    "sample",
+    "xxxx",
+  ]

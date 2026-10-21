@@ -13,6 +13,7 @@ const core = corePaths();
 const { parseArgs } = require(path.join(core.lib, 'args.cjs'));
 const { classify } = require(path.join(core.lib, 'classify.cjs'));
 const { check, runCli } = require(path.join(core.lib, 'report.cjs'));
+const { resolveArtifactFile } = require(path.join(core.lib, 'artifact-path.cjs'));
 const registry = require(core.registry);
 
 const FRAMEWORKS = ['react', 'vue', 'svelte', '@angular/core', 'solid-js', 'preact'];
@@ -143,17 +144,17 @@ function run(root) {
   // tokens missing => FAIL; unsupported nesting => FAIL; no token file at
   // all => not_evaluated, which caps the verdict at CONDITIONAL rather than
   // silently passing.
-  const tokensPath = path.join(root, 'design-tokens.json');
-  if (!fs.existsSync(tokensPath)) {
+  const tokensFound = resolveArtifactFile(root, 'design-tokens.json');
+  if (!tokensFound) {
     checks.push(check('F-tokens-contrast', 'not_evaluated',
       'no design-tokens.json; lock the design step or add tokens to evaluate contrast'));
     return checks;
   }
   let tokenSets;
   try {
-    tokenSets = tokenSetsFrom(JSON.parse(fs.readFileSync(tokensPath, 'utf8')));
+    tokenSets = tokenSetsFrom(JSON.parse(fs.readFileSync(tokensFound.abs, 'utf8')));
   } catch (e) {
-    checks.push(check('F-tokens-contrast', 'fail', `design-tokens.json: ${e.message}`));
+    checks.push(check('F-tokens-contrast', 'fail', `${tokensFound.rel}: ${e.message}`));
     return checks;
   }
   const required = ['text-main', 'surface-base'];
@@ -214,12 +215,12 @@ function walkthroughStepsObservable(root) {
   // failure, one as unevaluated — muddies the verdict and made an existing
   // fixture CONDITIONAL for a document another check already covers. This
   // check is only about the quality of steps that exist.
-  const file = path.join(root, 'ux-walkthrough.md');
-  if (!fs.existsSync(file)) {
+  const found = resolveArtifactFile(root, 'ux-walkthrough.md');
+  if (!found) {
     return check('F-walkthrough-observable', 'pass',
       'no ux-walkthrough.md; its presence is gated by product-acceptance, not here');
   }
-  const text = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
+  const text = fs.readFileSync(found.abs, 'utf8').replace(/\r\n/g, '\n');
   const stepsMatch = /^#{1,6}\s+Steps\b[^\n]*$/im.exec(text);
   if (!stepsMatch) {
     return check('F-walkthrough-observable', 'pass',

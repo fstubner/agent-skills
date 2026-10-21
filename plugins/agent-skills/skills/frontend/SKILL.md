@@ -20,7 +20,8 @@ compatibility: Requires Node 18+ to run the deterministic checker script.
 Owns four artifacts: `stack-decision.md` (only when the stack was open to
 choose — no entry, no requirement, an existing-stack project legitimately
 has none), `design-direction.md`, `design-tokens.json`, `ux-walkthrough.md`.
-Verify with:
+The checkers look for each at the project root, then `docs/`, then
+`docs/design/`. Verify with:
 
 ```bash
 node <this-skill>/scripts/check-frontend.js --root . --strict

@@ -102,6 +102,23 @@ function build(destinationRoot) {
     '',
   ].join('\n'));
 
+  // Hermes implements Agent Plugins v1, not Antigravity's manifest schema.
+  // Keep a separate generated package so neither harness's schema is weakened.
+  const hermes = path.join(destinationRoot, 'plugins', 'agent-skills-hermes');
+  copyTree(plugin, hermes);
+  for (const foreign of ['.claude-plugin', '.codex-plugin', '.cursor-plugin']) {
+    fs.rmSync(path.join(hermes, foreign), { recursive: true, force: true });
+  }
+  writeJson(path.join(hermes, 'plugin.json'), {
+    $schema: 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json',
+    ...commonManifest,
+  });
+  fs.writeFileSync(path.join(hermes, 'README.md'), [
+    '# Agent Skills for Hermes', '',
+    'Generated from the source skills for the Agent Plugins v1 loader.',
+    'Skills and checkers only; no startup hooks, MCP servers or telemetry.', '',
+  ].join('\n'));
+
   writeJson(path.join(destinationRoot, '.agents', 'plugins', 'marketplace.json'), {
     name: 'fstubner-agent-skills',
     interface: { displayName: 'Felix Stubner Agent Skills' },
@@ -150,7 +167,7 @@ function compare(expectedRoot, actualRoot) {
   return [...keys].filter((key) => expected.get(key) !== actual.get(key));
 }
 
-const generatedPaths = ['plugins/agent-skills', 'skills', '.agents/plugins', '.cursor-plugin', 'gemini-extension.json'];
+const generatedPaths = ['plugins/agent-skills', 'plugins/agent-skills-hermes', 'skills', '.agents/plugins', '.cursor-plugin', 'gemini-extension.json'];
 
 if (checkOnly) {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-skills-plugin-check-'));
@@ -172,7 +189,7 @@ if (checkOnly) {
     fs.rmSync(temp, { recursive: true, force: true });
   }
 } else {
-  for (const relative of ['plugins/agent-skills', 'skills', '.agents/plugins', '.cursor-plugin']) {
+  for (const relative of ['plugins/agent-skills', 'plugins/agent-skills-hermes', 'skills', '.agents/plugins', '.cursor-plugin']) {
     assertOwnedOrAbsent(path.join(root, relative));
   }
   for (const relative of generatedPaths) fs.rmSync(path.join(root, relative), { recursive: true, force: true });

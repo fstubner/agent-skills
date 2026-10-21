@@ -1,0 +1,112 @@
+# Cases for the RepoDocs style. Run them with `vale test --coverage` from
+# Vale 3.24 or later. They live outside the style folder because older Vale
+# rejects a rule file with a `tests` key.
+
+- name: an em dash is punctuation
+  rule: ../RepoDocs/Dashes.yml
+  input: The build is slow — it runs every test.
+  contains: RepoDocs.Dashes
+- name: an en dash is punctuation
+  rule: ../RepoDocs/Dashes.yml
+  input: The build is slow – it runs every test.
+  contains: RepoDocs.Dashes
+- name: a hyphen in a compound word is not a dash
+  rule: ../RepoDocs/Dashes.yml
+  input: It is a well-known build step.
+  absent: RepoDocs.Dashes
+
+- name: a semicolon in prose is flagged
+  rule: ../RepoDocs/Semicolons.yml
+  input: The build is slow; it runs every test.
+  contains: RepoDocs.Semicolons
+- name: a semicolon in inline code is not prose
+  rule: ../RepoDocs/Semicolons.yml
+  input: Run `a; b` from the root.
+  absent: RepoDocs.Semicolons
+
+- name: a mid-line colon in prose is flagged
+  rule: ../RepoDocs/InlineColons.yml
+  input: 'Note: dry runs never push.'
+  contains: RepoDocs.InlineColons
+- name: a colon inside a bold label is flagged
+  rule: ../RepoDocs/InlineColons.yml
+  input: '- **Status:** Accepted'
+  contains: RepoDocs.InlineColons
+- name: a colon ending a line that introduces a code block is allowed
+  rule: ../RepoDocs/InlineColons.yml
+  input: |
+    Run these from the root:
+
+    ```bash
+    npm test
+    ```
+  absent: RepoDocs.InlineColons
+- name: a time is not an inline colon
+  rule: ../RepoDocs/InlineColons.yml
+  input: The job runs at 10:30 every day.
+  absent: RepoDocs.InlineColons
+- name: a literal in backticks is not prose
+  rule: ../RepoDocs/InlineColons.yml
+  input: 'Run the `Format: Document` command.'
+  absent: RepoDocs.InlineColons
+
+- name: a prose colon in a paragraph is flagged by the paragraph rule
+  rule: ../RepoDocs/InlineColonsInParagraphs.yml
+  input: 'Note: dry runs never push.'
+  contains: RepoDocs.InlineColonsInParagraphs
+- name: a template label in a list is left to the template
+  rule: ../RepoDocs/InlineColonsInParagraphs.yml
+  input: '- **Status:** Accepted'
+  absent: RepoDocs.InlineColonsInParagraphs
+
+- name: the author in the third person is flagged
+  rule: ../RepoDocs/Person.yml
+  input: The author uses these skills every day.
+  contains: RepoDocs.Person
+- name: the maintainers in the third person are flagged
+  rule: ../RepoDocs/Person.yml
+  input: Ask the maintainers before opening a pull request.
+  contains: RepoDocs.Person
+- name: the word authored is not the author
+  rule: ../RepoDocs/Person.yml
+  input: I authored the release notes.
+  absent: RepoDocs.Person
+
+- name: plus as a connective is filler
+  rule: ../RepoDocs/Connectives.yml
+  input: It checks links, plus it checks headings.
+  contains: RepoDocs.Connectives
+- name: rather than is filler
+  rule: ../RepoDocs/Connectives.yml
+  input: It reads the file rather than the cache.
+  contains: RepoDocs.Connectives
+- name: a word containing plus is not the connective
+  rule: ../RepoDocs/Connectives.yml
+  input: The surplus goes to the next run.
+  absent: RepoDocs.Connectives
+
+- name: a date in a sentence is history
+  rule: ../RepoDocs/History.yml
+  input: Added on 2026-04-02 after a bug.
+  contains: RepoDocs.History
+- name: a date ending a sentence is history
+  rule: ../RepoDocs/History.yml
+  input: This changed on 2026-04-02.
+  contains: RepoDocs.History
+- name: an audit story is history
+  rule: ../RepoDocs/History.yml
+  input: An audit found three broken links.
+  contains: RepoDocs.History
+- name: a date in a filename is a name
+  rule: ../RepoDocs/History.yml
+  input: See bench-2026-03-01.md for numbers.
+  absent: RepoDocs.History
+
+- name: a 26-word sentence is over the limit
+  rule: ../RepoDocs/SentenceLength.yml
+  input: One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty twentyone twentytwo twentythree twentyfour twentyfive twentysix.
+  contains: RepoDocs.SentenceLength
+- name: a 25-word sentence is at the limit
+  rule: ../RepoDocs/SentenceLength.yml
+  input: One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty twentyone twentytwo twentythree twentyfour twentyfive.
+  absent: RepoDocs.SentenceLength

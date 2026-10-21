@@ -293,3 +293,22 @@ form and ends in `-dirty` if the source tree had uncommitted changes.
 The two git fields are left out when the source has no git history. That
 happens with an extracted tarball or a copy vendored into another repository. `version`
 and `suite` are always present.
+
+## Hermes Agent
+
+The generated `plugins/agent-skills-hermes` package uses Agent Plugins v1.
+The Antigravity package has a different schema and is not a Hermes install target.
+
+```sh
+hermes plugins install https://github.com/fstubner/agent-skills/tree/main/plugins/agent-skills-hermes --ref <full-commit-sha> --enable
+```
+
+The package contains all 19 skills, their checkers and vendored references. It
+contains no startup hooks, executable plugin registration, MCP servers or telemetry.
+Hermes's normal validation and security scan still apply. A scan finding does not
+authorize an override. New sessions discover enabled plugin skills.
+Successful discovery is not evidence that an agent invoked or benefited from them.
+
+For local self-checks before pushing, `node scripts/run-tests.mjs` is also the
+repository's CI entry point. The suite includes generated-package drift and
+packaged checker execution tests for Hermes and the existing harnesses.
