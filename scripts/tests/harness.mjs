@@ -100,6 +100,11 @@ export function walk(dir, out = []) {
   return out;
 }
 
+export function inArchivedRuns(filePath, repoRoot = root) {
+  const parts = path.relative(repoRoot, filePath).split(/[\\/]+/);
+  return parts[0] === 'eval' && (parts[1] === 'runs' || parts[1] === 'runs-superseded');
+}
+
 export function pathToFileUrl(p) {
   return 'file:///' + p.split(path.sep).join('/');
 }
