@@ -50,7 +50,9 @@ document tells you to run.
 
 - Verifies required documents exist with real headings (`PRODUCT.md`,
   `ARCHITECTURE.md` when multi-part, `design-direction.md` and
-  `ux-walkthrough.md` when a frontend exists).
+  `ux-walkthrough.md` when a frontend exists). Each is accepted at the
+  project root, `docs/` or `docs/design/`, and the pass message names the
+  path it found.
 - **Re-runs** every registered domain checker (architecture, frontend,
   backend) fresh, with `--no-write` so the audit never mutates the project
   under review, and schema-validates their output. Report files already on

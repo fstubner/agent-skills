@@ -1,0 +1,7 @@
+extends: existence
+message: "Semicolon in prose. Split it into two sentences."
+link: https://github.com/fstubner/agent-skills/blob/main/repo-docs/SKILL.md#voice
+level: error
+nonword: true
+raw:
+  - ';'

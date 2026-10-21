@@ -1,0 +1,6 @@
+extends: sequence
+message: "'%s' looks passive (ASD-STE100). Name who does it."
+level: error
+tokens:
+  - pattern: '\b(?:is|are|was|were|be|been|being)\b'
+  - tag: VBN

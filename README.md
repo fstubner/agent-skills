@@ -3,7 +3,7 @@
 [Version](./VERSION) · [Changelog](./CHANGELOG.md) · MIT licence
 
 19 Agent Skills for product and software delivery, for Claude Code, Codex,
-Cursor and Antigravity. They are built around three ideas.
+Cursor, Antigravity and Hermes. They are built around three ideas.
 
 - **Evidence-gated shipping.** Deterministic checkers write a standard
   report, and the acceptance gate re-runs them itself every time.

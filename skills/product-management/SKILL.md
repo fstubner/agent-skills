@@ -12,7 +12,8 @@ description: >-
 
 Produce one artifact: `PRODUCT.md` at the project root, from
 `assets/PRODUCT.md`. Ask only what you cannot infer; batch unknowns into
-one short round of questions.
+one short round of questions. The checkers also accept it under `docs/` or
+`docs/design/`.
 
 ## Required headings
 

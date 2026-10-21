@@ -19,7 +19,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SCAN_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'];
-const NEWLINE = String.fromCharCode(10); // line separator for --files-from
+const NEWLINE = '\n'; // line separator for --files-from
 const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'build', 'coverage', '.next', '.turbo', '.agent-evidence', 'fixtures', 'testdata', 'examples', '.claude', '.cursor', '.codex', '.agents', '.aider', '.worktrees']);
 const MAX_FILES = 20000;
 const MAX_FILE_BYTES = 2 * 1024 * 1024;

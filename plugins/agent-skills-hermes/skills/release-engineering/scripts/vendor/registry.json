@@ -1,0 +1,354 @@
+{
+  "name": "fstubner/agent-skills",
+  "suiteVersionFile": "VERSION",
+  "defaultSkill": "product-build",
+  "_defaultSkillNote": "Not a pipeline head — every skill below fires independently on its own trigger. This is only the suggested starting point when a request is greenfield/ambiguous and no single skill's trigger clearly applies yet.",
+  "evidenceDir": ".agent-evidence",
+  "harnessPaths": {
+    "cursor": "~/.cursor/skills",
+    "claude": "~/.claude/skills",
+    "codex": "~/.agents/skills",
+    "antigravity": "~/.gemini/antigravity-cli/skills"
+  },
+  "legacyHarnessPaths": {
+    "codex": [
+      "~/.codex/skills"
+    ]
+  },
+  "_harnessPathsNote": "Claude Desktop reads the same ~/.claude/skills as Claude Code (confirmed, no separate entry needed) and has no filesystem target for cloud use — see INSTALL.md. Codex installs only to the current documented shared path, ~/.agents/skills. Installing the same skills to both ~/.codex/skills and ~/.agents/skills was tested against Codex CLI 0.146.0 and produced duplicate model-visible catalog entries, consuming the capped discovery budget. legacyHarnessPaths lets the installer remove only its own marker-bearing copies from the former ~/.codex/skills target during migration. Antigravity CLI reads ~/.gemini/antigravity-cli/skills. Antigravity IDE separately reads global skills from ~/.gemini/config/skills and workspace skills from <workspace-root>/.agents/skills; see INSTALL.md.",
+  "skills": [
+    {
+      "id": "product-build",
+      "role": "Dispatcher — routes a greenfield/ambiguous request to whichever skills apply"
+    },
+    {
+      "id": "product-management",
+      "role": "PRODUCT.md contract interview"
+    },
+    {
+      "id": "systems-architecture",
+      "role": "Parts, boundaries, trust"
+    },
+    {
+      "id": "frontend",
+      "role": "Stack, structure, design, and UX"
+    },
+    {
+      "id": "backend-engineering",
+      "role": "Trusted-side laws"
+    },
+    {
+      "id": "product-acceptance",
+      "role": "Independent acceptance gate"
+    },
+    {
+      "id": "ai-prose-slop",
+      "role": "Prose slop editor/detector"
+    },
+    {
+      "id": "mental-models",
+      "role": "Reasoning lens catalog + triage guide + four named mindsets"
+    },
+    {
+      "id": "code-smells",
+      "role": "Fowler code-smell catalog + judgment guide"
+    },
+    {
+      "id": "code-organization",
+      "role": "Module boundaries, dependency direction, naming"
+    },
+    {
+      "id": "testing-strategy",
+      "role": "Test pyramid triage, behavior over implementation, flaky-test discipline"
+    },
+    {
+      "id": "data-modeling",
+      "role": "Schema design — keys, normalization, nullability, migrations"
+    },
+    {
+      "id": "cli-tooling",
+      "role": "CLI surface + contract — naming, config precedence, exit codes, dry-run"
+    },
+    {
+      "id": "release-engineering",
+      "role": "CI/CD pipeline gating, deployment strategy, rollback"
+    },
+    {
+      "id": "learn-from-session",
+      "role": "Turn a correction or confirmation into a durable rule/fixture/memory"
+    },
+    {
+      "id": "engineering-assessment",
+      "role": "Evidence-first codebase audit — severity-ranked findings, coverage gaps stated"
+    },
+    {
+      "id": "multi-agent-design",
+      "role": "Multi-agent topology, delegation contracts, governance, failure recovery"
+    },
+    {
+      "id": "repo-docs",
+      "role": "Repository documents: README by project type, release notes from the CHANGELOG, CHANGELOG entries, ADR structure and a voice checker"
+    },
+    {
+      "id": "delivery-workflow",
+      "role": "Branch, pull request, merge and draft-release workflow for the owner's own repositories, with Conventional Commits, semantic versions from them, a guard hook, branch protection and a pull request checker"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "product-contract",
+      "kind": "document",
+      "file": "PRODUCT.md",
+      "producer": "product-management",
+      "consumers": [
+        "systems-architecture",
+        "frontend",
+        "backend-engineering",
+        "product-acceptance"
+      ],
+      "acceptanceGated": true,
+      "requiredWhen": "always",
+      "requiredHeadings": [
+        "Purpose",
+        "Users",
+        "Success",
+        "MVP",
+        "Constraints"
+      ]
+    },
+    {
+      "id": "architecture-doc",
+      "kind": "document",
+      "file": "ARCHITECTURE.md",
+      "producer": "systems-architecture",
+      "consumers": [
+        "backend-engineering",
+        "product-acceptance"
+      ],
+      "acceptanceGated": true,
+      "requiredWhen": "multi_part",
+      "requiredHeadings": [
+        "Parts",
+        "Boundaries",
+        "Trust"
+      ]
+    },
+    {
+      "id": "design-direction",
+      "kind": "document",
+      "file": "design-direction.md",
+      "producer": "frontend",
+      "consumers": [
+        "product-acceptance"
+      ],
+      "acceptanceGated": true,
+      "requiredWhen": "frontend_present",
+      "requiredHeadings": [
+        "Interview"
+      ]
+    },
+    {
+      "id": "ux-walkthrough",
+      "kind": "document",
+      "file": "ux-walkthrough.md",
+      "producer": "frontend",
+      "consumers": [
+        "product-acceptance"
+      ],
+      "acceptanceGated": true,
+      "requiredWhen": "frontend_present",
+      "_requiredHeadingsNote": "Was the only acceptance-gated document with no content requirement, so existence was the whole check and a file containing 'TODO' passed the gate (probe, 2026-08-02). These match frontend/assets/ux-walkthrough.md's own sections, so a filled-in template satisfies them by construction.",
+      "requiredHeadings": [
+        "Primary job",
+        "Steps",
+        "States"
+      ]
+    },
+    {
+      "id": "stack-decision",
+      "kind": "document",
+      "file": "stack-decision.md",
+      "producer": "frontend",
+      "consumers": [
+        "product-acceptance"
+      ],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Written only when the stack was open to choose (frontend/SKILL.md). Not acceptance-gated: an existing-stack project legitimately has no stack-decision.md."
+    },
+    {
+      "id": "design-tokens",
+      "kind": "document",
+      "file": "design-tokens.json",
+      "producer": "frontend",
+      "consumers": [
+        "product-acceptance"
+      ],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Consumed directly by frontend's own checker (F-tokens-contrast), which is itself acceptance-gated via frontend-report. Listed here so it isn't undocumented, not double-gated."
+    },
+    {
+      "id": "architecture-report",
+      "kind": "report",
+      "file": ".agent-evidence/architecture-report.json",
+      "producer": "systems-architecture",
+      "producerScript": "systems-architecture/scripts/check-architecture.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [
+        "product-acceptance"
+      ],
+      "acceptanceGated": true,
+      "requiredWhen": "multi_part"
+    },
+    {
+      "id": "frontend-report",
+      "kind": "report",
+      "file": ".agent-evidence/frontend-report.json",
+      "producer": "frontend",
+      "producerScript": "frontend/scripts/check-frontend.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [
+        "product-acceptance"
+      ],
+      "acceptanceGated": true,
+      "requiredWhen": "frontend_present"
+    },
+    {
+      "id": "backend-report",
+      "kind": "report",
+      "file": ".agent-evidence/backend-report.json",
+      "producer": "backend-engineering",
+      "producerScript": "backend-engineering/scripts/check-backend.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [
+        "product-acceptance"
+      ],
+      "acceptanceGated": true,
+      "requiredWhen": "server_present"
+    },
+    {
+      "id": "cochange-report",
+      "kind": "report",
+      "file": ".agent-evidence/cochange-report.json",
+      "producer": "code-smells",
+      "producerScript": "code-smells/scripts/check-cochange.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Shotgun surgery read from git history. Not acceptance-gated: it describes how a codebase has CHANGED, which a fresh project legitimately has no data for, and a ship decision should not hinge on commit-history volume. Review-time signal, recorded so it is not undocumented."
+    },
+    {
+      "id": "smoke-report",
+      "kind": "report",
+      "file": ".agent-evidence/smoke-report.json",
+      "producer": "release-engineering",
+      "producerScript": "release-engineering/scripts/check-smoke.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [
+        "product-acceptance"
+      ],
+      "acceptanceGated": true,
+      "requiredWhen": "always",
+      "note": "Static only: verifies that declared npm scripts and entry points point at paths that exist and that a real test command is declared. Does NOT execute target-project code unless --run is passed, which acceptance never does. This is the deterministic floor under A-runtime, not a replacement for it."
+    },
+    {
+      "id": "operability-report",
+      "kind": "report",
+      "file": ".agent-evidence/operability-report.json",
+      "producer": "release-engineering",
+      "producerScript": "release-engineering/scripts/check-operability.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [
+        "product-acceptance"
+      ],
+      "acceptanceGated": true,
+      "requiredWhen": "server_present",
+      "note": "Whether a running service can be operated by someone who did not build it: OPERATIONS.md with Signals, Alerts, Failure modes and Recovery, plus the two properties a checkout can show — a health endpoint and structured logging. Whether the alerts fire or the runbook is correct needs a running system and is reported as not_evaluated rather than assumed."
+    },
+    {
+      "id": "acceptance-report",
+      "kind": "report",
+      "file": ".agent-evidence/acceptance-report.json",
+      "producer": "product-acceptance",
+      "producerScript": "product-acceptance/scripts/accept-check.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "always"
+    },
+    {
+      "id": "prose-report",
+      "kind": "report",
+      "file": null,
+      "producer": "ai-prose-slop",
+      "producerScript": "ai-prose-slop/scripts/check-prose.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Invoked directly via its own CLI (targets as positional args, optional --report <path>), not through --root/evidenceDir like the registry-driven checkers. No default file: null reflects that."
+    },
+    {
+      "id": "organization-report",
+      "kind": "report",
+      "file": null,
+      "producer": "code-organization",
+      "producerScript": "code-organization/scripts/check-organization.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Invoked directly via its own CLI (--root <dir>, optional --strict/--report), self-contained like ai-prose-slop's check-prose.js. Only checks circular imports (O-circular-deps) — the one code-organization rule that's genuinely deterministic; everything else in that skill stays judgment-only."
+    },
+    {
+      "id": "smells-report",
+      "kind": "report",
+      "file": null,
+      "producer": "code-smells",
+      "producerScript": "code-smells/scripts/check-smells.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Invoked directly via its own CLI (--root <dir>, optional --strict/--report). Checks file size (any language) and nesting depth (brace-delimited languages only, excluding Go) — the two code-smells rules genuinely checkable without a per-language parser; everything else in that skill stays judgment-only."
+    },
+    {
+      "id": "migrations-report",
+      "kind": "report",
+      "file": null,
+      "producer": "data-modeling",
+      "producerScript": "data-modeling/scripts/check-migrations.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Invoked directly via its own CLI (--root <dir>, optional --strict/--report). Checks ONLY raw .sql migration files for destructive drops, unsafe NOT NULL additions, renames, and volatile-function column defaults — every check id is prefixed DM-sql- specifically so this is never mistaken for having evaluated data modeling generally. A project modeling data via an ORM schema DSL or a NoSQL store gets none of this checked mechanically; SKILL.md's judgment rules still apply to those, just without a script behind them."
+    },
+    {
+      "id": "docs-report",
+      "kind": "report",
+      "file": ".agent-evidence/docs-report.json",
+      "producer": "repo-docs",
+      "producerScript": "repo-docs/scripts/check-docs.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Voice, ASD-STE100 sentence limits and structure of the documents a visitor reads. The voice and STE rules are Vale styles in repo-docs/rules, run through Vale; structure, release-note figures and the numbered-step limit are checked in Node. Documents read: README, INSTALL, CONTRIBUTING, SECURITY, RELEASE, SUPPORT, PRODUCT.md, ARCHITECTURE.md, docs/, ADRs and the [Unreleased] CHANGELOG section. Run directly and from the pre-commit hook on staged documents. Not wired into acceptance: as a gate it would cap the verdict on every eval fixture, most of which have no README."
+    },
+    {
+      "id": "pr-report",
+      "kind": "report",
+      "file": ".agent-evidence/pr-report.json",
+      "producer": "delivery-workflow",
+      "producerScript": "delivery-workflow/scripts/check-pr.js",
+      "schema": "core/schemas/check-report.schema.json",
+      "consumers": [],
+      "acceptanceGated": false,
+      "requiredWhen": "never",
+      "note": "Whether a pull request description has What changed, How it was verified and Left out on purpose sections with content, passes the RepoDocs Vale voice rules from repo-docs (dated history allowed) and carries no attribution lines. Run before opening a pull request and on the live description. Not wired into acceptance, because it judges a pull request, not the product."
+    }
+  ]
+}

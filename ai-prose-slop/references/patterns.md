@@ -39,7 +39,7 @@ Patterns are split by how reliably they can be caught by a regex:
   listiness, figurative geography/ecology words, binary-contrast framing,
   faux-insight setups, colon-reveal drama, synonym cycling, fake-strong
   verbs over "is"/"has", negative listing, robotic rhythm, rhetorical
-  self-answered questions
+  self-answered questions, editorial framing
 - [Sources of inspiration](#sources-of-inspiration)
 
 ## Vale-checkable
@@ -250,6 +250,48 @@ by a human ear, not by a regex on any one sentence.
 ### Rhetorical self-answered questions
 *"What if I told you...", "Think about it:", "Plot twist:"* — staged questions
 the writer immediately answers. Drop the staging, make the point.
+
+### Editorial framing
+Sentences that introduce, characterise or justify instead of stating a fact
+about the product or telling the reader what to do. In usage docs (README,
+install guide, docs pages) every sentence should do one of those two things.
+The test is one line. Delete the sentence. If the reader loses no fact and no
+instruction, it was framing.
+
+The forms it takes:
+
+- A sentence that announces what follows, or counts the options before
+  listing them.
+- A claim about what users typically do, with no data behind it.
+- A tagline that describes the product by effect instead of by what it does.
+- A rationale aside that the reader does not need in order to act.
+- A label or a wry remark standing in for a plain statement.
+
+Real rewrites from a README that passed every Vale check and still read as
+machine-written:
+
+| Framing | Fact or instruction |
+|---|---|
+| There are two ways in, and most people end up using both. | Install xtctx as a plugin, set it up per project, or both. |
+| xtctx lets one AI coding agent pick up where another left off. | xtctx indexes the transcripts that AI coding agents write on your machine and serves them over MCP. |
+| Everything stays on your machine. The one exception is cloud sync, which… | Transcripts stay on your machine unless a project turns on cloud sync or a remote embedding endpoint. |
+| xtctx searches by keyword out of the box. | Search matches keywords by default. |
+| Merging releases nothing. | Releases are manual. |
+| The rest of the file is yours. | …and leaves the rest of the file unchanged. |
+
+- **Why it reads as slop:** the sentence sounds like documentation without
+  adding any. It also carries claims nobody checked. In the example above,
+  "most people" had no data behind it and "the one exception" was wrong,
+  because there were two.
+- **Fix:** state the fact, or cut the sentence. If a link covers it, link
+  instead of summarising. A rationale belongs in a design doc or an ADR.
+- **Judgment only:** phrases such as "most users" and "out of the box" can
+  express measured findings or useful defaults. No existence regex can tell
+  that from unsupported framing. Quote the sentence, inspect its evidence and
+  purpose, and suggest a change only when it adds no useful information.
+- **Caveat:** keep useful signposting, product descriptions, measured audience
+  claims and reasons the reader needs to make a decision. Marketing copy and
+  design rationale have different jobs from installation steps.
 
 ## Sources of inspiration
 

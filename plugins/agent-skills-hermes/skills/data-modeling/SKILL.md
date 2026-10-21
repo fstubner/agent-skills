@@ -1,0 +1,153 @@
+---
+name: data-modeling
+description: >-
+  Design persisted-data models that enforce the domain's real invariants —
+  relational schemas, document stores, key-value and wide-column databases,
+  and property graphs. Covers keys, relationship direction, partitioning,
+  normalization versus duplication, constraints, traversal and access
+  patterns, and additive/backward-compatible migrations. Triggers when
+  designing or changing stored data in any database family. Narrower than
+  `backend-engineering` (trusted-side runtime laws — secrets, validation,
+  auth) — this is specifically about the shape of persisted data, not the
+  code that reads and writes it.
+compatibility: Requires Node 18+ to run the deterministic checker script.
+---
+
+# Data modeling
+
+A schema is a set of claims about what's always true. Every nullable column,
+every unconstrained foreign key, every field with no validation is a claim
+the schema explicitly declines to make — sometimes correctly, but that
+should be a decision, not a default.
+
+No shared artifacts. Schema quality depends on the domain's actual
+invariants, which no generic script can know — this stays a judgment
+skill regardless of whether the data is modeled as SQL tables, an ORM's
+own schema DSL (Prisma, Django models, SQLAlchemy), a document or key-value
+store, a wide-column database, or a property graph. The shared rules below
+apply to all of them; database-family-specific checks live in
+`references/non-relational-modeling.md`. One narrow
+slice IS genuinely checkable without knowing the domain, though: whether a
+raw SQL migration file does something known to be unsafe regardless of
+what it's migrating. `scripts/check-migrations.js` checks exactly that and
+nothing more — every check id it emits is prefixed `DM-sql-` on purpose,
+so a report can never be misread as having evaluated data modeling
+generally. A project with no `.sql` files (ORM-DSL or NoSQL projects
+included) gets a clean scope-skip, not a false pass on rules it never
+looked at. Run it: `node <this-skill>/scripts/check-migrations.js --root
+<dir>`. It checks for destructive drops, an unsafe `NOT NULL` addition, a
+rename, and a volatile-function column default — sourced from real
+migration linters (Squawk, strong_migrations), not invented — and
+excludes down/rollback migrations (which are expected to contain drops by
+design) by filename convention or an inline `-- +goose Down` /
+`-- migrate:down` marker.
+
+Known limit, verified by probe: SQL built at runtime inside a `DO $$ ... $$`
+block is invisible to it, because the statement text lives in a string
+literal and string contents are blanked before matching (that blanking is
+what stops a DROP mentioned in a comment from failing the check). Dynamic
+DDL therefore needs your own review — the checker will not see it.
+
+Add `--files a.sql,b.sql` to restrict what may *fail* to specific paths
+(relative to `--root`, or absolute). That's what makes this usable as a
+pre-commit hook — see `scripts/git-hooks/pre-commit`, which runs it on
+staged files. Without scoping, the first commit on any project with a
+destructive migration already in its history is blocked by that history,
+and a hook that blocks unrelated work gets bypassed rather than obeyed.
+Migrations are exactly the kind of file where catching it at commit time
+beats catching it at acceptance: by then it may already have run.
+
+## Rules
+
+1. **Model the invariant, not just the field.** A `discount_percent` column
+   that accepts `150` is missing a constraint the domain actually has. This
+   is `code-smells`' primitive-obsession problem at the schema level: a raw
+   number where a bounded, named concept belongs. Push what you can into a
+   `CHECK` constraint, an enum, or a `NOT NULL` rather than trusting every
+   caller to enforce it in application code.
+2. **A nullable column needs a reason, not just a "maybe."** Every nullable
+   column carries a comment — in the migration or the schema — saying which
+   rows legitimately lack the value. Writing it is the check: if the answer
+   is "rows where we haven't got round to it yet", the column wanted a
+   default or a separate table, not a null. If a value is "usually
+   required, occasionally not," the "not" cases are often a genuinely
+   different kind of row — model them as a separate, optional relationship
+   instead of making every reader check for null. Reserve null for values
+   truly optional for every row, not as a default hedge against being wrong
+   about what's required.
+3. **Normalize until it hurts, then denormalize on purpose.** Start
+   normalized — one fact stored in one place — so an update can't leave two
+   copies disagreeing. Every denormalized field carries a comment naming
+   the read pattern that forced it and, where you have one, the measurement
+   (the slow query, the p95). "It'll be faster" is available for any schema
+   at any time and so decides nothing; a named query is something a future
+   reader can re-measure and, if it's gone, undo. Without that comment
+   they can only guess whether the duplication is load-bearing, and the
+   safe guess is to leave it forever.
+4. **Enforce referential integrity at the database when you can.**
+   Application-level checks get bypassed by the next script, migration, or
+   direct database access that doesn't go through that code path. A real
+   foreign key constraint can't be forgotten by a future caller the way an
+   application check can.
+5. **Choose keys for what actually stays stable.** A natural key (email,
+   username) that a user can legitimately change makes a bad primary key —
+   every reference to it breaks or needs cascading updates. A surrogate key
+   (generated ID) stays stable at the cost of being meaningless on its own;
+   default to a surrogate key and keep the natural value as a unique,
+   changeable column instead of the identity itself.
+6. **Migrations touching live data go additive-first.** Prefer add-column
+   (nullable) → backfill → make-required → remove-old over a single
+   destructive rewrite, especially once real rows exist. A one-shot
+   migration that assumes a maintenance window or perfect backfill logic is
+   the migration most likely to be the one that actually loses data.
+
+   The hard form of this rule, because a measured eval showed the soft form
+   does not transfer: **an up migration never contains `DROP TABLE` or
+   `DROP COLUMN`.** Not when the table is confirmed unused, not when the
+   requirements say "no longer needed" — *"nothing reads it anymore"* is
+   precisely the rationalization under which the DROP ships and then breaks
+   the still-deployed old code, the mid-rollout replica, or the rollback
+   you suddenly need. A drop is its own, clearly-marked destructive
+   migration (or a down/ file), scheduled after a deprecation window, never
+   a rider on the change that made the data unnecessary. If you find
+   yourself typing DROP in the same file that adds a column, stop.
+
+   The make-required step has its own trap. `ALTER COLUMN x SET NOT NULL`
+   looks like the harmless end of the sequence, but on Postgres it takes an
+   ACCESS EXCLUSIVE lock and full-scans the table to verify — on a large
+   table that is an outage, and it is the step most likely to be run
+   casually because the preceding backfill felt like the hard part. Do it in
+   three migrations instead:
+
+   ```sql
+   -- 1. instant: records the intent, verifies nothing yet
+   ALTER TABLE users ADD CONSTRAINT users_email_not_null
+     CHECK (email IS NOT NULL) NOT VALID;
+
+   -- 2. scans, but takes only SHARE UPDATE EXCLUSIVE — reads and writes continue
+   ALTER TABLE users VALIDATE CONSTRAINT users_email_not_null;
+
+   -- 3. now a fast metadata change: Postgres 12+ trusts the validated
+   --    constraint and skips the scan
+   ALTER TABLE users ALTER COLUMN email SET NOT NULL;
+   ```
+
+   `check-migrations` enforces exactly this: a bare `SET NOT NULL` fails,
+   the same statement preceded by a VALIDATEd constraint on that table
+   passes. On MySQL/SQLite, where this pattern does not exist, state in a
+   comment which tool performs the equivalent safe change and why.
+7. **The database family follows the workload, not fashion.** Before choosing
+   relational, document, key-value, wide-column, or graph, write a six-line
+   design record: required reads, required writes, atomicity boundary,
+   consistency requirement, expected cardinality/growth, and the invariant
+   the database must enforce. A choice with no record is familiarity, not a
+   design. Work through `references/non-relational-modeling.md` when any
+   non-relational family is in scope; it defines the observable evidence and
+   failure cases for document boundaries, partition keys, duplicated data,
+   graph relationships, traversal cost, and schema evolution.
+8. **This feeds `backend-engineering`, it doesn't replace it.** Schema
+   constraints stop bad data from being stored; `backend-engineering`'s
+   trusted-side validation stops bad data from being acted on before it
+   gets that far. A system needs both — a schema constraint that only
+   catches a violation after the application already trusted the value is
+   a real gap, not a redundant check.

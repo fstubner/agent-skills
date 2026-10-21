@@ -1,0 +1,10 @@
+extends: existence
+message: "'%s' is history told in a descriptive page. It belongs in the CHANGELOG, a commit message or an ADR."
+link: https://github.com/fstubner/agent-skills/blob/main/repo-docs/SKILL.md#voice
+level: error
+nonword: true
+ignorecase: true
+# Vale concatenates raw entries into one pattern, so the alternatives share
+# one entry. A date inside a filename (bench-2026-03-01.md) is a name.
+raw:
+  - '(?:(?:^|[^\w-])\d{4}-\d{2}-\d{2}(?:[^\w.-]|\.(?:\s|$)|$)|\ban audit found\b|\bfound by (?:an )?audit\b)'

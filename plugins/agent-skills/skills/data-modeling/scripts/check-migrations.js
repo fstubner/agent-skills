@@ -31,7 +31,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const NEWLINE = String.fromCharCode(10); // line separator for --files-from
+const NEWLINE = '\n'; // line separator for --files-from
 const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.agent-evidence', 'fixtures', 'testdata', 'examples', '.claude', '.cursor', '.codex', '.agents', '.aider', '.worktrees']);
 const DOWN_FILENAME_RE = /(\.down\.sql|_down\.sql|\.rollback\.sql)$/i;
 const DOWN_DIR_RE = /(^|[/\\])(down|revert|rollback)([/\\]|$)/i;

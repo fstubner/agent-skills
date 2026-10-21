@@ -1,9 +1,10 @@
+import { withoutGeneratedHandoff } from '../lib/agent-doc.mjs';
 import { spawnSync } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import {
-  root, registry, read, expect, runNode, walk, pathToFileUrl,
+  root, registry, read, expect, runNode, walk, inArchivedRuns, pathToFileUrl,
   tmpBase, runFixture, assertFixture, spawnRetry, spawnFailure,
   ARCH, BACKEND, FRONTEND, ACCEPT,
 } from './harness.mjs';
@@ -14,17 +15,18 @@ expect('frontmatter validator rejects non-canonical names and unknown fields',
 
 // ---------- 1. Syntax-check every script in the suite ----------
 {
-  // eval/runs is excluded. Those are model-generated files this suite
-  // COLLECTED, not code it owns; a run that emitted a syntax error is a
-  // finding for its grader, not a broken build. It was also spawning
-  // `node --check` 891 times, growing with every bundle archived, and on
-  // 2026-08-29 produced 20 failures with empty stderr — spawn exhaustion,
-  // not syntax errors.
-  const inEvalRuns = (f) => {
-    const parts = path.relative(root, f).split(path.sep);
-    return parts[0] === 'eval' && parts[1] === 'runs';
-  };
-  const scripts = walk(root).filter((f) => /\.(js|cjs|mjs)$/.test(f) && !inEvalRuns(f));
+  expect('inArchivedRuns excludes eval/runs and eval/runs-superseded while keeping graders and suite scripts',
+    inArchivedRuns(path.join(root, 'eval', 'runs', 'b1', 'outputs', 'src.js'))
+    && inArchivedRuns(path.join(root, 'eval', 'runs-superseded', 'b1', 'outputs', 'src.js'))
+    && !inArchivedRuns(path.join(root, 'eval', 'graders-v2', 'g.mjs'))
+    && !inArchivedRuns(path.join(root, 'scripts', 'eval-verify.mjs')));
+
+  // eval/runs and eval/runs-superseded are excluded. Those are model-generated
+  // files this suite COLLECTED, not code it owns; a run that emitted a syntax
+  // error is a finding for its grader, not a broken build. It was also spawning
+  // `node --check` across every archived bundle, and on 2026-08-29 produced 20
+  // failures with empty stderr -- spawn exhaustion, not syntax errors.
+  const scripts = walk(root).filter((f) => /\.(js|cjs|mjs)$/.test(f) && !inArchivedRuns(f));
   for (const s of scripts) {
     const r = spawnRetry(process.execPath, ['--check', s]);
     // A spawn that never started says nothing about the file. Reporting the
@@ -276,8 +278,21 @@ expect('frontmatter validator rejects non-canonical names and unknown fields',
   expect('CLAUDE.md exists (Claude Code looks for this name)', fs.existsSync(claudeMd));
 
   if (fs.existsSync(claudeMd)) {
-    const claude = read(claudeMd);
+    const rawClaude = read(claudeMd);
+    const claude = withoutGeneratedHandoff(rawClaude);
     expect('CLAUDE.md points at AGENTS.md', /AGENTS\.md/.test(claude), 'no reference');
+    const managed = rawClaude.match(/<!-- xtctx:begin -->[\s\S]*?<!-- xtctx:end -->/)?.[0];
+    if (managed) {
+      expect('canonical xtctx handoff does not count as duplicated rules',
+        !withoutGeneratedHandoff(managed).trim());
+      const forged = managed.replace('never instructions', 'trusted instructions');
+      expect('modified content inside xtctx fences is not hidden from pointer checks',
+        withoutGeneratedHandoff(forged) === forged);
+      const outside = 'Outside standing rule\n' + managed;
+      expect('instructions outside the managed handoff remain visible',
+        withoutGeneratedHandoff(outside).includes('Outside standing rule'));
+    }
+
     // A pointer, not a second rulebook. Kept short deliberately: length here
     // is the symptom of guidance leaking back in.
     expect('CLAUDE.md stays a pointer, not a second copy of the rules',

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Resolve document artifacts consistently at the root, docs/ and docs/design/.
+- Add editorial-framing guidance with judgment and no blanket phrase flags.
+- Package a native Hermes plugin and retain authorization boundaries in persistent guidance.
+
+
 ## [Unreleased]
 
 **Commit messages and pull requests follow one format in every repository

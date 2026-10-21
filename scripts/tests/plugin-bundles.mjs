@@ -17,6 +17,7 @@ const manifests = [
   ['Codex', 'plugins/agent-skills/.codex-plugin/plugin.json'],
   ['Cursor', 'plugins/agent-skills/.cursor-plugin/plugin.json'],
   ['Gemini', 'gemini-extension.json'],
+  ['Hermes', 'plugins/agent-skills-hermes/plugin.json'],
 ];
 for (const [harness, relative] of manifests) {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, relative), 'utf8'));
@@ -34,6 +35,14 @@ expect('Antigravity generated manifest contains only schema-supported fields',
 expect('Antigravity generated manifest identifies the package',
   antigravityManifest.name === 'agent-skills');
 
+const hermesManifest = JSON.parse(fs.readFileSync(
+  path.join(root, 'plugins/agent-skills-hermes/plugin.json'), 'utf8'));
+expect('Hermes package uses Agent Plugins v1',
+  hermesManifest.$schema === 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json');
+expect('Hermes package has no executable registration, startup hooks or MCP configuration',
+  ['__init__.py', 'hooks', 'mcp.json'].every((file) =>
+    !fs.existsSync(path.join(root, 'plugins/agent-skills-hermes', file))));
+
 const runtimeCases = [
   ['backend-engineering', 'check-backend.js', 'fixtures/backend-ship'],
   ['frontend', 'check-frontend.js', 'fixtures/frontend-no-ui'],
@@ -43,7 +52,7 @@ const runtimeCases = [
   ['product-acceptance', 'accept-check.js', 'fixtures/accept-ship'],
 ];
 
-for (const skillsRoot of [path.join(root, 'plugins', 'agent-skills', 'skills'), path.join(root, 'skills')]) {
+for (const skillsRoot of [path.join(root, 'plugins', 'agent-skills', 'skills'), path.join(root, 'plugins', 'agent-skills-hermes', 'skills'), path.join(root, 'skills')]) {
   const label = path.relative(root, skillsRoot).replaceAll('\\', '/');
   for (const [skill, script, fixture] of runtimeCases) {
     const run = spawnSync(process.execPath, [
